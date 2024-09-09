@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         exo: ['"Exo 2"', 'sans-serif'],
       },
+      colors:{
+        'pageBackGround': '#E6E6E6',
+      }
     },
   },
   plugins: [],
