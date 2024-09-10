@@ -27,11 +27,13 @@ const CarousalComponent: React.FC<CarouselProps> = ({ slides }) => {
 }
 
   return (
-    <div className="overflow-hidden relative" >
+    <>
+  
+    <div className="overflow-hidden relative"  >
         <div className={`flex transition  ease-out duration-400 ` }  style={{transform:`translateX(-${current*100}%)`}}>
             {
                 slides.map((s) => {
-                    return <img src={s} alt="" />
+                    return <img src={s} alt="" className="object-cover" />
                 })
             }
         </div>
@@ -46,6 +48,7 @@ const CarousalComponent: React.FC<CarouselProps> = ({ slides }) => {
       
         </div>
     </div>
+    </>
   )
 }
 

@@ -12,7 +12,7 @@ function Header() {
 
   return (
     <>
-       <div style={{backgroundColor:'#078FDC'}} className='text-white font-bold h-[130px] flex justify-between'  >
+       <div  className='text-white font-bold h-[130px] flex justify-between bg-freeze-color'  >
             <h1 className="w-full text-3xl  text-black font-exo  p-10" >FREEZE <span className="text-white font-exo" >LAND</span> </h1>
             <ul className=" p-8 hidden md:flex  ">
                 <li className="p-4">HOME</li>

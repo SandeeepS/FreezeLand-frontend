@@ -7,10 +7,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        exo: ['"Exo 2"', 'sans-serif'],
+        exo: ['"Exo 2"', 'sans-serif','Metal'],
+        Metal: ['Metal'],
       },
       colors:{
-        'pageBackGround': '#E6E6E6',
+        'pageBackGround': '#444444',
+        'freeze-color' :'#078FDC'
       }
     },
   },
