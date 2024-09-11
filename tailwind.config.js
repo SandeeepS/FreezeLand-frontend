@@ -14,9 +14,7 @@ module.exports = {
         'pageBackGround': '#444444',
         'freeze-color' :'#078FDC'
       },
-      backgroundImage:{
-        'penguine':URL('/')
-      }
+   
     },
   },
   plugins: [],

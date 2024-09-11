@@ -13,8 +13,8 @@ function Header() {
   return (
     <>
        <div  className='text-white font-bold h-[130px] flex justify-between bg-freeze-color'  >
-            <h1 className="w-full text-3xl  text-black font-exo  p-10" >FREEZE <span className="text-white font-exo" >LAND</span> </h1>
-            <ul className=" p-8 hidden md:flex  ">
+       <h1 className="w-full text-3xl  text-black font-exo  p-10" >FREEZE <span className="text-white font-exo" >LAND</span> </h1>
+       <ul className=" p-8 hidden md:flex  ">
                 <li className="p-4">HOME</li>
                 <li className="p-4">ACCOUNT</li>
                 <li className="p-4">SERVICES</li>
