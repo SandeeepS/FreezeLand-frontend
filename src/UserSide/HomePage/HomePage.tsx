@@ -1,7 +1,8 @@
 
-import Header from "../Header"
+import Header from "../Components/Header"
 import CarousalComponent from "../../components/CarousalComponent"
 import Promo1 from "./Promo1"
+import ServiceList from "./ServiceList"
 function HomePage() {
 
     
@@ -22,6 +23,11 @@ function HomePage() {
        <>
         <Promo1/>
        </>
+
+       <>
+       <ServiceList/>
+       </>
+
        
     </>
   )
