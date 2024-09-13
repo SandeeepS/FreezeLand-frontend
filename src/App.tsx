@@ -1,6 +1,6 @@
 import './App.css'
+import SignupPage from './UserSide/LoginPage/SignupPage'
 // import HomePage from './UserSide/HomePage/HomePage'
-import LoginPage from './UserSide/LoginPage/LoginPage'
 
 
 function App() {
@@ -8,7 +8,8 @@ function App() {
 
   return (
     <>
-      <LoginPage/>
+    <SignupPage/>
+      {/* <LoginPage/> */}
       {/* <HomePage/>  */}
     </>
   )

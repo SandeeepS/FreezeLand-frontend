@@ -14,21 +14,18 @@ function HomePage() {
   ]
 
   return (
+
     <>
        <Header  />
        <div className=' m-auto pt-5'>
-        <CarousalComponent slides={slides}/>
+         <CarousalComponent slides={slides}/>
        </div>
-
        <>
-        <Promo1/>
+         <Promo1/>
        </>
-
        <>
-       <ServiceList/>
+        <ServiceList/>
        </>
-
-       
     </>
   )
 }
