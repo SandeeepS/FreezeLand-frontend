@@ -1,38 +1,57 @@
 import { useState } from "react";
+import { useFormik } from "formik";
+import { SignupValidation } from "../../components/Common/Validations";
+import { signup } from "../../Api/user";
 
 export interface FormData {
   name: string;
   email: string;
   phone: string;
-  location: string;
   password: string;
   confirmPassword?: string;
-  role: string;
+}
+interface initialVal {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  cpassword: string;
 }
 
+const initialValues: initialVal = {
+  name: "",
+  email: "",
+  phone: "",
+  password: "",
+  cpassword: "",
+};
+
 const UserSignupPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
+  const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
+    initialValues: initialValues,
+    validationSchema: SignupValidation,
+    onSubmit: (values) => {
+      const formData = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        password: values.password,
+        confirmPassword: values.cpassword,
+      };
+      const hanSub = async () => {
+        try {
+          const result = await signup(formData);
+          // if (result) {
+          //   navigate("/user/otp-page");
+          // }
+          console.log("result fron the signup form is ",result)
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      hanSub();
+    },
   });
-
-  // Event handler for input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  // Event handler for form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log(formData);
-  };
 
   return (
     <div className="bg-[url('/src/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
@@ -60,6 +79,27 @@ const UserSignupPage: React.FC = () => {
                 </p>
               </div>
 
+              
+              <div>
+                <label className="text-gray-800 text-sm block mb-1">
+                  Name
+                </label>
+                <div className="relative">
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    value={values.name}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Enter email"
+                  />
+                  {errors.name && <small className='text-red-500'>{errors.name}</small>}
+
+                </div>
+              </div>
+
               <div>
                 <label className="text-gray-800 text-sm block mb-1">
                   Email
@@ -69,11 +109,14 @@ const UserSignupPage: React.FC = () => {
                     name="email"
                     type="text"
                     required
-                    value={formData.email}
+                    value={values.email}
+                    onBlur={handleBlur}
                     onChange={handleChange}
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter email"
                   />
+                  {errors.email && <small className='text-red-500'>{errors.email}</small>}
+
                 </div>
               </div>
 
@@ -86,11 +129,14 @@ const UserSignupPage: React.FC = () => {
                     name="phone"
                     type="tel"
                     required
-                    value={formData.phone}
+                    value={values.phone}
+                    onBlur={handleBlur}
                     onChange={handleChange}
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter your phone number"
                   />
+                  {errors.phone && <small className='text-red-500'>{errors.phone}</small>}
+
                 </div>
               </div>
 
@@ -103,11 +149,14 @@ const UserSignupPage: React.FC = () => {
                     name="password"
                     type="password"
                     required
-                    value={formData.password}
+                    value={values.password}
+                    onBlur={handleBlur}
                     onChange={handleChange}
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter password"
                   />
+                  {errors.password && <small className='text-red-500'>{errors.password}</small>}
+
                 </div>
               </div>
 
@@ -117,14 +166,17 @@ const UserSignupPage: React.FC = () => {
                 </label>
                 <div className="relative">
                   <input
-                    name="confirmPassword"
+                    name="cpassword"
                     type="password"
                     required
-                    value={formData.confirmPassword}
+                    value={values.cpassword}
+                    onBlur={handleBlur}
                     onChange={handleChange}
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Conform you password"
                   />
+                  {errors.cpassword && <small className='text-red-500'>{errors.cpassword}</small>}
+
                 </div>
               </div>
 
