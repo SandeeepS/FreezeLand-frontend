@@ -3,18 +3,15 @@ import Header from "../Components/Header"
 import CarousalComponent from "../../components/CarousalComponent"
 import Promo1 from "./Promo1"
 import ServiceList from "./ServiceList"
-function HomePage() {
-
-    
+const HomePage : React.FC= ()=>{
+ 
   const slides = [
         "/src/Images/carousal-1.jpg",
          "/src/Images/carousal-2.jpg",
           "/src/Images/carousal-3.jpg"
-
   ]
 
   return (
-
     <>
        <Header  />
        <div className=' m-auto pt-5'>
@@ -27,7 +24,7 @@ function HomePage() {
         <ServiceList/>
        </>
     </>
-  )
+  )     
 }
 
 export default HomePage
