@@ -3,7 +3,7 @@ import Header from "../components/User/Header"
 import CarousalComponent from "../components/User/CarousalComponent"
 import Promo1 from "../components/User/Promo1"
 import ServiceList from "../components/User/ServiceList"
-const HomePage : React.FC= ()=>{
+const UserHomePage : React.FC= ()=>{
  
   const slides = [
         "/src/Images/carousal-1.jpg",
@@ -27,4 +27,4 @@ const HomePage : React.FC= ()=>{
   )     
 }
 
-export default HomePage
+export default UserHomePage

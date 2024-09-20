@@ -1,6 +1,6 @@
 import SignUpForm from "../components/User/SignUpForm"
 
-function SignupPage() {
+function UserSignupPage() {
   return (
     <div className="bg-[url('/src/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
     
@@ -17,4 +17,4 @@ function SignupPage() {
   )
 }
 
-export default SignupPage
+export default UserSignupPage

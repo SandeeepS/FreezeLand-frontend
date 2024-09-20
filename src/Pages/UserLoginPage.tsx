@@ -1,6 +1,6 @@
 import LoginForm from "../components/User/LoginForm";
 
-function LoginPage() {
+function UserLoginPage() {
   return (
     <div className="bg-[url('/src/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
     
@@ -17,4 +17,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default UserLoginPage;
