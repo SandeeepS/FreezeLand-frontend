@@ -1,5 +1,5 @@
 import './App.css'
-import SignupPage from './UserSide/LoginPage/SignupPage'
+import SignupPage from './Pages/UserSignupPage'
 // import HomePage from './UserSide/HomePage/HomePage'
 
 
