@@ -14,3 +14,8 @@ export const SignupValidation = Yup.object({
     cpassword: Yup.string().oneOf([Yup.ref("password")], "Password not matching").required("please Enter the confirm password!"),
 
 })
+
+export const LoginValidation = Yup.object({
+    email: Yup.string().email("please Enter a valid Email Address!").required("please Enter Email!"),
+    password: Yup.string().required("please Enter your password!")
+})

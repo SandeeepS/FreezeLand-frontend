@@ -13,6 +13,21 @@ const signup = async({name,phone,email,password}:FormData) => {
           }
 }
 
+
+const login = async (email: string, password: string) => {
+  try {
+    console.log("entered in the login Api");
+      const result = await Api.post(userRoutes.login, { email, password });
+      console.log("result from the fronEnd is ", result);
+      return result;
+  } catch (error) {
+      console.log("error from the login from the ueser.ts",error as Error);
+  }
+}
+
+
+
 export {
-    signup
+    signup,
+    login
 }

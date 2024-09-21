@@ -70,7 +70,7 @@ const UserSignupPage: React.FC = () => {
                 <p className="text-gray-600 text-sm mt-2">
                   Already have an account?{" "}
                   <a
-                    href="javascript:void(0);"
+                    href="/login"
                     className="text-blue-600 font-semibold hover:underline"
                   >
                     Sign in here
