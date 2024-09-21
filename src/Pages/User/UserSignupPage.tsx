@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useFormik } from "formik";
 import { SignupValidation } from "../../components/Common/Validations";
 import { signup } from "../../Api/user";

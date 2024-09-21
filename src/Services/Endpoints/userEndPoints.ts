@@ -1,5 +1,5 @@
 const userRoutes = {
-    signup:'/user/registration',
+    signUp:'/user/registration',
 }
 
 export default userRoutes;
