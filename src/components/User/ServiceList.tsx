@@ -2,95 +2,58 @@ function ServiceList() {
   return (
     <div className="w-full bg-white h-[600px]">
       <h1 className="text-5xl m-12">OUR SERVICES</h1>
-      <div className="flex">
-
+      <div className="flex m-12 space-x-10">
         {/* {div 1} */}
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
+        <div className="max-w-xs h-64 rounded overflow-hidden shadow-lg bg-[#078FDC]">
           <img
             className="w-full"
             src="/src/Images/AC service.jpg"
             alt="Sunset in the mountains"
           />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-            <p className="text-gray-700 text-base">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Voluptatibus quia, nulla! Maiores et perferendis eaque,
-              exercitationem praesentium nihil.
-            </p>
-          </div>
-          <div className="px-6 pt-4 pb-2">
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #photography
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #travel
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #winter
-            </span>
+          <div className="flex items-center justify-center mt-2">
+            <h3 className=" text-xl mb-2 text-center">A/C Service</h3>
           </div>
         </div>
-        {/* {div 1} */}
-
         {/* {div 2} */}
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
+
+        {/* {div 1} */}
+        <div className="max-w-xs h-64 rounded overflow-hidden shadow-lg bg-[#078FDC]">
           <img
             className="w-full"
-            src="/src/Images/AC service.jpg"
+            src="/src/Images/washingmachine2.jpg"
             alt="Sunset in the mountains"
           />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-            <p className="text-gray-700 text-base">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Voluptatibus quia, nulla! Maiores et perferendis eaque,
-              exercitationem praesentium nihil.
-            </p>
-          </div>
-          <div className="px-6 pt-4 pb-2">
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #photography
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #travel
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #winter
-            </span>
+          <div className="flex items-center justify-center mt-2">
+            <h3 className=" text-xl mb-2 text-center">WashingMachine</h3>
           </div>
         </div>
         {/* {div 2} */}
 
         {/* {div 3} */}
-        <div className="max-w-sm rounded overflow-hidden shadow-lg">
+        <div className="max-w-xs h-64 rounded overflow-hidden shadow-lg bg-[#078FDC]">
           <img
             className="w-full"
-            src="/src/Images/AC service.jpg"
+            src="/src/Images/fridge-repair.jpg"
             alt="Sunset in the mountains"
           />
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">The Coldest Sunset</div>
-            <p className="text-gray-700 text-base">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Voluptatibus quia, nulla! Maiores et perferendis eaque,
-              exercitationem praesentium nihil.
-            </p>
-          </div>
-          <div className="px-6 pt-4 pb-2">
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #photography
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #travel
-            </span>
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              #winter
-            </span>
+         <div className="flex items-center justify-center mt-2">
+            <h3 className="text-xl mb-2 text-center">FridgeRepaire</h3>
           </div>
         </div>
         {/* {div 3} */}
 
+        {/* {div 4} */}
+        <div className="max-w-xs h-64 rounded overflow-hidden shadow-lg bg-[#078FDC]">
+          <img
+            className="w-full"
+            src="/src/Images/ac installation.jpg"
+            alt="Sunset in the mountains"
+          />
+          <div className="flex items-center justify-center mt-2">
+            <h3 className="text-xl mb-2 text-center">A/C Intallation</h3>
+          </div>
+        </div>
+        {/* {div 4} */}
       </div>
     </div>
   );

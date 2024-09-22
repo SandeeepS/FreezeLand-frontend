@@ -3,6 +3,8 @@ import Header from "../../components/User/Header"
 import CarousalComponent from "../../components/User/CarousalComponent"
 import Promo1 from "../../components/User/Promo1"
 import ServiceList from "../../components/User/ServiceList"
+import Promo2 from "../../components/User/Promo2"
+import Footer from "../../components/User/Footer"
 const UserHomePage : React.FC= ()=>{
  
   const slides = [
@@ -22,6 +24,12 @@ const UserHomePage : React.FC= ()=>{
        </>
        <>
         <ServiceList/>
+       </>
+       <>
+          <Promo2/>
+       </>
+       <>
+       <Footer/>
        </>
     </>
   )     
