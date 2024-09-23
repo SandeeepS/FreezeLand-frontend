@@ -25,9 +25,18 @@ const login = async (email: string, password: string) => {
   }
 }
 
+const logout = async () => {
+  try {
+      return await Api.get(userRoutes.logout);
+  } catch (error) {
+      console.log("error in the logout in the user.ts",error as Error);
+  }
+}
+
 
 
 export {
     signup,
-    login
+    login,
+    logout
 }

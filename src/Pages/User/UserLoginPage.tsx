@@ -3,6 +3,10 @@ import React from "react";
 import { LoginValidation } from "../../components/Common/Validations";
 import { login } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
+import { useDispatch,  } from "react-redux";
+import { useAppSelector } from "../../App/store";
+import { setUserCredental } from "../../App/slices/AuthSlice";
+
 
 
 interface initialVal {
@@ -17,6 +21,8 @@ const initialValues: initialVal = {
 
 const UserLoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {useData} = useAppSelector((state) => state.auth)
 
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
@@ -28,11 +34,13 @@ const UserLoginPage: React.FC = () => {
           const result = await login(values.email,values.password);
           if (result) {
             {console.log("result fron the front end ",result)}
+            dispatch(setUserCredental(result.data.data.token));
             navigate("/user/homepage");
           }
           console.log("result fron the signup form is ",result)
         } catch (error) {
           console.log(error);
+          
         }
       };
       hanSub();
