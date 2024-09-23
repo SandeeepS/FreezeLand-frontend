@@ -4,7 +4,6 @@ import { LoginValidation } from "../../components/Common/Validations";
 import { login } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
 import { useDispatch,  } from "react-redux";
-import { useAppSelector } from "../../App/store";
 import { setUserCredental } from "../../App/slices/AuthSlice";
 
 
@@ -22,7 +21,6 @@ const initialValues: initialVal = {
 const UserLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {useData} = useAppSelector((state) => state.auth)
 
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,

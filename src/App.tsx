@@ -1,6 +1,5 @@
 import "./App.css";
 import React,{Suspense,lazy} from "react";
-import { DiVim } from "react-icons/di";
 import { Route, Routes } from "react-router-dom";
 
 
@@ -13,7 +12,7 @@ const  AdminLoginPage   = lazy(() => import("./Pages/Admin/AdminLoginPage"))
 const  AdminDashboard   = lazy(() => import("./Pages/Admin/AdminDashboard"))
 const   AdminUserListing  = lazy(() => import("./Pages/Admin/AdminUserListing"))
 const   AdminMechListing  = lazy(() => import("./Pages/Admin/AdminMechListing"))
-const  UserLoggedIn   = lazy(() => import("./components/User/UserLoggedOut"))
+const  UserLoggedIn   = lazy(() => import("./components/User/UserLoggedIn"))
 
 
 
@@ -29,7 +28,7 @@ function App() {
         </Route>
 
         <Route path="" element={<UserLoggedIn />}>
-          <Route path="user/homepage" element={<UserHomePage />} />
+          <Route path="/user/homepage" element={<UserHomePage />} />
         </Route>
 
         {/*Admin Routes*/}
