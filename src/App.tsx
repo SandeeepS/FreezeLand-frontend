@@ -1,29 +1,44 @@
 import "./App.css";
+import React,{Suspense,lazy} from "react";
+import { DiVim } from "react-icons/di";
 import { Route, Routes } from "react-router-dom";
-import UserHomePage from "./Pages/User/UserHomePage";
-import UserSignupPage from "./Pages/User/UserSignupPage";
-import UserLoginPage from "./Pages/User/UserLoginPage";
-import AdminLoginPage from "./Pages/Admin/AdminLoginPage";
-import AdminDashboard from "./Pages/Admin/AdminDashboard";
-import AdminUserListing from "./Pages/Admin/AdminUserListing";
-import AdminMechListing from "./Pages/Admin/AdminMechListing";
+
+
+
+const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
+const  UserLoggedOut   = lazy(() => import("./components/User/UserLoggedOut"))
+const UserSignupPage    = lazy(() => import("./Pages/User/UserSignupPage"))
+const  UserLoginPage   = lazy(() => import("./Pages/User/UserLoginPage"))
+const  AdminLoginPage   = lazy(() => import("./Pages/Admin/AdminLoginPage"))
+const  AdminDashboard   = lazy(() => import("./Pages/Admin/AdminDashboard"))
+const   AdminUserListing  = lazy(() => import("./Pages/Admin/AdminUserListing"))
+const   AdminMechListing  = lazy(() => import("./Pages/Admin/AdminMechListing"))
+const  UserLoggedIn   = lazy(() => import("./components/User/UserLoggedOut"))
+
+
 
 function App() {
   return (
     <>
+     <Suspense fallback={<div>...Loading</div>}>
       <Routes>
         {/* userRoutes */}
-        <Route path="user/homepage" element={<UserHomePage />} />
-        <Route path="/signup" element={<UserSignupPage />} />
-        <Route path="/login" element={<UserLoginPage/>}/>
+        <Route path="" element={<UserLoggedOut />}>
+          <Route path="/signup" element={<UserSignupPage />} />
+          <Route path="/login" element={<UserLoginPage />} />
+        </Route>
 
+        <Route path="" element={<UserLoggedIn />}>
+          <Route path="user/homepage" element={<UserHomePage />} />
+        </Route>
 
         {/*Admin Routes*/}
-        <Route path="/admin/login" element={<AdminLoginPage/>}/>
-        <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
-        <Route path="/admin/users" element={<AdminUserListing/>}/>
-        <Route path="/admin/mech" element={<AdminMechListing/>}/>
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUserListing />} />
+        <Route path="/admin/mech" element={<AdminMechListing />} />
       </Routes>
+      </Suspense>
     </>
   );
 }
