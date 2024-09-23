@@ -9,7 +9,7 @@ const  DataListing:React.FC = () => {
                 tabIndex={0}
                 className="focus:outline-none text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-normal text-gray-800 dark:text-white"
               >
-                Files
+                {/* Files */}
               </p>
               <div className="mt-4 sm:mt-0">
                 <button className="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 inline-flex sm:ml-3 items-start justify-start px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
@@ -35,25 +35,62 @@ const  DataListing:React.FC = () => {
                         </div>
                         <div className="pl-2">
                           <p className="text-sm font-medium leading-none text-gray-800 dark:text-white">
-                            Fonts.fig
+                            Arjun
                           </p>
                           <p className="text-xs leading-3 text-gray-600 dark:text-gray-200 mt-2">
-                            Shared by Ashley Wilson
+                            Kunnil
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="pl-16">
-                      <p>#designer</p>
+                      <p>Pathanamthitta</p>
                     </td>
                     <td>
-                      <p className="pl-16">3.7gb</p>
+                      <p className="pl-16">Active</p>
+                    </td>
+                  
+                    <td>
+                      <p className="pl-16">Edit</p>
                     </td>
                     <td>
-                      <p className="pl-16">4 members</p>
+                      <p className="pl-16">Block</p>
+                    </td>
+                  </tr>
+
+
+
+                  <tr
+                    tabIndex={0}
+                    className="focus:outline-none text-sm leading-none text-gray-600 dark:text-gray-200 h-16"
+                  >
+                    <td className="w-1/2">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gray-700 rounded-sm flex items-center justify-center">
+                          <p className="text-xs font-bold leading-3 text-white">FIG</p>
+                        </div>
+                        <div className="pl-2">
+                          <p className="text-sm font-medium leading-none text-gray-800 dark:text-white">
+                            Sanush
+                          </p>
+                          <p className="text-xs leading-3 text-gray-600 dark:text-gray-200 mt-2">
+                            KK
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="pl-16">
+                      <p>Pathanamthitta</p>
                     </td>
                     <td>
-                      <p className="pl-16">Shared on 21 February 2020</p>
+                      <p className="pl-16">Active</p>
+                    </td>
+                  
+                    <td>
+                      <p className="pl-16">Edit</p>
+                    </td>
+                    <td>
+                      <p className="pl-16">Block</p>
                     </td>
                   </tr>
     
