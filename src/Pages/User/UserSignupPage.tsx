@@ -1,6 +1,7 @@
 import { useFormik } from "formik";
 import { SignupValidation } from "../../components/Common/Validations";
 import { signup } from "../../Api/user";
+import { useNavigate } from "react-router-dom";
 
 export interface FormData {
   name: string;
@@ -26,6 +27,7 @@ const initialValues: initialVal = {
 };
 
 const UserSignupPage: React.FC = () => {
+  const navigate = useNavigate()
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
     validationSchema: SignupValidation,
@@ -40,9 +42,9 @@ const UserSignupPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await signup(formData);
-          // if (result) {
-          //   navigate("/user/otp-page");
-          // }
+          if (result) {
+            navigate("/user/homepage");
+          }
           console.log("result fron the signup form is ",result)
         } catch (error) {
           console.log(error);

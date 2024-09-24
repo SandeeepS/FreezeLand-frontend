@@ -7,6 +7,7 @@ const signup = async({name,phone,email,password}:FormData) => {
             console.log("Entered in signup ");
               const result = await Api.post(userRoutes.signUp,{name,phone,email,password});
               console.log("result of api post",result);
+              return result;
            
           }catch(error){
             console.log(error as Error);

@@ -1,8 +1,10 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { LoginValidation } from "../../components/Common/Validations";
-import { login } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
+import { adminLogin } from "../../Api/admin";
+import toast from "react-hot-toast";
+import { useAppSelector } from "../../App/store";
 
 interface initialVal {
   email: string;
@@ -17,21 +19,29 @@ const initialValues: initialVal = {
 const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
+  // const dispatch = useDispatch();
+  const { adminData } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (adminData) {
+      navigate("/admin/dashboard");
+    }
+  }, [adminData]);
+
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
     validationSchema: LoginValidation,
     onSubmit: (values) => {
       const hanSub = async () => {
         try {
-          const result = await login(values.email, values.password);
+          const result = await adminLogin(values.email, values.password);
           if (result) {
-            {
-              console.log("result fron the front end ", result);
-            }
-            navigate("/user/homepage");
+            console.log("result from the front end ", result);
+            navigate("/admin/dashboard");
           }
-          console.log("result fron the signup form is ", result);
+          console.log("result fron the login form is ", result);
         } catch (error) {
+          toast.error("Invalild email or password");
           console.log(error);
         }
       };
