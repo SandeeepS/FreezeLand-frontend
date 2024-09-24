@@ -38,7 +38,6 @@ function Promo1() {
               <img src="/src/Images/fridge2.jpg" alt="" />
             </div>
           </div>
-          
         </div>
       </div>
     </>

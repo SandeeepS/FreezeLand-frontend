@@ -1,6 +1,6 @@
-const adminRoutes={
-    login:"/admin/login",
-    logout:"/admin/logout",
-}
+const adminRoutes = {
+  login: "/admin/login",
+  logout: "/admin/logout",
+};
 
 export default adminRoutes;

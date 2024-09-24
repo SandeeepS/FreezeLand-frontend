@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import { userLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 
-
 function Header() {
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
@@ -31,7 +30,7 @@ function Header() {
           logout().then(() => console.log(""));
           dispatch(userLogout());
           toast.success("You are logged out!");
-          navigate('/login');
+          navigate("/login");
         }
       });
     } catch (error) {

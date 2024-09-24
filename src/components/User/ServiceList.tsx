@@ -36,7 +36,7 @@ function ServiceList() {
             src="/src/Images/fridge-repair.jpg"
             alt="Sunset in the mountains"
           />
-         <div className="flex items-center justify-center mt-2">
+          <div className="flex items-center justify-center mt-2">
             <h3 className="text-xl mb-2 text-center">FridgeRepaire</h3>
           </div>
         </div>

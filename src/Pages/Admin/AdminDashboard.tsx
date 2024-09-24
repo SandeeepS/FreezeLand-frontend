@@ -9,7 +9,7 @@ const AdminDashboard: React.FC = () => {
         {/* Contents */}
         <div className="w-3/4 bg-[#DFECF8]">
           <div>
-            <AdminHeader heading="Dashboard"/>
+            <AdminHeader heading="Dashboard" />
           </div>
         </div>
       </div>

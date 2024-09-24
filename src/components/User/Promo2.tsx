@@ -24,14 +24,15 @@ function Promo2() {
           </div>
 
           <div className="px-6 py-4 text-center">
-            <div className="font-bold text-xl mb-2 italic">Certified Technicians</div>
+            <div className="font-bold text-xl mb-2 italic">
+              Certified Technicians
+            </div>
             <p className="text-gray-700 text-base">
-            All AC technicians at Carlcare are certified and well-trained who are proficient to repair your AC impeccably
+              All AC technicians at Carlcare are certified and well-trained who
+              are proficient to repair your AC impeccably
             </p>
           </div>
-     
         </div>
-
 
         <div className="max-w-sm rounded overflow-hidden shadow-lg">
           <div className="w-40 h-40 flex items-center justify-center mx-auto">
@@ -43,14 +44,15 @@ function Promo2() {
           </div>
 
           <div className="px-6 py-4 text-center">
-            <div className="font-bold text-xl mb-2 italic">Certified Technicians</div>
+            <div className="font-bold text-xl mb-2 italic">
+              Certified Technicians
+            </div>
             <p className="text-gray-700 text-base">
-            All AC technicians at Carlcare are certified and well-trained who are proficient to repair your AC impeccably
+              All AC technicians at Carlcare are certified and well-trained who
+              are proficient to repair your AC impeccably
             </p>
           </div>
-     
         </div>
-
 
         <div className="max-w-sm rounded overflow-hidden shadow-lg">
           <div className="w-40 h-40 flex items-center justify-center mx-auto">
@@ -62,12 +64,14 @@ function Promo2() {
           </div>
 
           <div className="px-6 py-4 text-center">
-            <div className="font-bold text-xl mb-2 italic">Certified Technicians</div>
+            <div className="font-bold text-xl mb-2 italic">
+              Certified Technicians
+            </div>
             <p className="text-gray-700 text-base">
-            All AC technicians at Carlcare are certified and well-trained who are proficient to repair your AC impeccably
+              All AC technicians at Carlcare are certified and well-trained who
+              are proficient to repair your AC impeccably
             </p>
           </div>
-     
         </div>
       </div>
     </div>

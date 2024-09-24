@@ -1,15 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../../App/store";
 
-
 const UserLoggedOut = () => {
-
-    const { userData } = useAppSelector((state) => state.auth);
-    if (userData) {
-        return <Navigate to='/user/homepage' />
-    } else {
-        return <Outlet />
-    }
-}
+  const { userData } = useAppSelector((state) => state.auth);
+  if (userData) {
+    return <Navigate to="/user/homepage" />;
+  } else {
+    return <Outlet />;
+  }
+};
 
 export default UserLoggedOut;

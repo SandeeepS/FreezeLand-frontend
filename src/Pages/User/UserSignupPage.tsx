@@ -27,7 +27,7 @@ const initialValues: initialVal = {
 };
 
 const UserSignupPage: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
     validationSchema: SignupValidation,
@@ -45,7 +45,7 @@ const UserSignupPage: React.FC = () => {
           if (result) {
             navigate("/user/homepage");
           }
-          console.log("result fron the signup form is ",result)
+          console.log("result fron the signup form is ", result);
         } catch (error) {
           console.log(error);
         }
@@ -80,11 +80,8 @@ const UserSignupPage: React.FC = () => {
                 </p>
               </div>
 
-              
               <div>
-                <label className="text-gray-800 text-sm block mb-1">
-                  Name
-                </label>
+                <label className="text-gray-800 text-sm block mb-1">Name</label>
                 <div className="relative">
                   <input
                     name="name"
@@ -96,8 +93,9 @@ const UserSignupPage: React.FC = () => {
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter email"
                   />
-                  {errors.name && <small className='text-red-500'>{errors.name}</small>}
-
+                  {errors.name && (
+                    <small className="text-red-500">{errors.name}</small>
+                  )}
                 </div>
               </div>
 
@@ -116,8 +114,9 @@ const UserSignupPage: React.FC = () => {
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter email"
                   />
-                  {errors.email && <small className='text-red-500'>{errors.email}</small>}
-
+                  {errors.email && (
+                    <small className="text-red-500">{errors.email}</small>
+                  )}
                 </div>
               </div>
 
@@ -136,8 +135,9 @@ const UserSignupPage: React.FC = () => {
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter your phone number"
                   />
-                  {errors.phone && <small className='text-red-500'>{errors.phone}</small>}
-
+                  {errors.phone && (
+                    <small className="text-red-500">{errors.phone}</small>
+                  )}
                 </div>
               </div>
 
@@ -156,8 +156,9 @@ const UserSignupPage: React.FC = () => {
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Enter password"
                   />
-                  {errors.password && <small className='text-red-500'>{errors.password}</small>}
-
+                  {errors.password && (
+                    <small className="text-red-500">{errors.password}</small>
+                  )}
                 </div>
               </div>
 
@@ -176,8 +177,9 @@ const UserSignupPage: React.FC = () => {
                     className="bg-gray-50 w-full text-sm text-gray-800 border border-gray-300 rounded px-4 py-2 outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Conform you password"
                   />
-                  {errors.cpassword && <small className='text-red-500'>{errors.cpassword}</small>}
-
+                  {errors.cpassword && (
+                    <small className="text-red-500">{errors.cpassword}</small>
+                  )}
                 </div>
               </div>
 

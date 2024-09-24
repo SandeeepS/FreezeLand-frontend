@@ -72,7 +72,9 @@ const AdminListing: React.FC = () => {
             <div
               key={item.name}
               className={`flex items-center space-x-3 p-2 rounded-lg cursor-pointer group 
-              ${activeItem === item.name ? "bg-gray-600" : ""} hover:bg-gray-500`}
+              ${
+                activeItem === item.name ? "bg-gray-600" : ""
+              } hover:bg-gray-500`}
               onClick={() => handleItemClick(item.name)}
             >
               <img

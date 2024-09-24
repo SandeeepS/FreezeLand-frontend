@@ -1,14 +1,5 @@
-
-
-
 function OtpComponent() {
-
-
-  return (
- <div>
-    
- </div>
-  )
+  return <div></div>;
 }
 
-export default OtpComponent
+export default OtpComponent;

@@ -34,9 +34,9 @@ const UserLoginPage: React.FC = () => {
             }
             dispatch(setUserCredental(result.data.data.token));
             navigate("/user/homepage");
-          }else{
+          } else {
             console.log("result fron the signup form is ", result);
-            toast.error("Incorrect password or email")
+            toast.error("Incorrect password or email");
           }
         } catch (error) {
           console.log(error);

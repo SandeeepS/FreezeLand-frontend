@@ -30,16 +30,15 @@ function App() {
             <Route path="/user/homepage" element={<UserHomePage />} />
           </Route>
           {/*Admin Routes*/}
-          <Route path="" element={<AdminLoggedOut/>}>
-          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="" element={<AdminLoggedOut />}>
+            <Route path="/admin/login" element={<AdminLoginPage />} />
           </Route>
 
-          <Route path="" element={<AdminLoggedIn/>}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUserListing />} />
-          <Route path="/admin/mech" element={<AdminMechListing />} />
+          <Route path="" element={<AdminLoggedIn />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUserListing />} />
+            <Route path="/admin/mech" element={<AdminMechListing />} />
           </Route>
-
         </Routes>
       </Suspense>
     </>
