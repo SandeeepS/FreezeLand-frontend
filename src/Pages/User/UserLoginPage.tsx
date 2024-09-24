@@ -3,10 +3,9 @@ import React from "react";
 import { LoginValidation } from "../../components/Common/Validations";
 import { login } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
-import { useDispatch,  } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUserCredental } from "../../App/slices/AuthSlice";
-
-
+import toast from "react-hot-toast";
 
 interface initialVal {
   email: string;
@@ -26,25 +25,27 @@ const UserLoginPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: LoginValidation,
     onSubmit: (values) => {
-     
       const hanSub = async () => {
         try {
-          const result = await login(values.email,values.password);
-          if (result) {
-            {console.log("result fron the front end ",result)}
+          const result = await login(values.email, values.password);
+          if (result !== null) {
+            {
+              console.log("result fron the front end ", result);
+            }
             dispatch(setUserCredental(result.data.data.token));
             navigate("/user/homepage");
+          }else{
+            console.log("result fron the signup form is ", result);
+            toast.error("Incorrect password or email")
           }
-          console.log("result fron the signup form is ",result)
         } catch (error) {
           console.log(error);
-          
         }
       };
       hanSub();
     },
   });
-  
+
   return (
     <div className="bg-[url('/src/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
       <div className="w-full lg:w-1/3 pt-8">
@@ -61,7 +62,7 @@ const UserLoginPage: React.FC = () => {
                   Sign in
                 </h3>
                 <p className="text-gray-600 text-sm mt-2">
-                  Don't  have an account?{" "}
+                  Don't have an account?{" "}
                   <a
                     href="/signup"
                     className="text-blue-600 font-semibold hover:underline"
@@ -70,8 +71,6 @@ const UserLoginPage: React.FC = () => {
                   </a>
                 </p>
               </div>
-
-          
 
               <div>
                 <label className="text-gray-800 text-sm block mb-1">
@@ -94,7 +93,6 @@ const UserLoginPage: React.FC = () => {
                 </div>
               </div>
 
-
               <div>
                 <label className="text-gray-800 text-sm block mb-1">
                   Password
@@ -115,8 +113,6 @@ const UserLoginPage: React.FC = () => {
                   )}
                 </div>
               </div>
-
-          
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center"></div>

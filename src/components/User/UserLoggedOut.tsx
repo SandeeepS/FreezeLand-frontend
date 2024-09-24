@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../../App/store";
 
+
 const UserLoggedOut = () => {
 
     const { userData } = useAppSelector((state) => state.auth);

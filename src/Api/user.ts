@@ -22,6 +22,7 @@ const login = async (email: string, password: string) => {
       return result;
   } catch (error) {
       console.log("error from the login from the ueser.ts",error as Error);
+      return null;
   }
 }
 
