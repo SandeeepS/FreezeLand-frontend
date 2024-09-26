@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../Api/admin";
 import toast from "react-hot-toast";
 import { useAppSelector } from "../../App/store";
+import { useDispatch } from "react-redux";
+import { setAdminCredential } from "../../App/slices/AuthSlice";
 
 interface initialVal {
   email: string;
@@ -19,7 +21,7 @@ const initialValues: initialVal = {
 const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { adminData } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
@@ -36,7 +38,8 @@ const AdminLoginPage: React.FC = () => {
         try {
           const result = await adminLogin(values.email, values.password);
           if (result) {
-            console.log("result from the front end ", result);
+            console.log("result reched in the login page  ", result);
+            dispatch(setAdminCredential(result.data.data));
             navigate("/admin/dashboard");
           }
           console.log("result fron the login form is ", result);

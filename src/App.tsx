@@ -27,7 +27,7 @@ function App() {
             <Route path="/login" element={<UserLoginPage />} />
           </Route>
           <Route path="" element={<UserLoggedIn />}>
-            <Route path="/user/homepage" element={<UserHomePage />} />
+            <Route path="/user/homepage" element={<UserHomePage />}/>
           </Route>
           {/*Admin Routes*/}
           <Route path="" element={<AdminLoggedOut />}>

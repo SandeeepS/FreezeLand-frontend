@@ -4,6 +4,7 @@ export interface CouterState {
   value: number;
 }
 
+console.log("local storage is ",localStorage)
 const initialState = {
   adminData: localStorage.getItem("adminInfo")
     ? JSON.parse(localStorage.getItem("adminInfo") as string)
