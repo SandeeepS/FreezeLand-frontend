@@ -2,15 +2,13 @@ import React from "react";
 import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import Swal from "sweetalert2";
-import { logout } from "../../Api/user";
+import { mLogout } from "../../Api/mech";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { userLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
+import { mechLogout } from "../../App/slices/AuthSlice";
 
-
-
-const Header:React.FC = () =>  {
+const MechHeader: React.FC = () => {
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
   const dispatch = useDispatch();
@@ -30,10 +28,10 @@ const Header:React.FC = () =>  {
         confirmButtonText: "Yes",
       }).then((result) => {
         if (result.isConfirmed) {
-          logout().then(() => console.log(""));
-          dispatch(userLogout());
+          mLogout().then(() => console.log(""));
+          dispatch(mechLogout());
           toast.success("You are logged out!");
-          navigate("/login");
+          navigate("/mech/login");
         }
       });
     } catch (error) {
@@ -98,6 +96,6 @@ const Header:React.FC = () =>  {
       </div>
     </>
   );
-}
+};
 
-export default Header;
+export default MechHeader;
