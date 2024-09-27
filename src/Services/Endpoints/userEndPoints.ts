@@ -1,6 +1,6 @@
 const userRoutes = {
   login: "/user/login",
-  signUp: "/user/registration",
+  signup: "/user/registration",
   logout: "/user/logout",
   getProfile: "/user/profile",
 };
