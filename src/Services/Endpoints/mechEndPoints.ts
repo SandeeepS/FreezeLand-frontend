@@ -1,6 +1,7 @@
 const mechRoutes = {
+    signup:'/mech/signup',
     login:'/mech/login',
-    logout:'/admin/logout'
+    logout:'/mech/logout'
 }
 
 export default mechRoutes;

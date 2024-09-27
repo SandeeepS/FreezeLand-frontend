@@ -38,11 +38,11 @@ export const authSlice = createSlice({
       localStorage.removeItem("adminInfo");
     },
     setMechCredential: (state, action) => {
-      state.adminData = action.payload;
+      state.mechData = action.payload;
       localStorage.setItem("mechInfo", JSON.stringify(action.payload));
     },
     mechLogout: (state) => {
-      state.adminData = null;
+      state.mechData = null;
       localStorage.removeItem("mechInfo");
     },
   },

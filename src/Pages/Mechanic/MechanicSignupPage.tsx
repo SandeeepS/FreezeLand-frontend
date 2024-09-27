@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { SignupValidation } from "../../components/Common/Validations";
-import { signup } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
+import { mechSignup } from "../../Api/mech";
 
 export interface FormData {
   name: string;
@@ -26,7 +26,7 @@ const initialValues: initialVal = {
   cpassword: "",
 };
 
-const UserSignupPage: React.FC = () => {
+const MechanicSignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
@@ -41,9 +41,9 @@ const UserSignupPage: React.FC = () => {
       };
       const hanSub = async () => {
         try {
-          const result = await signup(formData);
+          const result = await mechSignup(formData);
           if (result) {
-            navigate("/user/homepage");
+            navigate("/mech/login");
           }
           console.log("result fron the signup form is ", result);
         } catch (error) {
@@ -55,15 +55,15 @@ const UserSignupPage: React.FC = () => {
   });
 
   return (
-    <div className="bg-[url('/src/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
+    <div className="bg-[url('/src/Images/penguineBlack.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
       <div className="w-full lg:w-1/3 pt-8">
         <div className="pl-14 ">
           <h1 className="w-full text-5xl  text-black font-exo  p-10">
-            FREEZE <span className="text-white font-exo">LAND</span>{" "}
+            FREEZE <span className="text-freeze-color font-exo">LAND</span>{" "}
           </h1>
         </div>
         <div className="pl-6">
-          <div className="font-[sans-serif] bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
+          <div className="font-[sans-serif] bg-white p-8 shadow-2xl rounded-lg w-full max-w-md">
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
                 <h3 className="text-gray-800 text-3xl font-extrabold">
@@ -72,7 +72,7 @@ const UserSignupPage: React.FC = () => {
                 <p className="text-gray-600 text-sm mt-2">
                   Already have an account?{" "}
                   <a
-                    href="/login"
+                    href="/mech/login"
                     className="text-blue-600 font-semibold hover:underline"
                   >
                     Sign in here
@@ -237,4 +237,4 @@ const UserSignupPage: React.FC = () => {
   );
 };
 
-export default UserSignupPage;
+export default MechanicSignupPage;

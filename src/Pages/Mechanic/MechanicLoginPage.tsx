@@ -26,7 +26,7 @@ const MechanicLoginPage: React.FC = () => {
 
   useEffect(() => {
     if (mechData) {
-      navigate("/admin/dashboard");
+      navigate("/mech/homepage");
     }
   }, [mechData]);
 
@@ -40,7 +40,7 @@ const MechanicLoginPage: React.FC = () => {
           if (result) {
             console.log("result reched in the login page  ", result);
             dispatch(setMechCredential(result.data.data));
-            navigate("/mech/dashboard");
+            navigate("/mech/homepage");
           }
           console.log("result fron the login form is ", result);
         } catch (error) {
@@ -67,7 +67,15 @@ const MechanicLoginPage: React.FC = () => {
                 <h3 className="text-gray-800 text-3xl font-extrabold">
                   Mechanic Sign in
                 </h3>
-                <br />
+                <p className="text-gray-600 text-sm mt-2">
+                  Don't have an account?{" "}
+                  <a
+                    href="/mech/signuppage"
+                    className="text-blue-600 font-semibold hover:underline"
+                  >
+                    Sign up here
+                  </a>
+                </p>
               </div>
 
               <div>

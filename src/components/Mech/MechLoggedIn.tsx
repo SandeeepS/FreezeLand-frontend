@@ -4,10 +4,10 @@ import { useAppSelector } from "../../App/store";
 const MechLoggedIn = () => {
   const { mechData } = useAppSelector((state) => state.auth);
   if (mechData) {
-    console.log("admin data is present in the adminloggedIn",mechData);
+    console.log("mech data is present in the mechloggedIn", mechData);
     return <Outlet />;
   } else {
-    console.log("Admin data is not present ",mechData);
+    console.log("mech data is not present ", mechData);
     return <Navigate to="/mech/login" />;
   }
 };

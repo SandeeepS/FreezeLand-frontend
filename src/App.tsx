@@ -6,10 +6,11 @@ import AdminLoggedIn from "./components/Admin/AdminLoggedIn";
 import AdminLoggedOut from "./components/Admin/AdminLoggedOut";
 import MechLoggedIn from "./components/Mech/MechLoggedIn";
 import MechLoggedOut from "./components/Mech/MechLoggedOut";
+import UserLoggedOut from "./components/User/UserLoggedOut";
+import UserLoggedIn from "./components/User/UserLoggedIn";
+
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
-const UserLoggedOut = lazy(() => import("./components/User/UserLoggedOut"));
-const UserLoggedIn = lazy(() => import("./components/User/UserLoggedIn"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
 const UserLoginPage = lazy(() => import("./Pages/User/UserLoginPage"));
 const AdminLoginPage = lazy(() => import("./Pages/Admin/AdminLoginPage"));
@@ -22,6 +23,10 @@ const MechanicLoginPage = lazy(
 const MechanicHomePage = lazy(
   () => import("./Pages/Mechanic/MechanicHomePage")
 );
+const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPage"))
+
+
+
 
 function App() {
   return (
@@ -52,6 +57,7 @@ function App() {
           {/*Mechanic Routes*/}
           <Route path="" element={<MechLoggedOut />}>
             <Route path="/mech/login" element={<MechanicLoginPage />} />
+            <Route path="/mech/signuppage" element={<MechanicSignupPage/>}/>
           </Route>
 
           <Route path="" element={<MechLoggedIn />}>
