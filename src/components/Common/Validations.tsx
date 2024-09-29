@@ -5,9 +5,12 @@ const strongRegex = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%\\^&*])(?=.{5,})"
 );
 
+const gmailRegex = new RegExp("^[a-zA-Z0-9._%+-]+@gmail\\.com$");
+
 export const SignupValidation = Yup.object({
   name: Yup.string().min(3).required("Please Enter name"),
   email: Yup.string()
+    .matches(gmailRegex, "Please enter a valid Email")
     .email("Please Enter Valid Email")
     .required("please Enter Email"),
   phone: Yup.string()
