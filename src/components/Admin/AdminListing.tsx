@@ -5,11 +5,22 @@ import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
+import { useNavigate } from "react-router-dom";
+
+type MenuItem = {
+  id: number;
+  name: string;
+  icon: string;
+  path:string;
+};
 
 const AdminListing: React.FC = () => {
-  const [activeItem, setActiveItem] = useState<string>("");
-  const handleItemClick = (item: string) => {
-    setActiveItem(item);
+  const navigate = useNavigate();
+  const [activeItem, setActiveItem] = useState<number>(0);
+  const handleItemClick = (item:MenuItem) => {
+    setActiveItem(item.id);
+    navigate(item.path);
+
   };
 
   const dispatch = useDispatch();
@@ -65,17 +76,17 @@ const AdminListing: React.FC = () => {
         {/* Listing */}
         <div className="mx-12 mt-8 space-y-5">
           {[
-            { name: "Dashboard", icon: "/src/Images/dashboard.png" },
-            { name: "Users", icon: "/src/Images/teamwork.png" },
-            { name: "Mechanics", icon: "/src/Images/support.png" },
+            { name: "Dashboard", icon: "/src/Images/dashboard.png",id:1,path:"/admin/dashboard" },
+            { name: "Users", icon: "/src/Images/teamwork.png",id:2,path:"/admin/users" },
+            { name: "Mechanics", icon: "/src/Images/support.png",id:3,path:"/admin/mech" },
           ].map((item) => (
             <div
               key={item.name}
               className={`flex items-center space-x-3 p-2 rounded-lg cursor-pointer group 
               ${
-                activeItem === item.name ? "bg-gray-600" : ""
+                activeItem === item.id ? "bg-gray-600" : ""
               } hover:bg-gray-500`}
-              onClick={() => handleItemClick(item.name)}
+              onClick={() => handleItemClick(item)}
             >
               <img
                 src={item.icon}
