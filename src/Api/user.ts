@@ -40,6 +40,28 @@ const verifyOtp = async (otpnum: string) => {
   }
 }
 
+
+const forgotPassword = async (email: string) => {
+  try {
+      return await Api.post(userRoutes.forgotPassword, { email })
+  } catch (error) {
+      console.log(error as Error)
+  }
+}
+const forgotVerifyOtp = async (otp: string) => {
+  try {
+      return await Api.post(userRoutes.forgotVerifyOtp, { otp });
+  } catch (error) {
+      console.log(error as Error);
+  }
+}
+const updateNewPassword = async (password: string, userId: string) => {
+  try {
+      return await Api.put(userRoutes.updateNewPassword, { password, userId });
+  } catch (error) {
+      console.log(error as Error);
+  }
+}
 const resendOtp = async () => {
   try {
       await Api.get(userRoutes.resendOtp);
@@ -47,6 +69,7 @@ const resendOtp = async () => {
       console.log(error as Error);
   }
 }
+
 
 const logout = async () => {
   try {
@@ -65,4 +88,4 @@ const getProfile = async () => {
   }
 };
 
-export { signup, login, logout, getProfile ,verifyOtp,resendOtp};
+export { signup, login, logout, getProfile ,verifyOtp,resendOtp,forgotPassword,forgotVerifyOtp,updateNewPassword};

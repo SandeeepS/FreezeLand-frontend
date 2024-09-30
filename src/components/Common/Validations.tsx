@@ -33,3 +33,8 @@ export const LoginValidation = Yup.object({
     .required("please Enter Email!"),
   password: Yup.string().required("please Enter your password!"),
 });
+
+export const newPasswordValidation = Yup.object({
+  password: Yup.string().min(8).matches(strongRegex, "Enter a Strong password").required('Please Enter the password!'),
+  cpassword: Yup.string().min(8).oneOf([Yup.ref("password")], "Password not matching").required('Please confirm the password!')
+})
