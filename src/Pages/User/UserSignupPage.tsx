@@ -43,7 +43,7 @@ const UserSignupPage: React.FC = () => {
         try {
           const result = await signup(formData);
           if (result) {
-            navigate("/user/homepage");
+            navigate("/otp-page");
           }
           console.log("result fron the signup form is ", result);
         } catch (error) {

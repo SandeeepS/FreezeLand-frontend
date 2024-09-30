@@ -30,6 +30,24 @@ const login = async (email: string, password: string) => {
   }
 };
 
+const verifyOtp = async (otpnum: string) => {
+  try {
+      const otp = parseInt(otpnum);
+      const result = await Api.post(userRoutes.veryfyOtp, { otp });
+      return result;
+  } catch (error) {
+      console.log(error as Error);
+  }
+}
+
+const resendOtp = async () => {
+  try {
+      await Api.get(userRoutes.resendOtp);
+  } catch (error) {
+      console.log(error as Error);
+  }
+}
+
 const logout = async () => {
   try {
     return await Api.get(userRoutes.logout);
@@ -47,4 +65,4 @@ const getProfile = async () => {
   }
 };
 
-export { signup, login, logout, getProfile };
+export { signup, login, logout, getProfile ,verifyOtp,resendOtp};
