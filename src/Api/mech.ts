@@ -27,6 +27,24 @@ const mechLogin = async(email:string,password:string) => {
     }
 }
 
+const verifyMechOtp = async (otpnum: string) => {
+  try {
+      const otp = parseInt(otpnum);
+      const result = await Api.post(mechRoutes.veryfyOtp, { otp });
+      return result;
+  } catch (error) {
+      console.log(error as Error);
+  }
+}
+
+const resendMechOtp = async () => {
+  try {
+      await Api.get(mechRoutes.resendOtp);
+  } catch (error) {
+      console.log(error as Error);
+  }
+}
+
 const mLogout = async () => {
     try {
       const result = await Api.get(mechRoutes.logout);
@@ -39,4 +57,4 @@ const mLogout = async () => {
     }
   };
 
-export {mechLogin,mLogout,mechSignup}
+export {mechLogin,mLogout,mechSignup,verifyMechOtp,resendMechOtp}

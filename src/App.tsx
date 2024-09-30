@@ -9,6 +9,7 @@ import MechLoggedOut from "./components/Mech/MechLoggedOut";
 import UserLoggedOut from "./components/User/UserLoggedOut";
 import UserLoggedIn from "./components/User/UserLoggedIn";
 import UserOtpPage from "./Pages/User/UserOtpPage";
+import MechOtpPage from "./Pages/Mechanic/MechOtpPage";
 
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
@@ -60,6 +61,7 @@ function App() {
           <Route path="" element={<MechLoggedOut />}>
             <Route path="/mech/login" element={<MechanicLoginPage />} />
             <Route path="/mech/signuppage" element={<MechanicSignupPage/>}/>
+            <Route path="/mech/veryfy-otp" element={<MechOtpPage/>}/>
           </Route>
 
           <Route path="" element={<MechLoggedIn />}>

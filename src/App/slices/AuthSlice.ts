@@ -18,6 +18,9 @@ const initialState = {
   user: localStorage.getItem("userAddress")
     ? JSON.parse(localStorage.getItem("userAddress") as string)
     : null,
+  mech: localStorage.getItem("mechAddress")
+    ? JSON.parse(localStorage.getItem("mechAddress") as string)
+    : null,
 };
 
 export const authSlice = createSlice({
@@ -48,6 +51,10 @@ export const authSlice = createSlice({
       state.mechData = action.payload;
       localStorage.setItem("mechInfo", JSON.stringify(action.payload));
     },
+    saveMech: (state, action) => {
+      state.mech = action.payload;
+      localStorage.setItem("userAddress", JSON.stringify(action.payload));
+    },
     mechLogout: (state) => {
       state.mechData = null;
       localStorage.removeItem("mechInfo");
@@ -62,7 +69,8 @@ export const {
   adLogout,
   setMechCredential,
   mechLogout,
-  saveUser
+  saveUser,
+  saveMech
 } = authSlice.actions;
 
 export default authSlice.reducer;

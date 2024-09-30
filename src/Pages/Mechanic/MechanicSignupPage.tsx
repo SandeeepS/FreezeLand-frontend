@@ -43,7 +43,7 @@ const MechanicSignupPage: React.FC = () => {
         try {
           const result = await mechSignup(formData);
           if (result) {
-            navigate("/mech/login");
+            navigate("/mech/veryfy-otp");
           }
           console.log("result fron the signup form is ", result);
         } catch (error) {
