@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { blockUser, getAllUsers } from "../../Api/admin";
+import { blockUser, getAllMechanics } from "../../Api/admin";
 import Swal from "sweetalert2";
 // import { Button, Pagination, Tooltip } from "@nextui-org/react";
 import toast from "react-hot-toast";
 
-interface UserData {
+interface MechData {
   _id: string;
   name: string;
   email: string;
   isBlocked: boolean;
 }
 
-const DataListing: React.FC = () => {
-  const [users, setUsers] = useState<UserData[]>([]);
+const MechDataListing: React.FC = () => {
+  const [mechanics, setMechanics] = useState<MechData[]>([]);
   const [block, setBlock] = useState(false);
 
   useEffect(() => {
     const fetctData = async () => {
       try {
-        const res = await getAllUsers();
-        console.log("userDatas is ", res);
-        setUsers(res?.data.data.users);
+        const res = await getAllMechanics();
+        console.log("MechDatas is ", res);
+        setMechanics(res?.data.data.mechs);
       } catch (error) {
         console.log(error as Error);
       }
@@ -78,11 +78,11 @@ const DataListing: React.FC = () => {
       </div>
       <div className="bg-white dark:bg-gray-900 px-4 md:px-10 pb-5">
         <div className="overflow-x-auto">
-          <table className="w-full whitespace-nowrap">
+          <table className="w-full whitespace-nowrap text-white">
             <tbody>
-              {users.map((user) => (
+              {mechanics? mechanics.map((mech) => (
                 <tr
-                  key={user._id}
+                  key={mech._id}
                   tabIndex={0}
                   className="focus:outline-none text-sm leading-none text-gray-600 dark:text-gray-200 h-16"
                 >
@@ -90,30 +90,30 @@ const DataListing: React.FC = () => {
                     <div className="flex items-center">
                       <div className="pl-2">
                         <p className="text-sm font-medium leading-none text-gray-800 dark:text-white">
-                          {user.name}
+                          {mech.name}
                         </p>
                         <p className="text-xs leading-3 text-gray-600 dark:text-gray-200 mt-2">
-                          {user.email}
+                          {mech.email}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="pl-16">
-                    {user.isBlocked ? "Blocked" : "Active"}
+                    {mech.isBlocked ? "Blocked" : "Active"}
                   </td>
                   <td className="pl-16">
                     <button
-                      onClick={() => handleBlock(user._id)}
+                      onClick={() => handleBlock(mech._id)}
                       className={`px-4 py-2 rounded text-white ${
-                        user.isBlocked ? "bg-red-500" : "bg-green-500"
+                        mech.isBlocked ? "bg-red-500" : "bg-green-500"
                       }`}
                     >
-                      {user.isBlocked ? "Unblock" : "Block"}
+                      {mech.isBlocked ? "Unblock" : "Block"}
                     </button>
                   </td>
                   <td className="pl-16">
                     <button
-                      onClick={() => handleBlock(user._id)}
+                      onClick={() => handleBlock(mech._id)}
                       className={`px-4 py-2 rounded text-white bg-blue-500`}
                     >
                       Edit
@@ -123,14 +123,14 @@ const DataListing: React.FC = () => {
 
                   <td className="pl-16">
                     <button
-                      onClick={() => handleBlock(user._id)}
+                      onClick={() => handleBlock(mech._id)}
                       className={`px-4 py-2 rounded text-white bg-red-500`}
                     >
                       Delete
                     </button>
                   </td>
                 </tr>
-              ))}
+              )) : "No Mechanics"}
             </tbody>
           </table>
         </div>
@@ -141,4 +141,4 @@ const DataListing: React.FC = () => {
   );
 };
 
-export default DataListing;
+export default MechDataListing;

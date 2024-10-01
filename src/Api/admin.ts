@@ -20,6 +20,15 @@ const getAllUsers = async () => {
       errorHandler(error as Error);
   }
 }
+
+const getAllMechanics = async () => {
+  try {
+      const  result = await Api.get(adminRoutes.getAllMechanic);
+      return result;
+  } catch (error) {
+      errorHandler(error as Error);
+  }
+}
 const blockUser = async (id: string) => {
   try {
       const result = await Api.put(`${adminRoutes.blockUser}${id}`);
@@ -41,4 +50,4 @@ const adminLogout = async () => {
   }
 };
 
-export { adminLogin, adminLogout ,getAllUsers,blockUser};
+export { adminLogin, adminLogout ,getAllUsers,blockUser,getAllMechanics};
