@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@material-tailwind/react": "^2.1.10",
+    "@nextui-org/react": "^2.4.8",
     "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
