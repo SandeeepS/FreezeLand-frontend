@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { blockUser, getAllUsers } from "../../Api/admin";
+import { blockUser, getAllUsers ,deleteUser} from "../../Api/admin";
 import Swal from "sweetalert2";
 // import { Button, Pagination, Tooltip } from "@nextui-org/react";
 import toast from "react-hot-toast";
@@ -14,6 +14,7 @@ interface UserData {
 const DataListing: React.FC = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [block, setBlock] = useState(false);
+  const [dele,setDelete] = useState(false);
 
   useEffect(() => {
     const fetctData = async () => {
@@ -26,7 +27,7 @@ const DataListing: React.FC = () => {
       }
     };
     fetctData();
-  }, []);
+  }, [block,dele]);
 
   const handleBlock = async (id: string) => {
     try {
@@ -43,6 +44,38 @@ const DataListing: React.FC = () => {
           blockUser(id).then((result) => {
             if (result?.data.success) {
               setBlock(!block);
+              Swal.fire({
+                title: "success!",
+                text: "",
+                icon: "success",
+              });
+            } else toast.error(result?.data.message);
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error as Error);
+    }
+  };
+
+
+
+  
+  const handleDelete = async (id: string) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteUser(id).then((result) => {
+            if (result?.data.success) {
+              setDelete(!dele);
               Swal.fire({
                 title: "success!",
                 text: "",
@@ -123,7 +156,7 @@ const DataListing: React.FC = () => {
 
                   <td className="pl-16">
                     <button
-                      onClick={() => handleBlock(user._id)}
+                      onClick={() => handleDelete(user._id)}
                       className={`px-4 py-2 rounded text-white bg-red-500`}
                     >
                       Delete

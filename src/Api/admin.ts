@@ -38,6 +38,15 @@ const blockUser = async (id: string) => {
   }
 }
 
+const deleteUser = async (id: string) => {
+  try {
+      const result = await Api.put(`${adminRoutes.deleteUser}${id}`);
+      return result;
+  } catch (error) {
+      errorHandler(error as Error);
+  }
+}
+
 const adminLogout = async () => {
   try {
     const result = await Api.get(adminRoutes.logout);
@@ -50,4 +59,4 @@ const adminLogout = async () => {
   }
 };
 
-export { adminLogin, adminLogout ,getAllUsers,blockUser,getAllMechanics};
+export { adminLogin, adminLogout ,getAllUsers,blockUser,getAllMechanics,deleteUser};

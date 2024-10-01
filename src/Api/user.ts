@@ -1,6 +1,7 @@
 import { FormData } from "../Pages/User/UserSignupPage";
 import Api from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
+import errorHandler from "./errorHandler";
 
 const signup = async ({ name, phone, email, password }: FormData) => {
   try {
@@ -26,7 +27,7 @@ const login = async (email: string, password: string) => {
     return result;
   } catch (error) {
     console.log("error from the login from the ueser.ts", error as Error);
-    return null;
+    errorHandler(error as Error);
   }
 };
 
