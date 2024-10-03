@@ -47,6 +47,8 @@ const deleteUser = async (id: string) => {
   }
 }
 
+
+
 const adminLogout = async () => {
   try {
     const result = await Api.get(adminRoutes.logout);
