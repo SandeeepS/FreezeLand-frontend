@@ -33,44 +33,42 @@ const login = async (email: string, password: string) => {
 
 const verifyOtp = async (otpnum: string) => {
   try {
-      const otp = parseInt(otpnum);
-      const result = await Api.post(userRoutes.veryfyOtp, { otp });
-      return result;
+    const otp = parseInt(otpnum);
+    const result = await Api.post(userRoutes.veryfyOtp, { otp });
+    return result;
   } catch (error) {
-      console.log(error as Error);
+    console.log(error as Error);
   }
-}
-
+};
 
 const forgotPassword = async (email: string) => {
   try {
-      return await Api.post(userRoutes.forgotPassword, { email })
+    return await Api.post(userRoutes.forgotPassword, { email });
   } catch (error) {
-      console.log(error as Error)
+    console.log(error as Error);
   }
-}
+};
 const forgotVerifyOtp = async (otp: string) => {
   try {
-      return await Api.post(userRoutes.forgotVerifyOtp, { otp });
+    return await Api.post(userRoutes.forgotVerifyOtp, { otp });
   } catch (error) {
-      console.log(error as Error);
+    console.log(error as Error);
   }
-}
+};
 const updateNewPassword = async (password: string, userId: string) => {
   try {
-      return await Api.put(userRoutes.updateNewPassword, { password, userId });
+    return await Api.put(userRoutes.updateNewPassword, { password, userId });
   } catch (error) {
-      console.log(error as Error);
+    console.log(error as Error);
   }
-}
+};
 const resendOtp = async () => {
   try {
-      await Api.get(userRoutes.resendOtp);
+    await Api.get(userRoutes.resendOtp);
   } catch (error) {
-      console.log(error as Error);
+    console.log(error as Error);
   }
-}
-
+};
 
 const logout = async () => {
   try {
@@ -89,4 +87,14 @@ const getProfile = async () => {
   }
 };
 
-export { signup, login, logout, getProfile ,verifyOtp,resendOtp,forgotPassword,forgotVerifyOtp,updateNewPassword};
+export {
+  signup,
+  login,
+  logout,
+  getProfile,
+  verifyOtp,
+  resendOtp,
+  forgotPassword,
+  forgotVerifyOtp,
+  updateNewPassword,
+};

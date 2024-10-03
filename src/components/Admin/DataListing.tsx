@@ -3,7 +3,6 @@ import { blockUser, getAllUsers ,deleteUser} from "../../Api/admin";
 import Swal from "sweetalert2";
 // import { Button, Pagination, Tooltip } from "@nextui-org/react";
 import toast from "react-hot-toast";
-
 interface UserData {
   _id: string;
   name: string;
@@ -91,34 +90,34 @@ const DataListing: React.FC = () => {
   };
 
 
-  const editUser = async (id: string) => {
-    try {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          editSelectedUser(id).then((result) => {
-            if (result?.data.success) {
-              setDelete(!dele);
-              Swal.fire({
-                title: "success!",
-                text: "",
-                icon: "success",
-              });
-            } else toast.error(result?.data.message);
-          });
-        }
-      });
-    } catch (error) {
-      console.log(error as Error);
-    }
-  };
+  // const editUser = async (id: string) => {
+  //   try {
+  //     Swal.fire({
+  //       title: "Are you sure?",
+  //       text: "",
+  //       icon: "question",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#3085d6",
+  //       cancelButtonColor: "#d33",
+  //       confirmButtonText: "Yes!",
+  //     }).then((result) => {
+  //       if (result.isConfirmed) {
+  //         editSelectedUser(id).then((result) => {
+  //           if (result?.data.success) {
+  //             setDelete(!dele);
+  //             Swal.fire({
+  //               title: "success!",
+  //               text: "",
+  //               icon: "success",
+  //             });
+  //           } else toast.error(result?.data.message);
+  //         });
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.log(error as Error);
+  //   }
+  // };
 
   return (
     <div className="xl:w-3/4 2xl:w-4/5 w-full">
@@ -176,7 +175,7 @@ const DataListing: React.FC = () => {
                   </td>
                   <td className="pl-16">
                     <button
-                      onClick={() => editUser(user._id)}
+                      // onClick={() => editUser(user._id)}
                       className={`px-4 py-2 rounded text-white bg-blue-500`}
                     >
                       Edit

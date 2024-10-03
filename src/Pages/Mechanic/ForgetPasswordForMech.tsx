@@ -1,11 +1,12 @@
 import { Spinner } from "@chakra-ui/react";
+
 import {
-  forgotPassword,
-  forgotVerifyOtp,
-  resendOtp,
-  updateNewPassword,
-} from "../../Api/user"
-import { UserData } from "../../interfaces/UserData";
+  forgotPasswordMech,
+  forgotVerifyOtpMech,
+  updateNewPasswordMech,
+  resendMechOtp,
+} from "../../Api/mech";
+import { MechData } from "../../interfaces/MechData";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,14 +23,14 @@ const initialValues: initialVal = {
   cpassword: "",
 };
 
-const ForgetPassword: React.FC = () => {
+const ForgetPasswordForMech: React.FC = () => {
   const [email, setEmail] = useState<string>();
   const [otp, setOtp] = useState("");
   const [seconds, setSeconds] = useState<number>(300);
   const [showOtp, setShowOtp] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [user, setUser] = useState<UserData | undefined>();
+  const [mech, setMech] = useState<MechData | undefined>();
 
   const navigate = useNavigate();
 
@@ -43,16 +44,16 @@ const ForgetPassword: React.FC = () => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
-  const handlSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
+  const handlSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(!loading);
     try {
       if (email) {
-        const res = await forgotPassword(email);
+        const res = await forgotPasswordMech(email);
         console.log(res);
         if (res?.data.success) {
           setLoading(false);
-          setUser(res.data.data);
+          setMech(res.data.data);
           toast.success(res.data.message);
           setShowOtp(!showOtp);
         } else toast.error(res?.data.message);
@@ -65,7 +66,7 @@ const ForgetPassword: React.FC = () => {
   const otpSubmitHandler = async () => {
     try {
       if (otp) {
-        const res = await forgotVerifyOtp(otp);
+        const res = await forgotVerifyOtpMech(otp);
         console.log(res);
         if (res?.data.success) {
           setShowForm(true);
@@ -81,11 +82,11 @@ const ForgetPassword: React.FC = () => {
     validationSchema: newPasswordValidation,
     onSubmit: (values) => {
       const hanSub = async () => {
-        if (user) {
-          const res = await updateNewPassword(values.password, user?._id);
+        if (mech) {
+          const res = await updateNewPasswordMech(values.password, mech?._id);
           if (res?.data.success) {
             toast.success("password updated successfully!");
-            navigate("/login");
+            navigate("/mech/login");
           } else toast.error(res?.data.message);
         }
       };
@@ -94,7 +95,7 @@ const ForgetPassword: React.FC = () => {
   });
   const resendOTP = async () => {
     try {
-      await resendOtp();
+      await resendMechOtp();
     } catch (error) {
       console.log(error as Error);
     }
@@ -107,9 +108,7 @@ const ForgetPassword: React.FC = () => {
           <div className="mt-28 bg-gray-100 p-3 rounded-xl shadow-3xl ">
             <div className="p-4 sm:p-7">
               <div className="text-center">
-                <h1 className="block text-2xl font-bold ">
-                  Forgot password?
-                </h1>
+                <h1 className="block text-2xl font-bold ">Forgot password?</h1>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   Remember your password?
                   <Link
@@ -180,9 +179,7 @@ const ForgetPassword: React.FC = () => {
               <h1 className="text-2xl font-semibold text-center mb-6">
                 Enter OTP
               </h1>
-              <p className=" text-center mb-4">
-                Code sent to your Email
-              </p>
+              <p className=" text-center mb-4">Code sent to your Email</p>
               <div className="flex justify-center my-2">
                 <input
                   type="text"
@@ -227,15 +224,15 @@ const ForgetPassword: React.FC = () => {
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
               <div className="flex items-center space-x-2 mb-6">
                 <img
-                  src={user?.profile_picture}
+                  src={mech?.profile_picture}
                   alt="Lock Icon"
                   className="rounded-full w-36 h-36"
                 />
                 <div>
-                  <h1 className="text-xl font-semibold">{user?.name}</h1>
-                  <h1 className="text-md font-semibold">{user?.headLine}</h1>
-                  <h1 className="text-sm font-semibold">{user?.email}</h1>
-                  <h1 className="text-sm font-semibold">{user?.location}</h1>
+                  <h1 className="text-xl font-semibold">{mech?.name}</h1>
+                  <h1 className="text-md font-semibold">{mech?.headLine}</h1>
+                  <h1 className="text-sm font-semibold">{mech?.email}</h1>
+                  <h1 className="text-sm font-semibold">{mech?.location}</h1>
                 </div>
               </div>
               <p className="text-sm text-gray-600 mb-6">
@@ -299,4 +296,4 @@ const ForgetPassword: React.FC = () => {
   );
 };
 
-export default  ForgetPassword;
+export default ForgetPasswordForMech;

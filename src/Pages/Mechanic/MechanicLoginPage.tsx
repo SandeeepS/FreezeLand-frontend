@@ -123,7 +123,7 @@ const MechanicLoginPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center"></div>
                 <a
-                  href="javascript:void(0);"
+                  href="/mech/forgot-password"
                   className="text-blue-600 text-sm font-semibold hover:underline"
                 >
                   Forgot Password?
