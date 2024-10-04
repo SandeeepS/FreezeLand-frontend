@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,6 +9,9 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
+import Swal from 'sweetalert2';
+import toast from 'react-hot-toast';
+import { blockUser, getAllUsers } from '../../Api/admin';
 
 interface Column {
   id: 'name' | 'email' | 'status' | 'actions';
@@ -24,39 +27,32 @@ const columns: readonly Column[] = [
   { id: 'actions', label: 'Actions', minWidth: 150, align: 'right' },
 ];
 
-interface Data {
+interface UserData {
+  _id: string;
   name: string;
   email: string;
-  status: string;
   isBlocked: boolean;
 }
 
-function createData(name: string, email: string, status: string, isBlocked: boolean): Data {
-  return { name, email, status, isBlocked };
-}
-
-const initialRows = [
-  createData('India', 'IN', 'Active', false),
-  createData('China', 'CN', 'Active', false),
-  createData('Italy', 'IT', 'Active', true),
-  createData('United States', 'US', 'Active', false),
-  createData('Canada', 'CA', 'Active', false),
-  createData('Australia', 'AU', 'Active', true),
-  createData('Germany', 'DE', 'Active', false),
-  createData('Ireland', 'IE', 'Active', false),
-  createData('Mexico', 'MX', 'Active', true),
-  createData('Japan', 'JP', 'Active', false),
-  createData('France', 'FR', 'Active', true),
-  createData('United Kingdom', 'GB', 'Active', false),
-  createData('Russia', 'RU', 'Active', true),
-  createData('Nigeria', 'NG', 'Active', false),
-  createData('Brazil', 'BR', 'Active', false),
-];
-
 function TableCommon() {
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [block, setBlock] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [rows, setRows] = useState(initialRows);
+
+  // Fetch the data on mount and whenever block state changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getAllUsers();
+        console.log("Fetched user data: ", res);
+        setUsers(res?.data.data.users);
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  }, [block]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -67,12 +63,35 @@ function TableCommon() {
     setPage(0);
   };
 
-  const handleBlockUnblock = (email: string) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.email === email ? { ...row, isBlocked: !row.isBlocked } : row
-      )
-    );
+  const handleBlockUnblock = async (id: string) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          blockUser(id).then((result) => {
+            if (result?.data.success) {
+              setBlock(!block); // Re-fetch data after blocking/unblocking
+              Swal.fire({
+                title: "Success!",
+                text: "",
+                icon: "success",
+              });
+            } else {
+              toast.error(result?.data.message);
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error as Error);
+    }
   };
 
   const handleEdit = (email: string) => {
@@ -101,65 +120,56 @@ function TableCommon() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {users
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.email}>
-                  {columns.map((column) => {
-                    const value = row[column.id as keyof Data];
-                    if (column.id === 'actions') {
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          <ToggleButton
-                            value="check"
-                            selected={!row.isBlocked}
-                            onChange={() => handleBlockUnblock(row.email)}
-                            sx={{
-                              backgroundColor: row.isBlocked ? 'red' : '#90ee90', // Light green for unblocked, red for blocked
-                              color: 'white', // Text color remains white
-                              width: '120px', // Fixed width to avoid resizing
-                              '&.Mui-selected': {
-                                backgroundColor: row.isBlocked ? 'red' : '#90ee90', // Enforce background color when selected
-                              },
-                              '&:hover': {
-                                backgroundColor: row.isBlocked ? '#ff4d4d' : '#81c784', // Slight hover adjustment for both states
-                              },
-                            }}
-                          >
-                            {row.isBlocked ? 'Blocked' : 'Unblocked'}
-                          </ToggleButton>
-                          <Button
-                            variant="outlined"
-                            sx={{
-                              marginLeft: '10px',
-                              marginRight: '10px',
-                              color: 'blue',
-                              borderColor: 'blue',
-                              '&:hover': {
-                                backgroundColor: '#e0f7fa',
-                                borderColor: 'blue',
-                              },
-                            }}
-                            onClick={() => handleEdit(row.email)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => handleDelete(row.email)}
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
-                      );
-                    }
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {value}
-                      </TableCell>
-                    );
-                  })}
+              .map((user) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={user._id}>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell align="right">{user.isBlocked ? 'Blocked' : 'Active'}</TableCell>
+                  <TableCell align="right">
+                    <ToggleButton
+                      value="check"
+                      selected={!user.isBlocked}
+                      onChange={() => handleBlockUnblock(user._id)}
+                      sx={{
+                        backgroundColor: user.isBlocked ? 'red' : '#90ee90', // Light green for unblocked, red for blocked
+                        color: 'white', // Text color remains white
+                        width: '120px', // Fixed width to avoid resizing
+                        '&.Mui-selected': {
+                          backgroundColor: user.isBlocked ? 'red' : '#90ee90', // Enforce background color when selected
+                        },
+                        '&:hover': {
+                          backgroundColor: user.isBlocked ? '#ff4d4d' : '#81c784', // Slight hover adjustment for both states
+                        },
+                      }}
+                    >
+                      {user.isBlocked ? 'Blocked' : 'Unblocked'}
+                    </ToggleButton>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        marginLeft: '10px',
+                        marginRight: '10px',
+                        color: 'blue',
+                        borderColor: 'blue',
+                        '&:hover': {
+                          backgroundColor: '#e0f7fa',
+                          borderColor: 'blue',
+                        },
+                      }}
+                      onClick={() => handleEdit(user.email)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDelete(user.email)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -168,7 +178,7 @@ function TableCommon() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={users.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
