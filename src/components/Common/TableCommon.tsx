@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
-import { blockUser, getAllUsers } from '../../Api/admin';
+import { blockUser } from '../../Api/admin';
 
 interface Column {
   id: 'name' | 'email' | 'status' | 'actions';
@@ -27,32 +27,30 @@ const columns: readonly Column[] = [
   { id: 'actions', label: 'Actions', minWidth: 150, align: 'right' },
 ];
 
-interface UserData {
+interface Data {
   _id: string;
   name: string;
   email: string;
   isBlocked: boolean;
 }
 
-function TableCommon() {
-  const [users, setUsers] = useState<UserData[]>([]);
+interface TableCommonProps {
+  users: Data[]; // Array of user data
+  updateUserStatus: (id: string, isBlocked: boolean) => void; // Function to update user status
+
+}
+
+const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  {
   const [block, setBlock] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+
   // Fetch the data on mount and whenever block state changes
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getAllUsers();
-        console.log("Fetched user data: ", res);
-        setUsers(res?.data.data.users);
-      } catch (error) {
-        console.log(error as Error);
-      }
-    };
-    fetchData();
-  }, [block]);
+    console.log("Fetched users: ", users);
+  }, [users, block]);
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -62,8 +60,7 @@ function TableCommon() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  const handleBlockUnblock = async (id: string) => {
+  const handleBlockUnblock = async (id: string,isCurrentlyBlocked:boolean) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -77,7 +74,7 @@ function TableCommon() {
         if (result.isConfirmed) {
           blockUser(id).then((result) => {
             if (result?.data.success) {
-              setBlock(!block); // Re-fetch data after blocking/unblocking
+              updateUserStatus(id,!isCurrentlyBlocked)
               Swal.fire({
                 title: "Success!",
                 text: "",
@@ -122,29 +119,29 @@ function TableCommon() {
           <TableBody>
             {users
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((user) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={user._id}>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell align="right">{user.isBlocked ? 'Blocked' : 'Active'}</TableCell>
+              .map((users) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={users._id}>
+                  <TableCell>{users.name}</TableCell>
+                  <TableCell>{users.email}</TableCell>
+                  <TableCell align="right">{users.isBlocked ? 'Blocked' : 'Active'}</TableCell>
                   <TableCell align="right">
                     <ToggleButton
                       value="check"
-                      selected={!user.isBlocked}
-                      onChange={() => handleBlockUnblock(user._id)}
+                      selected={!users.isBlocked}
+                      onChange={() => handleBlockUnblock(users._id,users.isBlocked)}
                       sx={{
-                        backgroundColor: user.isBlocked ? 'red' : '#90ee90', // Light green for unblocked, red for blocked
+                        backgroundColor: users.isBlocked ? 'red' : '#90ee90', // Light green for unblocked, red for blocked
                         color: 'white', // Text color remains white
                         width: '120px', // Fixed width to avoid resizing
                         '&.Mui-selected': {
-                          backgroundColor: user.isBlocked ? 'red' : '#90ee90', // Enforce background color when selected
+                          backgroundColor: users.isBlocked ? 'red' : '#90ee90', // Enforce background color when selected
                         },
                         '&:hover': {
-                          backgroundColor: user.isBlocked ? '#ff4d4d' : '#81c784', // Slight hover adjustment for both states
+                          backgroundColor: users.isBlocked ? '#ff4d4d' : '#81c784', // Slight hover adjustment for both states
                         },
                       }}
                     >
-                      {user.isBlocked ? 'Blocked' : 'Unblocked'}
+                      {users.isBlocked ? 'Blocked' : 'Unblocked'}
                     </ToggleButton>
                     <Button
                       variant="outlined"
@@ -158,14 +155,14 @@ function TableCommon() {
                           borderColor: 'blue',
                         },
                       }}
-                      onClick={() => handleEdit(user.email)}
+                      onClick={() => handleEdit(users.email)}
                     >
                       Edit
                     </Button>
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDelete(user.email)}
+                      onClick={() => handleDelete(users.email)}
                     >
                       Delete
                     </Button>

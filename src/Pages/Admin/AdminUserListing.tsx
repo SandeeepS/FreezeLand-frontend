@@ -2,9 +2,45 @@ import React from "react";
 import AdminListing from "../../components/Admin/AdminListing";
 import AdminHeader from "../../components/Admin/AdminHeader";
 // import DataListing from "../../components/Admin/DataListing";
-import Table from "../../components/Common/TableCommon";
+import TableCommon from "../../components/Common/TableCommon";
+import { getAllUsers } from "../../Api/admin";
+import { useState } from "react";
+import { useEffect } from "react";
+
+interface UserData {
+  _id: string;
+  name: string;
+  email: string;
+  isBlocked: boolean;
+}
 
 const AdminUserListing: React.FC = () => {
+
+  const [users, setUsers] = useState<UserData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getAllUsers();
+        console.log("user details in the first useEffect");
+        setUsers(res?.data?.data?.users); // Adjust according to your API response structure
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const updateUserStatus = (id: string, isBlocked: boolean) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user._id === id ? { ...user, isBlocked } : user
+      )
+    );
+  };
+
+
   return (
     <div className="h-screen flex">
       {/* side bar */}
@@ -14,7 +50,7 @@ const AdminUserListing: React.FC = () => {
         <div>
           <AdminHeader heading="Users" />
           <div className="flex mx-10 justify-center items-center pt-7">
-            <Table/>
+            <TableCommon users={users} updateUserStatus={updateUserStatus} />
           </div>
         </div>
       </div>
