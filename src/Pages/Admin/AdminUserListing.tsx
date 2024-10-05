@@ -6,17 +6,19 @@ import TableCommon from "../../components/Common/TableCommon";
 import { getAllUsers } from "../../Api/admin";
 import { useState } from "react";
 import { useEffect } from "react";
+import { blockUser } from "../../Api/admin";
 
 interface UserData {
   _id: string;
   name: string;
   email: string;
   isBlocked: boolean;
+  isDeleted:boolean;
 }
 
 const AdminUserListing: React.FC = () => {
 
-  const [users, setUsers] = useState<UserData[]>([]);
+  const [data, setUsers] = useState<UserData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +52,7 @@ const AdminUserListing: React.FC = () => {
         <div>
           <AdminHeader heading="Users" />
           <div className="flex mx-10 justify-center items-center pt-7">
-            <TableCommon users={users} updateUserStatus={updateUserStatus} />
+            <TableCommon data={data} updateUserStatus={updateUserStatus} blockUnblockFunciton={blockUser} />
           </div>
         </div>
       </div>

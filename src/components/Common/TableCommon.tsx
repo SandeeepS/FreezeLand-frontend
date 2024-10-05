@@ -11,8 +11,6 @@ import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
-import { blockUser } from '../../Api/admin';
-
 interface Column {
   id: 'name' | 'email' | 'status' | 'actions';
   label: string;
@@ -32,24 +30,31 @@ interface Data {
   name: string;
   email: string;
   isBlocked: boolean;
+  isDeleted:boolean
+}
+
+export interface BlockingResponse{
+  success:boolean;
+  message:string
 }
 
 interface TableCommonProps {
-  users: Data[]; // Array of user data
+  data: Data[]; // Array of user data
   updateUserStatus: (id: string, isBlocked: boolean) => void; // Function to update user status
+  blockUnblockFunciton:(id:string) => Promise<BlockingResponse>;
 
 }
 
-const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  {
+const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUnblockFunciton}) =>  {
   const [block, setBlock] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-
+  console.log("first getting props data is ",data);
   // Fetch the data on mount and whenever block state changes
   useEffect(() => {
-    console.log("Fetched users: ", users);
-  }, [users, block]);
+    console.log("Fetched data: ", data);
+  }, [data, block]);
 
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -60,7 +65,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleBlockUnblock = async (id: string,isCurrentlyBlocked:boolean) => {
+  const handleBlockUnblock = async (id: string ,isCurrentlyBlocked:boolean ) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -72,8 +77,8 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
         confirmButtonText: "Yes!",
       }).then((result) => {
         if (result.isConfirmed) {
-          blockUser(id).then((result) => {
-            if (result?.data.success) {
+          blockUnblockFunciton(id).then((result) => {
+            if (result?.success) {
               updateUserStatus(id,!isCurrentlyBlocked)
               Swal.fire({
                 title: "Success!",
@@ -81,7 +86,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
                 icon: "success",
               });
             } else {
-              toast.error(result?.data.message);
+              toast.error(result?.message);
             }
           });
         }
@@ -91,11 +96,11 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
     }
   };
 
-  const handleEdit = (email: string) => {
+  const handleEdit = (email: string | undefined) => {
     console.log(`Edit action for: ${email}`);
   };
 
-  const handleDelete = (email: string) => {
+  const handleDelete = (email: string | undefined) => {
     console.log(`Delete action for: ${email}`);
   };
 
@@ -117,31 +122,31 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
             </TableRow>
           </TableHead>
           <TableBody>
-            {users
+            {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((users) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={users._id}>
-                  <TableCell>{users.name}</TableCell>
-                  <TableCell>{users.email}</TableCell>
-                  <TableCell align="right">{users.isBlocked ? 'Blocked' : 'Active'}</TableCell>
+              .map((datas) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
+                  <TableCell>{datas.name}</TableCell>
+                  <TableCell>{datas.email}</TableCell>
+                  <TableCell align="right">{datas.isBlocked ? 'Blocked' : 'Active'}</TableCell>
                   <TableCell align="right">
                     <ToggleButton
                       value="check"
-                      selected={!users.isBlocked}
-                      onChange={() => handleBlockUnblock(users._id,users.isBlocked)}
+                      selected={!datas.isBlocked}
+                      onChange={() => handleBlockUnblock(datas._id,datas.isBlocked)}
                       sx={{
-                        backgroundColor: users.isBlocked ? 'red' : '#90ee90', // Light green for unblocked, red for blocked
-                        color: 'white', // Text color remains white
-                        width: '120px', // Fixed width to avoid resizing
+                        backgroundColor: datas.isBlocked ? 'red' : '#90ee90', 
+                        color: 'white', 
+                        width: '120px', 
                         '&.Mui-selected': {
-                          backgroundColor: users.isBlocked ? 'red' : '#90ee90', // Enforce background color when selected
+                          backgroundColor: datas.isBlocked ? 'red' : '#90ee90', 
                         },
                         '&:hover': {
-                          backgroundColor: users.isBlocked ? '#ff4d4d' : '#81c784', // Slight hover adjustment for both states
+                          backgroundColor: datas.isBlocked ? '#ff4d4d' : '#81c784', 
                         },
                       }}
                     >
-                      {users.isBlocked ? 'Blocked' : 'Unblocked'}
+                      {datas.isBlocked ? 'Blocked' : 'Unblocked'}
                     </ToggleButton>
                     <Button
                       variant="outlined"
@@ -155,14 +160,14 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
                           borderColor: 'blue',
                         },
                       }}
-                      onClick={() => handleEdit(users.email)}
+                      onClick={() => handleEdit(datas.email)}
                     >
                       Edit
                     </Button>
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDelete(users.email)}
+                      onClick={() => handleDelete(datas.email)}
                     >
                       Delete
                     </Button>
@@ -175,7 +180,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({users,updateUserStatus}) =>  
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={users.length}
+        count={data.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
