@@ -3,6 +3,11 @@ export interface UserData{
     name: string;
     email: string;
     isBlocked: boolean;
-    isDeleted:boolean;
-
+    isDeleted:boolean,
+    aboutInfo: string;
+    headLine: string;
+    location: string;
+    role: string;
+    cover_image: string;
+    profile_picture: string;
 }

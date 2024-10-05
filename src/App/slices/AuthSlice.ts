@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { AuthState } from "../../interfaces/AuthState";
 
 export interface CouterState {
   value: number;
 }
 
 console.log("local storage is ", localStorage);
-const initialState = {
+const initialState:AuthState = {
   adminData: localStorage.getItem("adminInfo")
     ? JSON.parse(localStorage.getItem("adminInfo") as string)
     : null,
@@ -22,6 +23,7 @@ const initialState = {
     ? JSON.parse(localStorage.getItem("mechAddress") as string)
     : null,
 };
+
 
 export const authSlice = createSlice({
   name: "auth",
@@ -61,6 +63,7 @@ export const authSlice = createSlice({
     },
   },
 });
+
 
 export const {
   setUserCredental,
