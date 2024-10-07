@@ -31,6 +31,26 @@ const login = async (email: string, password: string) => {
   }
 };
 
+const googleLogin = async (
+  name: string | null,
+  email: string | null,
+  googlePhotoUrl: string | null
+) => {
+  try {
+    if (!name || !email) return;
+    const result = await Api.post(userRoutes.googleLogin, {
+      name,
+      email,
+      googlePhotoUrl,
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    if (error) console.log(error);
+    console.log("error coming from here...");
+  }
+};
+
 const verifyOtp = async (otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
@@ -90,6 +110,7 @@ const getProfile = async () => {
 export {
   signup,
   login,
+  googleLogin,
   logout,
   getProfile,
   verifyOtp,

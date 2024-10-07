@@ -51,8 +51,10 @@ const AdminMechListing: React.FC = () => {
       <div className="w-3/4 bg-[#DFECF8]">
         <div>
           <AdminHeader heading="Mechanics" />
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center mx-10 pt-7">
+            
             <TableCommon data={mechs} updateUserStatus={updateMechStatus} blockUnblockFunciton={blockMech} />
+
           </div>
         </div>
       </div>

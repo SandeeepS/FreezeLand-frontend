@@ -1,5 +1,6 @@
 import { Spinner } from "@chakra-ui/react";
 
+
 import {
   forgotPasswordMech,
   forgotVerifyOtpMech,
@@ -12,6 +13,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { newPasswordValidation } from "../../components/Common/Validations";
+
 
 interface initialVal {
   password: string;
@@ -185,7 +187,7 @@ const ForgetPasswordForMech: React.FC = () => {
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  maxLength={6}
+                  maxLength={7}
                   className="rounded-lg border-2 border-gray-200  bg-gray-100 cursor-text   flex items-center justify-center  text-center outline-none"
                 />
               </div>
