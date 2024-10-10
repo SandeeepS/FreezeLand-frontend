@@ -12,7 +12,7 @@ import UserOtpPage from "./Pages/User/UserOtpPage";
 import MechOtpPage from "./Pages/Mechanic/MechOtpPage";
 import ForgetPassword from "./Pages/User/ForgetPassword";
 import ForgetPasswordForMech from "./Pages/Mechanic/ForgetPasswordForMech";
-import Profile from "./Pages/User/Profile";
+import Account from "./Pages/User/Account";
 
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
@@ -46,9 +46,10 @@ function App() {
             <Route path="otp-page" element={<UserOtpPage/>}/>
             <Route path="/user/forget-password" element={<ForgetPassword/>}/>
           </Route>
-          <Route path="" element={<UserLoggedIn />}>
-            <Route path="/user/homepage" element={<UserHomePage />} />
-            <Route path="/user/profile" element={<Profile/>} />
+
+          <Route path="" element={<UserLoggedIn/>}>
+            <Route path="/user/homepage" element={<UserHomePage />}/>
+            <Route path="/user/profile" element={<Account/>} />
           </Route>
 
           {/*Admin Routes*/}
@@ -68,7 +69,6 @@ function App() {
             <Route path="/mech/signuppage" element={<MechanicSignupPage/>}/>
             <Route path="/mech/veryfy-otp" element={<MechOtpPage/>}/>
             <Route path="/mech/forgot-password" element={<ForgetPasswordForMech/>}/>
-
           </Route>
 
           <Route path="" element={<MechLoggedIn />}>
