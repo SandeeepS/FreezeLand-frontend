@@ -49,11 +49,11 @@ const Header:React.FC = () =>  {
         </h1>
         {/* Desktop Menu */}
         <ul className="p-8 hidden md:flex">
-          <li className="p-4">HOME</li>
-          <li className="p-4">ACCOUNT</li>
-          <li className="p-4">SERVICES</li>
-          <li className="p-4">CONTACT</li>
-          <li className="p-4">QUEUE</li>
+          <li className="p-4 cursor-pointer" onClick={() => navigate('/user/homepage')} >HOME</li>
+          <li className="p-4 cursor-pointer" onClick={() => navigate('/user/account')}>ACCOUNT</li>
+          <li className="p-4 cursor-pointer">SERVICES</li>
+          <li className="p-4 cursor-pointer">CONTACT</li>
+          <li className="p-4 cursor-pointer">QUEUE</li>
           {/* Logout Button */}
           <li className="p-4">
             <button

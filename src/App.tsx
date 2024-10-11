@@ -49,7 +49,7 @@ function App() {
 
           <Route path="" element={<UserLoggedIn/>}>
             <Route path="/user/homepage" element={<UserHomePage />}/>
-            <Route path="/user/profile" element={<Account/>} />
+            <Route path="/user/account" element={<Account/>} />
           </Route>
 
           {/*Admin Routes*/}
