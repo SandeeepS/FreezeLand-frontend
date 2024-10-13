@@ -20,7 +20,6 @@ const AdminListing: React.FC = () => {
   const handleItemClick = (item:MenuItem) => {
     setActiveItem(item.id);
     navigate(item.path);
-
   };
 
   const dispatch = useDispatch();

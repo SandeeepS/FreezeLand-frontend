@@ -5,10 +5,26 @@ import { useDispatch } from "react-redux";
 import { userLogout } from "../../App/slices/AuthSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
+// type MenuItem = {
+//   id: number;
+//   name: string;
+//   path:string;
+// };
 
 const AccountSidebar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [activeItem, setActiveItem] = useState<number>(0);
+
+  const data = [
+    { name: "Profile", id: 1, path: "/user/profile" },
+    { name: "Adsress", id: 2, path: "/user/Address" },
+    { name: "History", id: 3, path: "/user/History" },
+    { name: "Payment", id: 1, path: "/user/Payment" },
+  ];
 
   const handleLogout = async () => {
     try {
@@ -44,18 +60,19 @@ const AccountSidebar: React.FC = () => {
           />
         </div>
         <h2 className="mt-4 text-lg font-semibold">Sandeep</h2>
-        <div className="w-full h-[50px] bg-gray-200  rounded m-2 flex justify-center items-center font-exo font-bold tracking-widest  hover:bg-freeze-color hover:text-white hover:shadow-lg cursor-pointer transition-all duration-300">
-          <h1 className="text-center">Profile</h1>
-        </div>
-        <div className="w-full h-[50px] bg-gray-200   rounded  m-2 flex justify-center items-center font-exo font-bold tracking-widest  hover:bg-freeze-color hover:text-white hover:shadow-lg cursor-pointer transition-all duration-300">
-          <h1>Address</h1>
-        </div>
-        <div className="w-full h-[50px] bg-gray-200   rounded  m-2 flex justify-center items-center font-exo font-bold tracking-widest  hover:bg-freeze-color hover:text-white hover:shadow-lg cursor-pointer transition-all duration-300">
-          <h1>History</h1>
-        </div>
-        <div className="w-full h-[50px] bg-gray-200   rounded  m-2 flex justify-center items-center font-exo font-bold tracking-widest  hover:bg-freeze-color hover:text-white hover:shadow-lg cursor-pointer transition-all duration-300">
-          <h1>Payments</h1>
-        </div>
+
+        {data.map((item) => (
+          <Link
+            key={item.id}
+            to={item.path}
+            onClick={() => setActiveItem(item.id)}
+            className={`w-full h-[50px] bg-gray-200 rounded m-2 flex justify-center items-center font-exo font-bold tracking-widest hover:bg-freeze-color hover:text-white hover:shadow-lg cursor-pointer transition-all duration-300 ${
+              activeItem === item.id ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            <h1 className="text-center">{item.name}</h1>
+          </Link>
+        ))}
 
         <button
           onClick={handleLogout}
