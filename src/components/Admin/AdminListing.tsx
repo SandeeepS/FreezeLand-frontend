@@ -1,32 +1,21 @@
-import React, { useState } from "react";
-import { RiArrowRightDoubleFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
-import { useNavigate } from "react-router-dom";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
 import { GiMechaHead } from "react-icons/gi";
 import { Link } from "react-router-dom";
-
-type MenuItem = {
-  id: number;
-  name: string;
-  icon: string;
-  path: string;
-};
+import { useState } from "react";
 
 const AdminListing: React.FC = () => {
-  const navigate = useNavigate();
-  const [activeItem, setActiveItem] = useState<number>(0);
-  const handleItemClick = (item: MenuItem) => {
-    setActiveItem(item.id);
-    navigate(item.path);
-  };
-
+  const [activeLink, setActiveLink] = useState(0);
   const dispatch = useDispatch();
+
+  const handleLinkClick = (index: number) => {
+    setActiveLink(index);
+  };
 
   const handleLogout = async () => {
     try {
@@ -97,11 +86,14 @@ const AdminListing: React.FC = () => {
             {SIDEBAR_LINKS.map((link, index) => (
               <li
                 key={index}
-                className="font-medium rounded-md py-2 hover:bg-freeze-color transition-all duration-300"
+                className={`font-medium rounded-md py-2 hover:bg-freeze-color hover:text-white transition-all duration-300 ${
+                  activeLink === index ? "text-freeze-color" : ""
+                }`}
               >
                 <Link
                   to={link.path}
                   className="flex items-center justify-center md:justify-start md:space-x-5"
+                  onClick={() => handleLinkClick(index)}
                 >
                   <span>{link.icon({})}</span>
                   <span className="hidden md:inline text-sm md:text-base">

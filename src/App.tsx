@@ -14,7 +14,7 @@ import ForgetPassword from "./Pages/User/ForgetPassword";
 import ForgetPasswordForMech from "./Pages/Mechanic/ForgetPasswordForMech";
 import Account from "./Pages/User/Account";
 import Profile from "./components/User/Profile";
-
+import Layout from "./components/Admin/Layout";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -23,16 +23,16 @@ const AdminLoginPage = lazy(() => import("./Pages/Admin/AdminLoginPage"));
 const AdminDashboard = lazy(() => import("./Pages/Admin/AdminDashboard"));
 const AdminUserListing = lazy(() => import("./Pages/Admin/AdminUserListing"));
 const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
+
 const MechanicLoginPage = lazy(
   () => import("./Pages/Mechanic/MechanicLoginPage")
 );
 const MechanicHomePage = lazy(
   () => import("./Pages/Mechanic/MechanicHomePage")
 );
-const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPage"))
-
-
-
+const MechanicSignupPage = lazy(
+  () => import("./Pages/Mechanic/MechanicSignupPage")
+);
 
 function App() {
   return (
@@ -44,33 +44,38 @@ function App() {
           <Route path="" element={<UserLoggedOut />}>
             <Route path="/signup" element={<UserSignupPage />} />
             <Route path="/login" element={<UserLoginPage />} />
-            <Route path="otp-page" element={<UserOtpPage/>}/>
-            <Route path="/user/forget-password" element={<ForgetPassword/>}/>
+            <Route path="otp-page" element={<UserOtpPage />} />
+            <Route path="/user/forget-password" element={<ForgetPassword />} />
           </Route>
 
-          <Route path="" element={<UserLoggedIn/>}>
-            <Route path="/user/homepage" element={<UserHomePage />}/>
-            <Route path="/user/account" element={<Account/>} />
-            <Route path="/user/profile" element={<Profile/>} />
+          <Route path="" element={<UserLoggedIn />}>
+            <Route path="/user/homepage" element={<UserHomePage />} />
+            <Route path="/user/account" element={<Account />} />
+            <Route path="/user/profile" element={<Profile />} />
           </Route>
 
           {/*Admin Routes*/}
-          <Route path="" element={<AdminLoggedOut />}>
+          <Route path="/admin" element={<AdminLoggedOut />}>
             <Route path="/admin/login" element={<AdminLoginPage />} />
           </Route>
 
-          <Route path="" element={<AdminLoggedIn />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<AdminUserListing />} />
-            <Route path="/admin/mech" element={<AdminMechListing />} />
+          <Route path="/admin" element={<AdminLoggedIn />}>
+            <Route path="/admin" element={<Layout />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<AdminUserListing />} />
+              <Route path="/admin/mech" element={<AdminMechListing />} />
+            </Route>
           </Route>
 
           {/*Mechanic Routes*/}
           <Route path="" element={<MechLoggedOut />}>
             <Route path="/mech/login" element={<MechanicLoginPage />} />
-            <Route path="/mech/signuppage" element={<MechanicSignupPage/>}/>
-            <Route path="/mech/veryfy-otp" element={<MechOtpPage/>}/>
-            <Route path="/mech/forgot-password" element={<ForgetPasswordForMech/>}/>
+            <Route path="/mech/signuppage" element={<MechanicSignupPage />} />
+            <Route path="/mech/veryfy-otp" element={<MechOtpPage />} />
+            <Route
+              path="/mech/forgot-password"
+              element={<ForgetPasswordForMech />}
+            />
           </Route>
 
           <Route path="" element={<MechLoggedIn />}>
