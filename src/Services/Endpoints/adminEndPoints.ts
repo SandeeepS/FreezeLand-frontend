@@ -5,6 +5,8 @@ const adminRoutes = {
   blockUser: "/admin/users/block/",
   blockMech:"/admin/mech/block/",
   deleteUser:"/admin/users/delete/",
+  deleteMech:"/admin/mech/delete/",
+
   logout: "/admin/logout",
 };
 

@@ -38,15 +38,20 @@ export interface BlockingResponse{
   message:string
 }
 
+export interface DeletingResponse{
+  success:boolean;
+  message:string
+}
+
 interface TableCommonProps {
   data: Data[]; // Array of user data
-  updateUserStatus: (id: string, isBlocked: boolean) => void; // Function to update user status
+  updateUserStatus: (id: string, isBlocked: boolean,isDeleted:boolean) => void; // Function to update user status
   blockUnblockFunciton:(id:string) => Promise<BlockingResponse>;
+  deleteUser:(id:string) =>Promise<DeletingResponse>;
 
 }
 
-const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUnblockFunciton}) =>  {
-  const [block, setBlock] = useState(false);
+const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUnblockFunciton,deleteUser}) =>  {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -54,11 +59,12 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
   // Fetch the data on mount and whenever block state changes
   useEffect(() => {
     console.log("Fetched data: ", data);
-  }, [data, block]);
+  }, [data]);
 
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+    console.log(event);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +85,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
         if (result.isConfirmed) {
           blockUnblockFunciton(id).then((result) => {
             if (result?.success) {
-              updateUserStatus(id,!isCurrentlyBlocked)
+              updateUserStatus(id,!isCurrentlyBlocked,false)
               Swal.fire({
                 title: "Success!",
                 text: "",
@@ -99,9 +105,32 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
   const handleEdit = (email: string | undefined) => {
     console.log(`Edit action for: ${email}`);
   };
-
-  const handleDelete = (email: string | undefined) => {
-    console.log(`Delete action for: ${email}`);
+  const handleDelete = async (id: string,isCurrentlyDeleted:boolean) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteUser(id).then((result) => {
+            if (result?.success) {
+              updateUserStatus(id, isCurrentlyDeleted, true);              Swal.fire({
+                title: "success!",
+                text: "",
+                icon: "success",
+              });
+            } else toast.error(result?.message);
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error as Error);
+    }
   };
 
   return (
@@ -167,7 +196,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDelete(datas.email)}
+                      onClick={() => handleDelete(datas._id,datas.isDeleted)}
                     >
                       Delete
                     </Button>

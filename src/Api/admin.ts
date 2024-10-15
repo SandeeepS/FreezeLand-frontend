@@ -1,4 +1,4 @@
-import { BlockingResponse } from "../components/Common/TableCommon";
+import { BlockingResponse, DeletingResponse } from "../components/Common/TableCommon";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
 import errorHandler from "./errorHandler";
@@ -63,12 +63,35 @@ const blockMech = async (id: string ): Promise<BlockingResponse> => {
     };  }
 }
 
-const deleteUser = async (id: string) => {
+const deleteUser = async (id: string):Promise<DeletingResponse> => {
   try {
-      const result = await Api.put(`${adminRoutes.deleteUser}${id}`);
-      return result;
+      const response = await Api.put(`${adminRoutes.deleteUser}${id}`);
+      return {
+        success: response.data.success,
+        message: response.data.message,
+      };
   } catch (error) {
-      errorHandler(error as Error);
+      console.log(error as Error);
+      return {
+        success: false,
+        message: 'Failed to block/unblock the user.',
+      };  
+  }
+}
+
+const deleteMech = async (id: string):Promise<DeletingResponse> => {
+  try {
+      const response = await Api.put(`${adminRoutes.deleteMech}${id}`);
+      return {
+        success: response.data.success,
+        message: response.data.message,
+      };
+  } catch (error) {
+      console.log(error as Error);
+      return {
+        success: false,
+        message: 'Failed to block/unblock the mechanic.',
+      };  
   }
 }
 
@@ -86,4 +109,4 @@ const adminLogout = async () => {
   }
 };
 
-export { adminLogin, adminLogout ,getAllUsers,blockUser,getAllMechanics,deleteUser,blockMech};
+export { adminLogin, adminLogout ,getAllUsers,blockUser,getAllMechanics,deleteUser,blockMech,deleteMech};

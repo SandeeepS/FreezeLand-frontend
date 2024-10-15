@@ -6,6 +6,7 @@ import { getAllUsers } from "../../Api/admin";
 import { useState } from "react";
 import { useEffect } from "react";
 import { blockUser } from "../../Api/admin";
+import { deleteUser } from "../../Api/admin";
 
 interface UserData {
   _id: string;
@@ -31,9 +32,11 @@ const AdminUserListing: React.FC = () => {
     fetchData();
   }, []);
 
-  const updateUserStatus = (id: string, isBlocked: boolean) => {
+  const updateUserStatus = (id: string, isBlocked: boolean,isDeleted:boolean) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) => (user._id === id ? { ...user, isBlocked } : user))
+      isDeleted
+        ? prevUsers.filter((user) => user._id !== id) // Remove deleted user
+        : prevUsers.map((user) => (user._id === id ? { ...user, isBlocked } : user))
     );
   };
 
@@ -43,6 +46,7 @@ const AdminUserListing: React.FC = () => {
         data={data}
         updateUserStatus={updateUserStatus}
         blockUnblockFunciton={blockUser}
+        deleteUser={deleteUser}
       />
     </div>
   );

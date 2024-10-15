@@ -41,14 +41,14 @@ const MechDataListing: React.FC = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           blockUser(id).then((result) => {
-            if (result?.data.success) {
+            if (result?.message) {
               setBlock(!block);
               Swal.fire({
                 title: "success!",
                 text: "",
                 icon: "success",
               });
-            } else toast.error(result?.data.message);
+            } else toast.error(result?.message);
           });
         }
       });

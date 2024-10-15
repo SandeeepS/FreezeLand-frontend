@@ -2,6 +2,7 @@ import TableCommon from "../../components/Common/TableCommon";
 import { blockMech, getAllMechanics } from "../../Api/admin";
 import { useState } from "react";
 import { useEffect } from "react";
+import { deleteMech } from "../../Api/admin";
 
 interface MechData {
   _id: string;
@@ -27,9 +28,11 @@ const AdminMechListing: React.FC = () => {
     fetchData();
   }, []);
 
-  const updateMechStatus = (id: string, isBlocked: boolean) => {
-    setMech((prevUsers) =>
-      prevUsers.map((mech) => (mech._id === id ? { ...mech, isBlocked } : mech))
+  const updateMechStatus = (id: string, isBlocked: boolean,isDeleted:boolean) => {
+    setMech((prevMechs) =>
+      isDeleted
+        ? prevMechs.filter((mech) => mech._id !== id) // Remove deleted mech
+        : prevMechs.map((mech) => (mech._id === id ? { ...mech, isBlocked } : mech))
     );
   };
 
@@ -39,6 +42,7 @@ const AdminMechListing: React.FC = () => {
         data={mechs}
         updateUserStatus={updateMechStatus}
         blockUnblockFunciton={blockMech}
+        deleteUser={deleteMech}
       />
     </div>
   );
