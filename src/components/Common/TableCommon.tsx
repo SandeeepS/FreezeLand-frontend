@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Button from '@mui/material/Button';
-import ToggleButton from '@mui/material/ToggleButton';
-import Swal from 'sweetalert2';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import Button from "@mui/material/Button";
+import ToggleButton from "@mui/material/ToggleButton";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 interface Column {
-  id: 'name' | 'email' | 'status' | 'actions';
+  id: "name" | "email" | "status" | "actions";
   label: string;
   minWidth?: number;
-  align?: 'right';
+  align?: "right";
 }
 
 const columns: readonly Column[] = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'email', label: 'Email', minWidth: 100 },
-  { id: 'status', label: 'Status', minWidth: 170, align: 'right' },
-  { id: 'actions', label: 'Actions', minWidth: 150, align: 'right' },
+  { id: "name", label: "Name", minWidth: 170 },
+  { id: "email", label: "Email", minWidth: 100 },
+  { id: "status", label: "Status", minWidth: 170, align: "right" },
+  { id: "actions", label: "Actions", minWidth: 150, align: "right" },
 ];
 
 interface Data {
@@ -30,48 +30,60 @@ interface Data {
   name: string;
   email: string;
   isBlocked: boolean;
-  isDeleted:boolean
+  isDeleted: boolean;
 }
 
-export interface BlockingResponse{
-  success:boolean;
-  message:string
+export interface BlockingResponse {
+  success: boolean;
+  message: string;
 }
 
-export interface DeletingResponse{
-  success:boolean;
-  message:string
+export interface DeletingResponse {
+  success: boolean;
+  message: string;
 }
 
 interface TableCommonProps {
   data: Data[]; // Array of user data
-  updateUserStatus: (id: string, isBlocked: boolean,isDeleted:boolean) => void; // Function to update user status
-  blockUnblockFunciton:(id:string) => Promise<BlockingResponse>;
-  deleteUser:(id:string) =>Promise<DeletingResponse>;
-
+  updateUserStatus: (
+    id: string,
+    isBlocked: boolean,
+    isDeleted: boolean
+  ) => void; // Function to update user status
+  blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
+  deleteUser: (id: string) => Promise<DeletingResponse>;
 }
 
-const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUnblockFunciton,deleteUser}) =>  {
+const TableCommon: React.FC<TableCommonProps> = ({
+  data,
+  updateUserStatus,
+  blockUnblockFunciton,
+  deleteUser,
+}) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  console.log("first getting props data is ",data);
+  console.log("first getting props data is ", data);
   // Fetch the data on mount and whenever block state changes
   useEffect(() => {
     console.log("Fetched data: ", data);
   }, [data]);
-
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
     console.log(event);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleBlockUnblock = async (id: string ,isCurrentlyBlocked:boolean ) => {
+  const handleBlockUnblock = async (
+    id: string,
+    isCurrentlyBlocked: boolean
+  ) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -85,7 +97,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
         if (result.isConfirmed) {
           blockUnblockFunciton(id).then((result) => {
             if (result?.success) {
-              updateUserStatus(id,!isCurrentlyBlocked,false)
+              updateUserStatus(id, !isCurrentlyBlocked, false);
               Swal.fire({
                 title: "Success!",
                 text: "",
@@ -105,7 +117,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
   const handleEdit = (email: string | undefined) => {
     console.log(`Edit action for: ${email}`);
   };
-  const handleDelete = async (id: string,isCurrentlyDeleted:boolean) => {
+  const handleDelete = async (id: string, isCurrentlyDeleted: boolean) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -119,7 +131,8 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
         if (result.isConfirmed) {
           deleteUser(id).then((result) => {
             if (result?.success) {
-              updateUserStatus(id, isCurrentlyDeleted, true);              Swal.fire({
+              updateUserStatus(id, isCurrentlyDeleted, true);
+              Swal.fire({
                 title: "success!",
                 text: "",
                 icon: "success",
@@ -134,7 +147,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -157,36 +170,42 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
                 <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
                   <TableCell>{datas.name}</TableCell>
                   <TableCell>{datas.email}</TableCell>
-                  <TableCell align="right">{datas.isBlocked ? 'Blocked' : 'Active'}</TableCell>
+                  <TableCell align="right">
+                    {datas.isBlocked ? "Blocked" : "Active"}
+                  </TableCell>
                   <TableCell align="right">
                     <ToggleButton
                       value="check"
                       selected={!datas.isBlocked}
-                      onChange={() => handleBlockUnblock(datas._id,datas.isBlocked)}
+                      onChange={() =>
+                        handleBlockUnblock(datas._id, datas.isBlocked)
+                      }
                       sx={{
-                        backgroundColor: datas.isBlocked ? 'red' : '#90ee90', 
-                        color: 'white', 
-                        width: '120px', 
-                        '&.Mui-selected': {
-                          backgroundColor: datas.isBlocked ? 'red' : '#90ee90', 
+                        backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                        color: "white",
+                        width: "120px",
+                        "&.Mui-selected": {
+                          backgroundColor: datas.isBlocked ? "red" : "#90ee90",
                         },
-                        '&:hover': {
-                          backgroundColor: datas.isBlocked ? '#ff4d4d' : '#81c784', 
+                        "&:hover": {
+                          backgroundColor: datas.isBlocked
+                            ? "#ff4d4d"
+                            : "#81c784",
                         },
                       }}
                     >
-                      {datas.isBlocked ? 'Blocked' : 'Unblocked'}
+                      {datas.isBlocked ? "Blocked" : "Unblocked"}
                     </ToggleButton>
                     <Button
                       variant="outlined"
                       sx={{
-                        marginLeft: '10px',
-                        marginRight: '10px',
-                        color: 'blue',
-                        borderColor: 'blue',
-                        '&:hover': {
-                          backgroundColor: '#e0f7fa',
-                          borderColor: 'blue',
+                        marginLeft: "10px",
+                        marginRight: "10px",
+                        color: "blue",
+                        borderColor: "blue",
+                        "&:hover": {
+                          backgroundColor: "#e0f7fa",
+                          borderColor: "blue",
                         },
                       }}
                       onClick={() => handleEdit(datas.email)}
@@ -196,7 +215,7 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDelete(datas._id,datas.isDeleted)}
+                      onClick={() => handleDelete(datas._id, datas.isDeleted)}
                     >
                       Delete
                     </Button>
@@ -217,6 +236,6 @@ const  TableCommon :React.FC<TableCommonProps> = ({data,updateUserStatus,blockUn
       />
     </Paper>
   );
-}
+};
 
 export default TableCommon;

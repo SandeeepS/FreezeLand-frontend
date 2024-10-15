@@ -1,4 +1,5 @@
 import { BlockingResponse, DeletingResponse } from "../components/Common/TableCommon";
+import { InewService } from "../Pages/Admin/NewService";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
 import errorHandler from "./errorHandler";
@@ -107,6 +108,8 @@ const adminLogout = async () => {
   } catch (error) {
     errorHandler(error as Error);
   }
+
+  
 };
 
 export { adminLogin, adminLogout ,getAllUsers,blockUser,getAllMechanics,deleteUser,blockMech,deleteMech};

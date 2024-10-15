@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { blockUser } from "../../Api/admin";
 import { deleteUser } from "../../Api/admin";
+import AdminHeader from "../../components/Admin/AdminHeader";
 
 interface UserData {
   _id: string;
@@ -18,6 +19,7 @@ interface UserData {
 
 const AdminUserListing: React.FC = () => {
   const [data, setUsers] = useState<UserData[]>([]);
+  const heading = "Users";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,22 +34,32 @@ const AdminUserListing: React.FC = () => {
     fetchData();
   }, []);
 
-  const updateUserStatus = (id: string, isBlocked: boolean,isDeleted:boolean) => {
+  const updateUserStatus = (
+    id: string,
+    isBlocked: boolean,
+    isDeleted: boolean
+  ) => {
     setUsers((prevUsers) =>
       isDeleted
         ? prevUsers.filter((user) => user._id !== id) // Remove deleted user
-        : prevUsers.map((user) => (user._id === id ? { ...user, isBlocked } : user))
+        : prevUsers.map((user) =>
+            user._id === id ? { ...user, isBlocked } : user
+          )
     );
   };
 
   return (
-    <div className="flex mx-10 justify-center items-center pt-7 h-screen">
-      <TableCommon
-        data={data}
-        updateUserStatus={updateUserStatus}
-        blockUnblockFunciton={blockUser}
-        deleteUser={deleteUser}
-      />
+    <div>
+      <AdminHeader heading={heading} />
+
+      <div className="flex mx-10 justify-center items-center pt-7 h-screen">
+        <TableCommon
+          data={data}
+          updateUserStatus={updateUserStatus}
+          blockUnblockFunciton={blockUser}
+          deleteUser={deleteUser}
+        />
+      </div>
     </div>
   );
 };

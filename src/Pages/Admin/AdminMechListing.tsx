@@ -3,6 +3,7 @@ import { blockMech, getAllMechanics } from "../../Api/admin";
 import { useState } from "react";
 import { useEffect } from "react";
 import { deleteMech } from "../../Api/admin";
+import AdminHeader from "../../components/Admin/AdminHeader";
 
 interface MechData {
   _id: string;
@@ -14,7 +15,7 @@ interface MechData {
 
 const AdminMechListing: React.FC = () => {
   const [mechs, setMech] = useState<MechData[]>([]);
-
+  const header = "Mechanics";
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,22 +29,31 @@ const AdminMechListing: React.FC = () => {
     fetchData();
   }, []);
 
-  const updateMechStatus = (id: string, isBlocked: boolean,isDeleted:boolean) => {
+  const updateMechStatus = (
+    id: string,
+    isBlocked: boolean,
+    isDeleted: boolean
+  ) => {
     setMech((prevMechs) =>
       isDeleted
         ? prevMechs.filter((mech) => mech._id !== id) // Remove deleted mech
-        : prevMechs.map((mech) => (mech._id === id ? { ...mech, isBlocked } : mech))
+        : prevMechs.map((mech) =>
+            mech._id === id ? { ...mech, isBlocked } : mech
+          )
     );
   };
 
   return (
-    <div className="flex justify-center items-center mx-10 pt-7 h-screen">
-      <TableCommon
-        data={mechs}
-        updateUserStatus={updateMechStatus}
-        blockUnblockFunciton={blockMech}
-        deleteUser={deleteMech}
-      />
+    <div>
+      <AdminHeader heading={header} />
+      <div className="flex justify-center items-center mx-10 pt-7 h-screen">
+        <TableCommon
+          data={mechs}
+          updateUserStatus={updateMechStatus}
+          blockUnblockFunciton={blockMech}
+          deleteUser={deleteMech}
+        />
+      </div>
     </div>
   );
 };

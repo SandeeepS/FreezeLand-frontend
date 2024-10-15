@@ -13,8 +13,12 @@ import MechOtpPage from "./Pages/Mechanic/MechOtpPage";
 import ForgetPassword from "./Pages/User/ForgetPassword";
 import ForgetPasswordForMech from "./Pages/Mechanic/ForgetPasswordForMech";
 import Account from "./Pages/User/Account";
-import Profile from "./components/User/Profile";
+import Profile from "./components/User/ProfileEdit";
 import Layout from "./components/Admin/Layout";
+import ProfileDetails from "./components/User/ProfileDetails";
+import Address from "./components/User/Address";
+import History from "./components/User/History";
+import Payments from "./components/User/Payments";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -23,6 +27,8 @@ const AdminLoginPage = lazy(() => import("./Pages/Admin/AdminLoginPage"));
 const AdminDashboard = lazy(() => import("./Pages/Admin/AdminDashboard"));
 const AdminUserListing = lazy(() => import("./Pages/Admin/AdminUserListing"));
 const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
+const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
+const NewService = lazy(() => import("./Pages/Admin/NewService"));
 
 const MechanicLoginPage = lazy(
   () => import("./Pages/Mechanic/MechanicLoginPage")
@@ -50,8 +56,16 @@ function App() {
 
           <Route path="" element={<UserLoggedIn />}>
             <Route path="/user/homepage" element={<UserHomePage />} />
-            <Route path="/user/account" element={<Account />} />
-            <Route path="/user/profile" element={<Profile />} />
+          </Route>
+
+          <Route path="" element={<UserLoggedIn />}>
+            <Route path="/user/account" element={<Account />}>
+              <Route path="/user/account" element={<ProfileDetails/>}/>
+              <Route path="/user/account/profile" element={<Profile />}/>
+              <Route path="/user/account/address" element={<Address/>}/>
+              <Route path="/user/account/history" element={<History/>}/>
+              <Route path="/user/account/payment" element={<Payments/>}/>
+            </Route>
           </Route>
 
           {/*Admin Routes*/}
@@ -64,6 +78,8 @@ function App() {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUserListing />} />
               <Route path="/admin/mech" element={<AdminMechListing />} />
+              <Route path="/admin/services" element={<AdminServices />} />
+              <Route path="/admin/addNewService" element={<NewService />} />
             </Route>
           </Route>
 

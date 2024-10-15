@@ -38,3 +38,9 @@ export const newPasswordValidation = Yup.object({
   password: Yup.string().min(8).matches(strongRegex, "Enter a Strong password").required('Please Enter the password!'),
   cpassword: Yup.string().min(8).oneOf([Yup.ref("password")], "Password not matching").required('Please confirm the password!')
 })
+
+
+export const newServiceValidation = Yup.object({
+  name:Yup.string().min(3).required("Please enter the Service name!!"),
+  discription:Yup.string().min(5).required("Please enter the Discription")
+})

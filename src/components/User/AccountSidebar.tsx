@@ -20,10 +20,10 @@ const AccountSidebar: React.FC = () => {
   const [activeItem, setActiveItem] = useState<number>(0);
 
   const data = [
-    { name: "Profile", id: 1, path: "/user/profile" },
-    { name: "Adsress", id: 2, path: "/user/Address" },
-    { name: "History", id: 3, path: "/user/History" },
-    { name: "Payment", id: 1, path: "/user/Payment" },
+    { name: "Edit Profile", id: 1, path: "/user/account/profile" },
+    { name: "Adsress", id: 2, path: "/user/account/Address" },
+    { name: "History", id: 3, path: "/user/account/History" },
+    { name: "Payment", id: 1, path: "/user/account/Payment" },
   ];
 
   const handleLogout = async () => {
