@@ -68,12 +68,16 @@ const UserOtpPage: React.FC = () => {
           />
         </div>
         <div className="flex items-center flex-col justify-between mb-6">
-     
           <div className="ps-1">
             {seconds <= 0 ? (
               <div>
                 Otp Expired{" "}
-                <span onClick={resendOTP} className="text-blue-500 cursor-pointer">Request another ?</span>
+                <span
+                  onClick={resendOTP}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  Request another ?
+                </span>
               </div>
             ) : (
               <div>

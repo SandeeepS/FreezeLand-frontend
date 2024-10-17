@@ -1,5 +1,4 @@
 import React from "react";
-
 // import DataListing from "../../components/Admin/DataListing";
 import TableCommon from "../../components/Common/TableCommon";
 import { getAllUsers } from "../../Api/admin";
@@ -51,7 +50,6 @@ const AdminUserListing: React.FC = () => {
   return (
     <div>
       <AdminHeader heading={heading} />
-
       <div className="flex mx-10 justify-center items-center pt-7 h-screen">
         <TableCommon
           data={data}

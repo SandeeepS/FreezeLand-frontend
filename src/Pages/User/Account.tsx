@@ -3,11 +3,11 @@ import Header from "../../components/User/Header";
 import AccountSidebar from "../../components/User/AccountSidebar";
 import AccountHeader from "../../components/User/AccountHeader";
 import Footer from "../../components/User/Footer";
-import { useState } from "react";
+// import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 const Account: React.FC = () => {
-  const [selectedSection, setSelectedSection] = useState<string>("");
+  // const [selectedSection, setSelectedSection] = useState<string>("");
   return (
     <div className="flex flex-col min-h-screen">
       <Header />

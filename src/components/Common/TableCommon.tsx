@@ -44,12 +44,12 @@ export interface DeletingResponse {
 }
 
 interface TableCommonProps {
-  data: Data[]; // Array of user data
+  data: Data[];
   updateUserStatus: (
     id: string,
     isBlocked: boolean,
     isDeleted: boolean
-  ) => void; // Function to update user status
+  ) => void;
   blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
   deleteUser: (id: string) => Promise<DeletingResponse>;
 }
@@ -64,7 +64,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   console.log("first getting props data is ", data);
-  // Fetch the data on mount and whenever block state changes
+
   useEffect(() => {
     console.log("Fetched data: ", data);
   }, [data]);
