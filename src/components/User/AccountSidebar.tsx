@@ -50,8 +50,8 @@ const AccountSidebar: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col items-center h-full">
+    
+      <div className="flex flex-col items-center h-full  mx-3">
         <div className="w-32 h-32 overflow-hidden rounded-full mt-3">
           <img
             src="https://www.366icons.com/media/01/profile-avatar-account-icon-16699.png"
@@ -81,7 +81,7 @@ const AccountSidebar: React.FC = () => {
           Logout
         </button>
       </div>
-    </>
+    
   );
 };
 
