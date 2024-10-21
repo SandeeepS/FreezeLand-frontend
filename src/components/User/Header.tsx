@@ -8,8 +8,6 @@ import toast from "react-hot-toast";
 import { userLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 
-
-
 const Header:React.FC = () =>  {
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);

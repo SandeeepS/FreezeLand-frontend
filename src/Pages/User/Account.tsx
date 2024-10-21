@@ -1,16 +1,12 @@
-import React from "react";
 import Header from "../../components/User/Header";
 import AccountSidebar from "../../components/User/AccountSidebar";
 import AccountHeader from "../../components/User/AccountHeader";
 import Footer from "../../components/User/Footer";
-import { useAppSelector } from "../../App/store";
+
 // import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 const Account: React.FC = () => {
-  const { userData } = useAppSelector((state) => state.auth);
-  console.log("User Details from the account side ",userData);
-
   // const [selectedSection, setSelectedSection] = useState<string>("");
   return (
     <>
@@ -22,7 +18,7 @@ const Account: React.FC = () => {
           <AccountSidebar />
         </div>
         <div className=" mx-4 mt-4 mb-4 basis-3/4 ">
-          <Outlet />
+          <Outlet/>
         </div>
       </div>
 

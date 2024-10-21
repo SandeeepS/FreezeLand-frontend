@@ -27,6 +27,20 @@ export const SignupValidation = Yup.object({
     .required("please Enter the confirm password!"),
 });
 
+export const EditUserValidation = Yup.object({
+  _id: Yup.string(),
+  name: Yup.string().min(3).required("Please Enter name"),
+  // email: Yup.string()
+  //   .matches(gmailRegex, "Please enter a valid Email")
+  //   .email("Please Enter Valid Email")
+  //   .required("please Enter Email"),
+  phone: Yup.string()
+    .matches(MOBILE_NUM_REGEX, "Enter a valid Phone number")
+    .min(10)
+    .max(10)
+    .required("Please Enter Phone number"),
+})
+
 export const LoginValidation = Yup.object({
   email: Yup.string()
     .email("please Enter a valid Email Address!")

@@ -1,51 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../../App/store"; // Assuming this is your Redux selector
-import axios from "axios";
+import { FaCamera, FaTrash } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
+import { getProfile } from "../../Api/user";
+import { Formik } from "formik";
+import { EditUserValidation } from "../Common/Validations";
+import { useNavigate } from "react-router-dom";
+import { EditUserDetails } from "../../Api/user";
+
+// interface initialVal {
+//   name: string;
+//   email: string;
+//   phone: string;
+//   password: string;
+//   cpassword: string;
+// }
 
 interface UserProfile {
-  name: string;
-  phone: string;
-  email: string;
-  imageUrl: string;
+  _id?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+  image?: string;
+  address?: string;
+  location?: string;
 }
 
 const ProfileEdit: React.FC = () => {
-  const { userData } = useAppSelector((state) => state.auth);
-  console.log("user data is ", userData); // Assuming this holds auth data
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    name: "",
-    phone: "",
-    email: "",
-    imageUrl: "https://via.placeholder.com/150",
-  });
+  const navigate = useNavigate();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get("/api/users/me"); // API call to fetch logged-in user's details
-        const user = response.data;
-        setUserProfile({
-          name: user.name || "",
-          phone: user.phone || "",
-          email: user.email || "",
-          imageUrl: user.imageUrl || "https://via.placeholder.com/150",
-        });
+        const response = await getProfile();
+        const user = response?.data.data.data;
+        console.log("User details from the backend in the Account is ", user);
+        setUserProfile(user);
       } catch (error) {
-        console.error("Failed to fetch user details", error);
+        console.log(
+          "Failed to fetch the user Details from the Account section",
+          error
+        );
       }
     };
-
     fetchUserDetails();
   }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserProfile({
-      ...userProfile,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -53,7 +54,7 @@ const ProfileEdit: React.FC = () => {
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUserProfile({ ...userProfile, imageUrl: reader.result as string });
+        setUserProfile({ ...userProfile, image: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
@@ -62,116 +63,164 @@ const ProfileEdit: React.FC = () => {
   const handleRemovePhoto = () => {
     setUserProfile({
       ...userProfile,
-      imageUrl: "https://via.placeholder.com/150",
+      image: "https://via.placeholder.com/150",
     });
     setImageFile(null);
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const formData = new FormData();
-      formData.append("name", userProfile.name);
-      formData.append("phone", userProfile.phone);
-      if (imageFile) formData.append("image", imageFile);
-
-      await axios.put("/api/users/me", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      alert("Changes saved successfully!");
-    } catch (error) {
-      console.error("Failed to save changes", error);
-      alert("Failed to save changes. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
-    <div className=" flex flex-col h-screen  bg-white p-8 shadow-md rounded-lg border border-gray-200 justify-center w-full">
+    <div className="flex flex-col h-screen bg-white p-8 shadow-md rounded-lg border border-gray-200 justify-center w-full">
       <div className="text-center">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">Edit Profile</h2>
       </div>
+      {userProfile ? (
+        <Formik
+          initialValues={{
+            _id: userProfile._id || "",
+            name: userProfile.name || "",
+            phone: userProfile.phone || "",
+          }}
+          validationSchema={EditUserValidation}
+          enableReinitialize={true} // This will reinitialize form with new values when userProfile updates
+          onSubmit={async (values) => {
+            console.log("Submited the userdetails", values);
+            setIsSaving(true);
+       
+            try {
+              const formData = {
+                _id: values._id,
+                name: values.name,
+                phone: values.phone,
+              };
+              console.log("form data is ",formData);
+              const result = await EditUserDetails(formData);
+              if (result?.status) {
+                console.log("resulte reached the fronend");
+                setIsSaving(false);
+                navigate("/user/account");
+              }
+              console.log("Result from the edit form is ", result);
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setIsSaving(false);
+            }
+          }}
+        >
+          {(formik) => (
+            <form onSubmit={formik.handleSubmit}>
+              <div className="flex flex-col gap-8">
+                {/* Hidden input for user id */}
+                <input type="hidden" name="_id" value={formik.values._id} />
 
-      <div className="flex flex-col  gap-8">
-        {/* Profie edit section*/}
-        <div className="flex-shrink-0 flex flex-col items-center">
-          <img
-            className="w-32 h-32 rounded-full object-cover border-2 border-blue-500"
-            src={userProfile.imageUrl}
-            alt="Profile"
-          />
-          <p className="mt-4 text-gray-600 font-semibold text-lg">
-            Email: {userProfile.email}
-          </p>
+                {/* Profile edit section */}
+                <div className="flex-shrink-0 flex flex-col items-center">
+                  {userProfile.image ? (
+                    <img
+                      className="w-32 h-32 rounded-full object-cover border-2 border-blue-500"
+                      src={userProfile.image}
+                      alt="Profile"
+                    />
+                  ) : (
+                    <div>
+                      <FaUserCircle className="w-32 h-32 rounded-full object-cover border-2 border-blue-500" />
+                    </div>
+                  )}
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="mt-4 border border-gray-300 rounded-md p-2 w-full"
-          />
-          <button
-            onClick={handleRemovePhoto}
-            className="mt-2 text-red-600 hover:underline"
-            disabled={!imageFile}
-          >
-            Remove Photo
-          </button>
+                  <p className="mt-4 text-gray-600 font-semibold text-lg">
+                    Email: {userProfile.email}
+                  </p>
+
+                  <label className="mt-4 cursor-pointer text-blue-600 flex items-center">
+                    <FaCamera className="mr-2" size={24} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    Change Photo
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="mt-2 text-red-600 hover:underline flex items-center"
+                    disabled={!imageFile}
+                  >
+                    <FaTrash className="mr-2" size={24} />
+                    Remove Photo
+                  </button>
+                </div>
+
+                {/* form to edit the user */}
+                <div className="flex-grow">
+                  <div className="mb-6">
+                    <label
+                      className="block text-gray-700 font-semibold mb-2"
+                      htmlFor="name"
+                    >
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.name}
+                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                      placeholder="Enter your name"
+                    />
+                    {formik.errors.name && (
+                      <small className="text-red-500">
+                        {formik.errors.name}
+                      </small>
+                    )}
+                  </div>
+
+                  <div className="mb-6">
+                    <label
+                      className="block text-gray-700 font-semibold mb-2"
+                      htmlFor="phone"
+                    >
+                      Phone Number
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.phone}
+                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                      placeholder="Enter your phone number"
+                    />
+                    {formik.errors.phone && (
+                      <small className="text-red-500">
+                        {formik.errors.phone}
+                      </small>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className={`mt-4 px-6 py-3 w-full bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none ${
+                      isSaving ? "cursor-not-allowed opacity-50" : ""
+                    }`}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+        </Formik>
+      ) : (
+        <div>
+          <p>UserDetails are loading...</p>
         </div>
-
-        {/* form to edit the user */}
-        <div className="flex-grow">
-          <div className="mb-6">
-            <label
-              className="block text-gray-700 font-semibold mb-2"
-              htmlFor="name"
-            >
-              Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={userProfile.name}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              placeholder="Enter your name"
-            />
-          </div>
-
-          <div className="mb-6">
-            <label
-              className="block text-gray-700 font-semibold mb-2"
-              htmlFor="phone"
-            >
-              Phone Number
-            </label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              value={userProfile.phone}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              placeholder="Enter your phone number"
-            />
-          </div>
-
-          <button
-            onClick={handleSave}
-            className={`mt-4 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none ${
-              isSaving ? "cursor-not-allowed opacity-50" : ""
-            }`}
-            disabled={isSaving}
-          >
-            {isSaving ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

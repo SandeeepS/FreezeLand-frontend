@@ -9,6 +9,7 @@ const userRoutes = {
   resendOtp: "/user/resend-otp",
   logout: "/user/logout",
   getProfile: "/user/profile",
+  editUser:"/user/editUser",
 };
 
 export default userRoutes;

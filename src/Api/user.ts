@@ -51,6 +51,7 @@ const googleLogin = async (
   }
 };
 
+
 const verifyOtp = async (otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
@@ -107,6 +108,21 @@ const getProfile = async () => {
   }
 };
 
+const EditUserDetails = async ({_id, name, phone }: FormData) => {
+  try {
+    console.log("Entered in the EditUserDetails in the user.ts");
+    const result = await Api.put(userRoutes.editUser, {
+      _id,
+      name,
+      phone,
+    });
+    console.log("result from the backend is ", result);
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+  }
+};
+
 export {
   signup,
   login,
@@ -116,6 +132,7 @@ export {
   verifyOtp,
   resendOtp,
   forgotPassword,
+  EditUserDetails,
   forgotVerifyOtp,
   updateNewPassword,
 };

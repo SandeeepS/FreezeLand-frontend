@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import OAuth from "../../components/Common/OAuth";
 
 export interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
+  _id?:string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
   confirmPassword?: string;
 }
 interface initialVal {
