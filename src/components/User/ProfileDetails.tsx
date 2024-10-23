@@ -65,10 +65,10 @@ const ProfileDetails: React.FC = () => {
             <div>
               <label className="block text-gray-700">Phone</label>
               <input
-                type="text"
+                type="number "
                 value={userDetails.phone}
                 readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                className="w-full  px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
               />
             </div>
             <div>

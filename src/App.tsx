@@ -19,6 +19,7 @@ import ProfileDetails from "./components/User/ProfileDetails";
 import Address from "./components/User/Address";
 import History from "./components/User/History";
 import Payments from "./components/User/Payments";
+import AddAddress from "./components/User/AddAddress";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -65,6 +66,7 @@ function App() {
               <Route path="/user/account/address" element={<Address/>}/>
               <Route path="/user/account/history" element={<History/>}/>
               <Route path="/user/account/payment" element={<Payments/>}/>
+              <Route path="/user/account/AddAddress" element={<AddAddress/>}/>
             </Route>
           </Route>
 
