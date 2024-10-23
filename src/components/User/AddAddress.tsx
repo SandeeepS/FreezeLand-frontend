@@ -1,7 +1,33 @@
 import React from "react";
 import { Button } from "@mui/material";
+import { Formik } from "formik";
+import { getProfile } from "../../Api/user";
+// import { useNavigate } from "react-router-dom";
+import { AddressValidation } from "../Common/Validations";
+import { AddUserAddress } from "../../Api/user";
+import { useEffect, useState } from "react";
+import { AddAddress  as AddAddressInterface } from "../../interfaces/AddAddress";
+
 
 const AddAddress: React.FC = () => {
+  const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await getProfile();
+        const user = response?.data.data.data;
+        console.log("User details from the backend in the Account is ", user);
+        setUserProfile(user);
+      } catch (error) {
+        console.log(
+          "Failed to fetch the user Details from the Account section",
+          error
+        );
+      }
+    };
+    fetchUserDetails();
+  }, []);
   return (
     <div className="h-full bg-white rounded-lg shadow-md flex flex-col">
       <div className="flex flex-col justify-center items-center my-6">
@@ -12,114 +38,204 @@ const AddAddress: React.FC = () => {
       </div>
 
       <div>
-        <form action="" className="mx-48 ">
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
-              Enter your name
-            </label>
-            <input
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              placeholder="Username"
-            />
-          </div>
+        {
+          <Formik
+            initialValues={{
+             
+              name: "",
+              phone: 0,
+              email: "",
+              state: "",
+              pin: 0,
+              district: "",
+              landMark: "",
+            }}
+            validationSchema={AddressValidation}
+            enableReinitialize={true}
+            onSubmit={async (values) => {
+              console.log("Submited addressDetails ", values);
+              let _id:string | undefined = "";
+              if(userProfile){
+                _id = userProfile._id
+              }
+              const result = await AddUserAddress(_id,values);
+              if(result){
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="phone"
-            >
-              Enter you phone number
-            </label>
-            <input
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="phone"
-              type="number"
-              placeholder="Phone number"
-            />
-          </div>
+                console.log("result reached the frontend");
+              }
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="email"
-            >
-              Enter you mail id
-            </label>
-            <input
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
-              type="email"
-              placeholder="Email"
-            />
-          </div>
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="state"
-            >
-              Enter you State
-            </label>
-            <input
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="state"
-              type="text"
-              placeholder="State"
-            />
-          </div>
+            }}
+          >
+            {(formik) => (
+              <form action="" className="mx-48 " onSubmit={formik.handleSubmit}>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="username"
+                  >
+                    Enter your name
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    name="name"
+                    id="username"
+                    type="text"
+                    placeholder="Username"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.name && (
+                    <small className="text-red-500">{formik.errors.name}</small>
+                  )}
+                </div>
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="pincode"
-            >
-              Enter you Pincode
-            </label>
-            <input
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="pin"
-              type="number"
-              placeholder="Pincode"
-            />
-          </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="phone"
+                  >
+                    Enter you phone number
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="phone"
+                    name="phone"
+                    type="number"
+                    placeholder="Phone number"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.phone && (
+                    <small className="text-red-500">
+                      {formik.errors.phone}
+                    </small>
+                  )}
+                </div>
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="district"
-            >
-              Enter you District
-            </label>
-            <input
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="district"
-              type="text"
-              placeholder="District"
-            />
-          </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="email"
+                  >
+                    Enter you mail id
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Email"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.email && (
+                    <small className="text-red-500">
+                      {formik.errors.email}
+                    </small>
+                  )}
+                </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Landmark
-            </label>
-            <textarea
-              value=""
-              rows={4} // Number of lines visible in textarea
-              className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Enter you land mark"
-            />
-          </div>
-          <div className="my-5">
-            <Button variant="contained" color="warning" className="w-full">
-              Add Address
-            </Button>
-          </div>
-        </form>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="state"
+                  >
+                    Enter you State
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="state"
+                    name="state"
+                    type="text"
+                    placeholder="State"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.state && (
+                    <small className="text-red-500">
+                      {formik.errors.state}
+                    </small>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="pincode"
+                  >
+                    Enter you Pincode
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="pin"
+                    name="pin"
+                    type="number"
+                    placeholder="Pincode"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.pin && (
+                    <small className="text-red-500">{formik.errors.pin}</small>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="district"
+                  >
+                    Enter you District
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="district"
+                    name="district"
+                    type="text"
+                    placeholder="District"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.district && (
+                    <small className="text-red-500">
+                      {formik.errors.district}
+                    </small>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Landmark
+                  </label>
+                  <textarea
+                    rows={4} // Number of lines visible in textarea
+                    className="shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="Enter you land mark"
+                    name="landMark"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.landMark && (
+                    <small className="text-red-500">
+                      {formik.errors.landMark}
+                    </small>
+                  )}
+                </div>
+                <div className="my-5">
+                  <Button
+                  type="submit"
+                    variant="contained"
+                    color="warning"
+                    className="w-full"
+                
+                  >
+                    Add Address
+                  </Button>
+                </div>
+              </form>
+            )}
+          </Formik>
+        }
       </div>
     </div>
   );

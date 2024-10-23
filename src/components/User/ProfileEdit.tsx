@@ -48,7 +48,7 @@ const ProfileEdit: React.FC = () => {
     fetchUserDetails();
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
     const file = e.target.files?.[0] || null;
     if (file) {
       setImageFile(file);

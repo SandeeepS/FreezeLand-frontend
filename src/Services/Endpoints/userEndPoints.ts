@@ -10,6 +10,7 @@ const userRoutes = {
   logout: "/user/logout",
   getProfile: "/user/profile",
   editUser:"/user/editUser",
+  addAddress:"/user/addAddress"
 };
 
 export default userRoutes;

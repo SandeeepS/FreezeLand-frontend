@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { MOBILE_NUM_REGEX } from "../../constants/CommonConstants";
+import { MOBILE_NUM_REGEX, PIN_CODE_REGEX } from "../../constants/CommonConstants";
 
 const strongRegex = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%\\^&*])(?=.{5,})"
@@ -57,4 +57,21 @@ export const newPasswordValidation = Yup.object({
 export const newServiceValidation = Yup.object({
   name:Yup.string().min(3).required("Please enter the Service name!!"),
   discription:Yup.string().min(5).required("Please enter the Discription")
+})
+
+export const AddressValidation = Yup.object({
+  name:Yup.string().min(3).required("Please enter name"),
+  phone:Yup.string()
+  .matches(MOBILE_NUM_REGEX,"Enter a valid phone number")
+  .min(10)
+  .max(10)
+  .required("Please enter phone number"),
+  email: Yup.string()
+  .matches(gmailRegex, "Please enter a valid Email")
+  .email("Please Enter Valid Email")
+  .required("please Enter Email"),
+  state:Yup.string().min(3).required("Please enter you state"),
+  pin:Yup.string().matches(PIN_CODE_REGEX,"Enter a valid pin"),
+  district:Yup.string().min(3).required("Enter you district name"),
+  landMark:Yup.string().required("please enter your landmark")
 })

@@ -2,6 +2,7 @@ import { FormData } from "../Pages/User/UserSignupPage";
 import Api from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
 import errorHandler from "./errorHandler";
+import { AddAddress } from "../interfaces/AddAddress";
 
 const signup = async ({ name, phone, email, password }: FormData) => {
   try {
@@ -123,6 +124,17 @@ const EditUserDetails = async ({_id, name, phone }: FormData) => {
   }
 };
 
+const AddUserAddress = async (_id:string | undefined,values:AddAddress) => {
+  try{
+    console.log("Entered in the AddUserAddress fucntion in the user.ts");
+    const result = await Api.post(userRoutes.addAddress,{_id,values});
+    return result
+  }catch(error){
+    console.log(error as Error);
+
+  }
+} 
+
 export {
   signup,
   login,
@@ -135,4 +147,5 @@ export {
   EditUserDetails,
   forgotVerifyOtp,
   updateNewPassword,
+  AddUserAddress
 };
