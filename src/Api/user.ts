@@ -52,7 +52,6 @@ const googleLogin = async (
   }
 };
 
-
 const verifyOtp = async (otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
@@ -109,7 +108,7 @@ const getProfile = async () => {
   }
 };
 
-const EditUserDetails = async ({_id, name, phone }: FormData) => {
+const EditUserDetails = async ({ _id, name, phone }: FormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
     const result = await Api.put(userRoutes.editUser, {
@@ -124,16 +123,30 @@ const EditUserDetails = async ({_id, name, phone }: FormData) => {
   }
 };
 
-const AddUserAddress = async (_id:string | undefined,values:AddAddress) => {
-  try{
+const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
+  try {
     console.log("Entered in the AddUserAddress fucntion in the user.ts");
-    const result = await Api.post(userRoutes.addAddress,{_id,values});
-    return result
-  }catch(error){
+    const result = await Api.post(userRoutes.addAddress, { _id, values });
+    return result;
+  } catch (error) {
     console.log(error as Error);
-
   }
-} 
+};
+
+const setDefaultAddress = async (
+  userId: string | undefined,
+  addressId: string | undefined
+) => {
+  try {
+    const result = await Api.put(userRoutes.setDefaultAddress, {
+      userId,
+      addressId,
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+  }
+};
 
 export {
   signup,
@@ -147,5 +160,6 @@ export {
   EditUserDetails,
   forgotVerifyOtp,
   updateNewPassword,
-  AddUserAddress
+  AddUserAddress,
+  setDefaultAddress,
 };

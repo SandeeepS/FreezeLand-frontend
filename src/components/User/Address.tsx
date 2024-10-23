@@ -2,13 +2,18 @@ import React from "react";
 import Box from "@mui/material/Box";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 const Address: React.FC = () => {
   const navigate = useNavigate();
   const handleAddAddress = () => {
     console.log("clicked the add address");
-    navigate('/user/account/addAddress')
+    navigate("/user/account/addAddress");
+  };
 
+  const handleButtonClick = () => {
+    console.log("Button clicked successfully");
+    navigate("/user/account/showAllAddress");
   };
 
   return (
@@ -45,6 +50,15 @@ const Address: React.FC = () => {
             <hr className="border-t-2 border-gray-400" />
           </Box>
         </div>
+      </div>
+      <div>
+        <Button
+          variant="contained"
+          className="w-full"
+          onClick={handleButtonClick}
+        >
+          Show All Address
+        </Button>
       </div>
     </div>
   );
