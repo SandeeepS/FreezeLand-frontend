@@ -123,7 +123,7 @@ const EditUserDetails = async ({ _id, name, phone }: FormData) => {
   }
 };
 
-const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
+const AddUserAddress = async (_id: string | undefined,values: AddAddress) => {
   try {
     console.log("Entered in the AddUserAddress fucntion in the user.ts");
     const result = await Api.post(userRoutes.addAddress, { _id, values });
@@ -132,6 +132,16 @@ const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
     console.log(error as Error);
   }
 };
+
+const EditExistAddress = async(_id:string | undefined , addressId : string | undefined, values :AddAddress) => {
+  try{
+    const result = await Api.put(userRoutes.editAddress,{_id, addressId,values});
+    return result;
+  }catch(error){
+    console.log(error as Error);
+
+  }
+}
 
 const setDefaultAddress = async (
   userId: string | undefined,
@@ -158,8 +168,10 @@ export {
   resendOtp,
   forgotPassword,
   EditUserDetails,
+  EditExistAddress,
   forgotVerifyOtp,
   updateNewPassword,
   AddUserAddress,
   setDefaultAddress,
+  
 };

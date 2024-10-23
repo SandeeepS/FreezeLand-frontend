@@ -3,6 +3,7 @@ import { Card, CardActions, CardContent, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { AddAddress } from "../../interfaces/AddAddress";
 import { setDefaultAddress } from "../../Api/user";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getProfile } from "../../Api/user";
 
@@ -19,6 +20,7 @@ interface userDetails {
 const AllAddress: React.FC = () => {
   const [allAddress, setAllAddress] = useState<AddAddress[]>([]);
   const [user,setUser] = useState<userDetails>()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -46,6 +48,12 @@ const AllAddress: React.FC = () => {
 
   }
 
+  const handleEditAddress = async (id:string | undefined) => {
+    console.log("clicked the editbutton by ",id);
+    navigate(`/user/account/editAddress/${id}`);
+    
+  }
+
   return (
     <div className="bg-white h-full rounded-lg shadow-md flex flex-col space-y-12 overflow-y-auto">
       <h1 className="mx-5 font-exo font-bold text-2xl my-4  ">All addresses</h1>
@@ -69,7 +77,7 @@ const AllAddress: React.FC = () => {
             </CardContent>
             <CardActions>
               <Button size="small" onClick={() => handleSetDefault(address._id)}>Set as Default</Button>
-              <Button size="small">Edit</Button>
+              <Button size="small" onClick={() => handleEditAddress(address._id)}>Edit</Button>
               <Button size="small"  >Remove</Button>
             </CardActions>
           </Card>

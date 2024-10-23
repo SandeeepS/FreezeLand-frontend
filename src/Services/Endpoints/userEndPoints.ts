@@ -11,6 +11,7 @@ const userRoutes = {
   getProfile: "/user/profile",
   editUser:"/user/editUser",
   addAddress:"/user/addAddress",
+  editAddress:"/user/editAddress",
   setDefaultAddress:"/user/setDefaultAddress"
 };
 

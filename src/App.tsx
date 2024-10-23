@@ -21,6 +21,7 @@ import History from "./components/User/History";
 import Payments from "./components/User/Payments";
 import AddAddress from "./components/User/AddAddress";
 import AllAddress from "./components/User/AllAddress";
+import {EditAddress} from "./components/User/EditAddress";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -69,6 +70,7 @@ function App() {
               <Route path="/user/account/payment" element={<Payments/>}/>
               <Route path="/user/account/AddAddress" element={<AddAddress/>}/>
               <Route path="/user/account/showAllAddress" element={<AllAddress/>}/>
+              <Route path="/user/account/editAddress/:id" element={<EditAddress/>}/>
             </Route>
           </Route>
 
