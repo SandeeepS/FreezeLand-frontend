@@ -14,6 +14,15 @@ interface MechData {
 }
 
 const AdminMechListing: React.FC = () => {
+
+  const columns = [
+    { id: "name", label: "Name", minWidth: 170 },
+    { id: "email", label: "Email", minWidth: 100 },
+    { id: "isBlocked", label: "Status", minWidth: 170, align: "right", format: (value: boolean) => (value ? "Blocked" : "Active") },
+    { id: "actions", label: "Actions", minWidth: 150, align: "right" }
+  ];
+
+
   const [mechs, setMech] = useState<MechData[]>([]);
   const header = "Mechanics";
   useEffect(() => {
@@ -48,6 +57,7 @@ const AdminMechListing: React.FC = () => {
       <AdminHeader heading={header} />
       <div className="flex justify-center items-center mx-10 pt-7 h-screen">
         <TableCommon
+         columns={columns}
           data={mechs}
           updateUserStatus={updateMechStatus}
           blockUnblockFunciton={blockMech}

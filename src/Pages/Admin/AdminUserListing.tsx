@@ -8,6 +8,8 @@ import { blockUser } from "../../Api/admin";
 import { deleteUser } from "../../Api/admin";
 import AdminHeader from "../../components/Admin/AdminHeader";
 
+
+
 interface UserData {
   _id: string;
   name: string;
@@ -17,6 +19,19 @@ interface UserData {
 }
 
 const AdminUserListing: React.FC = () => {
+  const columns = [
+    { id: "name", label: "Name", minWidth: 170 },
+    { id: "email", label: "Email", minWidth: 100 },
+    {
+      id: "isBlocked",
+      label: "Status",
+      minWidth: 170,
+      align: "right",
+      format: (value: boolean) => (value ? "Blocked" : "Active"),
+    },
+    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+  ];
+
   const [data, setUsers] = useState<UserData[]>([]);
   const heading = "Users";
 
@@ -52,6 +67,7 @@ const AdminUserListing: React.FC = () => {
       <AdminHeader heading={heading} />
       <div className="flex mx-10 justify-center items-center pt-7 h-screen">
         <TableCommon
+          columns={columns}
           data={data}
           updateUserStatus={updateUserStatus}
           blockUnblockFunciton={blockUser}

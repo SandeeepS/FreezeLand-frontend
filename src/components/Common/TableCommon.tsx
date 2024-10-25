@@ -12,18 +12,12 @@ import ToggleButton from "@mui/material/ToggleButton";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 interface Column {
-  id: "name" | "email" | "status" | "actions";
+  id: string;
   label: string;
   minWidth?: number;
-  align?: "right";
+  align?: "right" | "left" | "center";
+  format?:undefined
 }
-
-const columns: readonly Column[] = [
-  { id: "name", label: "Name", minWidth: 170 },
-  { id: "email", label: "Email", minWidth: 100 },
-  { id: "status", label: "Status", minWidth: 170, align: "right" },
-  { id: "actions", label: "Actions", minWidth: 150, align: "right" },
-];
 
 interface Data {
   _id: string;
@@ -44,6 +38,7 @@ export interface DeletingResponse {
 }
 
 interface TableCommonProps {
+  columns: Column[];
   data: Data[];
   updateUserStatus: (
     id: string,
@@ -55,6 +50,7 @@ interface TableCommonProps {
 }
 
 const TableCommon: React.FC<TableCommonProps> = ({
+  columns,
   data,
   updateUserStatus,
   blockUnblockFunciton,
