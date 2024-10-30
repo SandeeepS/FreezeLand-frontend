@@ -11,6 +11,8 @@ import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import {useNavigate } from "react-router-dom";
+
 interface Column {
   id: string;
   label: string;
@@ -48,6 +50,7 @@ interface TableCommonProps {
   ) => void;
   blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
   deleteFunction: (id: string) => Promise<DeletingResponse>;
+  navLink:string;
 }
 
 const TableCommon: React.FC<TableCommonProps> = ({
@@ -56,7 +59,9 @@ const TableCommon: React.FC<TableCommonProps> = ({
   updateStatus,
   blockUnblockFunciton,
   deleteFunction,
+  navLink,
 }) => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -111,8 +116,11 @@ const TableCommon: React.FC<TableCommonProps> = ({
     }
   };
 
-  const handleEdit = (email: string | undefined) => {
-    console.log(`Edit action for: ${email}`);
+  const handleEdit = (_id: string | undefined) => {
+    console.log(`Edit action for: ${_id}`);
+    console.log("navigation is ",navLink)
+    navigate(`${navLink}${_id}`);
+    
   };
   const handleDelete = async (id: string, isCurrentlyDeleted: boolean) => {
     try {
@@ -208,7 +216,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
                           borderColor: "blue",
                         },
                       }}
-                      onClick={() => handleEdit(datas.email)}
+                      onClick={() => handleEdit(datas._id)}
                     >
                       Edit
                     </Button>

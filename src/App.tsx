@@ -32,6 +32,7 @@ const AdminUserListing = lazy(() => import("./Pages/Admin/AdminUserListing"));
 const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
 const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
 const NewService = lazy(() => import("./Pages/Admin/NewService"));
+const EditServices = lazy(() => import("./Pages/Admin/EditService"))
 
 const MechanicLoginPage = lazy(
   () => import("./Pages/Mechanic/MechanicLoginPage")
@@ -86,6 +87,7 @@ function App() {
               <Route path="/admin/mech" element={<AdminMechListing />} />
               <Route path="/admin/services" element={<AdminServices />} />
               <Route path="/admin/addNewService" element={<NewService />} />
+              <Route path="/admin/editService/:id" element={<EditServices/>}/>
             </Route>
           </Route>
 

@@ -11,12 +11,12 @@ import { EditExistAddress } from '../../Api/user';
 
 export const EditAddress:React.FC = () => {
     const {id} = useParams();
-
+     
     const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(null);
     const [address, setAddress] = useState<AddAddress>();
     const navigate = useNavigate();
-
-
+   
+    
     useEffect(() => {
       const fetchUserDetails = async () => {
         try {
@@ -52,7 +52,6 @@ export const EditAddress:React.FC = () => {
         {
           <Formik
             initialValues={{
-             
               name: address?.name|| "",
               phone:address?.phone ||  0,
               email: address?.email ||  "",
@@ -71,14 +70,9 @@ export const EditAddress:React.FC = () => {
               }
               const result = await EditExistAddress(_id,address?._id,values);
               if(result){
- 
                 console.log("result reached the frontend");
                 navigate('/user/account/address');
-                
-                
               }
-
-
             }}
           >
             {(formik) => (

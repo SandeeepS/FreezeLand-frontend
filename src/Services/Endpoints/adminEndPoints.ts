@@ -8,8 +8,10 @@ const adminRoutes = {
   deleteMech:"/admin/mech/delete/",
   addNewService:"/admin/addNewService",
   getAllServices:"/admin/getAllServices",
+  getService:"/admin/getService/",
   listUnlistServices:"/admin/listUnlistServices",
   deleteService:"/admin/deleteService/",
+  editExistService:'/admin/editExistService',
   logout: "/admin/logout",
 };
 

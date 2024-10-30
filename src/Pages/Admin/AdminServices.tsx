@@ -65,6 +65,9 @@ const AdminServices: React.FC = () => {
           )
     );
   };
+  const navigationLink = '/admin/editService/';
+
+
 
   return (
     <div className=" flex flex-col">
@@ -84,6 +87,7 @@ const AdminServices: React.FC = () => {
           updateStatus={updateServiceStatus}
           blockUnblockFunciton={listUnlistService}
           deleteFunction={deleteService}
+          navLink={navigationLink}
         />
       </div>
     </div>

@@ -170,12 +170,37 @@ const getAllServices = async () => {
   }
 };
 
+const getService = async (id:string | undefined) => {
+   try{
+      console.log("entered in the getService funciton in the admin ts",id);
+      const result = await Api.get(`${adminRoutes.getService}${id}`);
+      if(result){
+        return result;
+      }
+   }catch(error){
+    console.log(error);
+    errorHandler(error as Error)
+   }
+}
+
+const editExistService = async(_id:string | undefined , values : InewService) => {
+  try{
+    const result = await Api.put(adminRoutes.editExistService,{_id,values});
+    return result;
+  }catch(error){
+    console.log(error as Error);
+
+  }
+}
+
 export {
   adminLogin,
   adminLogout,
   addService,
   getAllServices,
+  getService,
   listUnlistService,
+  editExistService,
   deleteService,
   getAllUsers,
   blockUser,
