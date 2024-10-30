@@ -3,20 +3,21 @@ import { Formik } from "formik";
 import AdminHeader from "../../components/Admin/AdminHeader";
 import { ServiceListingValidation } from "../../components/Common/Validations";
 import { addService } from "../../Api/admin";
+import { useNavigate } from "react-router-dom";
 
 export interface InewService {
   name: string;
-  description: string; // Fixed the spelling from 'discription' to 'description'
+  discription: string; 
 }
 
 const NewService: React.FC = () => {
-
-
+  const navigate = useNavigate();
   const handleSubmit = async (values: InewService) => {
     console.log("Submitted values:", values);
     const result = await addService(values);
-    console.log(result);
-
+    if(result){
+       navigate('/admin/services')
+    }
   };
 
   return (
@@ -26,7 +27,7 @@ const NewService: React.FC = () => {
         <Formik
           initialValues={{
             name: "",
-            description: "",
+            discription: "",
           }}
           validationSchema={ServiceListingValidation}
           onSubmit={handleSubmit}
@@ -60,45 +61,26 @@ const NewService: React.FC = () => {
                 )}
               </div>
 
-              {/* Uncomment and implement image upload as needed
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="image"
-                >
-                  Upload Image
-                </label>
-                <input
-                  id="image"
-                  type="file"
-                  accept=".jpg"
-                  onChange={handleImageChange}
-                  className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
-                  required
-                />
-              </div>
-              */}
-
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="description"
+                  htmlFor="discription"
                 >
                   Description
                 </label>
                 <textarea
-                  id="description"
-                  value={values.description}
+                  id="discription"
+                  value={values.discription}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Enter a brief description of the service"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${
-                    errors.description && touched.description ? "border-red-500" : "border-gray-300"
+                    errors.discription && touched.discription ? "border-red-500" : "border-gray-300"
                   }`}
                   rows={4}
                 ></textarea>
-                {errors.description && touched.description && (
-                  <small className="text-red-500">{errors.description}</small>
+                {errors.discription && touched.discription && (
+                  <small className="text-red-500">{errors.discription}</small>
                 )}
               </div>
 

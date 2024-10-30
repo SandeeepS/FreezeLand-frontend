@@ -67,6 +67,22 @@ const blockMech = async (id: string): Promise<BlockingResponse> => {
   }
 };
 
+const listUnlistService = async (id: string): Promise<BlockingResponse> => {
+  try {
+    console.log("entered in the listUnlistService");
+    const response = await Api.put(`${adminRoutes.listUnlistServices}${id}`);
+    return {
+      success: response.data.success,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.log(error as Error);
+    return {
+      success: false,
+      message: "Failed to List / unlist the services , admin.ts",
+    };
+  }
+};
 const deleteUser = async (id: string): Promise<DeletingResponse> => {
   try {
     const response = await Api.put(`${adminRoutes.deleteUser}${id}`);
@@ -94,7 +110,25 @@ const deleteMech = async (id: string): Promise<DeletingResponse> => {
     console.log(error as Error);
     return {
       success: false,
-      message: "Failed to block/unblock the mechanic.",
+      message: "Failed to Delete the mechanic.",
+    };
+  }
+};
+
+
+const deleteService = async (id: string): Promise<DeletingResponse> => {
+  try {
+    console.log("enterd in the admints for deleting service");
+    const response = await Api.put(`${adminRoutes.deleteService}${id}`);
+    return {
+      success: response.data.success,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.log(error as Error);
+    return {
+      success: false,
+      message: "Failed to Delete s the mechanic.",
     };
   }
 };
@@ -111,22 +145,38 @@ const adminLogout = async () => {
   }
 };
 
-
-const addService = async (values:InewService ) => {
-  try{
-    const result = await Api.post(adminRoutes.addNewService,{values});
-    if(result ){
-      console.log("logout success from the admin.ts");
+const addService = async (values: InewService) => {
+  try {
+    const result = await Api.post(adminRoutes.addNewService, { values });
+    if (result) {
+      console.log("Service added successfully");
+      return result;
     }
-  }catch(error){
+  } catch (error) {
     errorHandler(error as Error);
   }
-}
+};
+
+const getAllServices = async () => {
+  try {
+    console.log("entered in the admin.ts");
+    const result = await Api.get(adminRoutes.getAllServices);
+    if (result) {
+      return result;
+    }
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
 
 export {
   adminLogin,
   adminLogout,
   addService,
+  getAllServices,
+  listUnlistService,
+  deleteService,
   getAllUsers,
   blockUser,
   getAllMechanics,

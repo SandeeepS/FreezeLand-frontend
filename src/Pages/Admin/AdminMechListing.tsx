@@ -19,7 +19,7 @@ const AdminMechListing: React.FC = () => {
     { id: "name", label: "Name", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
     { id: "isBlocked", label: "Status", minWidth: 170, align: "right", format: (value: boolean) => (value ? "Blocked" : "Active") },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" }
+    { id: "actions", label: "Actions", minWidth: 150, align: "right"}
   ];
 
 
@@ -45,7 +45,7 @@ const AdminMechListing: React.FC = () => {
   ) => {
     setMech((prevMechs) =>
       isDeleted
-        ? prevMechs.filter((mech) => mech._id !== id) // Remove deleted mech
+        ? prevMechs.filter((mech) => mech._id !== id)
         : prevMechs.map((mech) =>
             mech._id === id ? { ...mech, isBlocked } : mech
           )
@@ -59,9 +59,9 @@ const AdminMechListing: React.FC = () => {
         <TableCommon
          columns={columns}
           data={mechs}
-          updateUserStatus={updateMechStatus}
+          updateStatus={updateMechStatus}
           blockUnblockFunciton={blockMech}
-          deleteUser={deleteMech}
+          deleteFunction={deleteMech}
         />
       </div>
     </div>

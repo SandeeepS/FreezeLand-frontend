@@ -15,16 +15,17 @@ interface Column {
   id: string;
   label: string;
   minWidth?: number;
-  align?: "right" | "left" | "center";
-  format?:undefined
+  align?: string;
+  format?:  "Active" | "Blocked";
 }
 
 interface Data {
   _id: string;
   name: string;
-  email: string;
-  isBlocked: boolean;
+  email?: string;
+  isBlocked?: boolean;
   isDeleted: boolean;
+  status?: boolean;
 }
 
 export interface BlockingResponse {
@@ -40,21 +41,21 @@ export interface DeletingResponse {
 interface TableCommonProps {
   columns: Column[];
   data: Data[];
-  updateUserStatus: (
+  updateStatus: (
     id: string,
     isBlocked: boolean,
     isDeleted: boolean
   ) => void;
   blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
-  deleteUser: (id: string) => Promise<DeletingResponse>;
+  deleteFunction: (id: string) => Promise<DeletingResponse>;
 }
 
 const TableCommon: React.FC<TableCommonProps> = ({
   columns,
   data,
-  updateUserStatus,
+  updateStatus,
   blockUnblockFunciton,
-  deleteUser,
+  deleteFunction,
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -93,7 +94,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
         if (result.isConfirmed) {
           blockUnblockFunciton(id).then((result) => {
             if (result?.success) {
-              updateUserStatus(id, !isCurrentlyBlocked, false);
+              updateStatus(id, !isCurrentlyBlocked, false);
               Swal.fire({
                 title: "Success!",
                 text: "",
@@ -125,9 +126,9 @@ const TableCommon: React.FC<TableCommonProps> = ({
         confirmButtonText: "Yes!",
       }).then((result) => {
         if (result.isConfirmed) {
-          deleteUser(id).then((result) => {
+          deleteFunction(id).then((result) => {
             if (result?.success) {
-              updateUserStatus(id, isCurrentlyDeleted, true);
+              updateStatus(id, isCurrentlyDeleted, true);
               Swal.fire({
                 title: "success!",
                 text: "",
@@ -165,7 +166,10 @@ const TableCommon: React.FC<TableCommonProps> = ({
               .map((datas) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
                   <TableCell>{datas.name}</TableCell>
-                  <TableCell>{datas.email}</TableCell>
+                   {
+                    datas.email? <TableCell>{datas.email}</TableCell> : ""
+
+                   }
                   <TableCell align="right">
                     {datas.isBlocked ? "Blocked" : "Active"}
                   </TableCell>

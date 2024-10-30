@@ -69,9 +69,9 @@ const AdminUserListing: React.FC = () => {
         <TableCommon
           columns={columns}
           data={data}
-          updateUserStatus={updateUserStatus}
+          updateStatus={updateUserStatus}
           blockUnblockFunciton={blockUser}
-          deleteUser={deleteUser}
+          deleteFunction={deleteUser}
         />
       </div>
     </div>
