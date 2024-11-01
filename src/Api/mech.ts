@@ -1,8 +1,15 @@
 import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
 import { FormData } from "../Pages/Mechanic/MechanicSignupPage";
+import errorHandler from "./errorHandler";
 
-const mechSignup = async ({ name, phone, email, password }: FormData) => {
+const mechSignup = async ({
+  name,
+  phone,
+  email,
+  password,
+  cpassword,
+}: FormData) => {
   try {
     console.log("Entered in mech signup ");
     const result = await Api.post(mechRoutes.signup, {
@@ -10,11 +17,13 @@ const mechSignup = async ({ name, phone, email, password }: FormData) => {
       phone,
       email,
       password,
+      cpassword,
     });
     console.log("result of api post", result);
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 const mechLogin = async (email: string, password: string) => {
@@ -23,7 +32,8 @@ const mechLogin = async (email: string, password: string) => {
     console.log("result reached in the frontend ", result);
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -33,7 +43,8 @@ const verifyMechOtp = async (otpnum: string) => {
     const result = await Api.post(mechRoutes.veryfyOtp, { otp });
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -41,14 +52,16 @@ const forgotPasswordMech = async (email: string) => {
   try {
     return await Api.post(mechRoutes.forgotPasswordMech, { email });
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 const forgotVerifyOtpMech = async (otp: string) => {
   try {
     return await Api.post(mechRoutes.forgotVerifyOtpMech, { otp });
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 const updateNewPasswordMech = async (password: string, userId: string) => {
@@ -58,7 +71,8 @@ const updateNewPasswordMech = async (password: string, userId: string) => {
       userId,
     });
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -66,7 +80,8 @@ const resendMechOtp = async () => {
   try {
     await Api.get(mechRoutes.resendOtp);
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -78,7 +93,8 @@ const mLogout = async () => {
       return result;
     }
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 

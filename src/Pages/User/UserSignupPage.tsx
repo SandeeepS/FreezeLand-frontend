@@ -46,11 +46,11 @@ const UserSignupPage: React.FC = () => {
         try {
           const result = await signup(formData);
           console.log("resutl is",result)
-          if (result) {
+          if (result){
             navigate("/otp-page");
           }
-          console.log("result fron the signup form is ", result);
-        } catch (error) {
+          console.log("result from the signup form is",result);
+        } catch (error){
           console.log(error);
         }
       };

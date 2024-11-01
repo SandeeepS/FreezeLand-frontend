@@ -8,8 +8,9 @@ export interface FormData {
   email: string;
   phone: string;
   password: string;
-  confirmPassword?: string;
+  cpassword: string;
 }
+
 interface initialVal {
   name: string;
   email: string;
@@ -32,15 +33,18 @@ const MechanicSignupPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: SignupValidation,
     onSubmit: (values) => {
-      const formData = {
+
+      const formData : FormData= {
         name: values.name,
         email: values.email,
         phone: values.phone,
         password: values.password,
-        confirmPassword: values.cpassword,
+        cpassword: values.cpassword,
       };
+
       const hanSub = async () => {
         try {
+          
           const result = await mechSignup(formData);
           if (result) {
             navigate("/mech/veryfy-otp");
