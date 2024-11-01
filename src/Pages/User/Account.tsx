@@ -13,7 +13,7 @@ const Account: React.FC = () => {
       <Header />
       <AccountHeader />
 
-      <div className="flex flex-row w-full bg-slate-200">
+      <div className="flex pt-16 m-auto flex-row w-full bg-slate-200">
         <div className="bg-white ml-4 mt-4 mb-4  rounded-lg basis-1/4">
           <AccountSidebar />
         </div>

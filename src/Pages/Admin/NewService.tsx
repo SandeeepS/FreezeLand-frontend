@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Formik } from "formik";
 import AdminHeader from "../../components/Admin/AdminHeader";
 import { ServiceListingValidation } from "../../components/Common/Validations";
@@ -7,19 +7,37 @@ import { useNavigate } from "react-router-dom";
 
 export interface InewService {
   name: string;
-  discription: string; 
+  discription: string;
 }
 
 const NewService: React.FC = () => {
   const navigate = useNavigate();
+  const [isFormDirty, setIsFormDirty] = useState(false);
+
   const handleSubmit = async (values: InewService) => {
     console.log("Submitted values:", values);
     const result = await addService(values);
-    if(result){
-       navigate('/admin/services')
+    if (result) {
+      setIsFormDirty(false); // Reset dirty flag on successful submit
+      navigate('/admin/services');
     }
   };
 
+  // Add event listener to prevent page unload with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isFormDirty) {
+        event.preventDefault();
+        event.returnValue = ""; // Show a confirmation dialog
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isFormDirty]);
 
   return (
     <div>
@@ -36,7 +54,11 @@ const NewService: React.FC = () => {
           {({ handleSubmit, handleChange, handleBlur, values, errors, touched }) => (
             <form
               className="bg-white shadow-md rounded-lg p-8 w-full max-w-lg"
-              onSubmit={handleSubmit}
+              onSubmit={(e) => {
+                setIsFormDirty(false); // Reset dirty flag on submit
+                handleSubmit(e);
+              }}
+              onChange={() => setIsFormDirty(true)} // Mark form as dirty on change
             >
               <h2 className="text-2xl font-bold text-center mb-6">New Service</h2>
               <div className="mb-4">
@@ -50,7 +72,10 @@ const NewService: React.FC = () => {
                   id="name"
                   type="text"
                   value={values.name}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    setIsFormDirty(true);
+                  }}
                   onBlur={handleBlur}
                   placeholder="Enter service name"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${
@@ -72,7 +97,10 @@ const NewService: React.FC = () => {
                 <textarea
                   id="discription"
                   value={values.discription}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    handleChange(e);
+                    setIsFormDirty(true);
+                  }}
                   onBlur={handleBlur}
                   placeholder="Enter a brief description of the service"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${

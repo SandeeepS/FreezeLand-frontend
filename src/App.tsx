@@ -33,6 +33,7 @@ const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
 const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
 const NewService = lazy(() => import("./Pages/Admin/NewService"));
 const EditServices = lazy(() => import("./Pages/Admin/EditService"))
+const Service = lazy(() => import("./Pages/User/Service"))
 
 const MechanicLoginPage = lazy(
   () => import("./Pages/Mechanic/MechanicLoginPage")
@@ -73,6 +74,7 @@ function App() {
               <Route path="/user/account/showAllAddress" element={<AllAddress/>}/>
               <Route path="/user/account/editAddress/:id" element={<EditAddress/>}/>
             </Route>
+            <Route path="/user/service/:id" element={<Service/>}/>
           </Route>
 
           {/*Admin Routes*/}

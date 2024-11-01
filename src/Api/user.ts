@@ -4,7 +4,7 @@ import userRoutes from "../Services/Endpoints/userEndPoints";
 import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 
-const signup = async ({ name, phone, email, password }: FormData) => {
+const signup = async ({ name, phone, email, password,cpassword }: FormData) => {
   try {
     console.log("Entered in signup ");
     const result = await Api.post(userRoutes.signup, {
@@ -12,11 +12,13 @@ const signup = async ({ name, phone, email, password }: FormData) => {
       phone,
       email,
       password,
+      cpassword
     });
     console.log("result of api post", result);
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error)
   }
 };
 
@@ -59,6 +61,7 @@ const verifyOtp = async (otpnum: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
+    errorHandler(error as Error)
   }
 };
 
@@ -66,28 +69,32 @@ const forgotPassword = async (email: string) => {
   try {
     return await Api.post(userRoutes.forgotPassword, { email });
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error)
   }
 };
 const forgotVerifyOtp = async (otp: string) => {
   try {
     return await Api.post(userRoutes.forgotVerifyOtp, { otp });
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 const updateNewPassword = async (password: string, userId: string) => {
   try {
     return await Api.put(userRoutes.updateNewPassword, { password, userId });
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 const resendOtp = async () => {
   try {
     await Api.get(userRoutes.resendOtp);
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error)
   }
 };
 
@@ -96,6 +103,7 @@ const logout = async () => {
     return await Api.get(userRoutes.logout);
   } catch (error) {
     console.log("error in the logout in the user.ts", error as Error);
+    errorHandler(error as Error)
   }
 };
 
@@ -105,6 +113,7 @@ const getProfile = async () => {
     return result;
   } catch (error) {
     console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -119,7 +128,8 @@ const EditUserDetails = async ({ _id, name, phone }: FormData) => {
     console.log("result from the backend is ", result);
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -129,7 +139,8 @@ const AddUserAddress = async (_id: string | undefined,values: AddAddress) => {
     const result = await Api.post(userRoutes.addAddress, { _id, values });
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
   }
 };
 
@@ -138,7 +149,8 @@ const EditExistAddress = async(_id:string | undefined , addressId : string | und
     const result = await Api.put(userRoutes.editAddress,{_id, addressId,values});
     return result;
   }catch(error){
-    console.log(error as Error);
+    console.log(error);
+    errorHandler(error as Error);
 
   }
 }
@@ -154,7 +166,8 @@ const setDefaultAddress = async (
     });
     return result;
   } catch (error) {
-    console.log(error as Error);
+    console.log(error );
+    errorHandler(error as Error);
   }
 };
 

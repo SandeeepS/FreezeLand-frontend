@@ -6,11 +6,11 @@ import OAuth from "../../components/Common/OAuth";
 
 export interface FormData {
   _id?:string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
-  confirmPassword?: string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  cpassword: string;
 }
 interface initialVal {
   name: string;
@@ -34,16 +34,18 @@ const UserSignupPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: SignupValidation,
     onSubmit: (values) => {
-      const formData = {
+      const formData:FormData = {
         name: values.name,
         email: values.email,
         phone: values.phone,
         password: values.password,
-        confirmPassword: values.cpassword,
+        cpassword: values.cpassword,
       };
+      console.log("checking the conformpasswod from the form data ",formData.cpassword,formData.password);
       const hanSub = async () => {
         try {
           const result = await signup(formData);
+          console.log("resutl is",result)
           if (result) {
             navigate("/otp-page");
           }

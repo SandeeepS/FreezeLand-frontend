@@ -5,7 +5,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div>
       <AdminHeader heading={heading} />
-      <div className="w-full ml-16 md:ml-56 h-screen bg-[#DFECF8]">
+      <div className="w-full  h-screen bg-[#DFECF8]">
         <h1>Admin dashboard</h1>
       </div>
     </div>

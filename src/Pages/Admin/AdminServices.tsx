@@ -71,16 +71,16 @@ const AdminServices: React.FC = () => {
 
   return (
     <div className=" flex flex-col">
-      <div>
+      <div className="fixed top-0 w-full">
         <AdminHeader heading={heading} />
       </div>
-      <div className="flex justify-end mx-10 my-5">
+      <div className="flex justify-end mx-10 ">
         <Button className="" onClick={handleClick} variant="contained">
           Add new Service
         </Button>
       </div>
 
-      <div className="flex justify-center items-center mx-10 pt-7 h-screen">
+      <div className="flex justify-center items-center mx-10  h-screen">
         <TableCommon
           columns={columns}
           data={services}
