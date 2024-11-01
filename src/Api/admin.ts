@@ -147,6 +147,7 @@ const adminLogout = async () => {
 
 const addService = async (values: InewService) => {
   try {
+    console.log("values from the addService from the admin.ts file ",values);
     const result = await Api.post(adminRoutes.addNewService, { values });
     if (result) {
       console.log("Service added successfully");
