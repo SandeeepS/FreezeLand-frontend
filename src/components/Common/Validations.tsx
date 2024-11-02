@@ -79,4 +79,5 @@ export const AddressValidation = Yup.object({
 export const ServiceListingValidation = Yup.object({
   name: Yup.string().min(3).required("Service name is required"),
   discription: Yup.string().min(3).required("Description is required"),
+  image: Yup.string().required("Image is required"),
 })

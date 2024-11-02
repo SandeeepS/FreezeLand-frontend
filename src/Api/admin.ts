@@ -115,7 +115,6 @@ const deleteMech = async (id: string): Promise<DeletingResponse> => {
   }
 };
 
-
 const deleteService = async (id: string): Promise<DeletingResponse> => {
   try {
     console.log("enterd in the admints for deleting service");
@@ -147,7 +146,7 @@ const adminLogout = async () => {
 
 const addService = async (values: InewService) => {
   try {
-    console.log("values from the addService from the admin.ts file ",values);
+    console.log("values from the addService from the admin.ts file ", values);
     const result = await Api.post(adminRoutes.addNewService, { values });
     if (result) {
       console.log("Service added successfully");
@@ -171,28 +170,30 @@ const getAllServices = async () => {
   }
 };
 
-const getService = async (id:string | undefined) => {
-   try{
-      console.log("entered in the getService funciton in the admin ts",id);
-      const result = await Api.get(`${adminRoutes.getService}${id}`);
-      if(result){
-        return result;
-      }
-   }catch(error){
+const getService = async (id: string | undefined) => {
+  try {
+    console.log("entered in the getService funciton in the admin ts", id);
+    const result = await Api.get(`${adminRoutes.getService}${id}`);
+    if (result) {
+      return result;
+    }
+  } catch (error) {
     console.log(error);
-    errorHandler(error as Error)
-   }
-}
-
-const editExistService = async(_id:string | undefined , values : InewService) => {
-  try{
-    const result = await Api.put(adminRoutes.editExistService,{_id,values});
-    return result;
-  }catch(error){
-    console.log(error as Error);
-
+    errorHandler(error as Error);
   }
-}
+};
+
+const editExistService = async (
+  _id: string | undefined,
+  values: InewService
+) => {
+  try {
+    const result = await Api.put(adminRoutes.editExistService, { _id, values });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+  }
+};
 
 export {
   adminLogin,
