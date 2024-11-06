@@ -83,6 +83,25 @@ const listUnlistService = async (id: string): Promise<BlockingResponse> => {
     };
   }
 };
+
+//listing the devices and unlisting the devices
+const listUnlistDevices = async (id: string): Promise<BlockingResponse> => {
+  try {
+    console.log("entered in the listUnlistDevices");
+    const response = await Api.put(`${adminRoutes.listUnlistDevices}${id}`);
+    return {
+      success: response.data.success,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.log(error as Error);
+    return {
+      success: false,
+      message: "Failed to List / unlist the Devices , admin.ts",
+    };
+  }
+};
+
 const deleteUser = async (id: string): Promise<DeletingResponse> => {
   try {
     const response = await Api.put(`${adminRoutes.deleteUser}${id}`);
@@ -132,6 +151,24 @@ const deleteService = async (id: string): Promise<DeletingResponse> => {
   }
 };
 
+
+const deleteDevice = async (id: string): Promise<DeletingResponse> => {
+  try {
+    console.log("enterd in the admints for deleting device");
+    const response = await Api.put(`${adminRoutes.deleteDevice}${id}`);
+    return {
+      success: response.data.success,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.log(error as Error);
+    return {
+      success: false,
+      message: "Failed to Delete  the device.",
+    };
+  }
+};
+
 const adminLogout = async () => {
   try {
     const result = await Api.get(adminRoutes.logout);
@@ -159,7 +196,10 @@ const addService = async (values: InewService) => {
 
 const addDevice = async (name: string) => {
   try {
-    console.log("Device name  from the addService from the admin.ts file ", name);
+    console.log(
+      "Device name  from the addService from the admin.ts file ",
+      name
+    );
     const result = await Api.post(adminRoutes.addNewDevice, { name });
     if (result) {
       console.log("Divice  added successfully");
@@ -170,11 +210,23 @@ const addDevice = async (name: string) => {
   }
 };
 
-
 const getAllServices = async () => {
   try {
     console.log("entered in the admin.ts");
     const result = await Api.get(adminRoutes.getAllServices);
+    if (result) {
+      return result;
+    }
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
+const getAllDevices = async () => {
+  try {
+    console.log("entered in the admin.ts for accessing the all devices ");
+    const result = await Api.get(adminRoutes.getAllDevices);
     if (result) {
       return result;
     }
@@ -216,9 +268,12 @@ export {
   addDevice,
   getAllServices,
   getService,
+  getAllDevices,
   listUnlistService,
+  listUnlistDevices,
   editExistService,
   deleteService,
+  deleteDevice,
   getAllUsers,
   blockUser,
   getAllMechanics,
