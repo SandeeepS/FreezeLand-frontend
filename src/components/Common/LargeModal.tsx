@@ -45,6 +45,7 @@ const LargeModal: React.FC<ModalProps> = ({ image, isOpen, onClose,onCropedImage
 
         // Convert canvas to base64 image
         const croppedImage = imageCanvas.toDataURL("image/jpeg");
+        console.log("cropped image is ",croppedImage)
         onCropedImageBack(croppedImage); // Pass cropped image back to parent
       };
 

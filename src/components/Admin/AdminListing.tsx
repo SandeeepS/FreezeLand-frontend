@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { BsFillDeviceSsdFill } from "react-icons/bs";
+
 import { FaUsers } from "react-icons/fa6";
 import { GiMechaHead } from "react-icons/gi";
 import { GrServices } from "react-icons/gr";
@@ -56,6 +58,8 @@ const AdminListing: React.FC = () => {
     { name: "Users", icon: FaUsers, id: 2, path: "/admin/users" },
     { name: "Mechanics", icon: GiMechaHead, id: 3, path: "/admin/mech" },
     {name:"Services",icon:GrServices , id:4,path:"/admin/services"},
+    {name:"Devices",icon:BsFillDeviceSsdFill, id:5,path:"/admin/devices"},
+
   ];
 
   return (

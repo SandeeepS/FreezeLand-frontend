@@ -78,7 +78,7 @@ const AdminServices: React.FC = () => {
         <Button className="" onClick={handleClick} variant="contained">
           Add new Service
         </Button>
-      </div>
+      </div> 
 
       <div className="flex justify-center items-center mx-10  h-screen">
         <TableCommon

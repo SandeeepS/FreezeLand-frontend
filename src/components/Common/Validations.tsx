@@ -81,3 +81,7 @@ export const ServiceListingValidation = Yup.object({
   discription: Yup.string().min(3).required("Description is required"),
   image: Yup.string().required("Image is required"),
 })
+
+export const DeviceListingValidation = Yup.object({
+  name : Yup.string().min(3).required("Device name is required")
+})

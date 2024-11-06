@@ -3,45 +3,42 @@ import Header from "../../components/User/Header";
 import { useParams } from "react-router-dom";
 import { getService } from "../../Api/admin";
 
-
 interface ServiceData {
-    _id: string;
-    name: string;
-    discription: string;
-    status: boolean;
-    isDeleted: boolean;
-  }
-
+  _id: string;
+  name: string;
+  discription: string;
+  status: boolean;
+  isDeleted: boolean;
+}
 
 const Service: React.FC = () => {
   const { id } = useParams();
   console.log("id from the userHome page is ", id);
-  const [service,setServices] = useState<ServiceData>();
+  const [service, setServices] = useState<ServiceData>();
+  
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try{
-                const result = await getService(id);
-                if(result){
-                    console.log("service detials form the backend is ",result?.data);
-                }
-                setServices(result?.data);
-            }catch(error){
-                console.log(error as Error);
-            }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getService(id);
+        if (result) {
+          console.log("service detials form the backend is ", result?.data);
         }
-        fetchData();
-    },[])
+        setServices(result?.data);
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
-    <>
+    <div className="flex flex-col">
       <Header />
-      <div className="flex justify-between m-12">
+      <div className="flex justify-between mt-40 mx-12 ">
         <div>
           <div>
-            <h1 className=" font-Metal text-xl">
-              {service?.discription}
-            </h1>
+            <h1 className=" font-Metal text-xl">{service?.discription}</h1>
           </div>
           <div>
             <h2>Image </h2>
@@ -161,7 +158,7 @@ const Service: React.FC = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

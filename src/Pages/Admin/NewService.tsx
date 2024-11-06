@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { storage } from "../../firebase";
+import {
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
+
 import { Formik } from "formik";
 import AdminHeader from "../../components/Admin/AdminHeader";
 import { ServiceListingValidation } from "../../components/Common/Validations";
@@ -16,11 +23,32 @@ export interface InewService {
 const NewService: React.FC = () => {
   const navigate = useNavigate();
   const [isFormDirty, setIsFormDirty] = useState(false);
-  const [image, setImage] = useState<string | undefined>(undefined);
+  const [image, setImage] = useState<string>("");
   const [modalImage, setModalImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const imageName = "image";
+
+  async function convertBlobToBase64(blobUrl: string) : Promise<string>{
+    const blob = await fetch(blobUrl).then((response) => response.blob());
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob); // This will give you base64 encoded image
+    });
+  }
 
   const handleSubmit = async (values: InewService) => {
+    const storageRef = ref(storage, `ServiceImages/${imageName}`); // imageName can be any unique identifier
+    const base64Image = await convertBlobToBase64(image); // image is your blob URL
+
+    // Assume `base64String` is your Base64 image string, e.g., "data:image/jpeg;base64,..."
+    await uploadString(storageRef, base64Image, "data_url");
+    const downloadURL = await getDownloadURL(storageRef);
+
+
+    values.image = downloadURL;
+    console.log("values for adding new Service is ", values);
     const result = await addService(values);
     if (result) {
       setIsFormDirty(false);
@@ -48,8 +76,7 @@ const NewService: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       const newImage = URL.createObjectURL(event.target.files[0]);
       setFieldValue("image", newImage);
-
-      setImage(undefined); // Clear previous image
+      setImage(""); // Clear previous image
       setTimeout(() => setImage(newImage), 0); // Update with new image
     }
   };

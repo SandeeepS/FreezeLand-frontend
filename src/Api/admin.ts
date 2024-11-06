@@ -157,6 +157,20 @@ const addService = async (values: InewService) => {
   }
 };
 
+const addDevice = async (name: string) => {
+  try {
+    console.log("Device name  from the addService from the admin.ts file ", name);
+    const result = await Api.post(adminRoutes.addNewDevice, { name });
+    if (result) {
+      console.log("Divice  added successfully");
+      return result;
+    }
+  } catch (error) {
+    errorHandler(error as Error);
+  }
+};
+
+
 const getAllServices = async () => {
   try {
     console.log("entered in the admin.ts");
@@ -199,6 +213,7 @@ export {
   adminLogin,
   adminLogout,
   addService,
+  addDevice,
   getAllServices,
   getService,
   listUnlistService,

@@ -32,8 +32,11 @@ const AdminUserListing = lazy(() => import("./Pages/Admin/AdminUserListing"));
 const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
 const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
 const NewService = lazy(() => import("./Pages/Admin/NewService"));
+
+const AdminDeviceListing = lazy(() => import("./Pages/Admin/AdminDeviceListing"));
 const EditServices = lazy(() => import("./Pages/Admin/EditService"))
 const Service = lazy(() => import("./Pages/User/Service"))
+const AddNewDevice = lazy(() => import("./components/Admin/AddNewDevice"));
 
 const MechanicLoginPage = lazy(
   () => import("./Pages/Mechanic/MechanicLoginPage")
@@ -87,9 +90,11 @@ function App() {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUserListing />} />
               <Route path="/admin/mech" element={<AdminMechListing />} />
+              <Route path="/admin/devices" element={<AdminDeviceListing/>} />
               <Route path="/admin/services" element={<AdminServices />} />
               <Route path="/admin/addNewService" element={<NewService />} />
               <Route path="/admin/editService/:id" element={<EditServices/>}/>
+              <Route path="/admin/addNewDevice" element={<AddNewDevice/>} />
             </Route>
           </Route>
 

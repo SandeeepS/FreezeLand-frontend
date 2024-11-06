@@ -7,6 +7,7 @@ const adminRoutes = {
   deleteUser:"/admin/users/delete/",
   deleteMech:"/admin/mech/delete/",
   addNewService:"/admin/addNewService",
+  addNewDevice:"/admin/addNewDevice",
   getAllServices:"/admin/getAllServices",
   getService:"/admin/getService/",
   listUnlistServices:"/admin/listUnlistServices/",
