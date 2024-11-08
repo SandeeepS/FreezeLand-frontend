@@ -6,6 +6,8 @@ import { FiMapPin } from "react-icons/fi";
 import { getProfile } from "../../Api/user";
 import { Card, CardContent, Typography } from "@mui/material";
 import { AddAddress } from "../../interfaces/AddAddress";
+const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+
 
 interface ServiceData {
   _id: string;
@@ -20,6 +22,7 @@ const Service: React.FC = () => {
   console.log("id from the userHome page is ", id);
   const [service, setServices] = useState<ServiceData>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
+  const [locationName,setLocationName] = useState(null);
   const [userProfile, setUserProfile] = useState("");
   const [defaultAddress, setDefaultAddress] = useState({});
 
@@ -61,8 +64,40 @@ const Service: React.FC = () => {
     fetchData();
   }, [id]);
 
-  const handleLocationClick = () => {
-    setShowLocationOptions(!showLocationOptions);
+   // Handle location fetching
+   const handleFetchLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+          );
+          const data = await response.json();
+          if (data.results && data.results.length > 0) {
+            setLocationName(data.results[0].formatted_address);
+          } else {
+            console.log("No results found for location");
+          }
+        } catch (error) {
+          console.error("Error fetching location name:", error);
+        }
+      },
+      (error) => {
+        console.error("Error fetching location:", error);
+      }
+    );
+  };
+
+   // Handle primary button click to show location options
+   const handleLocationClick = () => {
+    setShowLocationOptions(true);
+  };
+
+  // Remove location data
+  const handleRemoveLocation = () => {
+    setLocationName(null);
+    setShowLocationOptions(false);
   };
 
   return (
@@ -198,27 +233,38 @@ const Service: React.FC = () => {
                 />
               </div>
 
-              {/* Current Location Button */}
-              <div className="w-full px-3 mb-6 my-5">
+           {/* Location Button and Options */}
+           <div className="w-full px-3 mb-6 my-5">
+              <button
+                type="button"
+                onClick={handleLocationClick}
+                className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
+              >
+                {locationName ? `Location: ${locationName}` : "Please enter your location"}
+              </button>
+              
+              {showLocationOptions && !locationName && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={handleFetchLocation}
+                    className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
+                  >
+                    <FiMapPin className="mr-2" /> Use Current Location
+                  </button>
+                </div>
+              )}
+
+              {locationName && (
                 <button
                   type="button"
-                  onClick={handleLocationClick}
-                  className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
+                  onClick={handleRemoveLocation}
+                  className="mt-2 flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none w-full"
                 >
-                  <FiMapPin className="mr-2" /> Please enter your location
+                  Remove Location
                 </button>
-                {showLocationOptions && (
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={() => console.log("Using current location")}
-                      className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none  w-full"
-                    >
-                      <FiMapPin className="mr-2" /> Use Current Location
-                    </button>
-                  </div>
-                )}
-              </div>
+              )}
+            </div>
             </div>
           </form>
         </div>
