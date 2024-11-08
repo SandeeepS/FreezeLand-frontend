@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/User/Header";
 import { useParams } from "react-router-dom";
 import { getService } from "../../Api/admin";
+import { FiMapPin } from "react-icons/fi";
+import { getProfile } from "../../Api/user";
+import { Card, CardContent, Typography } from "@mui/material";
+import { AddAddress } from "../../interfaces/AddAddress";
 
 interface ServiceData {
   _id: string;
@@ -15,22 +19,51 @@ const Service: React.FC = () => {
   const { id } = useParams();
   console.log("id from the userHome page is ", id);
   const [service, setServices] = useState<ServiceData>();
-  
+  const [showLocationOptions, setShowLocationOptions] = useState(false);
+  const [userProfile, setUserProfile] = useState("");
+  const [defaultAddress, setDefaultAddress] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getService(id);
-        if (result) {
-          console.log("service detials form the backend is ", result?.data);
+        const [serviceResult, profileResult] = await Promise.all([
+          getService(id),
+          getProfile(),
+        ]);
+        if (serviceResult) {
+          console.log(
+            "Service result from the backend is ",
+            serviceResult.data
+          );
+          setServices(serviceResult.data.data);
         }
-        setServices(result?.data);
+
+        if (profileResult) {
+          const profileData = profileResult.data.data.data;
+          console.log("Profile reuslt from the backend", profileData);
+          setUserProfile(profileResult.data.data.data);
+
+          const defaultAdd = profileData.address.find(
+            (addr: AddAddress) => addr._id == profileData.defaultAddress
+          );
+          if (!defaultAdd) {
+            console.log("Default address not found, check if IDs match.");
+          } else {
+            console.log("Default address found:", defaultAdd);
+          }
+          setDefaultAddress(defaultAdd);
+        }
       } catch (error) {
         console.log(error as Error);
       }
     };
+
     fetchData();
-  }, []);
+  }, [id]);
+
+  const handleLocationClick = () => {
+    setShowLocationOptions(!showLocationOptions);
+  };
 
   return (
     <div className="flex flex-col">
@@ -52,65 +85,87 @@ const Service: React.FC = () => {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-first-name"
                 >
-                  First Name
+                  Name
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   id="grid-first-name"
                   type="text"
-                  placeholder="Jane"
+                  value={userProfile.name}
                 />
                 <p className="text-red-500 text-xs italic">
                   Please fill out this field.
                 </p>
               </div>
-              <div className="w-full md:w-1/2 px-3">
+              {/* <div className="w-full md:w-1/2 px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-last-name"
+                  htmlFor="grid-device"
                 >
-                  Last Name
+                  Device
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-last-name"
+                  id="grid-device"
                   type="text"
-                  placeholder="Doe"
+                  placeholder="Device name provide dynamic"
                 />
-              </div>
+              </div> */}
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-password"
+                  htmlFor="grid-complaint"
                 >
-                  Password
+                  Complaint Description
                 </label>
-                <input
+                <textarea
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-password"
-                  type="password"
-                  placeholder="******************"
-                />
+                  id="grid-complaint"
+                  placeholder="Describe your complaint here..."
+                  rows={4}
+                ></textarea>
                 <p className="text-gray-600 text-xs italic">
-                  Make it as long and as crazy as you'd like
+                  Provide a detailed description of the complaint.
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap -mx-3 mb-2">
+
+            {/**provide the default address  */}
+            <label
+              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              htmlFor="grid-complaint"
+            >
+              Current Address
+            </label>
+            {defaultAddress && (
+              <Card sx={{ maxWidth: 1000 }} className="flex justify-between">
+                <CardContent>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    Name: {defaultAddress?.name}
+                    <br />
+                    Email: {defaultAddress?.email}
+                    <br />
+                  </Typography>
+                </CardContent>
+              </Card>
+            )}
+            {/**provide the default address  */}
+
+            <div className="flex flex-wrap -mx-3 mb-2 my-5">
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-city"
                 >
-                  City
+                  District
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="grid-city"
                   type="text"
-                  placeholder="Albuquerque"
+                  value={defaultAddress.district}
                 />
               </div>
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -121,23 +176,11 @@ const Service: React.FC = () => {
                   State
                 </label>
                 <div className="relative">
-                  <select
-                    className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    id="grid-state"
-                  >
-                    <option>New Mexico</option>
-                    <option>Missouri</option>
-                    <option>Texas</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg
-                      className="fill-current h-4 w-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </div>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    type=""
+                    value={defaultAddress.state}
+                  />
                 </div>
               </div>
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -145,14 +188,36 @@ const Service: React.FC = () => {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-zip"
                 >
-                  Zip
+                  Pin
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="grid-zip"
                   type="text"
-                  placeholder="90210"
+                  value={defaultAddress.pin}
                 />
+              </div>
+
+              {/* Current Location Button */}
+              <div className="w-full px-3 mb-6 my-5">
+                <button
+                  type="button"
+                  onClick={handleLocationClick}
+                  className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
+                >
+                  <FiMapPin className="mr-2" /> Please enter your location
+                </button>
+                {showLocationOptions && (
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => console.log("Using current location")}
+                      className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none  w-full"
+                    >
+                      <FiMapPin className="mr-2" /> Use Current Location
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </form>

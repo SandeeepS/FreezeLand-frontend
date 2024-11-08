@@ -80,7 +80,7 @@ const AdminDeviceListing: React.FC = () => {
       </div>
       <div className="flex justify-end mx-10 ">
         <Button className="" onClick={handleClick} variant="contained">
-          Add new Service
+          Add new Device
         </Button>
       </div> 
 
