@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { storage } from "../../firebase";
-import {
-  ref,
-  uploadString,
-  getDownloadURL,
-} from "firebase/storage";
+import imageCompression from "browser-image-compression";
 
 import { Formik } from "formik";
 import AdminHeader from "../../components/Admin/AdminHeader";
@@ -26,10 +21,32 @@ const NewService: React.FC = () => {
   const [image, setImage] = useState<string>("");
   const [modalImage, setModalImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const imageName = "image";
 
-  async function convertBlobToBase64(blobUrl: string) : Promise<string>{
-    const blob = await fetch(blobUrl).then((response) => response.blob());
+  const compressImage = async (image:File) => {
+    const options = {
+      maxSizeMB: 0.4 , // Limit file size to 1MB
+      maxWidthOrHeight: 800,
+      useWebWorker: true, // Limit resolution
+    };
+    try {
+      const compressedFile = await imageCompression(image, options);
+      return compressedFile;
+    } catch (error) {
+      console.error("Error during image compression", error);
+    }
+  };
+
+  async function convertBlobToBase64(blobUrl: string | Blob) : Promise<string>{
+    let blob: Blob;
+
+    if (typeof blobUrl === "string") {
+      // If blobUrl is a URL, fetch the blob
+      blob = await fetch(blobUrl).then((response) => response.blob());
+    } else {
+      // If blobUrl is already a Blob/File, use it directly
+      blob = blobUrl;
+    }
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result as string);
@@ -38,16 +55,23 @@ const NewService: React.FC = () => {
     });
   }
 
+
   const handleSubmit = async (values: InewService) => {
-    const storageRef = ref(storage, `ServiceImages/${imageName}`); // imageName can be any unique identifier
-    const base64Image = await convertBlobToBase64(image); // image is your blob URL
-
-    // Assume `base64String` is your Base64 image string, e.g., "data:image/jpeg;base64,..."
-    await uploadString(storageRef, base64Image, "data_url");
-    const downloadURL = await getDownloadURL(storageRef);
+    //craeting a change to pass the raw image to the backend 
+    const blob = await fetch(image).then((res) => res.blob());
+    const file = new File([blob], "image.jpg", { type: blob.type });
 
 
-    values.image = downloadURL;
+    const compressedImage = await compressImage(file)
+
+    if (!compressedImage) {
+      console.error("Compression failed");
+      return; // Stop further execution
+    }
+
+    const base64Image = await convertBlobToBase64(URL.createObjectURL(compressedImage));
+    values.image = base64Image;
+   
     console.log("values for adding new Service is ", values);
     const result = await addService(values);
     if (result) {

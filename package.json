@@ -19,6 +19,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@tanstack/react-table": "^8.20.5",
     "axios": "^1.7.7",
+    "browser-image-compression": "^2.0.2",
     "current-location-geo": "^1.1.5",
     "dotenv": "^16.4.5",
     "firebase": "^10.13.2",
