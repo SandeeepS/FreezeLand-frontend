@@ -8,6 +8,7 @@ interface ServiceData {
   discription: string;
   status: boolean;
   isDeleted: boolean;
+  image: string;
 }
 
 const ServiceList: React.FC = () => {
@@ -21,7 +22,7 @@ const ServiceList: React.FC = () => {
         if (result) {
           console.log(result.data);
           setServices(result?.data.data.services);
-          console.log(services);
+          console.log("all services are ", services);
         }
       } catch (error) {
         console.log(error as Error);
@@ -31,30 +32,41 @@ const ServiceList: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleClick = (_id:string) => {
-      console.log("clicked id is ",_id);
-      navigate(`/user/service/${_id}`);
-
-  }
+  const handleClick = (_id: string) => {
+    console.log("clicked id is ", _id);
+    navigate(`/user/service/${_id}`);
+  };
 
   return (
     <div className="w-full bg-white h-[600px]">
       <h1 className="text-5xl m-12">OUR SERVICES</h1>
       <div className="flex m-12 space-x-10 cursor-pointer">
         {services.map((service) => (
-          <div onClick={() => handleClick(service._id)} className="max-w-xs h-64 rounded overflow-hidden shadow-lg bg-[#078FDC]">
-            <img
-              className="w-full"
-              src="/src/Images/AC service.jpg"
-              alt="Sunset in the mountains"
-            />
-            <div className="flex items-center justify-center mt-2">
-              <h3 className=" text-xl mb-2 text-center">{service.name}</h3>
+          <div
+            onClick={() => handleClick(service._id)}
+            className="max-w-xs h-60 rounded overflow-hidden shadow-lg bg-[#078FDC] flex flex-col"
+          >
+            {service.image ? (
+              <img
+                className="w-full h-[85%] object-cover"
+                src={service.image}
+                alt={service.name} // Added alt text for accessibility
+              />
+            ) : (
+              <img
+                className="w-full h-[85%] object-cover"
+                src="/Images/AC service.jpg" // Correct path to the image
+                alt="Default service" // Added alt text for fallback image
+              />
+            )}
+
+            <div className="flex items-center justify-center mt-auto p-2 bg-[#078FDC]">
+              <h3 className="text-xl mb-2 text-center text-white">
+                {service.name}
+              </h3>
             </div>
           </div>
         ))}
-
-     
       </div>
     </div>
   );
