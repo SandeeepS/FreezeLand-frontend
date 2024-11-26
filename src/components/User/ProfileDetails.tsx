@@ -3,6 +3,7 @@ import AntarticaImage from "../../Images/Antartica.jpg";
 import { useAppSelector } from "../../App/store";
 import { getProfile } from "../../Api/user";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface userDetails {
   name: string;
@@ -16,6 +17,7 @@ const ProfileDetails: React.FC = () => {
   const { userData } = useAppSelector((state) => state.auth);
   console.log("User Details from the account side ", userData);
   const [userDetails, setUserDetails] = useState<userDetails | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -34,6 +36,11 @@ const ProfileDetails: React.FC = () => {
     };
     fetchUserDetails();
   }, []);
+
+
+  const editProfile = () => {
+      navigate('/user/account/profile')
+  }
   return (
     <>
       {userDetails ? (
@@ -55,13 +62,11 @@ const ProfileDetails: React.FC = () => {
                   <img className="" src="/src/Images/businessman.png" alt="" />
                 </div>
                 <div className="flex flex-row w-full items-baseline justify-between ">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2  w-full ">
+                  <button onClick={editProfile} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2  w-full ">
                     Edit
                   </button>
 
-                  <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2  w-full ">
-                    Remove
-                  </button>
+                
                 </div>
               </div>
             </div>
