@@ -53,7 +53,7 @@ const ProfileDetails: React.FC = () => {
               width: "100%",
               height: "100%",
             }}
-            className="grid grid-cols-6 col-span-2 justify-between bg-white rounded-tl-lg rounded-tr-lg items-center pt-5 text-xs uppercase font-[500] relative "
+            className="grid grid-cols-6 col-span-2 justify-between bg-white rounded-tl-lg rounded-tr-lg items-center pt-5 text-xs uppercase font-[500]  "
           >
             {/* Black Div */}
             <div className="col-end-8 col-span-2 flex justify-center items-center">
@@ -65,10 +65,9 @@ const ProfileDetails: React.FC = () => {
                   <button onClick={editProfile} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2  w-full ">
                     Edit
                   </button>
-
-                
                 </div>
               </div>
+              
             </div>
           </div>
           <div className="space-x-4  bg-white grid grid-cols-2 p-10">

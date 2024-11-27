@@ -13,7 +13,9 @@ const UserHomePage: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <div className="fixed top-0 left-0 w-full  z-10 ">
+        <Header />
+      </div>{" "}
       <div className="pt-32 m-auto">
         <CarousalComponent slides={slides} />
       </div>
