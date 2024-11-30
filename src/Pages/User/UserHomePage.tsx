@@ -2,7 +2,7 @@ import Header from "../../components/User/Header";
 import CarousalComponent from "../../components/User/CarousalComponent";
 import Promo1 from "../../components/User/Promo1";
 import ServiceList from "../../components/User/ServiceList";
-import Promo2 from "../../components/User/Promo2";
+import Promo2 from "../../components/User/WhyChooseUs";
 import Footer from "../../components/User/Footer";
 const UserHomePage: React.FC = () => {
   const slides = [
@@ -12,26 +12,26 @@ const UserHomePage: React.FC = () => {
   ];
 
   return (
-    <>
+    <div className="flex flex-col">
       <div className="fixed top-0 left-0 w-full  z-10 ">
         <Header />
       </div>{" "}
-      <div className="pt-32 m-auto">
+      <div className=" carosal-compment  lg:pt-4   ">
         <CarousalComponent slides={slides} />
       </div>
-      <>
+      <div>
         <Promo1 />
-      </>
-      <>
+      </div>
+      <div>
         <ServiceList />
-      </>
-      <>
+      </div>
+      <div>
         <Promo2 />
-      </>
-      <>
+      </div>
+      <div>
         <Footer />
-      </>
-    </>
+      </div>
+    </div>
   );
 };
 

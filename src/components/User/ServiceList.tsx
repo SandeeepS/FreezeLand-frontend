@@ -38,13 +38,13 @@ const ServiceList: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white h-[600px]">
-      <h1 className="text-5xl m-12">OUR SERVICES</h1>
-      <div className="flex m-12 space-x-10 cursor-pointer">
+    <div className="w-full bg-white ">
+      <h1 className="text-5xl m-12 ml-36 md:text-left  text-center ">OUR SERVICES</h1>
+      <div className=" flex-row m-28   cursor-pointer justify-center items-center md:flex ">
         {services.map((service) => (
           <div
             onClick={() => handleClick(service._id)}
-            className="max-w-xs h-60 rounded overflow-hidden shadow-lg bg-[#078FDC] flex flex-col"
+            className="max-w-xs m-4 h-60 rounded overflow-hidden shadow-lg bg-[#078FDC] flex flex-col"
           >
             {service.image ? (
               <img

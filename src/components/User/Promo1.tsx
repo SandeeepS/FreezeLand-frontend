@@ -1,9 +1,9 @@
 function Promo1() {
   return (
     <>
-      <div className="bg-slate-100  w-full h-[400px] flex ">
-        <div className="flex-grow">
-          <div className="pl-12 pt-20">
+      <div className="bg-slate-100  w-full md:flex">
+        <div className=" md:flex-grow">
+          <div className=" pt-20 flex flex-col justify-center items-center sm:pl-12 sm:flex-none">
             <h1 className="text-5xl">
               YOUR
               <span className="text-freeze-color font-Metal italic">
@@ -17,7 +17,7 @@ function Promo1() {
               </span>
             </h1>
           </div>
-          <div className="pt-12 pl-12">
+          <div className="pt-12  flex flex-col justify-center items-center sm:pl-12 sm:flex-none ">
             <h6>
               in the Montreal area, we provide a full-service interior <br></br>{" "}
               design and turnkey renovation solution. We handle every <br></br>{" "}
