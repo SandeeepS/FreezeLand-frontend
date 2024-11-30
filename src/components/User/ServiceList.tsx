@@ -39,7 +39,7 @@ const ServiceList: React.FC = () => {
 
   return (
     <div className="w-full bg-white ">
-      <h1 className="text-5xl m-12 ml-36 md:text-left  text-center ">OUR SERVICES</h1>
+      <h1 className="md:text-5xl text-3xl m-12 ml-36 md:text-left  text-center ">OUR SERVICES</h1>
       <div className=" flex-row m-28   cursor-pointer justify-center items-center md:flex ">
         {services.map((service) => (
           <div
