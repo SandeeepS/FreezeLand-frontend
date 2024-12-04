@@ -14,7 +14,7 @@ interface ServiceData {
 const ServiceList: React.FC = () => {
   const [services, setServices] = useState<ServiceData[]>([]);
   const navigate = useNavigate();
-
+  // function to fetch all the service data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
