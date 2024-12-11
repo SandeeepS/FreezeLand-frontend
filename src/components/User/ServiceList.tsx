@@ -30,7 +30,7 @@ const ServiceList: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  },[]);
 
   const handleClick = (_id: string) => {
     console.log("clicked id is ", _id);

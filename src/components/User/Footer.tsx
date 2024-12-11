@@ -4,7 +4,7 @@ function Footer() {
   return (
     <div className="bg-[#078FDC]">
       <div className="flex-col">
-        <div className="flex p-12  pb-0 justify-between md:px-64">
+        <div className="flex   pb-0 justify-between md:px-64">
           <div className="brand&comp_details  text-left flex-col  ">
             <div className="">
               <BrandName />
