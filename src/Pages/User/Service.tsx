@@ -8,7 +8,7 @@ import { Card, CardContent, Typography } from "@mui/material";
 import { AddAddress } from "../../interfaces/AddAddress";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
-interface ServiceData {
+interface ServiceData{
   _id: string;
   name: string;
   discription: string;
@@ -32,19 +32,18 @@ const Service: React.FC = () => {
           getService(id),
           getProfile(),
         ]);
-        if (serviceResult) {
+        if (serviceResult){
           console.log(
-            "Service result from the backend is ",
+            "Service result from the backend",
             serviceResult.data
           );
-          setServices(serviceResult.data.data);
+          setServices(serviceResult.data);
         }
 
         if (profileResult) {
           const profileData = profileResult.data.data.data;
-          console.log("Profile reuslt from the backend", profileData);
           setUserProfile(profileResult.data.data.data);
-
+          console.log("Profile reuslt from the backend",userProfile);
           const defaultAdd = profileData.address.find(
             (addr: AddAddress) => addr._id == profileData.defaultAddress
           );
@@ -112,7 +111,7 @@ const Service: React.FC = () => {
             <h1 className=" font-Metal text-xl">{service?.discription}</h1>
           </div>
           <div>
-            <h2>Image </h2>
+              <img src={service?.image} alt="" />
           </div>
         </div>
         <div>
