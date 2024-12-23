@@ -99,19 +99,19 @@ const Service: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <Header />
-      <div className="md:flex justify-evenly mt-20 mx-6 ">
-        <div className="">
+      <div className="md:flex justify-space mt-20 mx-6 w-full">
+        <div className="w-[40%]">
           <div className="mb-12 flex justify-center">
-            <h1 className=" font-Metal text-xl">{service?.discription}</h1>
+            <h1 className="font-Metal text-xl">{service?.discription}</h1>
           </div>
           <div className="mb-12">
             <img src={service?.image} alt="" />
           </div>
         </div>
-        <div>
-          <form className="w-full max-w-lg ">
+        <div className="w-full">
+            <form className="w-full max-w-lg ">
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                 <label
@@ -243,7 +243,7 @@ const Service: React.FC = () => {
             {/**Adding address with new feature, implimenting radio button  */}
 
             {/**provide the default address  */}
-            <label
+            {/* <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="grid-complaint"
             >
@@ -260,54 +260,10 @@ const Service: React.FC = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            )}
+            )} */}
             {/**provide the default address  */}
 
             <div className="flex flex-wrap -mx-3 mb-2 my-5">
-              <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-city"
-                >
-                  District
-                </label>
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-city"
-                  type="text"
-                  value={defaultAddress.district}
-                />
-              </div>
-              <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-state"
-                >
-                  State
-                </label>
-                <div className="relative">
-                  <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    type=""
-                    value={defaultAddress.state}
-                  />
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-zip"
-                >
-                  Pin
-                </label>
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-zip"
-                  type="text"
-                  value={defaultAddress.pin}
-                />
-              </div>
-
               {/* Location Button and Options */}
               <div className="w-full px-3 mb-6 my-5">
                 <button
