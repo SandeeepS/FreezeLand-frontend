@@ -101,16 +101,17 @@ const Service: React.FC = () => {
   return (
     <div className="flex flex-col">
       <Header />
-      <div className="md:flex justify-space mt-20 mx-6 w-full">
-        <div className="w-[40%]">
+      <div className="md:flex md:justify-between mt-20 md:pl-32 mx-6 md:w-full">
+        <div className="md:w-[40%]">
           <div className="mb-12 flex justify-center">
             <h1 className="font-Metal text-xl">{service?.discription}</h1>
           </div>
-          <div className="mb-12">
+          <div className="md:mb-12 flex justify-center">
             <img src={service?.image} alt="" />
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-[30%] my-10"></div>
+        <div className="w-full ">
             <form className="w-full max-w-lg ">
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
