@@ -23,8 +23,10 @@ const Service: React.FC = () => {
   const [service, setServices] = useState<ServiceData>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState(null);
+  const [isDefaultAddressClicked, setIsDefaultAddressClicked] = useState(false);
   const [userProfile, setUserProfile] = useState("");
   const [defaultAddress, setDefaultAddress] = useState({});
+  const [selectedOption,setSelectedOption] = useState < "default" | "current" | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +91,13 @@ const Service: React.FC = () => {
 
   // Handle primary button click to show location options
   const handleLocationClick = () => {
+    setSelectedOption("current")
     setShowLocationOptions(true);
+  };
+
+  const handleDefalultAddressClick = () => {
+    setSelectedOption("default")
+    setIsDefaultAddressClicked(true);
   };
 
   // Remove location data
@@ -98,6 +106,10 @@ const Service: React.FC = () => {
     setShowLocationOptions(false);
   };
 
+  const handleRemoveDefaultAddress = () => {
+    setIsDefaultAddressClicked(false);
+  }
+ 
   return (
     <div className="flex flex-col">
       <Header />
@@ -112,7 +124,7 @@ const Service: React.FC = () => {
         </div>
         <div className="w-[30%] my-10"></div>
         <div className="w-full ">
-            <form className="w-full max-w-lg ">
+          <form className="w-full max-w-lg ">
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                 <label
@@ -207,43 +219,49 @@ const Service: React.FC = () => {
             </div>
             {/**providing space for inserting the device image*/}
 
-            {/**Adding address with new feature, implimenting radio button  */}
+            {/**Adding default address with addaddress option. */}
+            <div className="flex flex-wrap  ">
+              {/* default address Button and Options */}
+              <div className="w-full px-3 mb-6 my-5">
+                <button
+                  type="button"
+                  onClick={handleDefalultAddressClick}
+                  className="flex items-center  bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
+                  disabled={selectedOption === "current"}
+                >
+                  {isDefaultAddressClicked
+                    ? `Location: ${isDefaultAddressClicked}`
+                    : "Select Default Address"}
+                </button>
 
-            <div className="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
-              <input
-                id="bordered-radio-1"
-                type="radio"
-                value=""
-                name="bordered-radio"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                htmlFor="bordered-radio-1"
-                className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                Default radio
-              </label>
+                {isDefaultAddressClicked && (
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={handleFetchLocation}
+                      className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
+                    >
+                      <FiMapPin className="mr-2" /> Use Current Location
+                    </button>
+                  </div>
+                )}
+
+                {locationName && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveDefaultAddress}
+                    className="mt-2 flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none w-full"
+                  >
+                    Remove Location
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
-              <input
-                checked
-                id="bordered-radio-2"
-                type="radio"
-                value=""
-                name="bordered-radio"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                htmlFor="bordered-radio-2"
-                className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                Checked state
-              </label>
-            </div>
 
-            {/**Adding address with new feature, implimenting radio button  */}
+            {/**Adding default address with addaddress option */}
 
-            {/**provide the default address  */}
+            {/**below commented  code is not currently using only for refenrence purpose */}
+            {/**  provide the default address  */}
             {/* <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               htmlFor="grid-complaint"
@@ -264,13 +282,21 @@ const Service: React.FC = () => {
             )} */}
             {/**provide the default address  */}
 
-            <div className="flex flex-wrap -mx-3 mb-2 my-5">
+            <div className="inline-flex items-center justify-center w-full">
+              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2  ">
+                or
+              </span>
+            </div>
+
+            {/**code for selecting the current location of the user*/}
+            <div className="flex flex-wrap  ">
               {/* Location Button and Options */}
               <div className="w-full px-3 mb-6 my-5">
                 <button
                   type="button"
                   onClick={handleLocationClick}
                   className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
+                  disabled={selectedOption==="default"}
                 >
                   {locationName
                     ? `Location: ${locationName}`
@@ -300,6 +326,7 @@ const Service: React.FC = () => {
                 )}
               </div>
             </div>
+          {/**code for selecting the current location of the user will end here*/}
           </form>
         </div>
       </div>
