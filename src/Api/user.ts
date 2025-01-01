@@ -110,6 +110,7 @@ const logout = async () => {
 const getProfile = async () => {
   try {
     const result = await Api.get(userRoutes.getProfile);
+    console.log("UserProfile form the backend in the user.ts is ",result);
     return result;
   } catch (error) {
     console.log(error);

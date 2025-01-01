@@ -23,10 +23,14 @@ const Service: React.FC = () => {
   const [service, setServices] = useState<ServiceData>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState(null);
-  const [isDefaultAddressClicked, setIsDefaultAddressClicked] = useState(false);
+  const [isAddressClicked, setIsAddressClicked] = useState(false);
   const [userProfile, setUserProfile] = useState("");
-  const [defaultAddress, setDefaultAddress] = useState({});
-  const [selectedOption,setSelectedOption] = useState < "default" | "current" | null>(null);
+  const [defaultAddress, setDefaultAddress] = useState<AddAddress>();
+  const [selectedOption, setSelectedOption] = useState<
+    "default" | "current" | null
+  >(null);
+  const [isDisabledButton1, setIsDisabledButton1] = useState<boolean>(false);
+  const [isDisabledButton2, setIsDisabledButton2] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,15 +39,16 @@ const Service: React.FC = () => {
           getService(id),
           getProfile(),
         ]);
-        if (serviceResult) {
+        if (serviceResult){
           console.log("Service result from the backend", serviceResult.data);
           setServices(serviceResult.data);
         }
 
         if (profileResult) {
+          console.log("Profile Result is  from the backend is ",profileResult)
           const profileData = profileResult.data.data.data;
-          setUserProfile(profileResult.data.data.data);
-          console.log("Profile reuslt from the backend", userProfile);
+          console.log("Profile reuslt from the backend",profileData);
+          setUserProfile(profileData);
           const defaultAdd = profileData.address.find(
             (addr: AddAddress) => addr._id == profileData.defaultAddress
           );
@@ -54,7 +59,7 @@ const Service: React.FC = () => {
           }
           setDefaultAddress(defaultAdd);
         }
-      } catch (error) {
+      }catch(error){
         console.log(error as Error);
       }
     };
@@ -91,13 +96,25 @@ const Service: React.FC = () => {
 
   // Handle primary button click to show location options
   const handleLocationClick = () => {
-    setSelectedOption("current")
-    setShowLocationOptions(true);
+    setSelectedOption("current");
+    if (showLocationOptions == false) {
+      setIsDisabledButton1(true);
+      setShowLocationOptions(true);
+    } else {
+      setIsDisabledButton1(false);
+      setShowLocationOptions(false);
+    }
   };
 
-  const handleDefalultAddressClick = () => {
-    setSelectedOption("default")
-    setIsDefaultAddressClicked(true);
+  const handleAddressClick = () => {
+    setSelectedOption("default");
+    if (isAddressClicked == false) {
+      setIsDisabledButton2(true);
+      setIsAddressClicked(true);
+    } else {
+      setIsDisabledButton2(false);
+      setIsAddressClicked(false);
+    }
   };
 
   // Remove location data
@@ -106,25 +123,23 @@ const Service: React.FC = () => {
     setShowLocationOptions(false);
   };
 
-  const handleRemoveDefaultAddress = () => {
-    setIsDefaultAddressClicked(false);
-  }
- 
+
+
   return (
     <div className="flex flex-col">
       <Header />
       <div className="md:flex md:justify-between mt-20 md:pl-32 mx-6 md:w-full">
         <div className="md:w-[40%]">
-          <div className="mb-12 flex justify-center">
-            <h1 className="font-Metal text-xl">{service?.discription}</h1>
-          </div>
           <div className="md:mb-12 flex justify-center">
             <img src={service?.image} alt="" />
+          </div>
+          <div className="mb-12 flex justify-center my-5">
+            <h1 className="font-Metal text-xl">{service?.discription}</h1>
           </div>
         </div>
         <div className="w-[30%] my-10"></div>
         <div className="w-full ">
-          <form className="w-full max-w-lg ">
+          <form className="w-full max-w-lg flex-row items-center justify-center">
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                 <label
@@ -143,20 +158,6 @@ const Service: React.FC = () => {
                   Please fill out this field.
                 </p>
               </div>
-              {/* <div className="w-full md:w-1/2 px-3">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-device"
-                >
-                  Device
-                </label>
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-device"
-                  type="text"
-                  placeholder="Device name provide dynamic"
-                />
-              </div> */}
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full px-3">
@@ -219,42 +220,58 @@ const Service: React.FC = () => {
             </div>
             {/**providing space for inserting the device image*/}
 
-            {/**Adding default address with addaddress option. */}
+            {/**Adding  address with addaddress option. */}
             <div className="flex flex-wrap  ">
-              {/* default address Button and Options */}
+              {/* adding address Button and Options */}
               <div className="w-full px-3 mb-6 my-5">
                 <button
                   type="button"
-                  onClick={handleDefalultAddressClick}
-                  className="flex items-center  bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
-                  disabled={selectedOption === "current"}
+                  onClick={handleAddressClick}
+                  className={`flex items-center px-4 py-2 rounded w-full ${
+                    isDisabledButton1
+                      ? "bg-gray-500 text-gray-300 focus:outline-none cursor-not-allowed" 
+                      : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+                  }`}
+                  disabled={isDisabledButton1}
                 >
-                  {isDefaultAddressClicked
-                    ? `Location: ${isDefaultAddressClicked}`
-                    : "Select Default Address"}
+                  {isAddressClicked ? `Click to remove` : "Select Address"}
                 </button>
 
-                {isDefaultAddressClicked && (
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={handleFetchLocation}
-                      className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
-                    >
-                      <FiMapPin className="mr-2" /> Use Current Location
-                    </button>
+                {isAddressClicked && (
+                  <div className="flex overflow-x-auto m-5 space-x-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                    {/* Repeatable Card Section */}
+                    { userProfile?.address.map((item,index) => (
+                      <Card
+                        key={index}
+                        sx={{ maxWidth: 120, height: 160 }}
+                        className="flex-shrink-0 mx-2 cursor-pointer"
+                        
+                      >
+                        <CardContent>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
+                             {item?.name}
+                            <br />
+                            {item?.email}
+                            <br />
+                            {item?.district}
+                            <br />
+                            {item?.landMark}
+                            <br />
+                            {item?.state}
+                            <br />
+                            {item?.phone}
+                            <br />
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 )}
 
-                {locationName && (
-                  <button
-                    type="button"
-                    onClick={handleRemoveDefaultAddress}
-                    className="mt-2 flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none w-full"
-                  >
-                    Remove Location
-                  </button>
-                )}
+             
               </div>
             </div>
 
@@ -282,8 +299,8 @@ const Service: React.FC = () => {
             )} */}
             {/**provide the default address  */}
 
-            <div className="inline-flex items-center justify-center w-full">
-              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2  ">
+            <div className="flex items-center justify-center ">
+              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2">
                 or
               </span>
             </div>
@@ -295,8 +312,12 @@ const Service: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleLocationClick}
-                  className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full"
-                  disabled={selectedOption==="default"}
+                  className={`flex items-center px-4 py-2 rounded w-full ${
+                    isDisabledButton2
+                      ? "bg-gray-500 text-gray-300 focus:outline-none cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+                  }`}
+                  disabled={isDisabledButton2}
                 >
                   {locationName
                     ? `Location: ${locationName}`
@@ -326,7 +347,7 @@ const Service: React.FC = () => {
                 )}
               </div>
             </div>
-          {/**code for selecting the current location of the user will end here*/}
+            {/**code for selecting the current location of the user will end here*/}
           </form>
         </div>
       </div>
