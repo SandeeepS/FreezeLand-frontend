@@ -39,15 +39,15 @@ const Service: React.FC = () => {
           getService(id),
           getProfile(),
         ]);
-        if (serviceResult){
+        if (serviceResult) {
           console.log("Service result from the backend", serviceResult.data);
           setServices(serviceResult.data);
         }
 
         if (profileResult) {
-          console.log("Profile Result is  from the backend is ",profileResult)
+          console.log("Profile Result is  from the backend is ", profileResult);
           const profileData = profileResult.data.data.data;
-          console.log("Profile reuslt from the backend",profileData);
+          console.log("Profile reuslt from the backend", profileData);
           setUserProfile(profileData);
           const defaultAdd = profileData.address.find(
             (addr: AddAddress) => addr._id == profileData.defaultAddress
@@ -59,7 +59,7 @@ const Service: React.FC = () => {
           }
           setDefaultAddress(defaultAdd);
         }
-      }catch(error){
+      } catch (error) {
         console.log(error as Error);
       }
     };
@@ -118,12 +118,15 @@ const Service: React.FC = () => {
   };
 
   // Remove location data
-  const handleRemoveLocation = () => {
+  const handleRemoveLocation = ()=>{
     setLocationName(null);
     setShowLocationOptions(false);
   };
 
-
+  const handleSelectedAddress = (item : object) =>{
+      console.log("item when clicking is ",item);
+      setDefaultAddress(item?._id);
+  }
 
   return (
     <div className="flex flex-col">
@@ -184,7 +187,7 @@ const Service: React.FC = () => {
               htmlFor=""
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             >
-              Upload Image *
+              Upload Image*
             </label>
             <div className="flex items-center justify-center w-full mb-5">
               <label
@@ -229,7 +232,7 @@ const Service: React.FC = () => {
                   onClick={handleAddressClick}
                   className={`flex items-center px-4 py-2 rounded w-full ${
                     isDisabledButton1
-                      ? "bg-gray-500 text-gray-300 focus:outline-none cursor-not-allowed" 
+                      ? "bg-gray-500 text-gray-300 focus:outline-none cursor-not-allowed"
                       : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
                   }`}
                   disabled={isDisabledButton1}
@@ -238,40 +241,90 @@ const Service: React.FC = () => {
                 </button>
 
                 {isAddressClicked && (
-                  <div className="flex overflow-x-auto m-5 space-x-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-                    {/* Repeatable Card Section */}
-                    { userProfile?.address.map((item,index) => (
-                      <Card
-                        key={index}
-                        sx={{ maxWidth: 120, height: 160 }}
-                        className="flex-shrink-0 mx-2 cursor-pointer"
-                        
-                      >
-                        <CardContent>
-                          <Typography
-                            variant="body2"
-                            sx={{ color: "text.secondary" }}
+                  <div>
+                    <div className="">
+                      <p className="text-rose-500	text-sm	">
+                        By default the Default address is selected , you can
+                        change it if you needed
+                      </p>
+                    </div>
+
+                    <div className="flex w-full ">
+                      <div className="m-3 w-[40%]">
+                        {/**Default address card */}
+                        <Card
+                          sx={{
+                            maxWidth: 140,
+                            height: 180,
+                            border: `1px solid blue`,
+                          }}
+                          className="mx-2"
+                        >
+                          <CardContent>
+                            <p className="text-sm font-bold">Default Address</p>
+                            <Typography
+                              variant="body2"
+                              sx={{ color: "text.secondary" }}
+                            >
+                              {defaultAddress?.name}
+                              <br />
+                              {defaultAddress?.email}
+                              <br />
+                              {defaultAddress?.district}
+                              <br />
+                              {defaultAddress?.landMark}
+                              <br />
+                              {defaultAddress?.state}
+                              <br />
+                              {defaultAddress?.phone}
+                              <br />
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      </div>
+                      <div className="flex overflow-x-auto m-5 space-x-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                        {/* Repeatable Card Section */}
+                        {userProfile?.address.map((item, index) => (
+                          <div onClick={() => handleSelectedAddress(item)}>
+                          <Card
+                            key={index}
+                            sx={{
+                              maxWidth: 120,
+                              height: 180,
+                              transition:
+                                {
+                                transform: "scale(1.05)", // Slightly enlarge the card
+                                boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)", // Add a shadow on hover
+                              },
+                            }}
+                            className="flex-shrink-0 mx-2 cursor-pointer border border-gray-300 hover:border-blue-500 rounded-lg"
                           >
-                             {item?.name}
-                            <br />
-                            {item?.email}
-                            <br />
-                            {item?.district}
-                            <br />
-                            {item?.landMark}
-                            <br />
-                            {item?.state}
-                            <br />
-                            {item?.phone}
-                            <br />
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    ))}
+                            <CardContent>
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "text.secondary"}}
+                              >
+                                {item?.name}
+                                <br />
+                                {item?.email}
+                                <br />
+                                {item?.district}
+                                <br />
+                                {item?.landMark}
+                                <br />
+                                {item?.state}
+                                <br />
+                                {item?.phone}
+                                <br />
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
-
-             
               </div>
             </div>
 
@@ -331,7 +384,7 @@ const Service: React.FC = () => {
                       onClick={handleFetchLocation}
                       className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
                     >
-                      <FiMapPin className="mr-2" /> Use Current Location
+                      <FiMapPin className="mr-2" />Use Current Location
                     </button>
                   </div>
                 )}
@@ -351,7 +404,7 @@ const Service: React.FC = () => {
           </form>
         </div>
       </div>
-      <Footer />
+      <Footer/>
     </div>
   );
 };
