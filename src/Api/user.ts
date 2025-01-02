@@ -7,7 +7,7 @@ import { AddAddress } from "../interfaces/AddAddress";
 const signup = async ({ name, phone, email, password,cpassword }: FormData) => {
   try {
     console.log("Entered in signup ");
-    const result = await Api.post(userRoutes.signup, {
+    const result = await Api.post(userRoutes.signup,{
       name,
       phone,
       email,
