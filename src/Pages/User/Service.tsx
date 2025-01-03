@@ -9,7 +9,7 @@ import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
-interface ServiceData {
+interface ServiceData{
   _id: string;
   name: string;
   discription: string;
