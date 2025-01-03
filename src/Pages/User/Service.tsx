@@ -9,13 +9,23 @@ import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
-interface ServiceData{
+interface ServiceData {
   _id: string;
   name: string;
   discription: string;
   status: boolean;
   isDeleted: boolean;
 }
+
+interface initialValueInterface {
+  name:string;
+  complaintDiscription:string;
+  image:string;
+  selectedAddress:object;
+  location:string;
+}
+
+
 
 const Service: React.FC = () => {
   const { id } = useParams();
@@ -29,8 +39,6 @@ const Service: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<
     "default" | "current" | null
   >(null);
-  const [isDisabledButton1, setIsDisabledButton1] = useState<boolean>(false);
-  const [isDisabledButton2, setIsDisabledButton2] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,35 +106,32 @@ const Service: React.FC = () => {
   const handleLocationClick = () => {
     setSelectedOption("current");
     if (showLocationOptions == false) {
-      setIsDisabledButton1(true);
       setShowLocationOptions(true);
     } else {
-      setIsDisabledButton1(false);
       setShowLocationOptions(false);
     }
   };
 
   const handleAddressClick = () => {
     setSelectedOption("default");
-    if (isAddressClicked == false) {
-      setIsDisabledButton2(true);
+    if (isAddressClicked == false){
       setIsAddressClicked(true);
     } else {
-      setIsDisabledButton2(false);
       setIsAddressClicked(false);
     }
   };
 
   // Remove location data
-  const handleRemoveLocation = ()=>{
+  const handleRemoveLocation = () => {
     setLocationName(null);
     setShowLocationOptions(false);
   };
 
-  const handleSelectedAddress = (item : object) =>{
-      console.log("item when clicking is ",item);
-      setDefaultAddress(item?._id);
-  }
+  const handleSelectedAddress = (item: object) => {
+    console.log("item when clicking is ", item);
+    setDefaultAddress(item);
+    console.log("after changing the default addres is ", defaultAddress);
+  };
 
   return (
     <div className="flex flex-col">
@@ -226,16 +231,12 @@ const Service: React.FC = () => {
             {/**Adding  address with addaddress option. */}
             <div className="flex flex-wrap  ">
               {/* adding address Button and Options */}
-              <div className="w-full px-3 mb-6 my-5">
+              <div className="w-full mb-6 my-5">
                 <button
                   type="button"
                   onClick={handleAddressClick}
-                  className={`flex items-center px-4 py-2 rounded w-full ${
-                    isDisabledButton1
-                      ? "bg-gray-500 text-gray-300 focus:outline-none cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+                  className={`flex items-center px-4 py-2 rounded w-full  bg-blue-500 text-white hover:bg-blue-600 focus:ring-2
                   }`}
-                  disabled={isDisabledButton1}
                 >
                   {isAddressClicked ? `Click to remove` : "Select Address"}
                 </button>
@@ -252,6 +253,7 @@ const Service: React.FC = () => {
                     <div className="flex w-full ">
                       <div className="m-3 w-[40%]">
                         {/**Default address card */}
+
                         <Card
                           sx={{
                             maxWidth: 140,
@@ -286,39 +288,38 @@ const Service: React.FC = () => {
                         {/* Repeatable Card Section */}
                         {userProfile?.address.map((item, index) => (
                           <div onClick={() => handleSelectedAddress(item)}>
-                          <Card
-                            key={index}
-                            sx={{
-                              maxWidth: 120,
-                              height: 180,
-                              transition:
-                                {
-                                transform: "scale(1.05)", // Slightly enlarge the card
-                                boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)", // Add a shadow on hover
-                              },
-                            }}
-                            className="flex-shrink-0 mx-2 cursor-pointer border border-gray-300 hover:border-blue-500 rounded-lg"
-                          >
-                            <CardContent>
-                              <Typography
-                                variant="body2"
-                                sx={{ color: "text.secondary"}}
-                              >
-                                {item?.name}
-                                <br />
-                                {item?.email}
-                                <br />
-                                {item?.district}
-                                <br />
-                                {item?.landMark}
-                                <br />
-                                {item?.state}
-                                <br />
-                                {item?.phone}
-                                <br />
-                              </Typography>
-                            </CardContent>
-                          </Card>
+                            <Card
+                              key={index}
+                              sx={{
+                                maxWidth: 120,
+                                height: 180,
+                                transition: {
+                                  transform: "scale(1.05)", // Slightly enlarge the card
+                                  boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)", // Add a shadow on hover
+                                },
+                              }}
+                              className="flex-shrink-0 mx-2 cursor-pointer border border-gray-300 hover:border-blue-500 rounded-lg"
+                            >
+                              <CardContent>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "text.secondary" }}
+                                >
+                                  {item?.name}
+                                  <br />
+                                  {item?.email}
+                                  <br />
+                                  {item?.district}
+                                  <br />
+                                  {item?.landMark}
+                                  <br />
+                                  {item?.state}
+                                  <br />
+                                  {item?.phone}
+                                  <br />
+                                </Typography>
+                              </CardContent>
+                            </Card>
                           </div>
                         ))}
                       </div>
@@ -328,49 +329,15 @@ const Service: React.FC = () => {
               </div>
             </div>
 
-            {/**Adding default address with addaddress option */}
-
-            {/**below commented  code is not currently using only for refenrence purpose */}
-            {/**  provide the default address  */}
-            {/* <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-complaint"
-            >
-              Current Address
-            </label>
-            {defaultAddress && (
-              <Card sx={{ maxWidth: 1000 }} className="flex justify-between">
-                <CardContent>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    Name: {defaultAddress?.name}
-                    <br />
-                    Email: {defaultAddress?.email}
-                    <br />
-                  </Typography>
-                </CardContent>
-              </Card>
-            )} */}
-            {/**provide the default address  */}
-
-            <div className="flex items-center justify-center ">
-              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2">
-                or
-              </span>
-            </div>
-
             {/**code for selecting the current location of the user*/}
             <div className="flex flex-wrap  ">
               {/* Location Button and Options */}
-              <div className="w-full px-3 mb-6 my-5">
+              <div className="w-full  mb-6 my-5">
                 <button
                   type="button"
                   onClick={handleLocationClick}
-                  className={`flex items-center px-4 py-2 rounded w-full ${
-                    isDisabledButton2
-                      ? "bg-gray-500 text-gray-300 focus:outline-none cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
+                  className={`flex items-center px-4 py-2 rounded w-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
                   }`}
-                  disabled={isDisabledButton2}
                 >
                   {locationName
                     ? `Location: ${locationName}`
@@ -384,7 +351,8 @@ const Service: React.FC = () => {
                       onClick={handleFetchLocation}
                       className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
                     >
-                      <FiMapPin className="mr-2" />Use Current Location
+                      <FiMapPin className="mr-2" />
+                      Use Current Location
                     </button>
                   </div>
                 )}
@@ -401,10 +369,19 @@ const Service: React.FC = () => {
               </div>
             </div>
             {/**code for selecting the current location of the user will end here*/}
+
+            <div className="w-full my-2 ">
+              <button
+                type="button"
+                className="focus:outline-none text-white bg-green-400 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-full"
+              >
+                Submit
+              </button>
+            </div>
           </form>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
