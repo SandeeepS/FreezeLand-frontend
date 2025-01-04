@@ -8,12 +8,13 @@ import { Card, CardContent, Typography } from "@mui/material";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
+import { UserData } from "../../interfaces/UserData";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 interface ServiceData {
   _id: string;
   name: string;
-  image:string;
+  image: string;
   discription: string;
   status: boolean;
   isDeleted: boolean;
@@ -25,16 +26,13 @@ const Service: React.FC = () => {
   const [service, setServices] = useState<ServiceData>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState({
-    address:"",
-    latitude:null,
-    longitude:null
+    address: "",
+    latitude: null,
+    longitude: null,
   });
   const [isAddressClicked, setIsAddressClicked] = useState(false);
-  const [userProfile, setUserProfile] = useState("");
+  const [userProfile, setUserProfile] = useState<UserData>();
   const [defaultAddress, setDefaultAddress] = useState<AddAddress>();
-  const [selectedOption, setSelectedOption] = useState<
-    "default" | "current" | null
-  >(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,7 +61,7 @@ const Service: React.FC = () => {
           }
           setDefaultAddress(defaultAdd);
         }
-      } catch (error){
+      } catch (error) {
         console.log(error as Error);
       }
     };
@@ -87,7 +85,6 @@ const Service: React.FC = () => {
               latitude: data.results[0].geometry.location.lat,
               longitude: data.results[0].geometry.location.lng,
             });
-
           } else {
             console.log("No results found for location");
           }
@@ -98,13 +95,12 @@ const Service: React.FC = () => {
       (error) => {
         console.error("Error fetching location:", error);
       },
-      { enableHighAccuracy:true}
+      { enableHighAccuracy: true }
     );
   };
 
   // Handle primary button click to show location options
   const handleLocationClick = () => {
-    setSelectedOption("current");
     if (showLocationOptions == false) {
       setShowLocationOptions(true);
     } else {
@@ -113,7 +109,6 @@ const Service: React.FC = () => {
   };
 
   const handleAddressClick = () => {
-    setSelectedOption("default");
     if (isAddressClicked == false) {
       setIsAddressClicked(true);
     } else {
@@ -124,9 +119,9 @@ const Service: React.FC = () => {
   // Remove location data
   const handleRemoveLocation = () => {
     setLocationName({
-      address:"",
-      longitude:null,
-      latitude:null,
+      address: "",
+      longitude: null,
+      latitude: null,
     });
     setShowLocationOptions(false);
   };
@@ -166,10 +161,12 @@ const Service: React.FC = () => {
                 const combinedData = {
                   ...values,
                   ...defaultAddress,
-                  locationName: locationName
-                  
-                }
-                console.log("complaint details after combining the addres adn location ", combinedData);
+                  locationName: locationName,
+                };
+                console.log(
+                  "complaint details after combining the addres adn location ",
+                  combinedData
+                );
               }}
             >
               {(formik) => (
@@ -280,6 +277,12 @@ const Service: React.FC = () => {
                   <div className="flex flex-wrap  ">
                     {/* adding address Button and Options */}
                     <div className="w-full mb-6 my-5">
+                      <label
+                        htmlFor=""
+                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                      >
+                        Update address*
+                      </label>
                       <button
                         type="button"
                         onClick={handleAddressClick}
@@ -338,45 +341,47 @@ const Service: React.FC = () => {
                             </div>
                             <div className="flex overflow-x-auto m-5 space-x-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
                               {/* Repeatable Card Section */}
-                              {userProfile?.address.map((item, index) => (
-                                <div
-                                  onClick={() => handleSelectedAddress(item)}
-                                >
-                                  <Card
-                                    key={index}
-                                    sx={{
-                                      maxWidth: 120,
-                                      height: 180,
-                                      transition: {
-                                        transform: "scale(1.05)", // Slightly enlarge the card
-                                        boxShadow:
-                                          "0px 4px 15px rgba(0, 0, 0, 0.2)", // Add a shadow on hover
-                                      },
-                                    }}
-                                    className="flex-shrink-0 mx-2 cursor-pointer border border-gray-300 hover:border-blue-500 rounded-lg"
+                              {userProfile?.address.map(
+                                (item: AddAddress, index) => (
+                                  <div
+                                    onClick={() => handleSelectedAddress(item)}
                                   >
-                                    <CardContent>
-                                      <Typography
-                                        variant="body2"
-                                        sx={{ color: "text.secondary" }}
-                                      >
-                                        {item?.name}
-                                        <br />
-                                        {item?.email}
-                                        <br />
-                                        {item?.district}
-                                        <br />
-                                        {item?.landMark}
-                                        <br />
-                                        {item?.state}
-                                        <br />
-                                        {item?.phone}
-                                        <br />
-                                      </Typography>
-                                    </CardContent>
-                                  </Card>
-                                </div>
-                              ))}
+                                    <Card
+                                      key={index}
+                                      sx={{
+                                        maxWidth: 120,
+                                        height: 180,
+                                        transition: {
+                                          transform: "scale(1.05)", // Slightly enlarge the card
+                                          boxShadow:
+                                            "0px 4px 15px rgba(0, 0, 0, 0.2)", // Add a shadow on hover
+                                        },
+                                      }}
+                                      className="flex-shrink-0 mx-2 cursor-pointer border border-gray-300 hover:border-blue-500 rounded-lg"
+                                    >
+                                      <CardContent>
+                                        <Typography
+                                          variant="body2"
+                                          sx={{ color: "text.secondary" }}
+                                        >
+                                          {item?.name}
+                                          <br />
+                                          {item?.email}
+                                          <br />
+                                          {item?.district}
+                                          <br />
+                                          {item?.landMark}
+                                          <br />
+                                          {item?.state}
+                                          <br />
+                                          {item?.phone}
+                                          <br />
+                                        </Typography>
+                                      </CardContent>
+                                    </Card>
+                                  </div>
+                                )
+                              )}
                             </div>
                           </div>
                         </div>
@@ -388,6 +393,12 @@ const Service: React.FC = () => {
                   <div className="flex flex-wrap  ">
                     {/* Location Button and Options */}
                     <div className="w-full  mb-6 my-5">
+                      <label
+                        htmlFor=""
+                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                      >
+                        update location*
+                      </label>
                       <button
                         type="button"
                         onClick={handleLocationClick}
@@ -399,18 +410,19 @@ const Service: React.FC = () => {
                           : "Please enter your location"}
                       </button>
 
-                      {showLocationOptions && locationName.longitude == null && (
-                        <div className="mt-2">
-                          <button
-                            type="button"
-                            onClick={handleFetchLocation}
-                            className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
-                          >
-                            <FiMapPin className="mr-2" />
-                            Use Current Location
-                          </button>
-                        </div>
-                      )}
+                      {showLocationOptions &&
+                        locationName.longitude == null && (
+                          <div className="mt-2">
+                            <button
+                              type="button"
+                              onClick={handleFetchLocation}
+                              className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
+                            >
+                              <FiMapPin className="mr-2" />
+                              Use Current Location
+                            </button>
+                          </div>
+                        )}
 
                       {locationName.longitude !== null && (
                         <button
