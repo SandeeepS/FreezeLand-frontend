@@ -6,11 +6,12 @@ import { getProfile } from "../../Api/user";
 import { AddressValidation } from "../Common/Validations";
 import { AddUserAddress } from "../../Api/user";
 import { useEffect, useState } from "react";
-import { AddAddress  as AddAddressInterface } from "../../interfaces/AddAddress";
-
+import { AddAddress as AddAddressInterface } from "../../interfaces/AddAddress";
 
 const AddAddress: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(null);
+  const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -41,7 +42,6 @@ const AddAddress: React.FC = () => {
         {
           <Formik
             initialValues={{
-             
               name: "",
               phone: 0,
               email: "",
@@ -54,17 +54,14 @@ const AddAddress: React.FC = () => {
             enableReinitialize={true}
             onSubmit={async (values) => {
               console.log("Submited addressDetails ", values);
-              let _id:string | undefined = "";
-              if(userProfile){
-                _id = userProfile._id
+              let _id: string | undefined = "";
+              if (userProfile) {
+                _id = userProfile._id;
               }
-              const result = await AddUserAddress(_id,values);
-              if(result){
-
+              const result = await AddUserAddress(_id, values);
+              if (result) {
                 console.log("result reached the frontend");
               }
-
-
             }}
           >
             {(formik) => (
@@ -223,11 +220,10 @@ const AddAddress: React.FC = () => {
                 </div>
                 <div className="my-5">
                   <Button
-                  type="submit"
+                    type="submit"
                     variant="contained"
                     color="warning"
                     className="w-full"
-                
                   >
                     Add Address
                   </Button>

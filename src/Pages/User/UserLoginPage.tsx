@@ -26,10 +26,10 @@ const UserLoginPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: LoginValidation,
     onSubmit: (values) => {
-      const hanSub = async () => {
+      const hanSub = async() => {
         try {
           const result = await login(values.email, values.password);
-          if (result !== null) {
+          if (result !== null){
             {
               console.log("result fron the front end ", result);
             }
