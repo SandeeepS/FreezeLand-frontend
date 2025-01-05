@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/User/Header";
 import { useParams } from "react-router-dom";
 import { getService } from "../../Api/admin";
@@ -7,18 +7,11 @@ import { getProfile } from "../../Api/user";
 import { Card, CardContent, Typography } from "@mui/material";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
-import { Formik } from "formik";
+import { Field, Formik } from "formik";
 import { UserData } from "../../interfaces/UserData";
+import { ServiceData } from "../../interfaces/ServiceData";
+import { ServiceFormValidation } from "../../components/Common/Validations";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-
-interface ServiceData {
-  _id: string;
-  name: string;
-  image: string;
-  discription: string;
-  status: boolean;
-  isDeleted: boolean;
-}
 
 const Service: React.FC = () => {
   const { id } = useParams();
@@ -32,7 +25,10 @@ const Service: React.FC = () => {
   });
   const [isAddressClicked, setIsAddressClicked] = useState(false);
   const [userProfile, setUserProfile] = useState<UserData>();
-  const [defaultAddress, setDefaultAddress] = useState<AddAddress>();
+  const [defaultAddress, setDefaultAddress] = useState();
+  const [defaultAddressDetails, setDefaultAddressDetails] =
+    useState<AddAddress>();
+  const fileRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,7 +55,8 @@ const Service: React.FC = () => {
           } else {
             console.log("Default address found:", defaultAdd);
           }
-          setDefaultAddress(defaultAdd);
+          setDefaultAddress(defaultAdd._id);
+          setDefaultAddressDetails(defaultAdd);
         }
       } catch (error) {
         console.log(error as Error);
@@ -128,7 +125,8 @@ const Service: React.FC = () => {
 
   const handleSelectedAddress = (item: object) => {
     console.log("item when clicking is ", item);
-    setDefaultAddress(item);
+    setDefaultAddress(item._id);
+    setDefaultAddressDetails(item);
     console.log("after changing the default addres is ", defaultAddress);
   };
 
@@ -151,16 +149,16 @@ const Service: React.FC = () => {
               initialValues={{
                 name: "",
                 complaintDiscription: "",
-                image: "",
-                selectedAddress: {},
+                file: "",
                 location: "",
               }}
+              validationSchema={ServiceFormValidation}
               enableReinitialize={true}
               onSubmit={async (values) => {
                 console.log("submited complaint details is", values);
                 const combinedData = {
                   ...values,
-                  ...defaultAddress,
+                  defaultAddress: defaultAddressDetails,
                   locationName: locationName,
                 };
                 console.log(
@@ -228,48 +226,13 @@ const Service: React.FC = () => {
                     Upload Image*
                   </label>
                   <div className="flex items-center justify-center w-full mb-5">
-                    <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full  border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg
-                          className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 16"
-                        >
-                          <path
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                          />
-                        </svg>
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                          <span className="font-semibold">Click to upload</span>{" "}
-                          or drag and drop
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p>
-                      </div>
-                      <input
-                        id="image"
-                        type="file"
-                        className="hidden"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                      />
-
-                      {formik.errors.image && (
-                        <small className="text-red-500">
-                          {formik.errors.image}
-                        </small>
-                      )}
-                    </label>
+                
+                    <input
+                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                      id="multiple_files"
+                      type="file"
+                      multiple
+                    />
                   </div>
                   {/**providing space for inserting the device image*/}
 
@@ -323,17 +286,17 @@ const Service: React.FC = () => {
                                     variant="body2"
                                     sx={{ color: "text.secondary" }}
                                   >
-                                    {defaultAddress?.name}
+                                    {defaultAddressDetails?.name}
                                     <br />
-                                    {defaultAddress?.email}
+                                    {defaultAddressDetails?.email}
                                     <br />
-                                    {defaultAddress?.district}
+                                    {defaultAddressDetails?.district}
                                     <br />
-                                    {defaultAddress?.landMark}
+                                    {defaultAddressDetails?.landMark}
                                     <br />
-                                    {defaultAddress?.state}
+                                    {defaultAddressDetails?.state}
                                     <br />
-                                    {defaultAddress?.phone}
+                                    {defaultAddressDetails?.phone}
                                     <br />
                                   </Typography>
                                 </CardContent>
