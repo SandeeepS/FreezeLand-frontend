@@ -58,7 +58,7 @@ const Service: React.FC = () => {
           setDefaultAddress(defaultAdd._id);
           setDefaultAddressDetails(defaultAdd);
         }
-      } catch (error) {
+      } catch (error){
         console.log(error as Error);
       }
     };
@@ -70,12 +70,13 @@ const Service: React.FC = () => {
   const handleFetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { latitude, longitude } = position.coords;
+        const { latitude,longitude} = position.coords;
         try {
           const response = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
           );
           const data = await response.json();
+          console.log("Geocoding respose is ",data);
           if (data.results && data.results.length > 0) {
             setLocationName({
               address: data.results[0].formatted_address,
@@ -134,7 +135,6 @@ const Service: React.FC = () => {
               initialValues={{
                 name: "",
                 complaintDiscription: "",
-                image: "",
                 location: "",
                 file: null,
                 defaultAddress: "",
@@ -232,7 +232,7 @@ const Service: React.FC = () => {
                   {/**providing space for inserting the device image*/}
                   <div>
                     {formik.values.file && (
-                      <PreviewImage file={formik.values.file} />
+                      <PreviewImage file={formik.values.file}/>
                     )}
                   </div>
                   {/**Adding  address with addaddress option. */}

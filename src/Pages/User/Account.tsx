@@ -8,21 +8,22 @@ const Account: React.FC = () => {
   return (
     <>
       <div className="flex flex-col">
-        
         {/* Fixed header at the top */}
         <div className="fixed top-0 left-0 w-full z-10 ">
           <Header />
         </div>
 
         {/* Account header */}
-        <div className=" pt-32 h-4  w-full fixed  ">
+        <div className=" pt-32 h-4  w-full fixed  z-10 ">
           <AccountHeader />
         </div>
 
         {/* Main content area */}
         <div className="flex flex-col flex-grow pt-[12rem] ">
           {/* Content section with sidebar and main area */}
+          
           <div className="flex flex-row flex-grow bg-slate-200">
+
             {/* Sidebar */}
             <div className="bg-white ml-4 mt-4 mb-4 rounded-lg basis-1/4 shadow-md">
               <AccountSidebar />

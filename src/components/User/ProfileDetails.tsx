@@ -1,11 +1,8 @@
-import React from "react";
+import React, { useState } from 'react';
 import AntarticaImage from "../../Images/Antartica.jpg";
-import { useAppSelector } from "../../App/store";
-import { getProfile } from "../../Api/user";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-interface userDetails {
+
+interface UserDetails {
   name: string;
   email: string;
   phone: number;
@@ -14,134 +11,109 @@ interface userDetails {
 }
 
 const ProfileDetails: React.FC = () => {
-  const { userData } = useAppSelector((state) => state.auth);
-  console.log("User Details from the account side ", userData);
-  const [userDetails, setUserDetails] = useState<userDetails | null>(null);
-  const navigate = useNavigate();
+  // Mock data - in real app this would come from props or context
+  const [userDetails] = useState<UserDetails>({
+    name: "John Doe",
+    email: "john@example.com",
+    phone: 1234567890,
+    location: "New York",
+    address: "123 Main St, New York, NY 10001"
+  });
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await getProfile();
-        const user = response?.data.data.data;
-        console.log("User details from the backend in the Account is ", user);
+  // const handleEditProfile = () => {
+  //   // In real app this would use proper navigation
+  //   console.log('Edit profile clicked');
+  // };
 
-        setUserDetails(user);
-      } catch (error) {
-        console.log(
-          "Failded to fetch the user Details from the Account section",
-          error
-        );
-      }
-    };
-    fetchUserDetails();
-  }, []);
-
-
-  const editProfile = () => {
-      navigate('/user/account/profile')
-  }
   return (
-    <>
-      {userDetails ? (
-        <div className="flex flex-col">
-          <div
-            style={{
-              backgroundImage: `url(${AntarticaImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              width: "100%",
-              height: "100%",
-            }}
-            className="grid grid-cols-6 col-span-2 justify-between bg-white rounded-tl-lg rounded-tr-lg items-center pt-5 text-xs uppercase font-[500]  "
-          >
-            {/* Black Div */}
-            <div className="col-end-8 col-span-2 flex justify-center items-center">
-              <div className="bg-white w-36 h-36 rounded-md items-center justify-center hidden lg:block  mb-4 mr-6 flex-col">
-                <div className="w-[78%]">
-                  <img className="" src="/src/Images/businessman.png" alt="" />
-                </div>
-                <div className="flex flex-row w-full items-baseline justify-between ">
-                  <button onClick={editProfile} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2  w-full ">
-                    Edit
-                  </button>
-                </div>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <div className="relative">
+        <div 
+          className="w-full h-64 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${AntarticaImage})`,
+          }}
+        >
+          <div className="absolute -bottom-16 right-10">
+            <div className="bg-white p-4 rounded-lg shadow-xl">
+              <div className="w-32 h-32 mx-auto mb-4">
+                <img 
+                  src="/src/Images/businessman.png" 
+                  alt="Profile" 
+                  className="w-full h-full object-cover rounded-lg"
+                />
               </div>
-              
+              {/* <button 
+                onClick={handleEditProfile} 
+                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
+              >
+                Edit Profile
+              </button> */}
             </div>
           </div>
-          <div className="space-x-4  bg-white grid grid-cols-2 p-10">
+        </div>
+      </div>
+
+      <div className="space-y-8 p-10 mt-20">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Personal Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label className="block text-gray-700">First Name</label>
+              <label className="block text-sm font-medium text-gray-700">First Name</label>
               <input
                 type="text"
                 value={userDetails.name}
                 readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
-
             <div>
-              <label className="block text-gray-700">Phone</label>
+              <label className="block text-sm font-medium text-gray-700">Phone</label>
               <input
-                type="number "
+                type="number"
                 value={userDetails.phone}
                 readOnly
-                className="w-full  px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Contact Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label className="block text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
                 type="text"
                 value={userDetails.email}
                 readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
             <div>
-              <label className="block text-gray-700">Location</label>
+              <label className="block text-sm font-medium text-gray-700">Location</label>
               <input
                 type="text"
-                value={
-                  userDetails.location ? userDetails.location : "Add Location !"
-                }
+                value={userDetails.location || "Add Location!"}
                 readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700">Pincode</label>
-              <input
-                type="text"
-                value=""
-                readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
-              />
-            </div>
-          </div>
-          <div className="flex  justify-center items-center bg-white">
-            <div className="w-full mx-10 mb-4">
-              <label className="block text-gray-700">Address</label>
-              <textarea
-                value={
-                  userDetails.address
-                    ? userDetails.address
-                    : "Address is not Added "
-                }
-                readOnly
-                rows={4} // Number of lines visible in textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               />
             </div>
           </div>
         </div>
-      ) : (
+
         <div>
-          <p>UserDetails Loading...</p>
+          <h2 className="text-2xl font-bold text-gray-800">Address</h2>
+          <textarea
+            value={userDetails.address || "Address is not Added"}
+            readOnly
+            rows={4}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 
