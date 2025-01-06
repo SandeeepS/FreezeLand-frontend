@@ -24,7 +24,6 @@ const Service: React.FC = () => {
     latitude: null,
     longitude: null,
   });
-  const [isAddressClicked, setIsAddressClicked] = useState(false);
   const [userProfile, setUserProfile] = useState<UserData>();
   const [defaultAddress, setDefaultAddress] = useState<string>("");
   const [defaultAddressDetails, setDefaultAddressDetails] =
@@ -106,14 +105,6 @@ const Service: React.FC = () => {
     }
   };
 
-  const handleAddressClick = () => {
-    if (isAddressClicked == false) {
-      setIsAddressClicked(true);
-    } else {
-      setIsAddressClicked(false);
-    }
-  };
-
   // Remove location data
   const handleRemoveLocation = () => {
     setLocationName({
@@ -122,13 +113,6 @@ const Service: React.FC = () => {
       latitude: null,
     });
     setShowLocationOptions(false);
-  };
-
-  const handleSelectedAddress = (item: object) => {
-    console.log("item when clicking is ", item);
-    setDefaultAddress(item?._id);
-    setDefaultAddressDetails(item);
-    console.log("after changing the default addres is ", defaultAddress);
   };
 
   return (
@@ -153,6 +137,7 @@ const Service: React.FC = () => {
                 image: "",
                 location: "",
                 file: null,
+                defaultAddress: "",
               }}
               validationSchema={ServiceFormValidation}
               enableReinitialize={true}
@@ -240,14 +225,10 @@ const Service: React.FC = () => {
                         formik.setFieldValue("file", event.target.files[0]);
                       }}
                     />
-
-                 
                   </div>
                   {formik.errors.file && (
-                      <small className="text-red-500">
-                        {formik.errors.file}
-                      </small>
-                    )}
+                    <small className="text-red-500">{formik.errors.file}</small>
+                  )}
                   {/**providing space for inserting the device image*/}
                   <div>
                     {formik.values.file && (
@@ -255,121 +236,45 @@ const Service: React.FC = () => {
                     )}
                   </div>
                   {/**Adding  address with addaddress option. */}
-                  <div className="flex flex-wrap  ">
+                  <div className="flex flex-wrap">
                     {/* adding address Button and Options */}
-                    <div className="w-full mb-6 my-5">
+                  </div>
+
+                  <div className="flex flex-wrap -mx-3 mb-6">
+                    <div className="w-full px-3">
                       <label
-                        htmlFor=""
+                        htmlFor="defaultAddress"
                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                       >
-                        Update address*
+                        Default Address *
                       </label>
-                      <button
-                        type="button"
-                        onClick={handleAddressClick}
-                        className={`flex items-center px-4 py-2 rounded w-full  bg-blue-500 text-white hover:bg-blue-600 focus:ring-2
-                  }`}
+                      <select
+                        className="appearance-none cursor-pointer block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                        id="defaultAddress"
+                        name="defaultAddress"
+                        value={defaultAddress}
+                        onChange={(event) => {
+                          formik.setFieldValue(
+                            "defaultAddress",
+                            event.target.value
+                          );
+                          setDefaultAddress(event.target.value);
+                        }}
                       >
-                        {isAddressClicked
-                          ? `Click to remove`
-                          : "Select Address"}
-                      </button>
-
-                      {isAddressClicked && (
-                        <div>
-                          <div className="">
-                            <p className="text-rose-500	text-sm	">
-                              By default the Default address is selected , you
-                              can change it if you needed
-                            </p>
-                          </div>
-
-                          <div className="flex w-full ">
-                            <div className="m-3 w-[40%]">
-                              {/**Default address card */}
-
-                              <Card
-                                sx={{
-                                  maxWidth: 140,
-                                  height: 180,
-                                  border: `1px solid blue`,
-                                }}
-                                className="mx-2"
-                              >
-                                <CardContent>
-                                  <p className="text-sm font-bold">
-                                    Default Address
-                                  </p>
-                                  <Typography
-                                    variant="body2"
-                                    sx={{ color: "text.secondary" }}
-                                  >
-                                    {defaultAddressDetails?.name}
-                                    <br />
-                                    {defaultAddressDetails?.email}
-                                    <br />
-                                    {defaultAddressDetails?.district}
-                                    <br />
-                                    {defaultAddressDetails?.landMark}
-                                    <br />
-                                    {defaultAddressDetails?.state}
-                                    <br />
-                                    {defaultAddressDetails?.phone}
-                                    <br />
-                                  </Typography>
-                                </CardContent>
-                              </Card>
-                            </div>
-                            <div className="flex overflow-x-auto m-5 space-x-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-                              {/* Repeatable Card Section */}
-                              {userProfile?.address.map(
-                                (item: AddAddress, index) => (
-                                  <div
-                                    onClick={() => handleSelectedAddress(item)}
-                                  >
-                                    <Card
-                                      key={index}
-                                      sx={{
-                                        maxWidth: 120,
-                                        height: 180,
-                                        transition: {
-                                          transform: "scale(1.05)", // Slightly enlarge the card
-                                          boxShadow:
-                                            "0px 4px 15px rgba(0, 0, 0, 0.2)", // Add a shadow on hover
-                                        },
-                                      }}
-                                      className="flex-shrink-0 mx-2 cursor-pointer border border-gray-300 hover:border-blue-500 rounded-lg"
-                                    >
-                                      <CardContent>
-                                        <Typography
-                                          variant="body2"
-                                          sx={{ color: "text.secondary" }}
-                                        >
-                                          {item?.name}
-                                          <br />
-                                          {item?.email}
-                                          <br />
-                                          {item?.district}
-                                          <br />
-                                          {item?.landMark}
-                                          <br />
-                                          {item?.state}
-                                          <br />
-                                          {item?.phone}
-                                          <br />
-                                        </Typography>
-                                      </CardContent>
-                                    </Card>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                        <option value="">Select Address</option>
+                        {userProfile?.address.map((item: AddAddress) => (
+                          <option key={item._id} value={item._id}>
+                            {item.name}, {item.district}, {item.state}
+                          </option>
+                        ))}
+                      </select>
+                      {formik.errors.defaultAddress && (
+                        <small className="text-red-500">
+                          {formik.errors.defaultAddress}
+                        </small>
                       )}
                     </div>
                   </div>
-
                   {/**code for selecting the current location of the user*/}
                   <div className="flex flex-wrap  ">
                     {/* Location Button and Options */}
