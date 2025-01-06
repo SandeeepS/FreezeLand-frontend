@@ -6,6 +6,7 @@ const strongRegex = new RegExp(
 );
 
 const gmailRegex = new RegExp("^[a-zA-Z0-9._%+-]+@gmail\\.com$");
+const SUPPORTED_FORMATS = ["image/jpg","image/jpeg","image/png"];
 
 export const SignupValidation = Yup.object({
   name: Yup.string().min(3).required("Please Enter name"),
@@ -91,11 +92,16 @@ export const ServiceFormValidation = Yup.object({
    .min(3).required("Please Enter Your Name"),
    complaintDiscription:Yup.string().min(5).required("A description is required to help us understand your complaint"),
    file: Yup.mixed()
+   .nullable()
+   .required("Please upload the image")
    .optional()
-   .test('file-present', 'Please upload an image', (value) => {
-     if (!value){
-       return true; // No error if no file is uploaded
-     }
-     return value.type === 'image/jpeg' || value.type === 'image/png';
-   })
+   .test('FILE-SIZE',
+     "uploaded file is too big", 
+     (value) => !value || (value && value.size <= 1024 * 1024)
+   )
+   .test(
+    "FILE FORMAT",
+    "Uploaded file has unsupported format",
+     (value) => !value || (value && SUPPORTED_FORMATS.includes(value?.type))
+   )
 })

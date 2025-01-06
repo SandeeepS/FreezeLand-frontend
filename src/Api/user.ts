@@ -25,7 +25,7 @@ const signup = async ({ name, phone, email, password,cpassword }: FormData) => {
 const login = async (email: string, password: string) => {
   try {
     console.log("entered in the login Api");
-    const result = await Api.post(userRoutes.login, { email, password });
+    const result = await Api.post(userRoutes.login,{ email, password });
     console.log("result from the fronEnd is ", result);
     return result;
   } catch (error) {

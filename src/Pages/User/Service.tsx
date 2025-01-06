@@ -7,10 +7,11 @@ import { getProfile } from "../../Api/user";
 import { Card, CardContent, Typography } from "@mui/material";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
-import { Field, Formik } from "formik";
+import { Formik } from "formik";
 import { UserData } from "../../interfaces/UserData";
 import { ServiceData } from "../../interfaces/ServiceData";
 import { ServiceFormValidation } from "../../components/Common/Validations";
+import PreviewImage from "../../components/User/PreviewImage";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 const Service: React.FC = () => {
@@ -25,10 +26,10 @@ const Service: React.FC = () => {
   });
   const [isAddressClicked, setIsAddressClicked] = useState(false);
   const [userProfile, setUserProfile] = useState<UserData>();
-  const [defaultAddress, setDefaultAddress] = useState();
+  const [defaultAddress, setDefaultAddress] = useState<string>("");
   const [defaultAddressDetails, setDefaultAddressDetails] =
     useState<AddAddress>();
-  const fileRef = useRef(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,7 +126,7 @@ const Service: React.FC = () => {
 
   const handleSelectedAddress = (item: object) => {
     console.log("item when clicking is ", item);
-    setDefaultAddress(item._id);
+    setDefaultAddress(item?._id);
     setDefaultAddressDetails(item);
     console.log("after changing the default addres is ", defaultAddress);
   };
@@ -149,8 +150,9 @@ const Service: React.FC = () => {
               initialValues={{
                 name: "",
                 complaintDiscription: "",
-                file: "",
+                image: "",
                 location: "",
+                file: null,
               }}
               validationSchema={ServiceFormValidation}
               enableReinitialize={true}
@@ -158,7 +160,7 @@ const Service: React.FC = () => {
                 console.log("submited complaint details is", values);
                 const combinedData = {
                   ...values,
-                  defaultAddress: defaultAddressDetails,
+                  defaultAddress: defaultAddress,
                   locationName: locationName,
                 };
                 console.log(
@@ -226,16 +228,32 @@ const Service: React.FC = () => {
                     Upload Image*
                   </label>
                   <div className="flex items-center justify-center w-full mb-5">
-                
                     <input
                       className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                       id="multiple_files"
+                      ref={fileRef}
                       type="file"
+                      name="file"
                       multiple
+                      onBlur={formik.handleBlur}
+                      onChange={(event) => {
+                        formik.setFieldValue("file", event.target.files[0]);
+                      }}
                     />
-                  </div>
-                  {/**providing space for inserting the device image*/}
 
+                 
+                  </div>
+                  {formik.errors.file && (
+                      <small className="text-red-500">
+                        {formik.errors.file}
+                      </small>
+                    )}
+                  {/**providing space for inserting the device image*/}
+                  <div>
+                    {formik.values.file && (
+                      <PreviewImage file={formik.values.file} />
+                    )}
+                  </div>
                   {/**Adding  address with addaddress option. */}
                   <div className="flex flex-wrap  ">
                     {/* adding address Button and Options */}
