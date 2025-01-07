@@ -97,7 +97,7 @@ export const DeviceListingValidation = Yup.object({
 
 export const ServiceFormValidation = Yup.object({
   name: Yup.string().min(3).required("Please Enter Your Name"),
-  complaintDiscription: Yup.string()
+  discription: Yup.string()
     .min(5)
     .required("A description is required to help us understand your complaint"),
   file: Yup.mixed()

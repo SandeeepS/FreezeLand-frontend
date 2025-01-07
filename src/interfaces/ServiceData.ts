@@ -1,5 +1,5 @@
 export interface ServiceData {
-    _id: string;
+  _id: string;
     name: string;
     image: string;
     discription: string;

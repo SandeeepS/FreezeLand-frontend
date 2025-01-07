@@ -12,7 +12,8 @@ const userRoutes = {
   editUser:"/user/editUser",
   addAddress:"/user/addAddress",
   editAddress:"/user/editAddress",
-  setDefaultAddress:"/user/setDefaultAddress"
+  setDefaultAddress:"/user/setDefaultAddress",
+  registerService:"/user/registerService"
 };
 
 export default userRoutes;

@@ -9,9 +9,10 @@ import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
 import { UserData } from "../../interfaces/UserData";
-import { ServiceData } from "../../interfaces/ServiceData";
+import { Iconcern } from "../../interfaces/Iconcern";
 import { ServiceFormValidation } from "../../components/Common/Validations";
 import PreviewImage from "../../components/User/PreviewImage";
+import { registerComplaint } from "../../Api/user";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 //interface used for validating the lcoation
@@ -30,7 +31,7 @@ type ValidationResult = {
 const Service: React.FC = () => {
   const { id } = useParams();
   console.log("id from the userHome page is ", id);
-  const [service, setServices] = useState<ServiceData>();
+  const [service, setServices] = useState<Iconcern>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState({
     address: "",
@@ -92,7 +93,7 @@ const Service: React.FC = () => {
           );
           const data = await response.json();
           console.log("Geocoding respose is ", data);
-          if (data.results && data.results.length > 0) {
+          if (data.results && data.results.length > 0){
             setLocationName({
               address: data.results[0].formatted_address,
               latitude: data.results[0].geometry.location.lat,
@@ -159,7 +160,7 @@ const Service: React.FC = () => {
             <Formik
               initialValues={{
                 name: "",
-                complaintDiscription: "",
+                discription: "",
                 location: "",
                 file: null,
                 defaultAddress: "",
@@ -176,15 +177,20 @@ const Service: React.FC = () => {
 
                 } else {
                   setLocationError("");
-                  const combinedData = {
-                    ...values,
-                    defaultAddress: defaultAddress,
-                    locationName: locationName,
+                  const combinedData:Iconcern = {
+                  
+                    name:values.name,
+                    image:values?.file?.name,
+                    defaultAddress:defaultAddress,
+                    discription:values.discription,
+                    locationName:locationName
+
                   };
                   console.log(
                     "complaint details after combining the addres adn location ",
                     combinedData
                   );
+                  const result = await registerComplaint(combinedData);
                 }
               }}
             >
@@ -225,15 +231,15 @@ const Service: React.FC = () => {
                       </label>
                       <textarea
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        id="complaintDiscription"
+                        id="discription"
                         placeholder="Describe your complaint here..."
                         rows={4}
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                       ></textarea>
-                      {formik.errors.complaintDiscription && (
+                      {formik.errors.discription && (
                         <small className="text-red-500">
-                          {formik.errors.complaintDiscription}
+                          {formik.errors.discription}
                         </small>
                       )}
                     </div>

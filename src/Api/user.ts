@@ -3,29 +3,36 @@ import Api from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
 import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
+import { ServiceData } from "../interfaces/ServiceData";
 
-const signup = async ({ name, phone, email, password,cpassword }: FormData) => {
+const signup = async ({
+  name,
+  phone,
+  email,
+  password,
+  cpassword,
+}: FormData) => {
   try {
     console.log("Entered in signup ");
-    const result = await Api.post(userRoutes.signup,{
+    const result = await Api.post(userRoutes.signup, {
       name,
       phone,
       email,
       password,
-      cpassword
+      cpassword,
     });
     console.log("result of api post", result);
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error)
+    errorHandler(error as Error);
   }
 };
 
 const login = async (email: string, password: string) => {
   try {
     console.log("entered in the login Api");
-    const result = await Api.post(userRoutes.login,{ email, password });
+    const result = await Api.post(userRoutes.login, { email, password });
     console.log("result from the fronEnd is ", result);
     return result;
   } catch (error) {
@@ -61,7 +68,7 @@ const verifyOtp = async (otpnum: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error)
+    errorHandler(error as Error);
   }
 };
 
@@ -70,7 +77,7 @@ const forgotPassword = async (email: string) => {
     return await Api.post(userRoutes.forgotPassword, { email });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error)
+    errorHandler(error as Error);
   }
 };
 const forgotVerifyOtp = async (otp: string) => {
@@ -94,7 +101,7 @@ const resendOtp = async () => {
     await Api.get(userRoutes.resendOtp);
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error)
+    errorHandler(error as Error);
   }
 };
 
@@ -110,7 +117,7 @@ const logout = async () => {
 const getProfile = async () => {
   try {
     const result = await Api.get(userRoutes.getProfile);
-    console.log("UserProfile form the backend in the user.ts is ",result);
+    console.log("UserProfile form the backend in the user.ts is ", result);
     return result;
   } catch (error) {
     console.log(error);
@@ -134,7 +141,7 @@ const EditUserDetails = async ({ _id, name, phone }: FormData) => {
   }
 };
 
-const AddUserAddress = async (_id: string | undefined,values: AddAddress) => {
+const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
   try {
     console.log("Entered in the AddUserAddress fucntion in the user.ts");
     const result = await Api.post(userRoutes.addAddress, { _id, values });
@@ -145,16 +152,23 @@ const AddUserAddress = async (_id: string | undefined,values: AddAddress) => {
   }
 };
 
-const EditExistAddress = async(_id:string | undefined , addressId : string | undefined, values :AddAddress) => {
-  try{
-    const result = await Api.put(userRoutes.editAddress,{_id, addressId,values});
+const EditExistAddress = async (
+  _id: string | undefined,
+  addressId: string | undefined,
+  values: AddAddress
+) => {
+  try {
+    const result = await Api.put(userRoutes.editAddress, {
+      _id,
+      addressId,
+      values,
+    });
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error);
     errorHandler(error as Error);
-
   }
-}
+};
 
 const setDefaultAddress = async (
   userId: string | undefined,
@@ -167,7 +181,18 @@ const setDefaultAddress = async (
     });
     return result;
   } catch (error) {
-    console.log(error );
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
+const registerComplaint = async (data: ServiceData) => {
+  try {
+    console.log("enterd in the registerCompaint funciton in the user.ts", data);
+    const result = await Api.post(userRoutes.registerService,{data})
+    console.log("result after registering the user complaint is ",result);
+  } catch (error) {
+    console.log(error as Error);
     errorHandler(error as Error);
   }
 };
@@ -187,5 +212,5 @@ export {
   updateNewPassword,
   AddUserAddress,
   setDefaultAddress,
-  
+  registerComplaint,
 };
