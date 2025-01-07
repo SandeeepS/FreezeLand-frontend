@@ -174,7 +174,7 @@ const Service: React.FC = () => {
                 if (isLocation.ok == false) {
                   console.log("Error message ");
                   setLocationError(isLocation.message);
-
+                  
                 } else {
                   setLocationError("");
                   const combinedData:Iconcern = {
@@ -184,13 +184,15 @@ const Service: React.FC = () => {
                     defaultAddress:defaultAddress,
                     discription:values.discription,
                     locationName:locationName
-
                   };
                   console.log(
                     "complaint details after combining the addres adn location ",
                     combinedData
                   );
                   const result = await registerComplaint(combinedData);
+                  if(result){
+                    console.log("result reached in the frontend is ",result)
+                  }
                 }
               }}
             >
