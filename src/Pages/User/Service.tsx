@@ -14,6 +14,19 @@ import { ServiceFormValidation } from "../../components/Common/Validations";
 import PreviewImage from "../../components/User/PreviewImage";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
+//interface used for validating the lcoation
+interface Location {
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+//for used for vlaidating the result
+type ValidationResult = {
+  ok: boolean;
+  message?: string;
+};
+
 const Service: React.FC = () => {
   const { id } = useParams();
   console.log("id from the userHome page is ", id);
@@ -28,6 +41,8 @@ const Service: React.FC = () => {
   const [defaultAddress, setDefaultAddress] = useState<string>("");
   const [defaultAddressDetails, setDefaultAddressDetails] =
     useState<AddAddress>();
+  const [locationError, setLocationError] = useState<string| undefined>("");
+
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -58,7 +73,7 @@ const Service: React.FC = () => {
           setDefaultAddress(defaultAdd._id);
           setDefaultAddressDetails(defaultAdd);
         }
-      } catch (error){
+      } catch (error) {
         console.log(error as Error);
       }
     };
@@ -70,19 +85,21 @@ const Service: React.FC = () => {
   const handleFetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { latitude,longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         try {
           const response = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
           );
           const data = await response.json();
-          console.log("Geocoding respose is ",data);
+          console.log("Geocoding respose is ", data);
           if (data.results && data.results.length > 0) {
             setLocationName({
               address: data.results[0].formatted_address,
               latitude: data.results[0].geometry.location.lat,
               longitude: data.results[0].geometry.location.lng,
             });
+            setLocationError("");
+
           } else {
             console.log("No results found for location");
           }
@@ -95,6 +112,14 @@ const Service: React.FC = () => {
       },
       { enableHighAccuracy: true }
     );
+  };
+
+  const validateLocationName = (value: Location): ValidationResult => {
+    if (!value.address || !value.latitude || !value.longitude) {
+      return { ok: false, message: "Location is required" };
+    }
+    // Additional checks can be added here if needed
+    return { ok: true };
   };
 
   // Handle primary button click to show location options
@@ -143,15 +168,24 @@ const Service: React.FC = () => {
               enableReinitialize={true}
               onSubmit={async (values) => {
                 console.log("submited complaint details is", values);
-                const combinedData = {
-                  ...values,
-                  defaultAddress: defaultAddress,
-                  locationName: locationName,
-                };
-                console.log(
-                  "complaint details after combining the addres adn location ",
-                  combinedData
-                );
+                const isLocation = validateLocationName(locationName);
+                console.log("location gnglsdfnlsd ", isLocation);
+                if (isLocation.ok == false) {
+                  console.log("Error message ");
+                  setLocationError(isLocation.message);
+
+                } else {
+                  setLocationError("");
+                  const combinedData = {
+                    ...values,
+                    defaultAddress: defaultAddress,
+                    locationName: locationName,
+                  };
+                  console.log(
+                    "complaint details after combining the addres adn location ",
+                    combinedData
+                  );
+                }
               }}
             >
               {(formik) => (
@@ -232,7 +266,7 @@ const Service: React.FC = () => {
                   {/**providing space for inserting the device image*/}
                   <div>
                     {formik.values.file && (
-                      <PreviewImage file={formik.values.file}/>
+                      <PreviewImage file={formik.values.file} />
                     )}
                   </div>
                   {/**Adding  address with addaddress option. */}
@@ -289,7 +323,7 @@ const Service: React.FC = () => {
                         type="button"
                         onClick={handleLocationClick}
                         className={`flex items-center px-4 py-2 rounded w-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
-                  }`}
+                       }`}
                       >
                         {locationName.longitude !== null
                           ? `Location: ${locationName?.address}`
@@ -322,6 +356,9 @@ const Service: React.FC = () => {
                     </div>
                   </div>
                   {/**code for selecting the current location of the user will end here*/}
+                  {locationError && (
+                    <div className="text-red-500 mt-2">{locationError}</div>
+                  )}
 
                   <div className="w-full my-2 ">
                     <button
