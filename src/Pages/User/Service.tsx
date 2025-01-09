@@ -42,7 +42,7 @@ const Service: React.FC = () => {
   const [defaultAddress, setDefaultAddress] = useState<string>("");
   const [defaultAddressDetails, setDefaultAddressDetails] =
     useState<AddAddress>();
-  const [locationError, setLocationError] = useState<string| undefined>("");
+  const [locationError, setLocationError] = useState<string | undefined>("");
 
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -93,14 +93,13 @@ const Service: React.FC = () => {
           );
           const data = await response.json();
           console.log("Geocoding respose is ", data);
-          if (data.results && data.results.length > 0){
+          if (data.results && data.results.length > 0) {
             setLocationName({
               address: data.results[0].formatted_address,
               latitude: data.results[0].geometry.location.lat,
               longitude: data.results[0].geometry.location.lng,
             });
             setLocationError("");
-
           } else {
             console.log("No results found for location");
           }
@@ -143,8 +142,8 @@ const Service: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <Header />
+    <div className="flex flex-col mt-48">
+     
       <div className="md:flex md:justify-between mt-20 md:pl-32 mx-6 md:w-full">
         <div className="md:w-[40%]">
           <div className="md:mb-12 flex justify-center">
@@ -174,24 +173,22 @@ const Service: React.FC = () => {
                 if (isLocation.ok == false) {
                   console.log("Error message ");
                   setLocationError(isLocation.message);
-                  
                 } else {
                   setLocationError("");
-                  const combinedData:Iconcern = {
-                  
-                    name:values.name,
-                    image:values?.file?.name,
-                    defaultAddress:defaultAddress,
-                    discription:values.discription,
-                    locationName:locationName
+                  const combinedData: Iconcern = {
+                    name: values.name,
+                    image: values?.file?.name,
+                    defaultAddress: defaultAddress,
+                    discription: values.discription,
+                    locationName: locationName,
                   };
                   console.log(
                     "complaint details after combining the addres adn location ",
                     combinedData
                   );
                   const result = await registerComplaint(combinedData);
-                  if(result){
-                    console.log("result reached in the frontend is ",result)
+                  if (result) {
+                    console.log("result reached in the frontend is ", result);
                   }
                 }
               }}

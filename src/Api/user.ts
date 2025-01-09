@@ -3,7 +3,7 @@ import Api from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
 import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
-import { ServiceData } from "../interfaces/ServiceData";
+import { Iconcern } from "../interfaces/Iconcern";
 
 const signup = async ({
   name,
@@ -186,7 +186,7 @@ const setDefaultAddress = async (
   }
 };
 
-const registerComplaint = async (data: ServiceData) => {
+const registerComplaint = async (data: Iconcern) => {
   try {
     console.log("enterd in the registerCompaint funciton in the user.ts", data);
     const result = await Api.post(userRoutes.registerService,{data})

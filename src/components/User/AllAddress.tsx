@@ -50,7 +50,7 @@ const AllAddress: React.FC = () => {
 
   const handleEditAddress = async (id:string | undefined) => {
     console.log("clicked the editbutton by ",id);
-    navigate(`/user/account/editAddress/${id}`);
+    navigate(`/user/editAddress/${id}`);
     
   }
 

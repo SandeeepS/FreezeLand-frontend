@@ -13,7 +13,7 @@ import MechOtpPage from "./Pages/Mechanic/MechOtpPage";
 import ForgetPassword from "./Pages/User/ForgetPassword";
 import ForgetPasswordForMech from "./Pages/Mechanic/ForgetPasswordForMech";
 import Account from "./Pages/User/Account";
-import Profile from "./components/User/ProfileEdit";
+import Profile from "./components/Common/Profile";
 import Layout from "./components/Admin/Layout";
 import ProfileDetails from "./components/User/ProfileDetails";
 import Address from "./components/User/Address";
@@ -21,7 +21,9 @@ import History from "./components/User/History";
 import Payments from "./components/User/Payments";
 import AddAddress from "./components/User/AddAddress";
 import AllAddress from "./components/User/AllAddress";
-import {EditAddress} from "./components/User/EditAddress";
+import { EditAddress } from "./components/User/EditAddress";
+import BasePage from "./Pages/User/UserLayout";
+import UserLayout from "./Pages/User/UserLayout";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -33,9 +35,11 @@ const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
 const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
 const NewService = lazy(() => import("./Pages/Admin/NewService"));
 
-const AdminDeviceListing = lazy(() => import("./Pages/Admin/AdminDeviceListing"));
-const EditServices = lazy(() => import("./Pages/Admin/EditService"))
-const Service = lazy(() => import("./Pages/User/Service"))
+const AdminDeviceListing = lazy(
+  () => import("./Pages/Admin/AdminDeviceListing")
+);
+const EditServices = lazy(() => import("./Pages/Admin/EditService"));
+const Service = lazy(() => import("./Pages/User/Service"));
 const AddNewDevice = lazy(() => import("./components/Admin/AddNewDevice"));
 
 const MechanicLoginPage = lazy(
@@ -66,18 +70,18 @@ function App() {
             <Route path="/user/homepage" element={<UserHomePage />} />
           </Route>
 
-          <Route path="" element={<UserLoggedIn />}>
-            <Route path="/user/account" element={<Account />}>
-              <Route path="/user/account" element={<ProfileDetails/>}/>
-              <Route path="/user/account/profile" element={<Profile />}/>
-              <Route path="/user/account/address" element={<Address/>}/>
-              <Route path="/user/account/history" element={<History/>}/>
-              <Route path="/user/account/payment" element={<Payments/>}/>
-              <Route path="/user/account/AddAddress" element={<AddAddress/>}/>
-              <Route path="/user/account/showAllAddress" element={<AllAddress/>}/>
-              <Route path="/user/account/editAddress/:id" element={<EditAddress/>}/>
+          {/** new User layout */}
+          <Route path="/user" element={<UserLoggedIn />}>
+            <Route path="/user" element={<UserLayout />}>
+              <Route path="/user/account" element={<Profile />} />
+              <Route path="/user/address" element={<Address />} />
+              <Route path="/user/history" element={<History />} />
+              <Route path="/user/payment" element={<Payments />} />
+              <Route path="/user/AddAddress" element={<AddAddress />} />
+              <Route path="/user/showAllAddress" element={<AllAddress />} />
+              <Route path="/user/editAddress/:id" element={<EditAddress />} />
+              <Route path="/user/service/:id" element={<Service />} />
             </Route>
-            <Route path="/user/service/:id" element={<Service/>}/>
           </Route>
 
           {/*Admin Routes*/}
@@ -90,11 +94,11 @@ function App() {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUserListing />} />
               <Route path="/admin/mech" element={<AdminMechListing />} />
-              <Route path="/admin/devices" element={<AdminDeviceListing/>} />
+              <Route path="/admin/devices" element={<AdminDeviceListing />} />
               <Route path="/admin/services" element={<AdminServices />} />
               <Route path="/admin/addNewService" element={<NewService />} />
-              <Route path="/admin/editService/:id" element={<EditServices/>}/>
-              <Route path="/admin/addNewDevice" element={<AddNewDevice/>} />
+              <Route path="/admin/editService/:id" element={<EditServices />} />
+              <Route path="/admin/addNewDevice" element={<AddNewDevice />} />
             </Route>
           </Route>
 

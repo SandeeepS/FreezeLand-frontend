@@ -15,12 +15,12 @@ const UserHomePage: React.FC = () => {
     <div className="flex flex-col">
       <div className="fixed top-0 left-0 w-full  z-10 ">
         <Header />
-      </div>{" "}
+      </div>
       <div className=" carosal-compment  lg:pt-4   ">
         <CarousalComponent slides={slides} />
       </div>
       <div>
-        <Promo1 />
+        <Promo1/>
       </div>
       <div>
         <ServiceList />
