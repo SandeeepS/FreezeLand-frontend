@@ -192,7 +192,7 @@ export const EditAddress: React.FC = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.errors.pin && (
+                  {formik.errors.pin&&(
                     <small className="text-red-500">{formik.errors.pin}</small>
                   )}
                 </div>
