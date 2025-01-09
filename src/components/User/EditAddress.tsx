@@ -1,47 +1,56 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
-import { Formik } from 'formik';
-import { AddressValidation } from '../Common/Validations';
-import { Button } from '@mui/material';
-import { useEffect,useState } from 'react';
-import { AddAddress, AddAddress  as AddAddressInterface } from "../../interfaces/AddAddress";
-import { useNavigate } from 'react-router-dom';
-import { getProfile } from '../../Api/user';
-import { EditExistAddress } from '../../Api/user';
+import React from "react";
+import { useParams } from "react-router-dom";
+import { Formik } from "formik";
+import { AddressValidation } from "../Common/Validations";
+import { Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+  AddAddress,
+  AddAddress as AddAddressInterface,
+} from "../../interfaces/AddAddress";
+import { useNavigate } from "react-router-dom";
+import { getProfile } from "../../Api/user";
+import { EditExistAddress } from "../../Api/user";
+import Footer from "./Footer";
 
-export const EditAddress:React.FC = () => {
-    const {id} = useParams();
-     
-    const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(null);
-    const [address, setAddress] = useState<AddAddress>();
-    const navigate = useNavigate();
-   
-    
-    useEffect(() => {
-      const fetchUserDetails = async () => {
-        try {
-          const response = await getProfile();
-          const user = response?.data.data.data;
-          console.log("User details from the backend in the EditAddress is ", user);
-          setUserProfile(user);
-          const addressFound = user.address.find((addr : AddAddress ) => addr._id === id)
-          console.log("adress while finded is ",addressFound);
-          setAddress(addressFound);
-        } catch (error) {
-          console.log(
-            "Failed to fetch the user Details from the Account section",
-            error
-          );
-        }
-      };
-      fetchUserDetails();
-    }, [id]);
+export const EditAddress: React.FC = () => {
+  const { id } = useParams();
 
+  const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(
+    null
+  );
+  const [address, setAddress] = useState<AddAddress>();
+  const navigate = useNavigate();
 
-    console.log("id from the kslfgnlgj",id);
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await getProfile();
+        const user = response?.data.data.data;
+        console.log(
+          "User details from the backend in the EditAddress is ",
+          user
+        );
+        setUserProfile(user);
+        const addressFound = user.address.find(
+          (addr: AddAddress) => addr._id === id
+        );
+        console.log("adress while finded is ", addressFound);
+        setAddress(addressFound);
+      } catch (error) {
+        console.log(
+          "Failed to fetch the user Details from the Account section",
+          error
+        );
+      }
+    };
+    fetchUserDetails();
+  }, [id]);
+
+  console.log("id from the kslfgnlgj", id);
   return (
-    <div className="bg-white h-full rounded-lg shadow-md flex flex-col space-y-12 overflow-y-auto">
-        <div className="flex flex-col justify-center items-center my-6">
+    <div className="bg-white h-full rounded-lg shadow-md flex flex-col space-y-12 overflow-y-auto mt-32">
+      <div className="flex flex-col justify-center items-center my-6">
         <h1>
           Your Account {">"} Your Address {">"} Edit Address
         </h1>
@@ -52,10 +61,10 @@ export const EditAddress:React.FC = () => {
         {
           <Formik
             initialValues={{
-              name: address?.name|| "",
-              phone:address?.phone ||  0,
-              email: address?.email ||  "",
-              state:  address?.state || "",
+              name: address?.name || "",
+              phone: address?.phone || 0,
+              email: address?.email || "",
+              state: address?.state || "",
               pin: address?.pin || 0,
               district: address?.district || "",
               landMark: address?.landMark || "",
@@ -64,14 +73,14 @@ export const EditAddress:React.FC = () => {
             enableReinitialize={true}
             onSubmit={async (values) => {
               console.log("Submited addressDetails ", values);
-              let _id:string | undefined = "";
-              if(userProfile){
-                _id = userProfile._id
+              let _id: string | undefined = "";
+              if (userProfile) {
+                _id = userProfile._id;
               }
-              const result = await EditExistAddress(_id,address?._id,values);
-              if(result){
+              const result = await EditExistAddress(_id, address?._id, values);
+              if (result) {
                 console.log("result reached the frontend");
-                navigate('/user/account/address');
+                navigate("/user/account/address");
               }
             }}
           >
@@ -231,11 +240,10 @@ export const EditAddress:React.FC = () => {
                 </div>
                 <div className="my-5">
                   <Button
-                  type="submit"
+                    type="submit"
                     variant="contained"
                     color="warning"
                     className="w-full"
-                
                   >
                     Add Address
                   </Button>
@@ -245,7 +253,9 @@ export const EditAddress:React.FC = () => {
           </Formik>
         }
       </div>
+      <div>
+        <Footer/>
+      </div>
     </div>
-  )
-}
-
+  );
+};

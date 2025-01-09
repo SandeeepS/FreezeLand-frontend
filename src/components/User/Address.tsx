@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
+import Footer from "./Footer";
 
 const Address: React.FC = () => {
   const navigate = useNavigate();
@@ -17,12 +18,12 @@ const Address: React.FC = () => {
   };
 
   return (
-    <div className="bg-white h-full rounded-lg shadow-md flex flex-col space-y-12">
-      <div className="mx-60 mt-12">
+    <div className="bg-white h-screen rounded-lg shadow-md flex flex-col space-y-12 mt-24">
+      <div className=" flex justify-center mx-60 mt-12">
         <h1 className="text-2xl font-bold">Your Address</h1>
       </div>
 
-      <div className="flex justify-center items-center space-x-6">
+      <div className="md:flex md:justify-center md:items-center  space-x-6 space-y-6">
         <div className="">
           <Box
             component="section"
@@ -51,14 +52,17 @@ const Address: React.FC = () => {
           </Box>
         </div>
       </div>
-      <div>
+      <div className="flex justify-center">
         <Button
+          className="md:w-96 w-full "
           variant="contained"
-          className="w-full"
           onClick={handleButtonClick}
         >
           Show All Address
         </Button>
+      </div>
+      <div>
+        <Footer/>
       </div>
     </div>
   );
