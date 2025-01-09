@@ -6,6 +6,7 @@ import { getAllServices } from "../../Api/admin";
 import { listUnlistService } from "../../Api/admin";
 import { deleteService } from "../../Api/admin";
 import TableCommon from "../../components/Common/TableCommon";
+import TopBar from "../../components/Admin/Dashboard/TopBar";
 
 interface ServiceData {
   _id: string;
@@ -72,7 +73,7 @@ const AdminServices: React.FC = () => {
   return (
     <div className=" flex flex-col">
       <div className="fixed top-0 w-full">
-        <AdminHeader heading={heading} />
+        <TopBar heading={heading}/>
       </div>
       <div className="flex justify-end mx-10 ">
         <Button className="" onClick={handleClick} variant="contained">

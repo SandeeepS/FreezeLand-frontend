@@ -3,7 +3,7 @@ import { blockMech, getAllMechanics } from "../../Api/admin";
 import { useState } from "react";
 import { useEffect } from "react";
 import { deleteMech } from "../../Api/admin";
-import AdminHeader from "../../components/Admin/AdminHeader";
+import TopBar from "../../components/Admin/Dashboard/TopBar";
 
 interface MechData {
   _id: string;
@@ -59,8 +59,8 @@ const AdminMechListing: React.FC = () => {
   return (
     <div>
       <div className="fixed top-0 w-full">
-        <AdminHeader heading={header} />
-      </div>
+        <TopBar heading={header}/>
+/      </div>
       <div className="flex justify-center items-center mx-10 pt-7 h-screen">
         <TableCommon
           columns={columns}

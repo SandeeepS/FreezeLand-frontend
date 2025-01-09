@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { blockUser } from "../../Api/admin";
 import { deleteUser } from "../../Api/admin";
-import AdminHeader from "../../components/Admin/AdminHeader";
+import TopBar from "../../components/Admin/Dashboard/TopBar";
 
 
 
@@ -64,7 +64,7 @@ const AdminUserListing: React.FC = () => {
 
   return (
     <div>
-      <AdminHeader heading={heading} />
+      <TopBar heading={heading}/>
       <div className="flex mx-10 justify-center items-center pt-7 h-screen">
         <TableCommon
           columns={columns}

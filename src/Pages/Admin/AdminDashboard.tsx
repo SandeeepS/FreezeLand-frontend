@@ -1,12 +1,12 @@
-import AdminHeader from "../../components/Admin/AdminHeader";
 import Grid from "../../components/Admin/Dashboard/Grid";
+import TopBar from "../../components/Admin/Dashboard/TopBar";
 
 const AdminDashboard: React.FC = () => {
-  const heading = "Dashboard";
+  const heading = "Admin Dashboard"
   return (
     <div>
-      <AdminHeader heading={heading}/>
       <div className="w-full  h-screen bg-[#DFECF8]">
+        <TopBar heading={heading}/>
          <Grid/>
       </div>
    

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState , useEffect} from "react";
 import { getAllDevices,deleteDevice, listUnlistDevices } from "../../Api/admin";
 import TableCommon from "../../components/Common/TableCommon";
-import AdminHeader from "../../components/Admin/AdminHeader";
+import TopBar from "../../components/Admin/Dashboard/TopBar";
 
 
 interface DeviceData {
@@ -76,7 +76,7 @@ const AdminDeviceListing: React.FC = () => {
   return (
     <div className=" flex flex-col">
       <div className="fixed top-0 w-full">
-        <AdminHeader heading={heading} />
+        <TopBar heading={heading}/>
       </div>
       <div className="flex justify-end mx-10 ">
         <Button className="" onClick={handleClick} variant="contained">
