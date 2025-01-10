@@ -24,6 +24,7 @@ import AllAddress from "./components/User/AllAddress";
 import { EditAddress } from "./components/User/EditAddress";
 import BasePage from "./Pages/User/UserLayout";
 import UserLayout from "./Pages/User/UserLayout";
+import Queue from "./components/User/Queue/Queue";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -77,6 +78,7 @@ function App() {
               <Route path="/user/address" element={<Address />} />
               <Route path="/user/history" element={<History />} />
               <Route path="/user/payment" element={<Payments />} />
+              <Route path="/user/queue" element={<Queue/>}/>
               <Route path="/user/AddAddress" element={<AddAddress />} />
               <Route path="/user/showAllAddress" element={<AllAddress />} />
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
