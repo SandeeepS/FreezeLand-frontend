@@ -1,9 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { logout } from "../../Api/user";
 import { useDispatch } from "react-redux";
-import { userLogout } from "../../App/slices/AuthSlice";
 import toast from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
 import { MdContactless } from "react-icons/md";
@@ -11,10 +9,9 @@ import { MdEventNote } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
 import { MdPowerSettingsNew } from "react-icons/md";
 
-const HeaderDropDown: React.FC = ({ isOpen, onClose }) => {
+const HeaderDropDown: React.FC = ({ isOpen, onClose,logout, authLogout,navigateTo}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   if (!isOpen) return null;
 
   const handleLogout = async () => {
@@ -30,9 +27,9 @@ const HeaderDropDown: React.FC = ({ isOpen, onClose }) => {
       }).then((result) => {
         if (result.isConfirmed) {
           logout().then(() => console.log(""));
-          dispatch(userLogout());
+          dispatch(authLogout());
           toast.success("You are logged out!");
-          navigate("/login");
+          navigate(navigateTo);
         }
       });
     } catch (error) {

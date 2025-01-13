@@ -125,6 +125,17 @@ const getProfile = async () => {
   }
 };
 
+//getting all registered complaint of the user
+const getAllRegisteredService = async () => {
+  try{
+    const result = await Api.get(userRoutes.getAllRegisteredService);
+    return result;
+  }catch(error){
+    console.log("error occured while fetching the user registerd services form the user.ts");
+    errorHandler(error as Error);
+  }
+}
+
 const EditUserDetails = async ({ _id, name, phone }: FormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
@@ -213,4 +224,5 @@ export {
   AddUserAddress,
   setDefaultAddress,
   registerComplaint,
+  getAllRegisteredService
 };

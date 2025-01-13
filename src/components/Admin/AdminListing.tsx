@@ -5,11 +5,9 @@ import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
-
 import { FaUsers } from "react-icons/fa6";
 import { GiMechaHead } from "react-icons/gi";
 import { GrServices } from "react-icons/gr";
-
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
@@ -57,15 +55,19 @@ const AdminListing: React.FC = () => {
     },
     { name: "Users", icon: FaUsers, id: 2, path: "/admin/users" },
     { name: "Mechanics", icon: GiMechaHead, id: 3, path: "/admin/mech" },
-    {name:"Services",icon:GrServices , id:4,path:"/admin/services"},
-    {name:"Devices",icon:BsFillDeviceSsdFill, id:5,path:"/admin/devices"},
-
+    { name: "Services", icon: GrServices, id: 4, path: "/admin/services" },
+    {
+      name: "Devices",
+      icon: BsFillDeviceSsdFill,
+      id: 5,
+      path: "/admin/devices",
+    },
   ];
 
   return (
     <>
       {/* Side Bar */}
-      <div className="w-16 md:w-56 fixed text-white left-0 top-0 z-10 h-screen border-r bg-[#4B4B4B]">
+      <div className="w-20 md:w-56  fixed text-white left-0  h-screen border-r bg-[#4B4B4B]">
         {/* Heading */}
         <div className="text-center">
           <h1 className="w-full text-xl md:text-2xl text-freeze-color font-exo p-6 md:p-10">
@@ -74,7 +76,7 @@ const AdminListing: React.FC = () => {
         </div>
 
         {/* Profile */}
-        <div className="flex justify-center items-center mt-4 md:mt-8">
+        {/* <div className="flex justify-center items-center mt-4 md:mt-8">
           <div className="rounded-full overflow-hidden w-10 h-10 md:w-16 md:h-16">
             <img
               src="/src/Images/businessman.png"
@@ -85,7 +87,7 @@ const AdminListing: React.FC = () => {
         </div>
         <h2 className="text-white text-center text-sm md:text-base mt-2 md:mt-4">
           Sandeep S
-        </h2>
+        </h2> */}
 
         {/* Listing */}
         <div className="mx-4 md:mx-12 mt-6 space-y-4 md:space-y-5">
@@ -93,7 +95,7 @@ const AdminListing: React.FC = () => {
             {SIDEBAR_LINKS.map((link, index) => (
               <li
                 key={index}
-                className={`font-medium rounded-md py-2 hover:bg-freeze-color hover:text-white transition-all duration-300 ${
+                className={`font-medium rounded-md  hover:bg-freeze-color hover:text-white transition-all duration-300 ${
                   activeLink === index ? "text-freeze-color" : ""
                 }`}
               >

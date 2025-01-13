@@ -13,7 +13,8 @@ const userRoutes = {
   addAddress:"/user/addAddress",
   editAddress:"/user/editAddress",
   setDefaultAddress:"/user/setDefaultAddress",
-  registerService:"/user/registerService"
+  registerService:"/user/registerService",
+  getAllRegisteredService:"/user/getAllRegisteredService"
 };
 
 export default userRoutes;

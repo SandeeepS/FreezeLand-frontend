@@ -1,20 +1,21 @@
 import React from "react";
 import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import { logout } from "../../Api/user";
-import { userLogout } from "../../App/slices/AuthSlice";
+import { adminLogout } from "../../Api/admin";
+import { adLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
 
-const Header: React.FC = () => {
+const AdminMainHeader: React.FC = () => {
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(false);
-  const navigateTo = "/login";
+  const navigateTo = "/admin/login";
 
   const handleNav = () => {
     setNav(!nav);
   };
+
 
 
   const toggleCard = () => {
@@ -23,7 +24,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[130px] flex justify-between w-full bg-freeze-color">
+      <div className="text-white font-bold h-[110px] flex justify-between w-full bg-freeze-color">
         <h1 className="w-full text-3xl text-black font-exo p-10">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>
@@ -58,7 +59,13 @@ const Header: React.FC = () => {
 
             {/* Card */}
             <div className="">
-              <Card isOpen={isCardOpen} onClose={toggleCard} logout={logout} authLogout={userLogout} navigateTo={navigateTo} />
+              <Card
+                isOpen={isCardOpen}
+                onClose={toggleCard}
+                logout={adminLogout}
+                authLogout={adLogout}
+                navigateTo={navigateTo}
+              />
             </div>
           </li>
         </ul>
@@ -72,19 +79,35 @@ const Header: React.FC = () => {
         <div
           className={
             !nav
-              ? "fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#078FDC] ease-in-out duration-500"
+              ? "fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#4B4B4B] ease-in-out duration-500"
               : "fixed left-[-100%]"
           }
         >
-          <h1 className="w-full text-3xl text-black font-exo p-10">
+          <h1 className="w-full text-3xl text-freeze-color font-exo p-10">
             FREEZE <span className="text-white font-exo">LAND</span>
           </h1>
-          <ul className="text-black pl-6">
-            <li className="p-4 border-b cursor-pointer">HOME</li>
-            <li className="p-4 border-b cursor-pointer">ACCOUNT</li>
-            <li className="p-4 border-b cursor-pointer">SERVICES</li>
-            <li className="p-4 border-b cursor-pointer">CONTACT</li>
-            <li className="p-4 border-b cursor-pointer">QUEUE</li>
+          <ul className="text-white pl-6">
+            <li className="p-4 border-b border-black cursor-pointer">HOME</li>
+            <li className="p-4 border-b border-black  cursor-pointer">
+              ACCOUNT
+            </li>
+            <li className="p-4 border-b border-black  cursor-pointer">
+              DASHBOARD
+            </li>
+            <li className="p-4 border-b border-black  cursor-pointer">USERS</li>
+            <li className="p-4 border-b border-black  cursor-pointer">
+              MECHANICS
+            </li>
+            <li className="p-4 border-b border-black  cursor-pointer">
+              DEVICES
+            </li>
+            <li className="p-4 border-b border-black  cursor-pointer">
+              SERVICES
+            </li>
+            <li className="p-4 border-b border-black  cursor-pointer">
+              CONTACT
+            </li>
+            <li className="p-4 border-b border-black  cursor-pointer">QUEUE</li>
             {/* Logout Button */}
             <li className="p-4 border-b">
               <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
@@ -98,4 +121,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export default AdminMainHeader;
