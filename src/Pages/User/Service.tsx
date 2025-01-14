@@ -142,7 +142,7 @@ const Service: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col mt-48">
+    <div className="flex flex-col mt-48 overflow-hidden">
      
       <div className="md:flex md:justify-between mt-20 md:pl-32 mx-6 md:w-full">
         <div className="md:w-[40%]">
