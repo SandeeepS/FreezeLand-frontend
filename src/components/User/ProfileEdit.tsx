@@ -13,16 +13,17 @@ interface UserProfile {
   image?: string;
 }
 
-interface EditProfileFormValues {
-  _id: string;
-  name: string;
-  phone: string;
-}
+// interface EditProfileFormValues {
+//   _id: string;
+//   name: string;
+//   phone: string;
+// }
 
 const validationSchema = object({
   name: string().required("Name is required"),
-  phone: string().required("Phone number is required")
-    .matches(/^\d{10}$/, "Phone number must be 10 digits")
+  phone: string()
+    .required("Phone number is required")
+    .matches(/^\d{10}$/, "Phone number must be 10 digits"),
 });
 
 const DEFAULT_PROFILE_IMAGE = "https://via.placeholder.com/150";
@@ -40,6 +41,8 @@ const ProfileEdit: React.FC = () => {
         setUserProfile(response?.data.data.data);
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
+        
+        
       }
     };
     fetchUserProfile();
@@ -52,13 +55,17 @@ const ProfileEdit: React.FC = () => {
     setImageFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setUserProfile(prev => prev ? { ...prev, image: reader.result as string } : null);
+      setUserProfile((prev) =>
+        prev ? { ...prev, image: reader.result as string } : null
+      );
     };
     reader.readAsDataURL(file);
   };
 
   const handleImageRemove = () => {
-    setUserProfile(prev => prev ? { ...prev, image: DEFAULT_PROFILE_IMAGE } : null);
+    setUserProfile((prev) =>
+      prev ? { ...prev, image: DEFAULT_PROFILE_IMAGE } : null
+    );
     setImageFile(null);
   };
 
@@ -68,7 +75,9 @@ const ProfileEdit: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white p-8 shadow-md rounded-lg border border-gray-200">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">Edit Profile</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+        Edit Profile
+      </h1>
 
       <Formik
         initialValues={{
@@ -137,7 +146,9 @@ const ProfileEdit: React.FC = () => {
 
             <div className="space-y-6">
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">Name</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Name
+                </label>
                 <Field
                   name="name"
                   type="text"
@@ -150,7 +161,9 @@ const ProfileEdit: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">Phone Number</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Phone Number
+                </label>
                 <Field
                   name="phone"
                   type="tel"
@@ -158,7 +171,9 @@ const ProfileEdit: React.FC = () => {
                   placeholder="Enter your phone number"
                 />
                 {errors.phone && touched.phone && (
-                  <div className="text-red-500 text-sm mt-1">{errors.phone}</div>
+                  <div className="text-red-500 text-sm mt-1">
+                    {errors.phone}
+                  </div>
                 )}
               </div>
 
@@ -177,4 +192,4 @@ const ProfileEdit: React.FC = () => {
   );
 };
 
-export default ProfileEdit
+export default ProfileEdit;

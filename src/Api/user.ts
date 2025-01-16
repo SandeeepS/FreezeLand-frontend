@@ -120,7 +120,7 @@ const getProfile = async () => {
     console.log("UserProfile form the backend in the user.ts is ", result);
     return result;
   } catch (error) {
-    console.log(error);
+    console.log("error while accessing the user details in the user.ts",error);
     errorHandler(error as Error);
   }
 };
