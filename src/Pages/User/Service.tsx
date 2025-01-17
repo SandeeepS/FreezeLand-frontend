@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import Header from "../../components/User/Header";
 import { useParams } from "react-router-dom";
 import { getService } from "../../Api/admin";
 import { FiMapPin } from "react-icons/fi";
 import { getProfile } from "../../Api/user";
-import { Card, CardContent, Typography } from "@mui/material";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
@@ -13,6 +11,8 @@ import { Iconcern } from "../../interfaces/Iconcern";
 import { ServiceFormValidation } from "../../components/Common/Validations";
 import PreviewImage from "../../components/User/PreviewImage";
 import { registerComplaint } from "../../Api/user";
+import { useSelector } from "react-redux";
+import { RootState } from "../../App/store";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 //interface used for validating the lcoation
@@ -30,6 +30,7 @@ type ValidationResult = {
 
 const Service: React.FC = () => {
   const { id } = useParams();
+  const userId = useSelector((state:RootState) => state.auth.userData?._id);
   console.log("id from the userHome page is ", id);
   const [service, setServices] = useState<Iconcern>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
