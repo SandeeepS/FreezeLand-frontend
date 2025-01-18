@@ -4,10 +4,10 @@ import InfoCard from "./InfoCard";
 import { useNavigate } from "react-router-dom";
 
 interface UserDetails {
-  name: string;
-  email: string;
-  phone: number;
-  address?: string;
+  name:string;
+  email:string;
+  phone:number;
+  address?:string;
   location?: string;
 }
 

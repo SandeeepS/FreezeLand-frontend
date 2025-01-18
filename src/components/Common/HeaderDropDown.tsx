@@ -1,4 +1,5 @@
 import React from "react";
+import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
@@ -9,7 +10,39 @@ import { MdEventNote } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
 import { MdPowerSettingsNew } from "react-icons/md";
 
-const HeaderDropDown: React.FC = ({ isOpen, onClose,logout, authLogout,navigateTo}) => {
+// Define interface for navigation items
+interface NavItem {
+  icon: React.ReactNode;
+  label: string;
+  path: string;
+}
+
+interface HeaderDropDownProps {
+  isOpen: boolean;
+  onClose: () => void;
+  logout: () => Promise<AxiosResponse | undefined>;
+  authLogout: () => void;
+  navigateTo: string;
+  // New props
+  coverImage: string;
+  profileImage: string;
+  userName: string;
+  userRole: string;
+  navigationItems: NavItem[];
+}
+
+const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
+  isOpen,
+  onClose,
+  logout,
+  authLogout,
+  navigateTo,
+  coverImage,
+  profileImage,
+  userName,
+  userRole,
+  navigationItems,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   if (!isOpen) return null;
@@ -38,71 +71,48 @@ const HeaderDropDown: React.FC = ({ isOpen, onClose,logout, authLogout,navigateT
   };
 
   return (
-    <div className="absolute right-0 top-10 rounded-lg mt-16 mr-8 w-64 bg-stone-100 shadow-lg">
+    <div className="absolute right-0 top-10 rounded-lg mt-16 mr-8 w-64 bg-stone-100 shadow-lg z-10">
       <div className="rounded-t-lg h-32 overflow-hidden">
         <img
           className="object-cover object-top w-full"
-          src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ"
-          alt="Mountain"
+          src={coverImage}
+          alt="Cover"
         />
       </div>
 
       <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
         <img
           className="object-cover object-center h-32"
-          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ"
-          alt="Woman looking front"
+          src={profileImage}
+          alt="Profile"
         />
       </div>
 
       <div className="text-center mt-2">
-        <h2 className="font-semibold text-black">Sarah Smith</h2>
-        <p className="text-gray-500">Freelance Web Designer</p>
+        <h2 className="font-semibold text-black">{userName}</h2>
+        <p className="text-gray-500">{userRole}</p>
       </div>
 
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-400" />
 
-      {/* <button onClick={onClose} className="absolute top-2 right-2 text-black">
-        X
-      </button> */}
-      <ul className="p-4 ">
-        <li
-          onClick={() => navigate("/user/account")}
-          className="text-black flex items-center my-1  text-sm"
-        >
-          <CgProfile className="mr-2" />
-          Profile
-        </li>
-
-        <li
-          onClick={() => navigate("/user/contact")}
-          className="text-black flex items-center  my-1  text-sm "
-        >
-          <MdContactless className="mr-2" />
-          Contact
-        </li>
-        <li
-          onClick={() => navigate("/user/address")}
-          className="text-black flex  items-center  my-1  text-sm "
-        >
-          <MdEventNote className="mr-2" />
-          Address
-        </li>
-        <li
-          onClick={() => navigate("/user/address")}
-          className="text-black flex  items-center  my-1  text-sm"
-        >
-          <IoIosSettings className="mr-2" />
-          Settings
-        </li>
+      <ul className="p-4">
+        {navigationItems.map((item, index) => (
+          <li
+            key={index}
+            onClick={() => navigate(item.path)}
+            className="text-black flex items-center my-1 text-sm cursor-pointer hover:bg-stone-200 p-2 rounded"
+          >
+            {item.icon}
+            <span className="ml-2">{item.label}</span>
+          </li>
+        ))}
 
         <li>
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer hover:bg-stone-200 p-2 rounded">
             <MdPowerSettingsNew className="text-red-500 h-4 w-4 mr-2" />
-
             <button
               onClick={handleLogout}
-              className="bg-transparent border-none p-0 mr-2  text-sm text-black"
+              className="bg-transparent border-none p-0 mr-2 text-sm text-black"
             >
               Logout
             </button>

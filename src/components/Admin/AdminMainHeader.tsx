@@ -5,12 +5,39 @@ import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
+import { CgProfile } from "react-icons/cg";
+import { MdContactless } from "react-icons/md";
+import { MdEventNote } from "react-icons/md";
+import { IoIosSettings } from "react-icons/io";
 
 const AdminMainHeader: React.FC = () => {
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(false);
   const navigateTo = "/admin/login";
+
+   const adminNavigationItems = [
+      {
+        icon: <CgProfile className="mr-2" />,
+        label: "Profile",
+        path: "/admin/account",
+      },
+      {
+        icon: <MdContactless className="mr-2" />,
+        label: "Contact",
+        path: "/admin/contact",
+      },
+      {
+        icon: <MdEventNote className="mr-2" />,
+        label: "Address",
+        path: "/admin/address",
+      },
+      {
+        icon: <IoIosSettings className="mr-2" />,
+        label: "Settings",
+        path: "/admin/settings",
+      },
+    ];
 
   const handleNav = () => {
     setNav(!nav);
@@ -32,7 +59,7 @@ const AdminMainHeader: React.FC = () => {
         <ul className="p-8 hidden md:flex">
           <li
             className="p-4 cursor-pointer"
-            onClick={() => navigate("/user/homepage")}
+            onClick={() => navigate("/admin/dashboard")}
           >
             HOME
           </li>
@@ -40,7 +67,7 @@ const AdminMainHeader: React.FC = () => {
           <li className="p-4 cursor-pointer">SERVICES</li>
           <li
             className="p-4 cursor-pointer"
-            onClick={() => navigate("/user/queue")}
+            onClick={() => navigate("/admin/queue")}
           >
             QUEUE
           </li>
@@ -65,6 +92,11 @@ const AdminMainHeader: React.FC = () => {
                 logout={adminLogout}
                 authLogout={adLogout}
                 navigateTo={navigateTo}
+                coverImage={"https://example.com/user-cover.jpg"}
+                profileImage={"https://example.com/user-profile.jpg"}
+                userName={"Admin"}
+                userRole={"Admin"}
+                navigationItems={adminNavigationItems}
               />
             </div>
           </li>

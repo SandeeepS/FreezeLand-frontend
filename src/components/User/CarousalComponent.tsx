@@ -26,7 +26,7 @@ const CarousalComponent: React.FC<CarouselProps> = ({ slides }) => {
 
   return (
     <>
-      <div className="overflow-hidden pt-20 md:pt-6   object-contain relative w-full ">
+      <div className="overflow-hidden  object-contain relative w-full h-[600px] z-0  ">
         <div
           className="flex transition  ease-out duration-400 w-full "
           style={{ transform: `translateX(-${current * 100}%)` }}

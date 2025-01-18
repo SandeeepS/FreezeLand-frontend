@@ -5,9 +5,10 @@ import MechPromo1 from "../../components/Mech/MechPromo1";
 import AssignedWorks from "../../components/Mech/AssignedWorks";
 const MechanicHomePage: React.FC = () => {
   const slides = [
+    "/src/Images/technicianWork.jpg",
     "/src/Images/Mechcarousal-1.jpg",
-    "/src/Images/Mechcarousal-1.jpg",
-    "/src/Images/Mechcarousal-1.jpg",
+    "/src/Images/spanner.jpg",
+    
   ];
 
   return (

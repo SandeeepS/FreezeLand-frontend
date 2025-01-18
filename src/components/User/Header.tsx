@@ -5,6 +5,10 @@ import { logout } from "../../Api/user";
 import { userLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
+import { CgProfile } from "react-icons/cg";
+import { MdContactless } from "react-icons/md";
+import { MdEventNote } from "react-icons/md";
+import { IoIosSettings } from "react-icons/io";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -12,10 +16,32 @@ const Header: React.FC = () => {
   const [isCardOpen, setIsCardOpen] = useState(false);
   const navigateTo = "/login";
 
+  const userNavigationItems = [
+    {
+      icon: <CgProfile className="mr-2" />,
+      label: "Profile",
+      path: "/user/account",
+    },
+    {
+      icon: <MdContactless className="mr-2" />,
+      label: "Contact",
+      path: "/user/contact",
+    },
+    {
+      icon: <MdEventNote className="mr-2" />,
+      label: "Address",
+      path: "/user/address",
+    },
+    {
+      icon: <IoIosSettings className="mr-2" />,
+      label: "Settings",
+      path: "/user/settings",
+    },
+  ];
+
   const handleNav = () => {
     setNav(!nav);
   };
-
 
   const toggleCard = () => {
     setIsCardOpen(!isCardOpen);
@@ -23,7 +49,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[130px] flex justify-between w-full bg-freeze-color">
+      <div className="text-white font-bold h-[100px] flex justify-between w-full bg-freeze-color">
         <h1 className="w-full text-3xl text-black font-exo p-10">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>
@@ -58,7 +84,18 @@ const Header: React.FC = () => {
 
             {/* Card */}
             <div className="">
-              <Card isOpen={isCardOpen} onClose={toggleCard} logout={logout} authLogout={userLogout} navigateTo={navigateTo} />
+              <Card
+                isOpen={isCardOpen}
+                onClose={toggleCard}
+                logout={logout}
+                authLogout={userLogout}
+                navigateTo={navigateTo}
+                coverImage="https://example.com/user-cover.jpg"
+                profileImage="https://example.com/user-profile.jpg"
+                userName="Sarah Smith"
+                userRole="Freelance Web Designer"
+                navigationItems={userNavigationItems}
+              />
             </div>
           </li>
         </ul>
