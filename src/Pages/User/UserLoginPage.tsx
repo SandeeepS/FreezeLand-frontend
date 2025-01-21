@@ -8,7 +8,7 @@ import { setUserCredental } from "../../App/slices/AuthSlice";
 import OAuth from "../../components/Common/OAuth";
 import toast from "react-hot-toast";
 
-interface initialVal {
+interface initialVal{
   email: string;
   password: string;
 }
@@ -26,14 +26,14 @@ const UserLoginPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: LoginValidation,
     onSubmit: (values) => {
-      const hanSub = async() => {
+      const hanSub = async () => {
         try {
           const result = await login(values.email, values.password);
-          if (result !== null){
+          if (result !== null) {
             {
               console.log("result fron the front end ", result);
             }
-            dispatch(setUserCredental(result?.data.data.token));
+            dispatch(setUserCredental(result?.data.data.data));
             navigate("/user/homepage");
           } else {
             console.log("result fron the signup form is", result);

@@ -1,34 +1,44 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { Formik } from "formik";
-import { getProfile } from "../../Api/user";
+// import { getProfile } from "../../Api/user";
 // import { useNavigate } from "react-router-dom";
 import { AddressValidation } from "../Common/Validations";
 import { AddUserAddress } from "../../Api/user";
-import { useEffect, useState } from "react";
-import { AddAddress as AddAddressInterface } from "../../interfaces/AddAddress";
+import { useState } from "react";
+// import { AddAddress as AddAddressInterface } from "../../interfaces/AddAddress";
+import { useSelector } from "react-redux";
+import { RootState } from "../../App/store";
+import  {IUserData}from "../../interfaces/IUserData"
 
 const AddAddress: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<AddAddressInterface | null>(
+  const [userProfile, setUserProfile] = useState<IUserData | null>(
     null
   );
+  const userData = useSelector((state: RootState) => state.auth.userData);
+  console.log("userData from the store is ", userData);
+  console.log("user id from the store is ", userData);
+  setUserProfile(userData);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await getProfile();
-        const user = response?.data.data.data;
-        console.log("User details from the backend in the Account is ", user);
-        setUserProfile(user);
-      } catch (error) {
-        console.log(
-          "Failed to fetch the user Details from the Account section",
-          error
-        );
-      }
-    };
-    fetchUserDetails();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     try {
+  //       const userId = userData?._id;
+  //       if (userId) {
+  //         const response = await getProfile(userId);
+  //         const user = response?.data.data.data;
+  //         console.log("User details from the backend in the Account is ", user);
+  //         setUserProfile(user);
+  //       }
+  //     } catch (error) {
+  //       console.log(
+  //         "Failed to fetch the user Details from the Account section",
+  //         error
+  //       );
+  //     }
+  //   };
+  //   fetchUserDetails();
+  // }, []);
   return (
     <div className="h-full bg-white rounded-lg shadow-md flex flex-col">
       <div className="flex flex-col justify-center items-center my-6">

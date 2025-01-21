@@ -49,12 +49,12 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[100px] flex justify-between w-full bg-freeze-color">
-        <h1 className="w-full text-3xl text-black font-exo p-10">
+      <div className="text-white font-bold h-[90px] flex justify-between w-full bg-freeze-color">
+        <h1 className="w-full text-3xl text-black font-exo p-6">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>
         {/* Desktop Menu */}
-        <ul className="p-8 hidden md:flex">
+        <ul className="p-4 hidden md:flex">
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/user/homepage")}

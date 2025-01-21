@@ -114,9 +114,10 @@ const logout = async () => {
   }
 };
 
-const getProfile = async () => {
+const getProfile = async (userId:string) => {
   try {
-    const result = await Api.get(userRoutes.getProfile);
+    console.log("Entered in the getProfile in the user.ts and the userId is ",userId);
+    const result = await Api.get(userRoutes.getProfile, {  params:{userId} });
     console.log("UserProfile form the backend in the user.ts is ", result);
     return result;
   } catch (error) {
@@ -154,7 +155,7 @@ const EditUserDetails = async ({ _id, name, phone }: FormData) => {
 
 const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
   try {
-    console.log("Entered in the AddUserAddress fucntion in the user.ts");
+    console.log("Entered in the AddUserAddress fucntion in the user.ts  and the id is",_id);
     const result = await Api.post(userRoutes.addAddress, { _id, values });
     return result;
   } catch (error) {

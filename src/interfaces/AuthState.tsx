@@ -1,6 +1,6 @@
 export interface AuthState {
     adminData: AdminDataType | null;
-    userData: UserDataType | null;
+    userData: UserDataType ;
     mechData: MechDataType | null;
     user: UserAddressType | null;
     mech: MechAddressType | null;
@@ -16,7 +16,7 @@ export interface AuthState {
   }
   
   interface UserDataType {
-    id: string;
+    _id: string;
     name: string;
   }
   
