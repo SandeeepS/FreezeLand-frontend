@@ -1,6 +1,6 @@
 import Header from "../../components/User/Header";
 import CarousalComponent from "../../components/User/CarousalComponent";
-import Promo1 from "../../components/User/Promo1";
+import Promo1 from "../../components/User/SubContentHomepage";
 import ServiceList from "../../components/User/ServiceList";
 import Promo2 from "../../components/User/WhyChooseUs";
 import Footer from "../../components/User/Footer";

@@ -24,7 +24,7 @@ const OAuth = () => {
                 if (result) {
                     dispatch(setUserCredental(result.data.token));
                     dispatch(saveUser(result.data.data));
-                    navigate('/user/home');
+                    // navigate('/user/home');
                 }
             }
 

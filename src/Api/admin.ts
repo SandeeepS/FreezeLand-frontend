@@ -7,6 +7,8 @@ import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
 import errorHandler from "./errorHandler";
 
+
+
 const adminLogin = async (email: string, password: string) => {
   console.log("entered in the admin login ");
   try {
@@ -181,11 +183,21 @@ const adminLogout = async () => {
   }
 };
 
+const getS3SingUrl = async (fileName:string,fileType:string) => {
+  try {
+    console.log("entered in the getS3SingUrl function in the admin.ts file",fileName,fileType);
+    const result = await Api.post(adminRoutes.getPresignedUrl, { fileName,fileType });
+    return result;
+  } catch (error) {
+    errorHandler(error as Error);
+  }
+}
+
 const addService = async (values: InewService) => {
   try {
     console.log("values from the addService from the admin.ts file ", values);
     const result = await Api.post(adminRoutes.addNewService, { values  });
-    if (result) {
+    if (result){
       console.log("Service added successfully");
       return result;
     }
@@ -264,6 +276,7 @@ const editExistService = async (
 export {
   adminLogin,
   adminLogout,
+  getS3SingUrl,
   addService,
   addDevice,
   getAllServices,

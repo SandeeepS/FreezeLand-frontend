@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import imageCompression from "browser-image-compression";
-
 import { Formik } from "formik";
 import AdminHeader from "../../components/Admin/AdminHeader";
 import { ServiceListingValidation } from "../../components/Common/Validations";
@@ -8,6 +7,7 @@ import { addService } from "../../Api/admin";
 import { useNavigate } from "react-router-dom";
 import LargeModal from "../../components/Common/LargeModal";
 import { FormikHelpers } from "formik";
+import { getS3SingUrl } from "../../Api/admin";
 
 export interface InewService {
   name: string;
@@ -21,63 +21,45 @@ const NewService: React.FC = () => {
   const [image, setImage] = useState<string>("");
   const [modalImage, setModalImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [fileName,setFileName] = useState<string>("");
+  const [fileType,setFileType] = useState<string>("");
 
-  const compressImage = async (image:File) => {
-    const options = {
-      maxSizeMB: 0.4 , // Limit file size to 1MB
-      maxWidthOrHeight: 800,
-      useWebWorker: true, // Limit resolution
-    };
-    try {
-      const compressedFile = await imageCompression(image, options);
-      return compressedFile;
-    } catch (error) {
-      console.error("Error during image compression", error);
-    }
-  };
 
-  async function convertBlobToBase64(blobUrl: string | Blob) : Promise<string>{
-    let blob: Blob;
-
-    if (typeof blobUrl === "string") {
-      // If blobUrl is a URL, fetch the blob
-      blob = await fetch(blobUrl).then((response) => response.blob());
-    } else {
-      // If blobUrl is already a Blob/File, use it directly
-      blob = blobUrl;
-    }
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob); // This will give you base64 encoded image
-    });
-  }
 
 
   const handleSubmit = async (values: InewService) => {
-    //craeting a change to pass the raw image to the backend 
-    const blob = await fetch(image).then((res) => res.blob());
-    const file = new File([blob], "image.jpg", { type: blob.type });
 
 
-    const compressedImage = await compressImage(file)
+    //craeting a change to pass the raw image to the backend
+    // const blob = await fetch(image).then((res) => res.blob());
+    // const file = new File([blob], "image.jpg", { type: blob.type });
+   console.log("handlesubmit triggered");
+    const response = await getS3SingUrl(fileName,fileType);
+    if (response?.data.uploadURL) {
+      console.log("response is ",response);
+      console.log("upload url is ",response.data.uploadURL);
+          // Upload the image to S3 using the presigned URL
+          const uploadResponse = await fetch(response.data.uploadURL, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'image/jpeg',
+            },
+            body: image,
+          });
 
-    if (!compressedImage) {
-      console.error("Compression failed");
-      return; // Stop further execution
+          console.log("upload response is ",uploadResponse);
+
     }
 
-    const base64Image = await convertBlobToBase64(URL.createObjectURL(compressedImage));
-    values.image = base64Image;
-   
+  
+
     console.log("values for adding new Service is ", values);
-    const result = await addService(values);
-    if (result) {
-      setIsFormDirty(false);
-      navigate("/admin/services");
-    }
+    // const response = await getPresingedUrl();
+    // const result = await addService(values);
+    // if (result) {
+    //   setIsFormDirty(false);
+    //   navigate("/admin/services");
+    // }
   };
 
   useEffect(() => {
@@ -98,15 +80,22 @@ const NewService: React.FC = () => {
     setFieldValue: FormikHelpers<InewService>["setFieldValue"]
   ) => {
     if (event.target.files && event.target.files[0]) {
-      const newImage = URL.createObjectURL(event.target.files[0]);
-      setFieldValue("image", newImage);
-      setImage(""); // Clear previous image
-      setTimeout(() => setImage(newImage), 0); // Update with new image
+
+      const file = event.target.files[0];
+      const fileLink = URL.createObjectURL(file);  
+      console.log("file is ",file);
+      console.log("file link is ",fileLink);
+      setFieldValue("image", file.name);
+      setImage(fileLink);
+      setFileName(file.name);
+      setFileType(file.type);
+
     }
   };
 
   const handleCropComplete = (croppedImage: string) => {
-    setImage(croppedImage); // Set the cropped image
+    setImage(croppedImage);
+    console.log("corpped image is",image) // Set the cropped image
   };
 
   const handleClickedImage = (image: string): void => {
