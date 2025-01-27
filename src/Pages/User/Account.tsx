@@ -10,7 +10,7 @@ const Account: React.FC = () => {
         <div className="header fixed top-0 left-0 w-full z-10">
           <Header />
         </div>
-          
+
         {/* Main content area */}
         <div className="main_content_area flex flex-col flex-grow pt-[6rem] ">
           {/* Content section with sidebar and main area */}

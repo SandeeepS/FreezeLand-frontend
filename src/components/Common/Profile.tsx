@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../User/Header";
 import InfoCard from "./InfoCard";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../App/store";
+import { useAppSelector } from "../../App/store";
 
 interface UserDetails {
   name: string;
@@ -14,9 +13,9 @@ interface UserDetails {
 }
 
 const Profile: React.FC = () => {
-  const userData = useSelector((state: RootState) => state.auth.userData);
+  const { userData } = useAppSelector((state) => state.auth);
   console.log("userData form the stroe is ", userData);
-  const userId = userData?.id;
+  const userId = userData?._id;
   console.log("user id from the stroe is ", userId);
   const navigate = useNavigate();
   // Mock data - in real app this would come from props or context
@@ -28,7 +27,11 @@ const Profile: React.FC = () => {
     address: "123 Main St, New York, NY 10001",
   });
 
-  //impliment useEffect to fetch the userDetails
+  // useEffect to fetch the userDetails
+  useEffect(() => {
+
+  }, []);
+
 
   // const handleEditProfile = () => {
   //   // In real app this would use proper navigation
