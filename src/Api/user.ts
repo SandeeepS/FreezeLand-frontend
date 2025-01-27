@@ -41,6 +41,18 @@ const login = async (email: string, password: string) => {
   }
 };
 
+const getImageUrl = async (imageKey: string, type: string) => {
+  try {
+    const result = await Api.get(userRoutes.getImageUrl, {
+      params: { imageKey, type },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 const googleLogin = async (
   name: string | null,
   email: string | null,
@@ -217,6 +229,7 @@ export {
   getProfile,
   verifyOtp,
   resendOtp,
+  getImageUrl,
   forgotPassword,
   EditUserDetails,
   EditExistAddress,

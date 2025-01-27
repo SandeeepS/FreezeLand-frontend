@@ -13,6 +13,7 @@ import PreviewImage from "../../components/User/PreviewImage";
 import { registerComplaint } from "../../Api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../App/store";
+import { getImageUrl } from "../../Api/user";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 //interface used for validating the lcoation
@@ -44,6 +45,7 @@ const Service: React.FC = () => {
   const [defaultAddressDetails, setDefaultAddressDetails] =
     useState<AddAddress>();
   const [locationError, setLocationError] = useState<string | undefined>("");
+  const [serviceImage,setServiceImage] = useState<string | undefined>("");
 
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -57,6 +59,11 @@ const Service: React.FC = () => {
         if (serviceResult) {
           console.log("Service result from the backend", serviceResult.data);
           setServices(serviceResult.data);
+
+          const result = await getImageUrl(serviceResult.data.imageKey, "service");
+          if (result) {
+            setServiceImage(result.data.url);
+          }
         }
 
         if (profileResult) {
@@ -148,7 +155,7 @@ const Service: React.FC = () => {
       <div className="md:flex md:justify-between mt-20 md:pl-32 mx-6 md:w-full">
         <div className="md:w-[40%]">
           <div className="md:mb-12 flex justify-center">
-            <img src={service?.image} alt="" />
+            <img src={serviceImage} alt="" />
           </div>
           <div className="mb-12 flex justify-center my-5">
             <h1 className="font-Metal text-xl">{service?.discription}</h1>

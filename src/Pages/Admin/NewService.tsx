@@ -12,54 +12,49 @@ import { getS3SingUrl } from "../../Api/admin";
 export interface InewService {
   name: string;
   discription: string;
-  image: string;
+  imageKey: string;
 }
 
 const NewService: React.FC = () => {
   const navigate = useNavigate();
   const [isFormDirty, setIsFormDirty] = useState(false);
   const [image, setImage] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [modalImage, setModalImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [fileName,setFileName] = useState<string>("");
-  const [fileType,setFileType] = useState<string>("");
-
-
-
+  const [fileName, setFileName] = useState<string>("");
+  const [fileType, setFileType] = useState<string>("");
 
   const handleSubmit = async (values: InewService) => {
-
-
     //craeting a change to pass the raw image to the backend
     // const blob = await fetch(image).then((res) => res.blob());
     // const file = new File([blob], "image.jpg", { type: blob.type });
-   console.log("handlesubmit triggered");
-    const response = await getS3SingUrl(fileName,fileType);
+    console.log("handlesubmit triggered");
+    const response = await getS3SingUrl(fileName, fileType);
     if (response?.data.uploadURL) {
-      console.log("response is ",response);
-      console.log("upload url is ",response.data.uploadURL);
-          // Upload the image to S3 using the presigned URL
-          const uploadResponse = await fetch(response.data.uploadURL, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'image/jpeg',
-            },
-            body: image,
-          });
+      console.log("response is ", response);
+      console.log("upload url is ", response.data.uploadURL);
+      // Upload the image to S3 using the presigned URL
+      console.log("image firl type is ", imageFile?.type);
+      console.log("key from the backend is ",response.data.key);
+      const uploadResponse = await fetch(response.data.uploadURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": fileType,
+        },
+        body: imageFile,
+      });
 
-          console.log("upload response is ",uploadResponse);
+      console.log("upload response is ", uploadResponse);
+      values.imageKey = response.data.key;
+      console.log("values for adding new Service is ", values);
 
+      const result = await addService(values);
+      if (result) {
+        setIsFormDirty(false);
+        navigate("/admin/services");
+      }
     }
-
-  
-
-    console.log("values for adding new Service is ", values);
-    // const response = await getPresingedUrl();
-    // const result = await addService(values);
-    // if (result) {
-    //   setIsFormDirty(false);
-    //   navigate("/admin/services");
-    // }
   };
 
   useEffect(() => {
@@ -80,22 +75,23 @@ const NewService: React.FC = () => {
     setFieldValue: FormikHelpers<InewService>["setFieldValue"]
   ) => {
     if (event.target.files && event.target.files[0]) {
-
       const file = event.target.files[0];
-      const fileLink = URL.createObjectURL(file);  
-      console.log("file is ",file);
-      console.log("file link is ",fileLink);
+      const fileLink = URL.createObjectURL(file);
+      console.log("file is ", file);
+      console.log("file link is ", fileLink);
       setFieldValue("image", file.name);
-      setImage(fileLink);
+      setImageFile(file);
+      setImage(file);
       setFileName(file.name);
+      console.log("file name is ", file.name);
       setFileType(file.type);
-
+      console.log("file type is ", file.type);
     }
   };
 
   const handleCropComplete = (croppedImage: string) => {
     setImage(croppedImage);
-    console.log("corpped image is",image) // Set the cropped image
+    console.log("corpped image is", image); // Set the cropped image
   };
 
   const handleClickedImage = (image: string): void => {

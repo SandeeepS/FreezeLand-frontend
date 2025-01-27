@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {motion} from "framer-motion";
 import { fadeIn } from "../../variants";
+import { getImageUrl } from "../../Api/user";
 interface ServiceListingCardProps {
   data: {
     _id: string;
-    image: string;
+    imageKey: string;
     title?: string;
     name?: string;
     discription?: string;
@@ -13,6 +14,21 @@ interface ServiceListingCardProps {
 }
 
 const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
+  const [image,setImage] = React.useState<string>("");
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getImageUrl(data.imageKey, "service");
+        if (result) {
+          setImage(result.data.url);
+        }
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  })
   const navigate = useNavigate();
   const handleClick = (_id: string) => {
     console.log("clicked id is ", _id);
@@ -30,10 +46,10 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
 
     >
       <div className="m-2">
-        {data.image ? (
+        {image ? (
           <img
             className="h-40 object-cover rounded-xl"
-            src={data.image}
+            src={image}
             alt={data.name} // Added alt text for accessibility
           />
         ) : (
