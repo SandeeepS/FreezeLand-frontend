@@ -27,6 +27,8 @@ import UserLayout from "./Pages/User/UserLayout";
 import Queue from "./components/User/Queue/Queue";
 import NotFound from "./components/Common/NotFound";
 import ProfileEdit from "./components/User/ProfileEdit";
+import MechLayOut from "./Pages/Mechanic/MechLayOut";
+import VerifyMechanic from "./Pages/Mechanic/VerifyMechanic";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -85,7 +87,7 @@ function App() {
               <Route path="/user/AddAddress" element={<AddAddress />} />
               <Route path="/user/showAllAddress" element={<AllAddress />} />
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
-              <Route path="/user/service/:id" element={<Service />}/>
+              <Route path="/user/service/:id" element={<Service />} />
             </Route>
           </Route>
 
@@ -119,7 +121,10 @@ function App() {
           </Route>
 
           <Route path="" element={<MechLoggedIn />}>
-            <Route path="/mech/homepage" element={<MechanicHomePage />} />
+            <Route path="/mech" element={<MechLayOut />}>
+              <Route path="/mech/homepage" element={<MechanicHomePage />} />
+              <Route path="/mech/verifyMechanic" element={<VerifyMechanic />} />
+            </Route>
           </Route>
 
           <Route path={"*"} element={<NotFound />} />

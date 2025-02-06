@@ -117,3 +117,34 @@ export const ServiceFormValidation = Yup.object({
 
     defaultAddress: Yup.string().required("Please Select the address")
 });
+
+export const MechanicVerificationValidationSchema = Yup.object({
+     
+      mechanicType: Yup.array()
+        .min(1, 'Select at least one mechanic type')
+        .required('Mechanic type is required'),
+      photo: Yup.mixed()
+        .required('Photo is required')
+        .test('fileSize', 'File too large', (value) => {
+          return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
+        })
+        .test('fileType', 'Unsupported file type', (value) => {
+          return value && ['image/jpeg', 'image/png', 'image/gif'].includes((value as File).type);
+        }),
+      adharProof: Yup.mixed()
+        .required('Adhar proof is required')
+        .test('fileSize', 'File too large', (value) => {
+          return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
+        })
+        .test('fileType', 'Unsupported file type', (value) => {
+          return value && ['image/jpeg', 'image/png', 'image/pdf'].includes((value as File).type);
+        }),
+      employeeLicense: Yup.mixed()
+        .required('Employee license is required')
+        .test('fileSize', 'File too large', (value) => {
+          return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
+        })
+        .test('fileType', 'Unsupported file type', (value) => {
+          return value && ['image/jpeg', 'image/png', 'image/pdf'].includes((value as File).type);
+        }),
+})

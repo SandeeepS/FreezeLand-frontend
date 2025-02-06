@@ -1,5 +1,4 @@
 import Header from "../../components/User/Header";
-import AccountSidebar from "../../components/User/AccountSidebar";
 import Footer from "../../components/User/Footer";
 import { Outlet } from "react-router-dom";
 

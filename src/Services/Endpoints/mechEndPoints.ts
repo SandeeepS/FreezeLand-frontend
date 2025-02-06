@@ -7,6 +7,7 @@ const mechRoutes = {
   updateNewPasswordMech:'/mech/update-newpassword',
   forgotVerifyOtpMech:'/mech/verify-forgot-otp',
   resendOtp: '/mech/resend-otp',
+  getAllMechanics:"/mech/getAllMechanics",
   logout: "/mech/logout",
 };
 

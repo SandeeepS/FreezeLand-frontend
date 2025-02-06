@@ -98,6 +98,16 @@ const mLogout = async () => {
   }
 };
 
+const getAllMechanics = async () => {
+  try{
+    const result = await Api.get(mechRoutes.getAllMechanics);
+    return result;
+  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
   mLogout,
@@ -107,4 +117,5 @@ export {
   forgotPasswordMech,
   forgotVerifyOtpMech,
   updateNewPasswordMech,
+  getAllMechanics
 };

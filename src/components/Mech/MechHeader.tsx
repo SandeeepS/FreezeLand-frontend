@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { AiOutlineClose, AiOutlineMenu} from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { mLogout } from "../../Api/mech";
 import { useNavigate } from "react-router-dom";
 import { mechLogout } from "../../App/slices/AuthSlice";
@@ -41,11 +41,14 @@ const MechHeader: React.FC = () => {
   return (
     <>
       <div className="text-white font-bold h-[100px] flex justify-between w-full bg-freeze-color">
-        <h1 className="w-full text-3xl text-black font-exo p-10">
-          FREEZE <span className="text-white font-exo">LAND</span>
-        </h1>
+        <div className="flex-col">
+          <h1 className="w-full text-3xl text-black font-exo p-8 pt-5 pb-0">
+            FREEZE <span className="text-white font-exo">LAND</span>
+          </h1>
+          <h4 className="text-white pl-8">Mechanic Portal</h4>
+        </div>
         {/* Desktop Menu */}
-        <ul className="p-8 hidden md:flex">
+        <ul className="p-6 hidden md:flex">
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/mech/homepage")}

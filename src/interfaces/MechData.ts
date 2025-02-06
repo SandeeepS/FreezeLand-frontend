@@ -2,11 +2,10 @@ export interface MechData{
     _id: string;
     name: string;
     email: string;
-    isBlocked: boolean;
-    aboutInfo: string;
-    headLine: string;
-    location: string;
     role: string;
-    cover_image: string;
-    profile_picture: string;
+    cover_image?: string;
+    profile_picture?: string;
+    isVerified:boolean;
+    isBlocked: boolean;
+    isDeleted:boolean;
 }

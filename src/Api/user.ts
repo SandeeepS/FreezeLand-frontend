@@ -51,7 +51,7 @@ const getImageUrl = async (imageKey: string, type: string) => {
     console.log(error as Error);
     errorHandler(error as Error);
   }
-}
+};
 
 const googleLogin = async (
   name: string | null,
@@ -126,14 +126,17 @@ const logout = async () => {
   }
 };
 
-const getProfile = async (userId:string) => {
+const getProfile = async (userId: string) => {
   try {
-    console.log("Entered in the getProfile in the user.ts and the userId is ",userId);
-    const result = await Api.get(userRoutes.getProfile, {  params:{userId} });
+    console.log(
+      "Entered in the getProfile in the user.ts and the userId is ",
+      userId
+    );
+    const result = await Api.get(userRoutes.getProfile, { params: { userId } });
     console.log("UserProfile form the backend in the user.ts is ", result);
     return result;
   } catch (error) {
-    console.log("error while accessing the user details in the user.ts",error);
+    console.log("error while accessing the user details in the user.ts", error);
     errorHandler(error as Error);
   }
 };
@@ -154,14 +157,16 @@ const getAllServices = async () => {
 
 //getting all registered complaint of the user
 const getAllRegisteredService = async () => {
-  try{
+  try {
     const result = await Api.get(userRoutes.getAllRegisteredService);
     return result;
-  }catch(error){
-    console.log("error occured while fetching the user registerd services form the user.ts");
+  } catch (error) {
+    console.log(
+      "error occured while fetching the user registerd services form the user.ts"
+    );
     errorHandler(error as Error);
   }
-}
+};
 
 const EditUserDetails = async ({ _id, name, phone }: FormData) => {
   try {
@@ -181,7 +186,10 @@ const EditUserDetails = async ({ _id, name, phone }: FormData) => {
 
 const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
   try {
-    console.log("Entered in the AddUserAddress fucntion in the user.ts  and the id is",_id);
+    console.log(
+      "Entered in the AddUserAddress fucntion in the user.ts  and the id is",
+      _id
+    );
     const result = await Api.post(userRoutes.addAddress, { _id, values });
     return result;
   } catch (error) {
@@ -227,8 +235,8 @@ const setDefaultAddress = async (
 const registerComplaint = async (data: Iconcern) => {
   try {
     console.log("enterd in the registerCompaint funciton in the user.ts", data);
-    const result = await Api.post(userRoutes.registerService,{data})
-    console.log("result after registering the user complaint is ",result);
+    const result = await Api.post(userRoutes.registerService, { data });
+    console.log("result after registering the user complaint is ", result);
   } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
@@ -253,5 +261,5 @@ export {
   setDefaultAddress,
   registerComplaint,
   getAllServices,
-  getAllRegisteredService
+  getAllRegisteredService,
 };

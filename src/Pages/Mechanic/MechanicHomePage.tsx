@@ -5,10 +5,27 @@ import MechPromo1 from "../../components/Mech/MechPromo1";
 import AssignedWorks from "../../components/Mech/AssignedWorks";
 const MechanicHomePage: React.FC = () => {
   const slides = [
-    "/src/Images/technicianWork.jpg",
-    "/src/Images/Mechcarousal-1.jpg",
-    "/src/Images/spanner.jpg",
-    
+    {
+      image: "/src/Images/technicianWork.jpg",
+      text1: "Our vision   ",
+      text2: "is to provide the",
+      text3: "best service to",
+      text4: "our customers.",
+    },
+    {
+      image: "/src/Images/Mechcarousal-1.jpg",
+      text1: "We strive ",
+      text2: "for excellence",
+      text3: " in everything ",
+      text4: "we do.",
+    },
+    {
+      image: "/src/Images/spanner.jpg",
+      text1: "Our vision   ",
+      text2: "is to provide the",
+      text3: "best service to",
+      text4: "our customers.",
+    },
   ];
 
   return (
@@ -21,11 +38,12 @@ const MechanicHomePage: React.FC = () => {
         <MechPromo1 />
       </>
       <>
-        <AssignedWorks/>
+        <AssignedWorks />
       </>
-      <>
+
+      <div className="mt-5">
         <Footer />
-      </>
+      </div>
     </>
   );
 };
