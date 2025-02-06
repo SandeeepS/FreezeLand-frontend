@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAllServices } from "../../Api/admin";
+import { getAllServices } from "../../Api/user";
 import ServiceListingCard from "../Common/ServiceListingCard";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../variants";
@@ -10,7 +10,7 @@ interface ServiceData {
   discription: string;
   status: boolean;
   isDeleted: boolean;
-  image: string;
+  imageKey: string;
 }
 
 const ServiceList: React.FC = () => {

@@ -138,6 +138,20 @@ const getProfile = async (userId:string) => {
   }
 };
 
+//getting services provided by the compnay eg:A/C installation .
+const getAllServices = async () => {
+  try {
+    console.log("entered in the user.ts");
+    const result = await Api.get(userRoutes.getAllServices);
+    if (result) {
+      return result;
+    }
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
 //getting all registered complaint of the user
 const getAllRegisteredService = async () => {
   try{
@@ -238,5 +252,6 @@ export {
   AddUserAddress,
   setDefaultAddress,
   registerComplaint,
+  getAllServices,
   getAllRegisteredService
 };
