@@ -8,6 +8,7 @@ const mechRoutes = {
   forgotVerifyOtpMech:'/mech/verify-forgot-otp',
   resendOtp: '/mech/resend-otp',
   getAllMechanics:"/mech/getAllMechanics",
+  getAllDevices:"/mech/getAllDevices",
   logout: "/mech/logout",
 };
 

@@ -108,6 +108,18 @@ const getAllMechanics = async () => {
   }
 }
 
+const getAllDevices = async () => {
+  try {
+    console.log("entered in the admin.ts for accessing the all devices ");
+    const result = await Api.get(mechRoutes.getAllDevices);
+    console.log("result from the backedn in the mech.ts is ",result);
+   return result;
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
 export {
   mechLogin,
   mLogout,
@@ -117,5 +129,6 @@ export {
   forgotPasswordMech,
   forgotVerifyOtpMech,
   updateNewPasswordMech,
-  getAllMechanics
+  getAllMechanics,
+  getAllDevices
 };

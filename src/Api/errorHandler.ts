@@ -1,5 +1,8 @@
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { logout } from "./user";
+import { store } from "../App/store";
+import { userLogout } from "../App/slices/AuthSlice";
 
 type ErrorResponse = {
   message: string;
@@ -9,7 +12,15 @@ type ErrorResponse = {
 const errorHandler = async (error: Error | AxiosError) => {
   try {
     const axiosError = error as AxiosError;
-
+    console.log(" jkhfodshfodsfhosdhfosdfhsd",axiosError)
+    if(axiosError.status === 401){
+      console.log("Unauthorized error, logging out...");
+      await logout(); 
+      store.dispatch(userLogout())
+    
+      toast.error("Session expired. Please log in again.");
+      return;
+    }
     if (axiosError.response?.data) {
       const errorResponse = axiosError.response.data as ErrorResponse;
       if (errorResponse.message === "User is blocked by admin!") {

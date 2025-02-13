@@ -119,6 +119,7 @@ const resendOtp = async () => {
 
 const logout = async () => {
   try {
+    console.log("entered in the logout function user.ts")
     return await Api.get(userRoutes.logout);
   } catch (error) {
     console.log("error in the logout in the user.ts", error as Error);
@@ -150,6 +151,7 @@ const getAllServices = async () => {
       return result;
     }
   } catch (error) {
+    console.log("error in the user.ts")
     console.log(error);
     errorHandler(error as Error);
   }

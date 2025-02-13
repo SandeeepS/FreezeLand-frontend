@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { MechanicVerificationValidationSchema } from "../../components/Common/Validations";
 import { RootState } from "../../App/store";
 import { useSelector } from "react-redux";
+import { getAllDevices } from "../../Api/mech";
+
+interface Device {
+  _id: string;
+  name: string;
+  isBlocked?: boolean;
+  isDeleted?: boolean;
+}
+
 interface MechanicForm {
   name: string;
   phone: string;
@@ -14,15 +23,21 @@ interface MechanicForm {
 }
 
 const VerifyMechanic: React.FC = () => {
-  const mechanicTypes = [
-    "A/C Mechanic",
-    "Fridge Mechanic",
-    "Washing Machine Mechanic",
-  ];
-
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
   console.log("mech data is ", mechanic?.data);
   const mech = mechanic?.data;
+  const [devices, setDevices] = useState<Device[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const allDevices = await getAllDevices();
+      console.log("All Devices from the backend is ", allDevices);
+      setDevices(allDevices?.data ?? []);
+    };
+
+    fetchData();
+  }, []);
+  console.log("only devices is ", devices);
 
   const handleSubmit = (values: MechanicForm) => {
     values.name = mech.name;
@@ -31,7 +46,6 @@ const VerifyMechanic: React.FC = () => {
     // Add submission logic here
   };
 
-  
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 pt-32">
       <div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-xl shadow-lg">
@@ -92,20 +106,20 @@ const VerifyMechanic: React.FC = () => {
                   Mechanic Type
                 </label>
                 <div className="mt-2 space-y-2">
-                  {mechanicTypes.map((type) => (
-                    <div key={type} className="flex items-center">
+                  {devices.map((device) => (
+                    <div key={device._id} className="flex items-center">
                       <Field
                         type="checkbox"
-                        id={type}
+                        id={device._id}
                         name="mechanicType"
-                        value={type}
+                        value={device._id}
                         className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                       />
                       <label
-                        htmlFor={type}
+                        htmlFor={device._id}
                         className="ml-2 block text-sm text-gray-900"
                       >
-                        {type}
+                        {device.name}
                       </label>
                     </div>
                   ))}

@@ -8,7 +8,7 @@ import { useAppSelector } from "../../App/store";
 import { useDispatch } from "react-redux";
 import { setAdminCredential } from "../../App/slices/AuthSlice";
 
-interface initialVal {
+interface initialVal{
   email: string;
   password: string;
 }
@@ -24,8 +24,8 @@ const AdminLoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const { adminData } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (adminData) {
+  useEffect(() =>{
+    if (adminData){
       navigate("/admin/dashboard");
     }
   }, [adminData]);
@@ -36,13 +36,17 @@ const AdminLoginPage: React.FC = () => {
     onSubmit: (values) => {
       const hanSub = async () => {
         try {
-          const result = await adminLogin(values.email, values.password);
-          if (result) {
-            console.log("result reched in the login page  ", result);
-            dispatch(setAdminCredential(result.data.data));
+          const response = await adminLogin(values.email, values.password);
+          console.log("response from the backend is ",response);
+          if (response?.status === 200 && response.data.data.success) {
+            console.log("clear...")
+            dispatch(setAdminCredential(response.data.data));
             navigate("/admin/dashboard");
+            toast.success("Logged in successfully!");
+          } else {
+            console.log("loging failed due to Incorrect password or email");
+            toast.error(response?.data?.message || "Login failed");
           }
-          console.log("result fron the login form is ", result);
         } catch (error) {
           toast.error("Invalild email or password");
           console.log(error);
