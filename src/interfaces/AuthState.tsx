@@ -21,8 +21,19 @@ export interface AuthState {
   }
   
   interface MechDataType {
-    id: string;
-    name: string;
+  id:string;
+  name: string;
+  email: string;
+  password: string;
+  phone: number;
+  role: string;
+  mechanicType: string[];
+  photo: string;
+  adharProof: string;
+  employeeLicense: string;
+  isVerified: boolean;
+  isBlocked: boolean;
+  isDeleted: boolean;
   }
   
   interface UserAddressType {
