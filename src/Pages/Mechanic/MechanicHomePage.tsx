@@ -2,7 +2,7 @@ import CarousalComponent from "../../components/User/CarousalComponent";
 import Footer from "../../components/User/Footer";
 import MechHeader from "../../components/Mech/MechHeader";
 import MechPromo1 from "../../components/Mech/MechPromo1";
-import AssignedWorks from "../../components/Mech/AssignedWorks";
+import AssignedWorks from "../../components/Mech/AssignedWroks/AssignedWorks";
 const MechanicHomePage: React.FC = () => {
   const slides = [
     {
