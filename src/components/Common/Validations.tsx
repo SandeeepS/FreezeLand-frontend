@@ -119,7 +119,7 @@ export const ServiceFormValidation = Yup.object({
 });
 
 export const MechanicVerificationValidationSchema = Yup.object({
-     
+  
       mechanicType: Yup.array()
         .min(1, 'Select at least one mechanic type')
         .required('Mechanic type is required'),

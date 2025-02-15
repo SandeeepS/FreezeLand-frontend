@@ -3,7 +3,12 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { MechanicVerificationValidationSchema } from "../../components/Common/Validations";
 import { RootState } from "../../App/store";
 import { useSelector } from "react-redux";
-import { getAllDevices } from "../../Api/mech";
+import {
+  getAllDevices,
+  getS3SingUrlForMechCredinential,
+  verifyMechanic,
+} from "../../Api/mech";
+import toast from "react-hot-toast";
 
 interface Device {
   _id: string;
@@ -12,13 +17,12 @@ interface Device {
   isDeleted?: boolean;
 }
 
-interface MechanicForm {
+export interface MechanicForm {
   name: string;
-  phone: string;
-  address: string;
+  id: string;
   mechanicType: string[];
   photo: File | null;
-  adharProof: File | null;
+  adharProof: File | string;
   employeeLicense: File | null;
 }
 
@@ -27,6 +31,13 @@ const VerifyMechanic: React.FC = () => {
   console.log("mech data is ", mechanic?.data);
   const mech = mechanic?.data;
   const [devices, setDevices] = useState<Device[]>([]);
+  const [profileImageFileName, setProfileImageFileName] = useState<string>();
+  const [adharImageFileName, setAdharImageFileName] = useState<string>();
+  const [licenceImageFileName, setLicenceImageFileName] = useState<string>();
+
+  const [profileImageFileType, setProfileImageFileType] = useState<string>();
+  const [adharImageFileType, setAdharImageFileType] = useState<string>();
+  const [licenceImageFileType, setLicenceImageFileType] = useState<string>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,24 +50,70 @@ const VerifyMechanic: React.FC = () => {
   }, []);
   console.log("only devices is ", devices);
 
-  const handleSubmit = (values: MechanicForm) => {
-    values.name = mech.name;
-    values.phone = mech.phone;
-    console.log(values);
-    // Add submission logic here
+  const uploadFileToS3 = async (file: File,fileName: string, fileType: string,name:string) => {
+    console.log("details from teh uploadfilTos3 function ",file,fileName,fileType,name);
+    const response = await getS3SingUrlForMechCredinential(fileName, fileType,name);
+    if (response?.data.uploadURL) {
+      console.log("response is ", response);
+      console.log("upload url is ", response.data.uploadURL);
+      const uploadResponse = await fetch(response.data.uploadURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": fileType,
+        },
+        body: file,
+      });
+      console.log("upload response is ", uploadResponse);
+      return response.data.key;
+    }
+    throw new Error("Failed to get presigned URL");
+  };
+
+  const handleSubmit = async (values: MechanicForm) => {
+    try {
+      values.name = mech.name;
+      values.id = mech._id;
+      console.log(values);
+
+      setAdharImageFileName(values.adharProof?.name);
+      setAdharImageFileType(values.adharProof?.type);
+      setLicenceImageFileName(values.employeeLicense?.name);
+      setLicenceImageFileType(values.employeeLicense?.type);
+      setProfileImageFileName(values.photo?.name);
+      setProfileImageFileType(values.photo?.type);
+
+      const filesToUpload = [
+        { file:values.adharProof,  fileName: adharImageFileName, fileType: adharImageFileType , name:values.name },
+        { file:values.photo, fileName: profileImageFileName, fileType: profileImageFileType ,name:values.name },
+        { file: values.employeeLicense,fileName: licenceImageFileName, fileType: licenceImageFileType ,name:values.name },
+      ];
+
+      const keys = await Promise.all(
+        filesToUpload.map(({file,  fileName, fileType,name }) => uploadFileToS3(file as File, fileName as string, fileType as string ,name))
+      );
+
+      console.log("Uploaded keys:", keys);
+      values.adharProof = keys[0];
+      values.photo = keys[1];
+      values.employeeLicense = keys[2];
+
+      // Add submission logic here
+      const response = await verifyMechanic(values);
+      console.log("response from the backend is ", response);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error Occurred !!");
+    }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 pt-32">
       <div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center">
-          Mechanic Verification
-        </h2>
+        <h2 className="text-2xl font-bold text-center">Mechanic Verification</h2>
         <Formik
           initialValues={{
             name: "",
-            phone: "",
-            address: "",
+            id: "",
             mechanicType: [],
             photo: null,
             adharProof: null,

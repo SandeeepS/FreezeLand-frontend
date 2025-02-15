@@ -2,6 +2,7 @@ import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
 import { FormData } from "../Pages/Mechanic/MechanicSignupPage";
 import errorHandler from "./errorHandler";
+import { MechanicForm } from "../Pages/Mechanic/VerifyMechanic";
 
 const mechSignup = async ({
   name,
@@ -99,23 +100,53 @@ const mLogout = async () => {
 };
 
 const getAllMechanics = async () => {
-  try{
+  try {
     const result = await Api.get(mechRoutes.getAllMechanics);
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
   }
-}
+};
+
+//signedUrl
+const getS3SingUrlForMechCredinential = async (fileName: string, fileType: string,name:string) => {
+  try {
+    console.log(
+      "entered in the getS3SingUrl function in the mech.ts file",
+      fileName,
+      fileType
+    );
+
+    const result = await Api.get(mechRoutes.getS3SingUrlForMechCredinential, {
+      params: { fileName, fileType,name },
+    });
+    return result;
+  } catch (error) {
+    errorHandler(error as Error);
+  }
+};
 
 const getAllDevices = async () => {
   try {
     console.log("entered in the admin.ts for accessing the all devices ");
     const result = await Api.get(mechRoutes.getAllDevices);
-    console.log("result from the backedn in the mech.ts is ",result);
-   return result;
+    console.log("result from the backedn in the mech.ts is ", result);
+    return result;
   } catch (error) {
     console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
+const verifyMechanic = async (values: MechanicForm) => {
+  try {
+    console.log("entered in the verigy Mechinc in mech.ts");
+    console.log("values in the frontend mech.ts is ",values);
+    const response = await Api.post(mechRoutes.VerifyMechanic, { values });
+    return response;
+  } catch (error) {
+    console.log(error as Error);
     errorHandler(error as Error);
   }
 };
@@ -130,5 +161,7 @@ export {
   forgotVerifyOtpMech,
   updateNewPasswordMech,
   getAllMechanics,
-  getAllDevices
+  getAllDevices,
+  verifyMechanic,
+  getS3SingUrlForMechCredinential
 };

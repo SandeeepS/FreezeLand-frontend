@@ -9,6 +9,8 @@ const mechRoutes = {
   resendOtp: '/mech/resend-otp',
   getAllMechanics:"/mech/getAllMechanics",
   getAllDevices:"/mech/getAllDevices",
+  VerifyMechanic:"mech/verifyMechanic",
+  getS3SingUrlForMechCredinential:"mech/getS3SingUrlForMechCredinential",
   logout: "/mech/logout",
 };
 
