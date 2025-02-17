@@ -11,14 +11,14 @@ import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface Column {
   id: string;
   label: string;
   minWidth?: number;
   align?: string;
-  format?:  "Active" | "Blocked";
+  format?: "Active" | "Blocked";
 }
 
 interface Data {
@@ -43,14 +43,10 @@ export interface DeletingResponse {
 interface TableCommonProps {
   columns: Column[];
   data: Data[];
-  updateStatus: (
-    id: string,
-    isBlocked: boolean,
-    isDeleted: boolean
-  ) => void;
+  updateStatus: (id: string, isBlocked: boolean, isDeleted: boolean) => void;
   blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
   deleteFunction: (id: string) => Promise<DeletingResponse>;
-  navLink:string;
+  navLink: string;
 }
 
 const TableCommon: React.FC<TableCommonProps> = ({
@@ -76,16 +72,12 @@ const TableCommon: React.FC<TableCommonProps> = ({
     console.log(event);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleBlockUnblock = async (
-    id: string,
-    isCurrentlyBlocked: boolean
-  ) => {
+
+  const handleBlockUnblock = async (id: string, isCurrentlyBlocked: boolean) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -118,10 +110,10 @@ const TableCommon: React.FC<TableCommonProps> = ({
 
   const handleEdit = (_id: string | undefined) => {
     console.log(`Edit action for: ${_id}`);
-    console.log("navigation is ",navLink)
+    console.log("navigation is ", navLink);
     navigate(`${navLink}${_id}`);
-    
   };
+
   const handleDelete = async (id: string, isCurrentlyDeleted: boolean) => {
     try {
       Swal.fire({
@@ -152,84 +144,65 @@ const TableCommon: React.FC<TableCommonProps> = ({
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+    <Paper sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <TableContainer sx={{ flexGrow: 1 }}>
+        <Table stickyHeader aria-label="sticky table" sx={{ height: "100%" }}>
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
+                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {data
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((datas) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
-                  <TableCell>{datas.name}</TableCell>
-                   {
-                    datas.email? <TableCell>{datas.email}</TableCell> : ""
-
-                   }
-                  <TableCell align="right">
-                    {datas.isBlocked ? "Blocked" : "Active"}
-                  </TableCell>
-                  <TableCell align="right">
-                    <ToggleButton
-                      value="check"
-                      selected={!datas.isBlocked}
-                      onChange={() =>
-                        handleBlockUnblock(datas._id, datas.isBlocked)
-                      }
-                      sx={{
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((datas) => (
+              <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
+                <TableCell>{datas.name}</TableCell>
+                {datas.email ? <TableCell>{datas.email}</TableCell> : ""}
+                <TableCell align="right">{datas.isBlocked ? "Blocked" : "Active"}</TableCell>
+                <TableCell align="right">
+                  <ToggleButton
+                    value="check"
+                    selected={!datas.isBlocked}
+                    onChange={() => handleBlockUnblock(datas._id, datas.isBlocked)}
+                    sx={{
+                      backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                      color: "white",
+                      width: "120px",
+                      "&.Mui-selected": {
                         backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                        color: "white",
-                        width: "120px",
-                        "&.Mui-selected": {
-                          backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                        },
-                        "&:hover": {
-                          backgroundColor: datas.isBlocked
-                            ? "#ff4d4d"
-                            : "#81c784",
-                        },
-                      }}
-                    >
-                      {datas.isBlocked ? "Blocked" : "Unblocked"}
-                    </ToggleButton>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        marginLeft: "10px",
-                        marginRight: "10px",
-                        color: "blue",
+                      },
+                      "&:hover": {
+                        backgroundColor: datas.isBlocked ? "#ff4d4d" : "#81c784",
+                      },
+                    }}
+                  >
+                    {datas.isBlocked ? "Blocked" : "Unblocked"}
+                  </ToggleButton>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                      color: "blue",
+                      borderColor: "blue",
+                      "&:hover": {
+                        backgroundColor: "#e0f7fa",
                         borderColor: "blue",
-                        "&:hover": {
-                          backgroundColor: "#e0f7fa",
-                          borderColor: "blue",
-                        },
-                      }}
-                      onClick={() => handleEdit(datas._id)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleDelete(datas._id, datas.isDeleted)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      },
+                    }}
+                    onClick={() => handleEdit(datas._id)}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="contained" color="error" onClick={() => handleDelete(datas._id, datas.isDeleted)}>
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

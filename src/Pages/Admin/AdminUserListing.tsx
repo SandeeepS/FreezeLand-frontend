@@ -63,9 +63,11 @@ const AdminUserListing: React.FC = () => {
   };
 
   return (
-    <div>
-      <TopBar heading={heading}/>
-      <div className="flex mx-10 justify-center items-center pt-7 h-screen">
+    <div className="flex flex-col h-screen">
+      <div className="mb-5">
+      <TopBar heading={heading} />
+      </div>
+      <div className="flex-grow mx-4">
         <TableCommon
           columns={columns}
           data={data}
