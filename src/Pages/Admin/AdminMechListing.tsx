@@ -28,7 +28,7 @@ const AdminMechListing: React.FC = () => {
   ];
 
   const [mechs, setMech] = useState<MechData[]>([]);
-  const header = "Mechanics";
+  const heading = "Mechanics";
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,10 +61,10 @@ const AdminMechListing: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col">
-      <div>
-        <TopBar heading={header} />
-      </div>
+    <div className="flex flex-col h-screen">
+    <div className="mb-5">
+    <TopBar heading={heading} />
+    </div>
       <div className="flex justify-end p-4">
         <button
           type="button"

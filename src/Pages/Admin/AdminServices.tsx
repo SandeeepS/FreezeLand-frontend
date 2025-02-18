@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AdminHeader from "../../components/Admin/AdminHeader";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { getAllServices } from "../../Api/admin";
@@ -71,11 +70,11 @@ const AdminServices: React.FC = () => {
 
 
   return (
-    <div className=" flex flex-col">
-      <div className="fixed top-0 w-full">
-        <TopBar heading={heading}/>
-      </div>
-      <div className="flex justify-end mx-10 ">
+    <div className="flex flex-col h-screen">
+    <div className="mb-5">
+    <TopBar heading={heading} />
+    </div>
+      <div className="flex justify-end mx-10 my-5 ">
         <Button className="" onClick={handleClick} variant="contained">
           Add new Service
         </Button>

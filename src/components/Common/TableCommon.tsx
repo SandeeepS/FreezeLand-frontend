@@ -72,12 +72,17 @@ const TableCommon: React.FC<TableCommonProps> = ({
     console.log(event);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const handleBlockUnblock = async (id: string, isCurrentlyBlocked: boolean) => {
+  const handleBlockUnblock = async (
+    id: string,
+    isCurrentlyBlocked: boolean
+  ) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -144,65 +149,94 @@ const TableCommon: React.FC<TableCommonProps> = ({
   };
 
   return (
-    <Paper sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+    <Paper
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <TableContainer sx={{ flexGrow: 1 }}>
         <Table stickyHeader aria-label="sticky table" sx={{ height: "100%" }}>
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                height: "150px",
+                maxHeight: "150px",
+                overflow: "hidden",
+              }}
+            >
               {columns.map((column) => (
-                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth, height: "100px" }}
+                >
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((datas) => (
-              <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
-                <TableCell>{datas.name}</TableCell>
-                {datas.email ? <TableCell>{datas.email}</TableCell> : ""}
-                <TableCell align="right">{datas.isBlocked ? "Blocked" : "Active"}</TableCell>
-                <TableCell align="right">
-                  <ToggleButton
-                    value="check"
-                    selected={!datas.isBlocked}
-                    onChange={() => handleBlockUnblock(datas._id, datas.isBlocked)}
-                    sx={{
-                      backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                      color: "white",
-                      width: "120px",
-                      "&.Mui-selected": {
+            {data
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((datas) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
+                  <TableCell>{datas.name}</TableCell>
+                  {datas.email ? <TableCell>{datas.email}</TableCell> : ""}
+                  <TableCell align="right">
+                    {datas.isBlocked ? "Blocked" : "Active"}
+                  </TableCell>
+                  <TableCell align="right">
+                    <ToggleButton
+                      value="check"
+                      selected={!datas.isBlocked}
+                      onChange={() =>
+                        handleBlockUnblock(datas._id, datas.isBlocked)
+                      }
+                      sx={{
                         backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                      },
-                      "&:hover": {
-                        backgroundColor: datas.isBlocked ? "#ff4d4d" : "#81c784",
-                      },
-                    }}
-                  >
-                    {datas.isBlocked ? "Blocked" : "Unblocked"}
-                  </ToggleButton>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      marginLeft: "10px",
-                      marginRight: "10px",
-                      color: "blue",
-                      borderColor: "blue",
-                      "&:hover": {
-                        backgroundColor: "#e0f7fa",
+                        color: "white",
+                        width: "120px",
+                        "&.Mui-selected": {
+                          backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                        },
+                        "&:hover": {
+                          backgroundColor: datas.isBlocked
+                            ? "#ff4d4d"
+                            : "#81c784",
+                        },
+                      }}
+                    >
+                      {datas.isBlocked ? "Blocked" : "Unblocked"}
+                    </ToggleButton>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        marginLeft: "10px",
+                        marginRight: "10px",
+                        color: "blue",
                         borderColor: "blue",
-                      },
-                    }}
-                    onClick={() => handleEdit(datas._id)}
-                  >
-                    Edit
-                  </Button>
-                  <Button variant="contained" color="error" onClick={() => handleDelete(datas._id, datas.isDeleted)}>
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                        "&:hover": {
+                          backgroundColor: "#e0f7fa",
+                          borderColor: "blue",
+                        },
+                      }}
+                      onClick={() => handleEdit(datas._id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDelete(datas._id, datas.isDeleted)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
