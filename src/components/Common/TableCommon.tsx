@@ -158,6 +158,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
       }}
     >
       <TableContainer sx={{ flexGrow: 1 }}>
+        {/**table code .... */}
         <Table stickyHeader aria-label="sticky table" sx={{ height: "100%" }}>
           <TableHead>
             <TableRow
