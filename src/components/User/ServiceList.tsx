@@ -34,11 +34,13 @@ const ServiceList: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full bg-freeze-color h-screen ">
-      <motion.div       variants={fadeIn("up", 0.1)}
-             initial="hidden"
-             whileInView={"show"}
-             className="flex items-center justify-center pt-6">
+    <div className="w-full bg-freeze-color h-screen overflow-hidden ">
+      <motion.div
+        variants={fadeIn("up", 0.1)}
+        initial="hidden"
+        whileInView={"show"}
+        className="flex items-center justify-center pt-6"
+      >
         <h1 className="md:text-5xl text-3xl pt-12 pl-6  md:text-left text-center  font-poppins font-semibold text-white">
           OUR SERVICES
         </h1>
