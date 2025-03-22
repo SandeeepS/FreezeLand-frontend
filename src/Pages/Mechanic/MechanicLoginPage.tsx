@@ -8,12 +8,12 @@ import { useAppSelector } from "../../App/store";
 import { setMechCredential } from "../../App/slices/AuthSlice";
 import { useDispatch } from "react-redux";
 
-interface initialVal {
+interface initialVal{
   email: string;
   password: string;
 }
 
-const initialValues: initialVal = {
+const initialValues:initialVal = {
   email: "",
   password: "",
 };

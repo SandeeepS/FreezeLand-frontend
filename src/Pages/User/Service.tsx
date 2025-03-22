@@ -33,6 +33,7 @@ const Service: React.FC = () => {
   const { id } = useParams();
   const userId = useSelector((state:RootState) => state.auth.userData?._id);
   console.log("id from the userHome page is ", id);
+  console.log("User id is in the Service is ",userId);
   const [service, setServices] = useState<Iconcern>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState({
@@ -54,7 +55,7 @@ const Service: React.FC = () => {
       try {
         const [serviceResult, profileResult] = await Promise.all([
           getService(id),
-          getProfile(),
+          getProfile(userId),
         ]);
         if (serviceResult) {
           console.log("Service result from the backend", serviceResult.data);
