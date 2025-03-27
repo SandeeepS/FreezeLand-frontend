@@ -51,6 +51,7 @@ const Service: React.FC = () => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    //fetching data 
     const fetchData = async () => {
       try {
         const [serviceResult, profileResult] = await Promise.all([
