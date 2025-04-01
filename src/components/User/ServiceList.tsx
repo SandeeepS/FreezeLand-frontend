@@ -36,6 +36,7 @@ const ServiceList: React.FC = () => {
   return (
     <div className="w-full bg-freeze-color h-screen overflow-hidden ">
       <motion.div
+      
         variants={fadeIn("up", 0.1)}
         initial="hidden"
         whileInView={"show"}

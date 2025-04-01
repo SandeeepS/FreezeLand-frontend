@@ -26,6 +26,7 @@ import NotFound from "./components/Common/NotFound";
 import ProfileEdit from "./components/User/ProfileEdit";
 import MechLayOut from "./Pages/Mechanic/MechLayOut";
 import VerifyMechanic from "./Pages/Mechanic/VerifyMechanic";
+import LocationModal from "./components/Common/LocationModal";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -120,6 +121,9 @@ function App() {
         </Routes>
       </Suspense>
     </>
+    // <>
+    //    <LocationModal/>
+    // </>
   );
 }
 
