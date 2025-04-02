@@ -17,6 +17,18 @@ const adminLogin = async (email: string, password: string) => {
   }
 };
 
+const getImageUrl = async (imageKey: string, type: string) => {
+  try {
+    const result = await Api.get(adminRoutes.getImageUrl, {
+      params: { imageKey, type },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
 const getAllUsers = async () => {
   try {
     const result = await Api.get(adminRoutes.getAllUsers);
@@ -34,6 +46,16 @@ const getAllMechanics = async () => {
     errorHandler(error as Error);
   }
 };
+
+const getMechanicById = async (id:string) => {
+  try{
+    const result = await Api.get(`${adminRoutes.getMechanicById}/${id}`);
+    console.log("mechanic details from teh admin.ts",result);
+    return result;
+  }catch(error){
+    errorHandler(error as Error);
+  }
+}
 
 const blockUser = async (id: string): Promise<BlockingResponse> => {
   try {
@@ -297,4 +319,6 @@ export {
   deleteUser,
   blockMech,
   deleteMech,
+  getMechanicById,
+  getImageUrl
 };

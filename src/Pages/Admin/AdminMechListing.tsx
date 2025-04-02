@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { deleteMech } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
+import { useNavigate } from "react-router-dom";
 
 interface MechData {
   _id: string;
@@ -14,6 +15,7 @@ interface MechData {
 }
 
 const AdminMechListing: React.FC = () => {
+  const navigate = useNavigate();
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
@@ -58,13 +60,14 @@ const AdminMechListing: React.FC = () => {
 
   const handleVerifyMechanic = () => {
     console.log("button clicked");
-  }
+    navigate("/admin/verifyMechanic");
+  };
 
   return (
     <div className="flex flex-col h-screen">
-    <div className="mb-5">
-    <TopBar heading={heading} />
-    </div>
+      <div className="mb-5">
+        <TopBar heading={heading} />
+      </div>
       <div className="flex justify-end p-4">
         <button
           type="button"

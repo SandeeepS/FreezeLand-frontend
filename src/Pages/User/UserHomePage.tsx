@@ -50,7 +50,7 @@ const UserHomePage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-hidden">
       <div className="fixed top-0 left-0 w-full z-10">
         <Header />
       </div>

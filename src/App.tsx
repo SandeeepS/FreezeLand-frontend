@@ -26,7 +26,9 @@ import NotFound from "./components/Common/NotFound";
 import ProfileEdit from "./components/User/ProfileEdit";
 import MechLayOut from "./Pages/Mechanic/MechLayOut";
 import VerifyMechanic from "./Pages/Mechanic/VerifyMechanic";
+import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanicByAdmin";
 import LocationModal from "./components/Common/LocationModal";
+import MechanicVerify from "./components/Admin/Mechanic/MechanicVerify";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -53,6 +55,9 @@ function App() {
       <Toaster position="top-right" reverseOrder={false} />
       <Suspense fallback={<div>...Loading</div>}>
         <Routes>
+
+          <Route path="/user/homepage" element={<UserHomePage />} />
+
           {/* userRoutes */}
           <Route path="" element={<UserLoggedOut />}>
             <Route path="/signup" element={<UserSignupPage />} />
@@ -61,9 +66,9 @@ function App() {
             <Route path="/user/forget-password" element={<ForgetPassword />} />
           </Route>
 
-          <Route path="" element={<UserLoggedIn />}>
+          {/* <Route path="/user" element={<UserLoggedIn />}>
             <Route path="/user/homepage" element={<UserHomePage />} />
-          </Route>
+          </Route> */}
 
           {/** new User layout */}
           <Route path="/user" element={<UserLoggedIn />}>
@@ -96,6 +101,8 @@ function App() {
               <Route path="/admin/addNewService" element={<NewService />} />
               <Route path="/admin/editService/:id" element={<EditServices />} />
               <Route path="/admin/addNewDevice" element={<AddNewDevice />} />
+              <Route path="/admin/verifyMechanic" element={<VerifyMechanicByAdmin/>} />
+              <Route path="/admin/mechanic/details/:id" element={<MechanicVerify/>}/>
             </Route>
           </Route>
 
