@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { logout } from "../../Api/user";
 import { userLogout } from "../../App/slices/AuthSlice";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
 import { MdContactless } from "react-icons/md";
@@ -50,7 +50,6 @@ const Header: React.FC = () => {
   return (
     <>
       <div className="text-white font-bold h-[90px] flex justify-between w-full bg-freeze-color">
-        
         <h1 className="w-full text-3xl text-black font-exo p-6">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>
@@ -58,18 +57,29 @@ const Header: React.FC = () => {
         <ul className="p-4 hidden md:flex">
           <li
             className="p-4 cursor-pointer"
-            onClick={() => navigate("/user/homepage")}
+            onClick={() => {
+              navigate("/user/homepage"); 
+              window.scrollTo({ top: 0, behavior: "smooth" }); 
+            }}            
+            
           >
             HOME
           </li>
 
+          <li className="p-4 cursor-pointer">
+            <a href="#serviceList" className="p-4 cursor-pointer uppercase  ">
+              Services
+            </a>
+          </li>
+
+          {/* 
           <li className="p-4 cursor-pointer">SERVICES</li>
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/user/queue")}
           >
             QUEUE
-          </li>
+          </li> */}
 
           <li className="p-2 cursor-pointer">
             <button

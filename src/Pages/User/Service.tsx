@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getService } from "../../Api/admin";
-import { FiMapPin } from "react-icons/fi";
 import { getProfile } from "../../Api/user";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
@@ -9,31 +8,19 @@ import { Formik } from "formik";
 import { UserData } from "../../interfaces/UserData";
 import { Iconcern } from "../../interfaces/Iconcern";
 import { ServiceFormValidation } from "../../components/Common/Validations";
-import PreviewImage from "../../components/User/PreviewImage";
 import { registerComplaint } from "../../Api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../App/store";
 import { getImageUrl } from "../../Api/user";
+import ServiceDetails from "../../components/User/UserServiceRegisteration/ServiceDetails";
+import ServiceForm from "../../components/User/UserServiceRegisteration/ServiceForm";
+import AboutTheService from "../../components/User/UserServiceRegisteration/AboutTheService";
+
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-
-//interface used for validating the lcoation
-interface Location {
-  address: string;
-  latitude: number | null;
-  longitude: number | null;
-}
-
-//for used for vlaidating the result
-type ValidationResult = {
-  ok: boolean;
-  message?: string;
-};
 
 const Service: React.FC = () => {
   const { id } = useParams();
-  const userId = useSelector((state:RootState) => state.auth.userData?._id);
-  console.log("id from the userHome page is ", id);
-  console.log("User id is in the Service is ",userId);
+  const userId = useSelector((state: RootState) => state.auth.userData?._id);
   const [service, setServices] = useState<Iconcern>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState({
@@ -46,12 +33,17 @@ const Service: React.FC = () => {
   const [defaultAddressDetails, setDefaultAddressDetails] =
     useState<AddAddress>();
   const [locationError, setLocationError] = useState<string | undefined>("");
-  const [serviceImage,setServiceImage] = useState<string | undefined>("");
-
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [serviceImage, setServiceImage] = useState<string | undefined>("");
+  const [showForm, setShowForm] = useState(false);
+  const services = [
+    "Applicable for both window & Split ACs",
+    "Advanced Foam-jet cleaning of indoor unit",
+    "Jet-spray cleaning of outer unit",
+    "Final checks & post-service cleaning",
+  ];
 
   useEffect(() => {
-    //fetching data 
+    // Fetching data
     const fetchData = async () => {
       try {
         const [serviceResult, profileResult] = await Promise.all([
@@ -59,29 +51,24 @@ const Service: React.FC = () => {
           getProfile(userId),
         ]);
         if (serviceResult) {
-          console.log("Service result from the backend", serviceResult.data);
           setServices(serviceResult.data);
 
-          const result = await getImageUrl(serviceResult.data.imageKey, "service");
+          const result = await getImageUrl(
+            serviceResult.data.imageKey,
+            "service"
+          );
           if (result) {
             setServiceImage(result.data.url);
           }
         }
 
         if (profileResult) {
-          console.log("Profile Result is  from the backend is ", profileResult);
           const profileData = profileResult.data.data.data;
-          console.log("Profile reuslt from the backend", profileData);
           setUserProfile(profileData);
           const defaultAdd = profileData.address.find(
             (addr: AddAddress) => addr._id == profileData.defaultAddress
           );
-          if (!defaultAdd) {
-            console.log("Default address not found, check if IDs match.");
-          } else {
-            console.log("Default address found:", defaultAdd);
-          }
-          setDefaultAddress(defaultAdd._id);
+          setDefaultAddress(defaultAdd?._id || "");
           setDefaultAddressDetails(defaultAdd);
         }
       } catch (error) {
@@ -92,7 +79,6 @@ const Service: React.FC = () => {
     fetchData();
   }, [id]);
 
-  // Handle location fetching
   const handleFetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -102,7 +88,6 @@ const Service: React.FC = () => {
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
           );
           const data = await response.json();
-          console.log("Geocoding respose is ", data);
           if (data.results && data.results.length > 0) {
             setLocationName({
               address: data.results[0].formatted_address,
@@ -110,8 +95,6 @@ const Service: React.FC = () => {
               longitude: data.results[0].geometry.location.lng,
             });
             setLocationError("");
-          } else {
-            console.log("No results found for location");
           }
         } catch (error) {
           console.error("Error fetching location name:", error);
@@ -124,24 +107,13 @@ const Service: React.FC = () => {
     );
   };
 
-  const validateLocationName = (value: Location): ValidationResult => {
+  const validateLocationName = (value: any) => {
     if (!value.address || !value.latitude || !value.longitude) {
       return { ok: false, message: "Location is required" };
     }
-    // Additional checks can be added here if needed
     return { ok: true };
   };
 
-  // Handle primary button click to show location options
-  const handleLocationClick = () => {
-    if (showLocationOptions == false) {
-      setShowLocationOptions(true);
-    } else {
-      setShowLocationOptions(false);
-    }
-  };
-
-  // Remove location data
   const handleRemoveLocation = () => {
     setLocationName({
       address: "",
@@ -152,20 +124,36 @@ const Service: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col mt-48 overflow-hidden">
-     
-      <div className="md:flex md:justify-between mt-20 md:pl-32 mx-6 md:w-full">
-        <div className="md:w-[40%]">
-          <div className="md:mb-12 flex justify-center">
-            <img src={serviceImage} alt="" />
-          </div>
-          <div className="mb-12 flex justify-center my-5">
-            <h1 className="font-Metal text-xl">{service?.discription}</h1>
-          </div>
+    <div className="flex flex-col mt-36 overflow-hidden">
+      {/* Toggle Button */}
+      <div className="flex justify-center ">
+        <button
+          className="px-6 py-2 bg-freeze-color text-white rounded-md hover:bg-blue-600"
+          onClick={() => setShowForm(!showForm)}
+        >
+          {showForm ? "Back to Service Details" : "Customize Service"}
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="md:flex md:justify-between mt-10 md:pl-32 mx-6 md:w-full">
+        {/* Service Details */}
+        <div className={`transition-all duration-500 ease-in-out md:w-full`}>
+          <ServiceDetails
+            serviceImage={serviceImage}
+            discription={service?.discription}
+          />
         </div>
-        <div className="w-[30%] my-10"></div>
-        <div className="w-full ">
-          {
+
+        {/* Conditional Rendering for AboutTheService & ServiceForm */}
+        {!showForm ? (
+          // Show AboutTheService beside ServiceDetails when form is hidden
+          <div className="mr-24">
+            <AboutTheService title="About the service" points={services} />
+          </div>
+        ) : (
+          // Show ServiceForm beside ServiceDetails, and AboutTheService below
+          <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 ">
             <Formik
               initialValues={{
                 name: "",
@@ -177,11 +165,8 @@ const Service: React.FC = () => {
               validationSchema={ServiceFormValidation}
               enableReinitialize={true}
               onSubmit={async (values) => {
-                console.log("submited complaint details is", values);
                 const isLocation = validateLocationName(locationName);
-                console.log("location gnglsdfnlsd ", isLocation);
-                if (isLocation.ok == false) {
-                  console.log("Error message ");
+                if (!isLocation.ok) {
                   setLocationError(isLocation.message);
                 } else {
                   setLocationError("");
@@ -192,203 +177,40 @@ const Service: React.FC = () => {
                     discription: values.discription,
                     locationName: locationName,
                   };
-                  console.log(
-                    "complaint details after combining the addres adn location ",
-                    combinedData
-                  );
                   const result = await registerComplaint(combinedData);
                   if (result) {
-                    console.log("result reached in the frontend is ", result);
+                    console.log("Result from backend:", result);
                   }
                 }
               }}
             >
               {(formik) => (
-                <form
-                  className="w-full max-w-lg flex-row items-center justify-center"
-                  onSubmit={formik.handleSubmit}
-                >
-                  <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                      <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="grid-first-name"
-                      >
-                        Name *
-                      </label>
-                      <input
-                        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                        id="name"
-                        type="text"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                      />
-                      {formik.errors.name && (
-                        <small className="text-red-500">
-                          {formik.errors.name}
-                        </small>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full px-3">
-                      <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="grid-complaint"
-                      >
-                        Complaint Description *
-                      </label>
-                      <textarea
-                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        id="discription"
-                        placeholder="Describe your complaint here..."
-                        rows={4}
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                      ></textarea>
-                      {formik.errors.discription && (
-                        <small className="text-red-500">
-                          {formik.errors.discription}
-                        </small>
-                      )}
-                    </div>
-                  </div>
-
-                  {/**providing space for inserting the device image*/}
-                  <label
-                    htmlFor=""
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  >
-                    Upload Image*
-                  </label>
-                  <div className="flex items-center justify-center w-full mb-5">
-                    <input
-                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                      id="multiple_files"
-                      ref={fileRef}
-                      type="file"
-                      name="file"
-                      multiple
-                      onBlur={formik.handleBlur}
-                      onChange={(event) => {
-                        formik.setFieldValue("file", event.target.files[0]);
-                      }}
-                    />
-                  </div>
-                  {formik.errors.file && (
-                    <small className="text-red-500">{formik.errors.file}</small>
-                  )}
-                  {/**providing space for inserting the device image*/}
-                  <div>
-                    {formik.values.file && (
-                      <PreviewImage file={formik.values.file} />
-                    )}
-                  </div>
-                  {/**Adding  address with addaddress option. */}
-                  <div className="flex flex-wrap">
-                    {/* adding address Button and Options */}
-                  </div>
-
-                  <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full px-3">
-                      <label
-                        htmlFor="defaultAddress"
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                      >
-                        Default Address *
-                      </label>
-                      <select
-                        className="appearance-none cursor-pointer block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                        id="defaultAddress"
-                        name="defaultAddress"
-                        value={defaultAddress}
-                        onChange={(event) => {
-                          formik.setFieldValue(
-                            "defaultAddress",
-                            event.target.value
-                          );
-                          setDefaultAddress(event.target.value);
-                        }}
-                      >
-                        <option value="">Select Address</option>
-                        {userProfile?.address.map((item: AddAddress) => (
-                          <option key={item._id} value={item._id}>
-                            {item.name}, {item.district}, {item.state}
-                          </option>
-                        ))}
-                      </select>
-                      {formik.errors.defaultAddress && (
-                        <small className="text-red-500">
-                          {formik.errors.defaultAddress}
-                        </small>
-                      )}
-                    </div>
-                  </div>
-                  {/**code for selecting the current location of the user*/}
-                  <div className="flex flex-wrap  ">
-                    {/* Location Button and Options */}
-                    <div className="w-full  mb-6 my-5">
-                      <label
-                        htmlFor=""
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                      >
-                        update location*
-                      </label>
-                      <button
-                        type="button"
-                        onClick={handleLocationClick}
-                        className={`flex items-center px-4 py-2 rounded w-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-300"
-                       }`}
-                      >
-                        {locationName.longitude !== null
-                          ? `Location: ${locationName?.address}`
-                          : "Please enter your location"}
-                      </button>
-
-                      {showLocationOptions &&
-                        locationName.longitude == null && (
-                          <div className="mt-2">
-                            <button
-                              type="button"
-                              onClick={handleFetchLocation}
-                              className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 focus:outline-none w-full"
-                            >
-                              <FiMapPin className="mr-2" />
-                              Use Current Location
-                            </button>
-                          </div>
-                        )}
-
-                      {locationName.longitude !== null && (
-                        <button
-                          type="submit"
-                          onClick={handleRemoveLocation}
-                          className="mt-2 flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none w-full"
-                        >
-                          Remove Location
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  {/**code for selecting the current location of the user will end here*/}
-                  {locationError && (
-                    <div className="text-red-500 mt-2">{locationError}</div>
-                  )}
-
-                  <div className="w-full my-2 ">
-                    <button
-                      type="submit"
-                      className="focus:outline-none text-white bg-green-400 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-full"
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </form>
+                <ServiceForm
+                  formik={formik}
+                  userProfile={userProfile}
+                  defaultAddress={defaultAddress}
+                  setDefaultAddress={setDefaultAddress}
+                  locationName={locationName}
+                  locationError={locationError}
+                  validateLocationName={validateLocationName}
+                  handleFetchLocation={handleFetchLocation}
+                  handleRemoveLocation={handleRemoveLocation}
+                  showLocationOptions={showLocationOptions}
+                  setShowLocationOptions={setShowLocationOptions}
+                />
               )}
             </Formik>
-          }
-        </div>
+          </div>
+        )}
       </div>
+
+      {/* AboutTheService moves below when ServiceForm is active */}
+      {showForm && (
+        <div className="mt-6 mr-12">
+          <AboutTheService title="About the service" points={services} />
+        </div>
+      )}
+
       <Footer />
     </div>
   );
