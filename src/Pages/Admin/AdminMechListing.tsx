@@ -30,6 +30,8 @@ const AdminMechListing: React.FC = () => {
   ];
 
   const [mechs, setMech] = useState<MechData[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const heading = "Mechanics";
   useEffect(() => {
     const fetchData = async () => {
@@ -63,10 +65,15 @@ const AdminMechListing: React.FC = () => {
     navigate("/admin/verifyMechanic");
   };
 
+  const filteredMechs = mechs.filter((mech) =>
+    mech.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    mech.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="flex flex-col h-screen">
       <div className="mb-5">
-        <TopBar heading={heading} />
+      <TopBar heading="Mechanics" searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       </div>
       <div className="flex justify-end p-4">
         <button
@@ -80,7 +87,7 @@ const AdminMechListing: React.FC = () => {
       <div className="flex justify-center items-center mx-10 pt-7 h-screen">
         <TableCommon
           columns={columns}
-          data={mechs}
+          data={filteredMechs}
           updateStatus={updateMechStatus}
           blockUnblockFunciton={blockMech}
           deleteFunction={deleteMech}
