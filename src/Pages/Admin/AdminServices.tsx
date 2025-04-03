@@ -29,6 +29,8 @@ const AdminServices: React.FC = () => {
   ];
 
   const [services, setServices] = useState<ServiceData[]>([]);
+  const [searchQuery,setSearchQuery] = useState<string>("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,7 +48,6 @@ const AdminServices: React.FC = () => {
     fetchData();
   }, []);
   const navigate = useNavigate();
-  const heading = "Services";
   const handleClick = () => {
     console.log("button clicked");
     navigate("/admin/addNewService");
@@ -68,11 +69,14 @@ const AdminServices: React.FC = () => {
   const navigationLink = '/admin/editService/';
 
 
+  const filteredService = services.filter((serivce) =>
+    serivce.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col h-screen">
     <div className="mb-5">
-    <TopBar heading={heading} />
+    <TopBar heading="Mechanics" searchQuery={searchQuery} onSearchChange={setSearchQuery} />
     </div>
       <div className="flex justify-end mx-10 my-5 ">
         <Button className="" onClick={handleClick} variant="contained">
@@ -83,7 +87,7 @@ const AdminServices: React.FC = () => {
       <div className="flex justify-center items-center mx-10  h-screen">
         <TableCommon
           columns={columns}
-          data={services}
+          data={filteredService}
           updateStatus={updateServiceStatus}
           blockUnblockFunciton={listUnlistService}
           deleteFunction={deleteService}

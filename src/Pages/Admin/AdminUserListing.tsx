@@ -8,8 +8,6 @@ import { blockUser } from "../../Api/admin";
 import { deleteUser } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 
-
-
 interface UserData {
   _id: string;
   name: string;
@@ -33,7 +31,7 @@ const AdminUserListing: React.FC = () => {
   ];
 
   const [data, setUsers] = useState<UserData[]>([]);
-  const heading = "Users";
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,15 +60,25 @@ const AdminUserListing: React.FC = () => {
     );
   };
 
+  const filteredUsers = data.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="flex flex-col h-screen">
       <div className="mb-5">
-      <TopBar heading={heading} />
+        <TopBar
+          heading="Mechanics"
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
       </div>
       <div className="flex-grow mx-4">
         <TableCommon
           columns={columns}
-          data={data}
+          data={filteredUsers}
           updateStatus={updateUserStatus}
           blockUnblockFunciton={blockUser}
           deleteFunction={deleteUser}

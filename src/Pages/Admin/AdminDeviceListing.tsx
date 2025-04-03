@@ -1,11 +1,14 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState , useEffect} from "react";
-import { getAllDevices,deleteDevice, listUnlistDevices } from "../../Api/admin";
+import { useState, useEffect } from "react";
+import {
+  getAllDevices,
+  deleteDevice,
+  listUnlistDevices,
+} from "../../Api/admin";
 import TableCommon from "../../components/Common/TableCommon";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
-
 
 interface DeviceData {
   _id: string;
@@ -16,6 +19,8 @@ interface DeviceData {
 
 const AdminDeviceListing: React.FC = () => {
   const [devices, setDevices] = useState<DeviceData[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const heading = "Adding new Device";
 
   const columns = [
@@ -31,23 +36,21 @@ const AdminDeviceListing: React.FC = () => {
   ];
 
   useEffect(() => {
-    const fetchData  = async () => {
-      try{
+    const fetchData = async () => {
+      try {
         console.log("entered in the useEffect in the adminservice listing ");
         const result = await getAllDevices();
         console.log("result reached in the frontend", result);
-        if(result?.data){
-          setDevices(result?.data?.data?.devices)
+        if (result?.data) {
+          setDevices(result?.data?.data?.devices);
         }
-      }catch(error){
+      } catch (error) {
         console.log(error as Error);
       }
-    }
+    };
 
     fetchData();
-  },[])
-
-
+  }, []);
 
   const updateDeviceStatus = (
     id: string,
@@ -63,31 +66,37 @@ const AdminDeviceListing: React.FC = () => {
     );
   };
 
-
   const navigate = useNavigate();
   const handleClick = () => {
     console.log("button clicked");
     navigate("/admin/addNewDevice");
   };
 
-  const navigationLink = '/admin/editDevice/';
+  const navigationLink = "/admin/editDevice/";
 
+  const filteredDevices = devices.filter((divice) =>
+    divice.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col h-screen">
-    <div className="mb-5">
-    <TopBar heading={heading} />
-    </div>
+      <div className="mb-5">
+        <TopBar
+          heading="Mechanics"
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+      </div>
       <div className="flex justify-end mx-10 my-5 ">
         <Button className="" onClick={handleClick} variant="contained">
           Add new Device
         </Button>
-      </div> 
+      </div>
 
       <div className="flex justify-center items-center mx-10  h-screen">
         <TableCommon
           columns={columns}
-          data={devices}
+          data={filteredDevices}
           updateStatus={updateDeviceStatus}
           blockUnblockFunciton={listUnlistDevices}
           deleteFunction={deleteDevice}
