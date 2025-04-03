@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import TopBar from "../Dashboard/TopBar";
-import { getAllMechanics } from "../../../Api/admin";
-import TableCommon2 from "../../Common/TableCommon2";
+import TopBar from "../../Dashboard/TopBar";
+import { getAllMechanics } from "../../../../Api/admin";
+import TableCommon2 from "../../../Common/TableCommon2";
 
 interface MechData {
   _id: string;

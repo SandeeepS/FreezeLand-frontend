@@ -1,5 +1,6 @@
 const adminRoutes = {
   login: "/admin/login",
+  updateApprove:"/admin/updateApprove",
   getImageUrl: "/admin/getImageUrl",
   getAllUsers: "/admin/users",
   getAllMechanic: "/admin/mechanics",

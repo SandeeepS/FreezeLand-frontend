@@ -17,6 +17,19 @@ const adminLogin = async (email: string, password: string) => {
   }
 };
 
+const updateApprove = async (id:string | undefined,verificationStatus:boolean | undefined) => {
+  console.log("entered in the updateApprove");
+  try{
+    console.log("kkkkkk",id, verificationStatus);
+    const result = await Api.put(adminRoutes.updateApprove,{},{
+      params:{id,verificationStatus}
+    })
+    return result;
+  }catch(error){
+    errorHandler(error as Error);
+  }
+}
+
 const getImageUrl = async (imageKey: string, type: string) => {
   try {
     const result = await Api.get(adminRoutes.getImageUrl, {
@@ -320,5 +333,6 @@ export {
   blockMech,
   deleteMech,
   getMechanicById,
-  getImageUrl
+  getImageUrl,
+  updateApprove
 };

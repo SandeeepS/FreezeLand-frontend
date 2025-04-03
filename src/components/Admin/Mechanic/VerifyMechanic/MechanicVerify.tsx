@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getImageUrl, getMechanicById } from "../../../Api/admin";
+import { getImageUrl, getMechanicById } from "../../../../Api/admin";
+import ApproveModal from "./ApproveModal"; // Import the modal component
 
 interface MechData {
   _id: string;
@@ -11,9 +12,9 @@ interface MechData {
   isBlocked: boolean;
   isDeleted: boolean;
   isVerified: boolean;
-  employeeLicense: string; // URL of the license image
-  adharProof: string; // URL of the Aadhaar image
-  image: string; // URL of the profile image
+  employeeLicense: string; 
+  adharProof: string; 
+  image: string; 
 }
 
 const MechanicVerify: React.FC = () => {
@@ -21,6 +22,8 @@ const MechanicVerify: React.FC = () => {
   const [mechanic, setMechanic] = useState<MechData | null>(null);
   const [employeeLicense, setEmployeeLicense] = useState<string>("");
   const [adharProof, setAdharProof] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); 
+  const [verificationStatus,setVerificationStatus] = useState<boolean>();
 
   useEffect(() => {
     const fetchMechanicDetails = async () => {
@@ -54,6 +57,8 @@ const MechanicVerify: React.FC = () => {
             license: licenseImage?.data?.url,
             adhar: adharImage?.data?.url,
           });
+          setVerificationStatus(mechanicData.isVerified);
+          console.log("Current status of Mechanic verified or not is",verificationStatus);
         }
       } catch (error) {
         console.error("Error fetching mechanic details or images:", error);
@@ -114,7 +119,7 @@ const MechanicVerify: React.FC = () => {
         </div>
       </div>
 
-      {/* Documents Section */}
+      {/* Documents Portion */}
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Uploaded Documents</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -160,17 +165,25 @@ const MechanicVerify: React.FC = () => {
       <div className="mt-8 flex justify-center gap-4">
         <button
           className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-          onClick={() => console.log("Mechanic Approved")}
+          onClick={() => setIsModalOpen(true)} // Open the modal
         >
           Approve
         </button>
-        <button
+        {/* <button
           className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
           onClick={() => console.log("Mechanic Rejected")}
         >
           Reject
-        </button>
+        </button> */}
       </div>
+
+      {/* Approve Modal */}
+      <ApproveModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} 
+        id = {id}
+        verifyStatus = {verificationStatus}
+      />
     </div>
   );
 };

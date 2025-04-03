@@ -26,9 +26,8 @@ import NotFound from "./components/Common/NotFound";
 import ProfileEdit from "./components/User/ProfileEdit";
 import MechLayOut from "./Pages/Mechanic/MechLayOut";
 import VerifyMechanic from "./Pages/Mechanic/VerifyMechanic";
-import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanicByAdmin";
-import LocationModal from "./components/Common/LocationModal";
-import MechanicVerify from "./components/Admin/Mechanic/MechanicVerify";
+import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanic/VerifyMechanicByAdmin";
+import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicVerify";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
