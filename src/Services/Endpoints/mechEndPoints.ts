@@ -10,6 +10,7 @@ const mechRoutes = {
   getAllMechanics:"/mech/getAllMechanics",
   getAllDevices:"/mech/getAllDevices",
   VerifyMechanic:"mech/verifyMechanic",
+  getMechanicDetails:"mech/getMechanicDetails",
   getS3SingUrlForMechCredinential:"mech/getS3SingUrlForMechCredinential",
   logout: "/mech/logout",
 };

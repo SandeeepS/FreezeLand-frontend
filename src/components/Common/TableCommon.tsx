@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,11 +9,15 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import IconButton from "@mui/material/IconButton";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+
+import SortIcon from "@mui/icons-material/Sort";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 interface Column {
   id: string;
@@ -64,6 +68,9 @@ const TableCommon: React.FC<TableCommonProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(4);
   const [filter, setFilter] = useState<"all" | "blocked" | "unblocked">("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
 
   // Filter Data
   const filteredData = data.filter((user) => {
@@ -82,12 +89,17 @@ const TableCommon: React.FC<TableCommonProps> = ({
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const handleBlockUnblock = async (id: string, isCurrentlyBlocked: boolean) => {
+  const handleBlockUnblock = async (
+    id: string,
+    isCurrentlyBlocked: boolean
+  ) => {
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -142,40 +154,62 @@ const TableCommon: React.FC<TableCommonProps> = ({
   };
 
   return (
-    <Paper sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+    <Paper
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {/* Filter & Sort Options */}
-      <div className="flex justify-between p-4">
-        {/* Filter Buttons */}
+      <div className="flex justify-end p-4 space-x-4">
+        {/* Filter Icon Button with Dropdown */}
         <div>
-          <Button
-            variant={filter === "all" ? "contained" : "outlined"}
-            onClick={() => setFilter("all")}
-            sx={{ marginRight: 2 }}
+          <IconButton onClick={(e) => setFilterAnchorEl(e.currentTarget)}>
+            <FilterListIcon />
+          </IconButton>
+          <Menu
+            anchorEl={filterAnchorEl}
+            open={Boolean(filterAnchorEl)}
+            onClose={() => setFilterAnchorEl(null)}
           >
-            All Users
-          </Button>
-          <Button
-            variant={filter === "blocked" ? "contained" : "outlined"}
-            color="error"
-            onClick={() => setFilter("blocked")}
-            sx={{ marginRight: 2 }}
-          >
-            Blocked Users
-          </Button>
-          <Button
-            variant={filter === "unblocked" ? "contained" : "outlined"}
-            color="success"
-            onClick={() => setFilter("unblocked")}
-          >
-            Unblocked Users
-          </Button>
+            <MenuItem
+              selected={filter === "all"}
+              onClick={() => {
+                setFilter("all");
+                setFilterAnchorEl(null);
+              }}
+            >
+              All Users
+            </MenuItem>
+            <MenuItem
+              selected={filter === "blocked"}
+              onClick={() => {
+                setFilter("blocked");
+                setFilterAnchorEl(null);
+              }}
+            >
+              Blocked Users
+            </MenuItem>
+            <MenuItem
+              selected={filter === "unblocked"}
+              onClick={() => {
+                setFilter("unblocked");
+                setFilterAnchorEl(null);
+              }}
+            >
+              Unblocked Users
+            </MenuItem>
+          </Menu>
         </div>
 
-        {/* Sort Dropdown */}
-        <Select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}>
-          <MenuItem value="asc">Sort A-Z</MenuItem>
-          <MenuItem value="desc">Sort Z-A</MenuItem>
-        </Select>
+        {/* Sort Icon Button */}
+        <IconButton
+          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+        >
+          <SortIcon />
+        </IconButton>
       </div>
 
       <TableContainer sx={{ flexGrow: 1 }}>
@@ -183,46 +217,66 @@ const TableCommon: React.FC<TableCommonProps> = ({
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((datas) => (
-              <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
-                <TableCell>{datas.name}</TableCell>
-                {datas.email && <TableCell>{datas.email}</TableCell>}
-                <TableCell align="right">{datas.isBlocked ? "Blocked" : "Active"}</TableCell>
-                <TableCell align="right">
-                  <ToggleButton
-                    value="check"
-                    selected={!datas.isBlocked}
-                    onChange={() => handleBlockUnblock(datas._id, datas.isBlocked)}
-                    sx={{
-                      backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                      color: "white",
-                      width: "120px",
-                      "&.Mui-selected": {
+            {sortedData
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((datas) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
+                  <TableCell>{datas.name}</TableCell>
+                  {datas.email && <TableCell>{datas.email}</TableCell>}
+                  <TableCell align="right">
+                    {datas.isBlocked ? "Blocked" : "Active"}
+                  </TableCell>
+                  <TableCell align="right">
+                    <ToggleButton
+                      value="check"
+                      selected={!datas.isBlocked}
+                      onChange={() =>
+                        handleBlockUnblock(datas._id, datas.isBlocked)
+                      }
+                      sx={{
                         backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                      },
-                      "&:hover": {
-                        backgroundColor: datas.isBlocked ? "#ff4d4d" : "#81c784",
-                      },
-                    }}
-                  >
-                    {datas.isBlocked ? "Blocked" : "Unblocked"}
-                  </ToggleButton>
-                  <Button variant="outlined" sx={{ marginLeft: "10px" }} onClick={() => handleEdit(datas._id)}>
-                    Edit
-                  </Button>
-                  <Button variant="contained" color="error" onClick={() => handleDelete(datas._id, datas.isDeleted)}>
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                        color: "white",
+                        width: "120px",
+                        "&.Mui-selected": {
+                          backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                        },
+                        "&:hover": {
+                          backgroundColor: datas.isBlocked
+                            ? "#ff4d4d"
+                            : "#81c784",
+                        },
+                      }}
+                    >
+                      {datas.isBlocked ? "Blocked" : "Unblocked"}
+                    </ToggleButton>
+                    <Button
+                      variant="outlined"
+                      sx={{ marginLeft: "10px" }}
+                      onClick={() => handleEdit(datas._id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDelete(datas._id, datas.isDeleted)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

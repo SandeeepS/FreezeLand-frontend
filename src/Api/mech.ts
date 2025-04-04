@@ -151,6 +151,22 @@ const verifyMechanic = async (values: MechanicForm) => {
   }
 };
 
+const getMechanicDetails = async (id: string) => {
+  try {
+    if (!id) {
+      console.warn("Mechanic ID is undefined or null");
+      return;
+    }
+    console.log("Fetching mechanic details for ID:", id);
+    const response = await Api.get(mechRoutes.getMechanicDetails, { params: { id } });
+    console.log("Response from backend:", response); 
+    return response;
+  } catch (error) {
+    console.error("Error fetching mechanic details:", error); 
+    errorHandler(error as Error);
+  }
+};
+
 export {
   mechLogin,
   mLogout,
@@ -163,5 +179,6 @@ export {
   getAllMechanics,
   getAllDevices,
   verifyMechanic,
+  getMechanicDetails,
   getS3SingUrlForMechCredinential
 };

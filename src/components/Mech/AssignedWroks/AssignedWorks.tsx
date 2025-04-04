@@ -2,42 +2,73 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import NotVerifiedPage from "./NotVerifiedPage";
 import ProccessingVerificationComponent from "./ProccessingVerificationComponent";
+import { useEffect, useState } from "react";
+import { getMechanicDetails } from "../../../Api/mech";
+import AnimatedButton from "./AnimatedButton";
+
+export interface MechanicData {
+  _id: string;
+  name: string;
+  email: string;
+  phone: number;
+  password: string;
+  role: "mechanic";
+  photo: string;
+  adharProof: string | null; // Ensure this matches the backend type
+  employeeLicense: string;
+  isBlocked: boolean;
+  isDeleted: boolean;
+  isVerified: boolean;
+  mechanicType: string[]; // Assuming these are ObjectId strings
+  __v: number;
+}
 
 const AssignedWorks: React.FC = () => {
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
-  console.log("mechanic details ", mechanic);
-  // Check if mechanic exists and is verified
-  let isVerified = false;
-  if (mechanic?.isVerified == true) {
-    isVerified = true;
-  }
-  const hasAdharDetails = mechanic?.adharProof !== null;
+  const mechanicId = mechanic?.data._id;
+  console.log("mechanic id ", mechanicId);
+  const [mechanicDetails, setMechanicDetails] = useState<MechanicData | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!mechanicId) {
+        console.warn("Mechanic ID is undefined or null");
+        return;
+      }
+
+      try {
+        console.log("Fetching mechanic details for ID:", mechanicId);
+        const response = await getMechanicDetails(mechanicId);
+        console.log("Mechanic details from backend:", response?.data.result);
+        setMechanicDetails(response?.data.result); // Set the fetched mechanic details
+      } catch (error) {
+        console.error("Error fetching mechanic details:", error);
+      }
+    };
+
+    fetchData();
+  }, [mechanicId]); // Add dependency array to avoid unnecessary re-renders
+
+  // Determine verification and Adhar status
+  const isVerified = mechanicDetails?.isVerified; // Default to false if undefined
+  const hasAdharDetails = !!mechanicDetails?.adharProof; // Ensure this is a boolean
+
   return (
     <>
-      {/* Render verification message if not verified */}
-      {isVerified === false && !hasAdharDetails && <NotVerifiedPage />}
-      {isVerified === false && hasAdharDetails && (
-        <ProccessingVerificationComponent />
-      )}
-      {/* Render services grid if verified */}
-      {isVerified === true && hasAdharDetails && (
-        <div className="w-full bg-freeze-color h-[600px]">
-          <h1 className="text-5xl text-center m-12">Assigned Works</h1>
-          <div className="flex m-12 space-x-10 justify-center">
-            {/* Your existing service cards remain unchanged */}
-            <div className="h-64 flex flex-col justify-between rounded overflow-hidden shadow-lg bg-[#fefefe]">
-              <div className="w-full flex-grow flex justify-center items-center p-2">
-                <img
-                  className="w-24 h-24 object-contain"
-                  src="/src/Images/air-conditioning.png"
-                  alt="A/C Service"
-                />
-              </div>
-              <div className="flex justify-center p-4">
-                <h3 className="text-xl mb-2 text-center">A/C Service</h3>
-              </div>
+      {/* Conditional Rendering */}
+      {!isVerified && !hasAdharDetails && <NotVerifiedPage />}
+      {!isVerified && hasAdharDetails && <ProccessingVerificationComponent />}
+      {isVerified && (
+        <div className="w-full bg-freeze-color h-[400px] ">
+          <div className="p-8">
+            <h1 className="text-4xl font-semibold text-center text-white ">
+              Available Works
+            </h1>
+            <div className="flex m-4 space-x-10 justify-center">
+              <AnimatedButton />
             </div>
-            {/* ... rest of your service cards ... */}
           </div>
         </div>
       )}
