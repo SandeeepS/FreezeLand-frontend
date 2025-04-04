@@ -46,7 +46,7 @@ const ServiceList: React.FC = () => {
           OUR SERVICES
         </h1>
       </motion.div>
-      <div className=" flex-row m-28 mt-12  cursor-pointer justify-center items-center md:flex ">
+      <div className=" flex-row m-28 mt-12  cursor-pointer justify-center items-center md:flex">
         {services.map((service) => (
           <>
             <ServiceListingCard data={service} />

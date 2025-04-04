@@ -125,16 +125,6 @@ const Service: React.FC = () => {
 
   return (
     <div className="flex flex-col mt-36 overflow-hidden">
-      {/* Toggle Button */}
-      <div className="flex justify-center ">
-        <button
-          className="px-6 py-2 bg-freeze-color text-white rounded-md hover:bg-blue-600"
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? "Back to Service Details" : "Customize Service"}
-        </button>
-      </div>
-
       {/* Main Content */}
       <div className="md:flex md:justify-between mt-10 md:pl-32 mx-6 md:w-full">
         {/* Service Details */}
@@ -145,71 +135,61 @@ const Service: React.FC = () => {
           />
         </div>
 
-        {/* Conditional Rendering for AboutTheService & ServiceForm */}
-        {!showForm ? (
-          // Show AboutTheService beside ServiceDetails when form is hidden
-          <div className="mr-24">
-            <AboutTheService title="About the service" points={services} />
-          </div>
-        ) : (
-          // Show ServiceForm beside ServiceDetails, and AboutTheService below
-          <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 ">
-            <Formik
-              initialValues={{
-                name: "",
-                discription: "",
-                location: "",
-                file: null,
-                defaultAddress: "",
-              }}
-              validationSchema={ServiceFormValidation}
-              enableReinitialize={true}
-              onSubmit={async (values) => {
-                const isLocation = validateLocationName(locationName);
-                if (!isLocation.ok) {
-                  setLocationError(isLocation.message);
-                } else {
-                  setLocationError("");
-                  const combinedData: Iconcern = {
-                    name: values.name,
-                    image: values?.file?.name,
-                    defaultAddress: defaultAddress,
-                    discription: values.discription,
-                    locationName: locationName,
-                  };
-                  const result = await registerComplaint(combinedData);
-                  if (result) {
-                    console.log("Result from backend:", result);
-                  }
-                }
-              }}
-            >
-              {(formik) => (
-                <ServiceForm
-                  formik={formik}
-                  userProfile={userProfile}
-                  defaultAddress={defaultAddress}
-                  setDefaultAddress={setDefaultAddress}
-                  locationName={locationName}
-                  locationError={locationError}
-                  validateLocationName={validateLocationName}
-                  handleFetchLocation={handleFetchLocation}
-                  handleRemoveLocation={handleRemoveLocation}
-                  showLocationOptions={showLocationOptions}
-                  setShowLocationOptions={setShowLocationOptions}
-                />
-              )}
-            </Formik>
-          </div>
-        )}
-      </div>
-
-      {/* AboutTheService moves below when ServiceForm is active */}
-      {showForm && (
-        <div className="mt-6 mr-12">
+        <div className="mr-24">
           <AboutTheService title="About the service" points={services} />
         </div>
-      )}
+      </div>
+      <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 pl-36 ">
+        <Formik
+          initialValues={{
+            name: "",
+            discription: "",
+            location: "",
+            file: null,
+            defaultAddress: "",
+          }}
+          validationSchema={ServiceFormValidation}
+          enableReinitialize={true}
+          onSubmit={async (values) => {
+            const isLocation = validateLocationName(locationName);
+            if (!isLocation.ok) {
+              setLocationError(isLocation.message);
+            } else {
+              setLocationError("");
+              const combinedData: Iconcern = {
+                name: values.name,
+                image: values?.file?.name,
+                defaultAddress: defaultAddress,
+                discription: values.discription,
+                locationName: locationName,
+                userId: userId,
+                serviceId: service?._id,
+              };
+              console.log("wrokinggndlkgnsldng");
+              const result = await registerComplaint(combinedData);
+              if (result) {
+                console.log("Result from backend:", result);
+              }
+            }
+          }}
+        >
+          {(formik) => (
+            <ServiceForm
+              formik={formik}
+              userProfile={userProfile}
+              defaultAddress={defaultAddress}
+              setDefaultAddress={setDefaultAddress}
+              locationName={locationName}
+              locationError={locationError}
+              validateLocationName={validateLocationName}
+              handleFetchLocation={handleFetchLocation}
+              handleRemoveLocation={handleRemoveLocation}
+              showLocationOptions={showLocationOptions}
+              setShowLocationOptions={setShowLocationOptions}
+            />
+          )}
+        </Formik>
+      </div>
 
       <Footer />
     </div>

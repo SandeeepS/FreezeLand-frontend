@@ -2,7 +2,7 @@ import React from "react";
 
 const ServiceDetails:React.FC = ({serviceImage,discription}) => {
   return (
-    <div className="md:w-[40%]">
+    <div className="serviceImage md:w-[45%]">
       <div className="md:mb-12 flex justify-center">
         <img src={serviceImage} alt="" />
       </div>

@@ -7,7 +7,7 @@ interface ServiceCardProps {
 
 const AboutTheService:React.FC<ServiceCardProps> = ({title,points}) => {
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 max-w-md border">
+    <div className="bg-white shadow-lg rounded-lg p-6 max-w-md border mr-44 w-full">
     <h2 className="text-lg font-bold mb-4">{title}</h2>
     <ul className="space-y-3">
       {points.map((point, index) => (

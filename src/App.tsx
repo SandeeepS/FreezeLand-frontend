@@ -65,9 +65,6 @@ function App() {
             <Route path="/user/forget-password" element={<ForgetPassword />} />
           </Route>
 
-          {/* <Route path="/user" element={<UserLoggedIn />}>
-            <Route path="/user/homepage" element={<UserHomePage />} />
-          </Route> */}
 
           {/** new User layout */}
           <Route path="/user" element={<UserLoggedIn />}>
