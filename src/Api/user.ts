@@ -239,6 +239,7 @@ const registerComplaint = async (data: Iconcern) => {
     console.log("enterd in the registerCompaint funciton in the user.ts", data);
     const result = await Api.post(userRoutes.registerService, { data });
     console.log("result after registering the user complaint is ", result);
+    return result;
   } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);

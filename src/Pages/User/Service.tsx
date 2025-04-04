@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getService } from "../../Api/admin";
 import { getProfile } from "../../Api/user";
 import { AddAddress } from "../../interfaces/AddAddress";
@@ -15,10 +15,12 @@ import { getImageUrl } from "../../Api/user";
 import ServiceDetails from "../../components/User/UserServiceRegisteration/ServiceDetails";
 import ServiceForm from "../../components/User/UserServiceRegisteration/ServiceForm";
 import AboutTheService from "../../components/User/UserServiceRegisteration/AboutTheService";
+import ConformationModal from "../../components/Common/ConformationModal";
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 const Service: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const userId = useSelector((state: RootState) => state.auth.userData?._id);
   const [service, setServices] = useState<Iconcern>();
@@ -35,6 +37,7 @@ const Service: React.FC = () => {
   const [locationError, setLocationError] = useState<string | undefined>("");
   const [serviceImage, setServiceImage] = useState<string | undefined>("");
   const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const services = [
     "Applicable for both window & Split ACs",
     "Advanced Foam-jet cleaning of indoor unit",
@@ -123,76 +126,90 @@ const Service: React.FC = () => {
     setShowLocationOptions(false);
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate("/user/homepage");
+  };
+
   return (
-    <div className="flex flex-col mt-36 overflow-hidden">
-      {/* Main Content */}
-      <div className="md:flex md:justify-between mt-10 md:pl-32 mx-6 md:w-full">
-        {/* Service Details */}
-        <div className={`transition-all duration-500 ease-in-out md:w-full`}>
-          <ServiceDetails
-            serviceImage={serviceImage}
-            discription={service?.discription}
-          />
+    <>
+      <div className="flex flex-col mt-36 overflow-hidden ">
+        <div className="flex flex-col justify-center items-center my-4">
+          <h2 className="font-bold font-sans text-lg ">{service?.name}</h2>
         </div>
+        {/* Main Content */}
+        <div className="md:flex md:justify-between mt-10 md:pl-32 mx-6 md:w-full">
+          {/* Service Details */}
+          <div className={`transition-all duration-500 ease-in-out md:w-full`}>
+            <ServiceDetails serviceImage={serviceImage} />
+          </div>
 
-        <div className="mr-24">
-          <AboutTheService title="About the service" points={services} />
+          <div className="mr-24">
+            <AboutTheService title="About the service" points={services} />
+          </div>
         </div>
-      </div>
-      <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 pl-36 ">
-        <Formik
-          initialValues={{
-            name: "",
-            discription: "",
-            location: "",
-            file: null,
-            defaultAddress: "",
-          }}
-          validationSchema={ServiceFormValidation}
-          enableReinitialize={true}
-          onSubmit={async (values) => {
-            const isLocation = validateLocationName(locationName);
-            if (!isLocation.ok) {
-              setLocationError(isLocation.message);
-            } else {
-              setLocationError("");
-              const combinedData: Iconcern = {
-                name: values.name,
-                image: values?.file?.name,
-                defaultAddress: defaultAddress,
-                discription: values.discription,
-                locationName: locationName,
-                userId: userId,
-                serviceId: service?._id,
-              };
-              console.log("wrokinggndlkgnsldng");
-              const result = await registerComplaint(combinedData);
-              if (result) {
-                console.log("Result from backend:", result);
+        <div className="flex flex-col justify-center items-center my-4">
+          <h3 className="font-bold font-sans text-lg ">
+            Enter More Details Here
+          </h3>
+        </div>
+        <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 md:pl-36 pl-6 ">
+          <Formik
+            initialValues={{
+              name: "",
+              discription: "",
+              location: "",
+              file: null,
+              defaultAddress: "",
+            }}
+            validationSchema={ServiceFormValidation}
+            enableReinitialize={true}
+            onSubmit={async (values) => {
+              const isLocation = validateLocationName(locationName);
+              if (!isLocation.ok) {
+                setLocationError(isLocation.message);
+              } else {
+                setLocationError("");
+                const combinedData: Iconcern = {
+                  name: values.name,
+                  image: values?.file?.name,
+                  defaultAddress: defaultAddress,
+                  discription: values.discription,
+                  locationName: locationName,
+                  userId: userId,
+                  serviceId: service?._id,
+                };
+                console.log("wrokinggndlkgnsldng");
+                const result = await registerComplaint(combinedData);
+                if (result) {
+                  console.log("Result from backend:", result);
+                  setShowModal(true);
+                }
               }
-            }
-          }}
-        >
-          {(formik) => (
-            <ServiceForm
-              formik={formik}
-              userProfile={userProfile}
-              defaultAddress={defaultAddress}
-              setDefaultAddress={setDefaultAddress}
-              locationName={locationName}
-              locationError={locationError}
-              validateLocationName={validateLocationName}
-              handleFetchLocation={handleFetchLocation}
-              handleRemoveLocation={handleRemoveLocation}
-              showLocationOptions={showLocationOptions}
-              setShowLocationOptions={setShowLocationOptions}
-            />
-          )}
-        </Formik>
-      </div>
+            }}
+          >
+            {(formik) => (
+              <ServiceForm
+                formik={formik}
+                userProfile={userProfile}
+                defaultAddress={defaultAddress}
+                setDefaultAddress={setDefaultAddress}
+                locationName={locationName}
+                locationError={locationError}
+                validateLocationName={validateLocationName}
+                handleFetchLocation={handleFetchLocation}
+                handleRemoveLocation={handleRemoveLocation}
+                showLocationOptions={showLocationOptions}
+                setShowLocationOptions={setShowLocationOptions}
+              />
+            )}
+          </Formik>
+        </div>
 
+        <ConformationModal show={showModal} onClose={handleCloseModal} />
+      </div>
       <Footer />
-    </div>
+    </>
   );
 };
 
