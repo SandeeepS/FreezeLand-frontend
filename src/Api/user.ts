@@ -119,7 +119,7 @@ const resendOtp = async () => {
 
 const logout = async () => {
   try {
-    console.log("entered in the logout function user.ts")
+    console.log("entered in the logout function user.ts");
     return await Api.get(userRoutes.logout);
   } catch (error) {
     console.log("error in the logout in the user.ts", error as Error);
@@ -151,18 +151,19 @@ const getAllServices = async () => {
       return result;
     }
   } catch (error) {
-    console.log("error in the user.ts")
+    console.log("error in the user.ts");
     console.log(error);
     errorHandler(error as Error);
   }
 };
 
 //getting all registered complaint of the user
-const getAllRegisteredService = async () => {
+const getAllUserRegisteredServices = async (userId:string) => {
   try {
-    const result = await Api.get(userRoutes.getAllRegisteredService);
-    return result;
-  } catch (error) {
+    const result = await Api.get(userRoutes.getAllUserRegisteredServices,{params:{userId}});
+    console.log("details reached in the user.ts tttt",result);
+    return result.data;
+  } catch (error){
     console.log(
       "error occured while fetching the user registerd services form the user.ts"
     );
@@ -246,6 +247,17 @@ const registerComplaint = async (data: Iconcern) => {
   }
 };
 
+const getUserRegisteredServiceDetailsById = async (id:string) => {
+  try{
+    console.log("Entered in the getUserRegisteredServiceDetailsById in the user.ts");
+    const result = await Api.get(userRoutes.getUserRegisteredServiceDetailsById,{params:{id}});
+    return result;
+  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   signup,
   login,
@@ -264,5 +276,6 @@ export {
   setDefaultAddress,
   registerComplaint,
   getAllServices,
-  getAllRegisteredService,
+  getAllUserRegisteredServices,
+  getUserRegisteredServiceDetailsById
 };

@@ -28,6 +28,7 @@ import MechLayOut from "./Pages/Mechanic/MechLayOut";
 import VerifyMechanic from "./Pages/Mechanic/VerifyMechanic";
 import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanic/VerifyMechanicByAdmin";
 import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicVerify";
+import ComplaintDetail from "./components/User/Queue/ComplaintDetail";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -59,7 +60,7 @@ function App() {
 
           {/* userRoutes */}
           <Route path="" element={<UserLoggedOut />}>
-            <Route path="/signup" element={<UserSignupPage />} />
+            <Route path="/signup" element={<UserSignupPage />}/>
             <Route path="/login" element={<UserLoginPage />} />
             <Route path="otp-page" element={<UserOtpPage />} />
             <Route path="/user/forget-password" element={<ForgetPassword />} />
@@ -79,6 +80,8 @@ function App() {
               <Route path="/user/showAllAddress" element={<AllAddress />} />
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
               <Route path="/user/service/:id" element={<Service />} />
+              <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />} />
+
             </Route>
           </Route>
 

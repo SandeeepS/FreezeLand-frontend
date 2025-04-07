@@ -37,7 +37,6 @@ const AssignedWorks: React.FC = () => {
         console.warn("Mechanic ID is undefined or null");
         return;
       }
-
       try {
         console.log("Fetching mechanic details for ID:", mechanicId);
         const response = await getMechanicDetails(mechanicId);
@@ -47,7 +46,6 @@ const AssignedWorks: React.FC = () => {
         console.error("Error fetching mechanic details:", error);
       }
     };
-
     fetchData();
   }, [mechanicId]); // Add dependency array to avoid unnecessary re-renders
 

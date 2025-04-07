@@ -17,7 +17,7 @@ const errorHandler = async (error: Error | AxiosError) => {
       console.log("Unauthorized error, logging out...");
       await logout(); 
       store.dispatch(userLogout())
-      toast.error("Session expired. Please log in again.");
+      toast.error(axiosError.message);
       return;
     }
     if (axiosError.response?.data) {

@@ -15,7 +15,8 @@ const userRoutes = {
   setDefaultAddress:"/user/setDefaultAddress",
   registerService:"/user/registerService",
   getAllServices:"/user/getAllServices",
-  getAllRegisteredService:"/user/getAllRegisteredService",
+  getAllUserRegisteredServices:"/user/getAllUserRegisteredServices",
+  getUserRegisteredServiceDetailsById:"/user/getUserRegisteredServiceDetailsById",
   getImageUrl: "/user/getImageUrl",
 };
 

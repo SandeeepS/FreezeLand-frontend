@@ -5,6 +5,7 @@ import { ServiceListingValidation } from "../../components/Common/Validations";
 import { addService, getS3SingUrl } from "../../Api/admin";
 import { useNavigate } from "react-router-dom";
 import LargeModal from "../../components/Common/LargeModal";
+import PageLeaveModal from "../../components/Common/PageLeaveModal";
 
 export interface InewService {
   name: string;
@@ -22,6 +23,25 @@ const NewService: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
+  // const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isFormDirty) {
+        event.preventDefault();
+        event.returnValue = ""; // Some browsers require this empty string for confirmation
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isFormDirty]);
+
+  // const handleNavigationAttempt = () => {
+  //   if (isFormDirty) {
+  //     setShowConfirmation(true);
+  //   }
+  // };
 
   const handleSubmit = async (values: InewService) => {
     console.log("handlesubmit triggered");
@@ -47,7 +67,6 @@ const NewService: React.FC = () => {
     }
   };
 
-  
   const onImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: (field: string, value: any) => void
@@ -84,8 +103,8 @@ const NewService: React.FC = () => {
         <Formik
           initialValues={{
             name: "",
-            discription: [], 
-            serviceCharge: 0, 
+            discription: [],
+            serviceCharge: 0,
             imageKey: "",
           }}
           validationSchema={ServiceListingValidation}
@@ -186,7 +205,9 @@ const NewService: React.FC = () => {
                     }`}
                   />
                   {errors.serviceCharge && touched.serviceCharge && (
-                    <small className="text-red-500">{errors.serviceCharge}</small>
+                    <small className="text-red-500">
+                      {errors.serviceCharge}
+                    </small>
                   )}
                 </div>
 
@@ -322,6 +343,18 @@ const NewService: React.FC = () => {
           />
         </div>
       )}
+      {/***
+      <div>
+
+        {showConfirmation && (
+          <PageLeaveModal
+            message="You have unsaved changes. Are you sure you want to leave?"
+            onConfirm={() => handleConfirmLeave} 
+            onCancel={() => handleCancelLeave} 
+          />
+        )}
+      </div>
+       */}
     </div>
   );
 };

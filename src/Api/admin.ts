@@ -306,6 +306,7 @@ const editExistService = async (
 ) => {
   try {
     const result = await Api.put(adminRoutes.editExistService, { _id, values });
+    console.log("result form front end",result);
     return result;
   } catch (error) {
     console.log(error as Error);

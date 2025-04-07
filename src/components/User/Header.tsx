@@ -72,14 +72,14 @@ const Header: React.FC = () => {
             </a>
           </li>
 
-          {/* 
+          
           <li className="p-4 cursor-pointer">SERVICES</li>
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/user/queue")}
           >
             QUEUE
-          </li> */}
+          </li> 
 
           <li className="p-2 cursor-pointer">
             <button
