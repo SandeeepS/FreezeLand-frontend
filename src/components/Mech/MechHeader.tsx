@@ -59,9 +59,9 @@ const MechHeader: React.FC = () => {
           <li className="p-4 cursor-pointer">SERVICES</li>
           <li
             className="p-4 cursor-pointer"
-            onClick={() => navigate("/mech/queue")}
+            onClick={() => navigate("/mech/allWorks")}
           >
-            QUEUE
+            WORKS
           </li>
 
           <li className="p-2 cursor-pointer">

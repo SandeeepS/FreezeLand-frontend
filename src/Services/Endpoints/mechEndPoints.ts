@@ -12,6 +12,7 @@ const mechRoutes = {
   VerifyMechanic:"mech/verifyMechanic",
   getMechanicDetails:"mech/getMechanicDetails",
   getS3SingUrlForMechCredinential:"mech/getS3SingUrlForMechCredinential",
+  getAllUserRegisteredServices:"mech/getAllUserRegisteredServices",
   logout: "/mech/logout",
 };
 

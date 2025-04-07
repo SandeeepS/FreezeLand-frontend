@@ -110,7 +110,11 @@ const getAllMechanics = async () => {
 };
 
 //signedUrl
-const getS3SingUrlForMechCredinential = async (fileName: string, fileType: string,name:string) => {
+const getS3SingUrlForMechCredinential = async (
+  fileName: string,
+  fileType: string,
+  name: string
+) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the mech.ts file",
@@ -119,7 +123,7 @@ const getS3SingUrlForMechCredinential = async (fileName: string, fileType: strin
     );
 
     const result = await Api.get(mechRoutes.getS3SingUrlForMechCredinential, {
-      params: { fileName, fileType,name },
+      params: { fileName, fileType, name },
     });
     return result;
   } catch (error) {
@@ -142,7 +146,7 @@ const getAllDevices = async () => {
 const verifyMechanic = async (values: MechanicForm) => {
   try {
     console.log("entered in the verigy Mechinc in mech.ts");
-    console.log("values in the frontend mech.ts is ",values);
+    console.log("values in the frontend mech.ts is ", values);
     const response = await Api.post(mechRoutes.VerifyMechanic, { values });
     return response;
   } catch (error) {
@@ -158,11 +162,27 @@ const getMechanicDetails = async (id: string) => {
       return;
     }
     console.log("Fetching mechanic details for ID:", id);
-    const response = await Api.get(mechRoutes.getMechanicDetails, { params: { id } });
-    console.log("Response from backend:", response); 
+    const response = await Api.get(mechRoutes.getMechanicDetails, {
+      params: { id },
+    });
+    console.log("Response from backend:", response);
     return response;
   } catch (error) {
-    console.error("Error fetching mechanic details:", error); 
+    console.error("Error fetching mechanic details:", error);
+    errorHandler(error as Error);
+  }
+};
+
+//function to get all userRegistered compliants in the mechside
+const getAllUserRegisteredServices = async () => {
+  try {
+    const result = await Api.get(mechRoutes.getAllUserRegisteredServices);
+    console.log("details reached in the mech.ts tttt", result);
+    return result.data;
+  } catch (error) {
+    console.log(
+      "error occured while fetching the user registerd services form the mech.ts"
+    );
     errorHandler(error as Error);
   }
 };
@@ -180,5 +200,6 @@ export {
   getAllDevices,
   verifyMechanic,
   getMechanicDetails,
-  getS3SingUrlForMechCredinential
+  getS3SingUrlForMechCredinential,
+  getAllUserRegisteredServices,
 };

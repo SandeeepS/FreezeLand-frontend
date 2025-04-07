@@ -158,12 +158,14 @@ const getAllServices = async () => {
 };
 
 //getting all registered complaint of the user
-const getAllUserRegisteredServices = async (userId:string) => {
+const getAllUserRegisteredServices = async (userId: string) => {
   try {
-    const result = await Api.get(userRoutes.getAllUserRegisteredServices,{params:{userId}});
-    console.log("details reached in the user.ts tttt",result);
+    const result = await Api.get(userRoutes.getAllUserRegisteredServices, {
+      params: { userId },
+    });
+    console.log("details reached in the user.ts tttt", result);
     return result.data;
-  } catch (error){
+  } catch (error) {
     console.log(
       "error occured while fetching the user registerd services form the user.ts"
     );
@@ -247,16 +249,21 @@ const registerComplaint = async (data: Iconcern) => {
   }
 };
 
-const getUserRegisteredServiceDetailsById = async (id:string) => {
-  try{
-    console.log("Entered in the getUserRegisteredServiceDetailsById in the user.ts");
-    const result = await Api.get(userRoutes.getUserRegisteredServiceDetailsById,{params:{id}});
+const getUserRegisteredServiceDetailsById = async (id: string) => {
+  try {
+    console.log(
+      "Entered in the getUserRegisteredServiceDetailsById in the user.ts"
+    );
+    const result = await Api.get(
+      userRoutes.getUserRegisteredServiceDetailsById,
+      { params: { id } }
+    );
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
   }
-}
+};
 
 export {
   signup,
@@ -277,5 +284,5 @@ export {
   registerComplaint,
   getAllServices,
   getAllUserRegisteredServices,
-  getUserRegisteredServiceDetailsById
+  getUserRegisteredServiceDetailsById,
 };
