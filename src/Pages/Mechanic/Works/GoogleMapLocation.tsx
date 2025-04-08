@@ -1,9 +1,9 @@
-import React from 'react';
-import { Map, GoogleApiWrapper, MapProps, IProvidedProps } from 'google-maps-react';
+import React from "react";
+import { Map, GoogleApiWrapper, IProvidedProps } from "google-maps-react";
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
-
 interface LocationProps {
+  address:string;
   latitude: number;
   longitude: number;
 }
@@ -17,13 +17,13 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6 mb-6">
-      <Map 
+      <Map
         google={google}
         style={{ width: "100%", height: "300px" }}
         zoom={10}
         initialCenter={{
           lat: location.latitude,
-          lng: location.longitude
+          lng: location.longitude,
         }}
       />
     </div>
@@ -35,7 +35,7 @@ interface GoogleMapLocationProps {
 }
 
 const GoogleMapLocation = GoogleApiWrapper({
-  apiKey: apiKey
+  apiKey: apiKey,
 })(MapContainer);
 
 export default GoogleMapLocation as React.ComponentType<GoogleMapLocationProps>;

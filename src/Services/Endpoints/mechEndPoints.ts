@@ -15,6 +15,7 @@ const mechRoutes = {
   getAllUserRegisteredServices:"mech/getAllUserRegisteredServices",
   getComplaintDetails:"mech/getComplaintDetails",
   getImageUrl:"mech/getImageUrl",
+  updateWorkAssigned:"mech/updateWorkAssigned",
   logout: "/mech/logout",
 };
 

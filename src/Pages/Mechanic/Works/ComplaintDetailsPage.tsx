@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import BuildIcon from "@mui/icons-material/Build";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 // Import components
 import ServiceDetailsComponent from "./ServiceDetailsComponent";
@@ -12,6 +12,7 @@ import StatusInfoComponent from "./StatusInfoComponent";
 import { getComplaintDetails } from "../../../Api/mech";
 import LocationDetail from "./LocationDetail";
 import GoogleMapLocation from "./GoogleMapLocation";
+import AccecptBtn from "./AccecptBtn";
 
 // Define the complaint details interface
 interface ComplaintDetails {
@@ -28,7 +29,7 @@ interface ComplaintDetails {
   completionPercentage: number;
   priority: string;
   createdAt: string;
-  userDetails?:{
+  userDetails?: {
     name: string;
     password: string;
     email: string;
@@ -36,8 +37,8 @@ interface ComplaintDetails {
     profile_picture: string;
     defaultAddress: string;
     role: string;
-};
-  serviceDetails?:{
+  };
+  serviceDetails?: {
     name: string;
     imageKey: string;
     discription: string[];
@@ -62,6 +63,7 @@ const ComplaintDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("details");
+  const [isAccepted, setIsAccepted] = useState<boolean>(false);
 
   // Format date function
   const formatDate = (dateString: string) => {
@@ -82,7 +84,7 @@ const ComplaintDetailsPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         if (id) {
           const result = await getComplaintDetails(id);
           console.log("result is ", result);
@@ -90,17 +92,19 @@ const ComplaintDetailsPage: React.FC = () => {
           if (result && result.data.result && result.data.result.length > 0) {
             const complaintData = result.data.result[0];
 
-         
-
+            // Set isAccepted based on status (not pending means already accepted)
+            setIsAccepted(complaintData.status !== "pending");
             setComplaint(complaintData);
-            console.log("complaints after set ",complaint);
+            console.log("complaints after set ", complaint);
           } else {
             setError("No data found for this service request.");
           }
         }
       } catch (error) {
         console.error("Error fetching complaint details:", error);
-        setError("Failed to load service request data. Please try again later.");
+        setError(
+          "Failed to load service request data. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
@@ -110,15 +114,8 @@ const ComplaintDetailsPage: React.FC = () => {
   }, [id]);
 
   // Handle back button
-  const handleBack = () =>{
+  const handleBack = () => {
     navigate(-1);
-  };
-
-  // Handle update button
-  const handleUpdate = () =>{
-    if (complaint) {
-      navigate(`/mechanic/update-complaint/${complaint._id}`);
-    }
   };
 
   if (loading) {
@@ -165,63 +162,46 @@ const ComplaintDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="px-4 py-6 bg-gray-50 min-h-screenf mt-32 ">
+    <div className="px-4 py-6 bg-gray-50 min-h-screen mt-32">
       {/* Header with back button */}
       <div className="flex items-center mb-6">
-        {/* <button
-          onClick={handleBack}
-          className="mr-4 text-blue-600 hover:text-blue-800 flex items-center"
-        >
-          <ArrowBackIcon className="mr-1" /> Back
-        </button> */}
         <h1 className="text-2xl font-bold flex-grow">
           Service Request Details
         </h1>
-
-        {complaint.status !== "completed" && (
-          <button
-            onClick={handleUpdate}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
-          >
-            <BuildIcon className="mr-1" />
-            {complaint.status === "pending"
-              ? "Take Up Request"
-              : "Update Status"}
-          </button>
-        )}
+        <AccecptBtn complaintId={complaint._id} />
       </div>
 
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column - Service info */}
-        <ServiceDetailsComponent 
-          complaint={complaint} 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          formatDate={formatDate}
-        />
-
-        {/* Right column - Customer and status info */}
-        <div className="lg:col-span-1">
-          {/* Only render StatusInfoComponent if we have status and priority */}
-          {complaint.status && complaint.priority && (
-            <StatusInfoComponent 
-              status={complaint.status} 
-              priority={complaint.priority} 
-            />
-          )}
-          
-          {/* Customer info card */}
-          <CustomerDetailsComponent 
-            complaint={complaint} 
+        {isAccepted && (
+          <ServiceDetailsComponent
+            complaint={complaint}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             formatDate={formatDate}
           />
+        )}
+
+        {/* Right column - Customer and status info */}
+        <div className={`lg:col-span-${isAccepted ? 1 : 3}`}>
+          {/* Only render StatusInfoComponent if we have status and priority */}
+          {complaint.status && complaint.priority && (
+            <StatusInfoComponent
+              status={complaint.status}
+              priority={complaint.priority}
+            />
+          )}
+
+          {/* Customer info card */}
+          <CustomerDetailsComponent
+            complaint={complaint}
+            formatDate={formatDate}
+          />
+
+          {/* Location details */}
           <LocationDetail location={complaint.locationName} />
-          <GoogleMapLocation location={complaint.locationName}/>
-
-
-
-
+          <GoogleMapLocation location={complaint.locationName} />
         </div>
       </div>
     </div>

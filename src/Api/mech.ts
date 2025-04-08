@@ -217,6 +217,16 @@ const getImageUrl = async (imageKey: string, type: string) => {
   }
 };
 
+const updateWorkAssigned = async (complaintId:string,mechanicId:string,status:string) => {
+  try{
+    console.log('ehtered in the updateWorkAssigned');
+    const result = await Api.put(mechRoutes.updateWorkAssigned,{complaintId,mechanicId,status})
+    return result;
+  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
 
 export {
   mechLogin,
@@ -235,4 +245,5 @@ export {
   getMechanicDetails,
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,
+  updateWorkAssigned
 };

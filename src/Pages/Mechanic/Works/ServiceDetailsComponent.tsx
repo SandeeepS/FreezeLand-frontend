@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import BuildIcon from "@mui/icons-material/Build";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { useEditable } from "@chakra-ui/react";
 import { getImageUrl } from "../../../Api/mech";
 
 interface ServiceDetailsProps {
