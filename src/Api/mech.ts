@@ -187,10 +187,42 @@ const getAllUserRegisteredServices = async () => {
   }
 };
 
+//function to get the specified complaint by id 
+const getComplaintDetails = async (id: string) => {
+  try {
+    console.log(
+      "Entered in the getComplaintDetails in the mech.ts"
+    );
+    const result = await Api.get(
+      mechRoutes.getComplaintDetails,
+      { params: { id } }
+    );
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+
+const getImageUrl = async (imageKey: string, type: string) => {
+  try {
+    const result = await Api.get(mechRoutes.getImageUrl, {
+      params: { imageKey, type },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+
 export {
   mechLogin,
   mLogout,
   mechSignup,
+  getImageUrl,
   verifyMechOtp,
   resendMechOtp,
   forgotPasswordMech,
@@ -199,6 +231,7 @@ export {
   getAllMechanics,
   getAllDevices,
   verifyMechanic,
+  getComplaintDetails,
   getMechanicDetails,
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,

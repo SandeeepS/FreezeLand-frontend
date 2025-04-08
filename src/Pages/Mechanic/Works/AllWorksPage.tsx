@@ -279,7 +279,7 @@ const AllWorksPage: React.FC = () => {
   const handleRowClick = (item: any) => {
     console.log("Clicked on complaint:", item);
     // Navigate to the detail page with the complaint ID
-    navigate(`/mechanic/complaint-details/${item.id}`);
+    navigate(`/mech/complaintDetails/${item.id}`);
   };
 
   // Handle action button click
