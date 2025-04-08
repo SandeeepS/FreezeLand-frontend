@@ -228,6 +228,18 @@ const updateWorkAssigned = async (complaintId:string,mechanicId:string,status:st
   }
 }
 
+//function to get all accepted cmpliants by teh mechanic 
+const getAllAcceptedServices = async(mechanicId:string) => {
+  try{
+    console.log("Entered in the getAllAcceptedService");
+    const result = await Api.get(mechRoutes.getAllAcceptedServices,{params:{mechanicId}})
+    return result;
+  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
   mLogout,
@@ -245,5 +257,6 @@ export {
   getMechanicDetails,
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,
-  updateWorkAssigned
+  updateWorkAssigned,
+  getAllAcceptedServices
 };

@@ -31,6 +31,7 @@ import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicV
 import ComplaintDetail from "./components/User/Queue/ComplaintDetail";
 import AllWorksPage from "./Pages/Mechanic/Works/AllWorksPage";
 import ComplaintDetailsPage from "./Pages/Mechanic/Works/ComplaintDetailsPage";
+import MechQueue from "./Pages/Mechanic/Queue/MechQueue";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -124,6 +125,7 @@ function App() {
               <Route path="/mech/verifyMechanic" element={<VerifyMechanic />} />
               <Route path="/mech/allWorks" element={<AllWorksPage/>} />
               <Route path="/mech/complaintDetails/:id" element={<ComplaintDetailsPage/>}/>
+              <Route path="/mech/queue" element={<MechQueue/>} />
             </Route>
           </Route>
 
