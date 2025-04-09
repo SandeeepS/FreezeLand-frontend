@@ -187,23 +187,19 @@ const getAllUserRegisteredServices = async () => {
   }
 };
 
-//function to get the specified complaint by id 
+//function to get the specified complaint by id
 const getComplaintDetails = async (id: string) => {
   try {
-    console.log(
-      "Entered in the getComplaintDetails in the mech.ts"
-    );
-    const result = await Api.get(
-      mechRoutes.getComplaintDetails,
-      { params: { id } }
-    );
+    console.log("Entered in the getComplaintDetails in the mech.ts");
+    const result = await Api.get(mechRoutes.getComplaintDetails, {
+      params: { id },
+    });
     return result;
   } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
   }
 };
-
 
 const getImageUrl = async (imageKey: string, type: string) => {
   try {
@@ -217,29 +213,52 @@ const getImageUrl = async (imageKey: string, type: string) => {
   }
 };
 
-const updateWorkAssigned = async (complaintId:string,mechanicId:string,status:string) => {
-  try{
-    console.log('ehtered in the updateWorkAssigned');
-    const result = await Api.put(mechRoutes.updateWorkAssigned,{complaintId,mechanicId,status})
+const updateWorkAssigned = async (
+  complaintId: string,
+  mechanicId: string,
+  status: string
+) => {
+  try {
+    console.log("ehtered in the updateWorkAssigned");
+    const result = await Api.put(mechRoutes.updateWorkAssigned, {
+      complaintId,
+      mechanicId,
+      status,
+    });
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
   }
-}
+};
 
-//function to get all accepted cmpliants by teh mechanic 
-const getAllAcceptedServices = async(mechanicId:string) => {
-  try{
+//function to get all accepted cmpliants by teh mechanic
+const getAllAcceptedServices = async (mechanicId: string) => {
+  try {
     console.log("Entered in the getAllAcceptedService");
-    const result = await Api.get(mechRoutes.getAllAcceptedServices,{params:{mechanicId}})
+    const result = await Api.get(mechRoutes.getAllAcceptedServices, {
+      params: { mechanicId },
+    });
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
   }
-}
+};
 
+//function to update the complaint status by mechanic
+const updateComplaintStatus = async (complaintId:string, nextStatus: string) => {
+  try {
+    console.log("Entered in the updateComplaintStatus",complaintId,nextStatus);
+    const result = await Api.put(mechRoutes.updateComplaintStatus,{}, {
+      params: {complaintId, nextStatus },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
 
 export {
   mechLogin,
@@ -259,5 +278,6 @@ export {
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,
   updateWorkAssigned,
-  getAllAcceptedServices
+  getAllAcceptedServices,
+  updateComplaintStatus,
 };

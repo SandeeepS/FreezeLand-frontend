@@ -171,7 +171,7 @@ const ComplaintDetailsPage: React.FC = () => {
         
            {/* Show UpdateBtn if currentMechanicId exists, otherwise show AcceptBtn */}
            {complaint.currentMechanicId ? (
-          <UpdateStatusBtn complaintId={complaint._id} />
+          <UpdateStatusBtn complaintId={complaint._id} currentStatus={complaint.status} />
         ) : (
           <AccecptBtn complaintId={complaint._id} />
         )}
