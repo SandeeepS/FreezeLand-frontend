@@ -134,7 +134,6 @@ const AllWorksPage: React.FC = () => {
         if (result?.allRegisteredUserServices) {
           setAllComplaints(result.allRegisteredUserServices);
           console.log("Complaints data:", allComplaints);
-
         }
       } catch (error) {
         console.error("Error fetching complaints:", error);
@@ -295,57 +294,14 @@ const AllWorksPage: React.FC = () => {
       <DynamicTable
         title="All Complaints"
         columns={complaintColumns}
-        data={loading ? [] : formattedData.length > 0 ? formattedData : sampleData}
+        data={formattedData}
         loading={loading}
-        emptyMessage="No complaints available at this time"
+        emptyMessage="No service requests available. New requests will appear here when customers submit them."
         onRowClick={handleRowClick}
         className="cursor-pointer"
       />
     </div>
   );
 };
-
-// Sample data to use when API data is not available
-const sampleData = [
-  {
-    id: "sample1",
-    name: "Oil Change Service",
-    logo: "/api/placeholder/48/48",
-    userName: "John Doe",
-    location: "123 Main St, Anytown",
-    status: "pending",
-    priority: "high",
-    dateCreated: "Apr 2, 2025",
-    deviceImages: ["/api/placeholder/40/40", "/api/placeholder/40/40"],
-    completion: 0,
-    description: "Vehicle needs urgent oil change"
-  },
-  {
-    id: "sample2",
-    name: "Brake Repair",
-    logo: "/api/placeholder/48/48",
-    userName: "Jane Smith",
-    location: "456 Oak Ave, Somecity",
-    status: "in progress",
-    priority: "medium",
-    dateCreated: "Apr 1, 2025",
-    deviceImages: ["/api/placeholder/40/40"],
-    completion: 40,
-    description: "Brake pads need replacement"
-  },
-  {
-    id: "sample3",
-    name: "Engine Diagnostics",
-    logo: "/api/placeholder/48/48",
-    userName: "Mike Johnson",
-    location: "789 Pine Blvd, Othercity",
-    status: "completed",
-    priority: "low",
-    dateCreated: "Mar 30, 2025",
-    deviceImages: ["/api/placeholder/40/40", "/api/placeholder/40/40", "/api/placeholder/40/40"],
-    completion: 100,
-    description: "Check engine light is on"
-  }
-];
 
 export default AllWorksPage;

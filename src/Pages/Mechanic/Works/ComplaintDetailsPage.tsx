@@ -13,6 +13,7 @@ import { getComplaintDetails } from "../../../Api/mech";
 import LocationDetail from "./LocationDetail";
 import GoogleMapLocation from "./GoogleMapLocation";
 import AccecptBtn from "./AccecptBtn";
+import UpdateStatusBtn from "./UpdateStatusBtn";
 
 // Define the complaint details interface
 interface ComplaintDetails {
@@ -26,6 +27,7 @@ interface ComplaintDetails {
   locationName?: object;
   status: string;
   deviceImages?: string[];
+  currentMechanicId?:string;
   completionPercentage: number;
   priority: string;
   createdAt: string;
@@ -69,7 +71,7 @@ const ComplaintDetailsPage: React.FC = () => {
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("en-US",{
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -84,11 +86,9 @@ const ComplaintDetailsPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-
         if (id) {
           const result = await getComplaintDetails(id);
           console.log("result is ", result);
-
           if (result && result.data.result && result.data.result.length > 0) {
             const complaintData = result.data.result[0];
 
@@ -168,7 +168,14 @@ const ComplaintDetailsPage: React.FC = () => {
         <h1 className="text-2xl font-bold flex-grow">
           Service Request Details
         </h1>
-        <AccecptBtn complaintId={complaint._id} />
+        
+           {/* Show UpdateBtn if currentMechanicId exists, otherwise show AcceptBtn */}
+           {complaint.currentMechanicId ? (
+          <UpdateStatusBtn complaintId={complaint._id} />
+        ) : (
+          <AccecptBtn complaintId={complaint._id} />
+        )}
+    
       </div>
 
       {/* Main content */}
@@ -201,7 +208,7 @@ const ComplaintDetailsPage: React.FC = () => {
 
           {/* Location details */}
           <LocationDetail location={complaint.locationName} />
-          <GoogleMapLocation location={complaint.locationName} />
+          <GoogleMapLocation location={complaint.locationName}/>
         </div>
       </div>
     </div>

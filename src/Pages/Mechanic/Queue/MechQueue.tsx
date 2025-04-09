@@ -216,7 +216,7 @@ const MechQueue: React.FC = () => {
   const handleRowClick = (item: any) => {
     console.log("Clicked on service:", item);
     // Navigate to the detail page with the service ID
-    navigate(`/user/registeredComplaintByUser/${item.id}`);
+    navigate(`/mech/complaintDetails/${item.id}`);
   };
 
   return (
