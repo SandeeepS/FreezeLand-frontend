@@ -30,8 +30,8 @@ interface AllAcceptedServices {
   ];
   isBlocked: boolean;
   isDeleted: boolean;
-  serviceDetails:object;
-  userDetails:object;
+  serviceDetails: object;
+  userDetails: object;
 }
 
 // Define the base data item type with optional fields
@@ -89,7 +89,7 @@ const MechQueue: React.FC = () => {
   const navigate = useNavigate();
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
   const mechanicId = mechanic?.data._id;
-  const [allRegisteredServices, setAllRegisteredService] = 
+  const [allAcceptedServices, setAllAcceptedServices] = 
     useState<AllAcceptedServices[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -98,19 +98,15 @@ const MechQueue: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // const result = await getAllUserRegisteredServices(mechanicId);
         const result = await getAllAcceptedServices(mechanicId);
         console.log("data reached", result);
-        // if (result?.allRegisteredUserServices){
-        //   setAllRegisteredService(result.allRegisteredUserServices);
-        //   console.log(
-        //     "Registered services from the frontend:",
-        //     result.allRegisteredUserServices
-        //   );
-        // }
+        if (result?.data?.result) {
+          setAllAcceptedServices(result.data.result);
+       
+        }
       } catch (error) {
         console.error(
-          "Error occurred while fetching the registered services:",
+          "Error occurred while fetching the accepted services:",
           error
         );
       } finally {
@@ -119,6 +115,11 @@ const MechQueue: React.FC = () => {
     };
     fetchData();
   }, [mechanicId]);
+
+  // You can use another useEffect to log the state after it's updated
+  useEffect(() => {
+    console.log("Accepted services from the frontend:", allAcceptedServices);
+  }, [allAcceptedServices]);
 
   // Define the columns for the service table
   const serviceColumns: TableColumn[] = [
@@ -197,12 +198,12 @@ const MechQueue: React.FC = () => {
 
   // Transform your data to match the table structure
   const formattedData =
-    allRegisteredServices.length > 0
-      ? allRegisteredServices.map((service: any) => ({
+    allAcceptedServices.length > 0
+      ? allAcceptedServices.map((service: any) => ({
           id: service._id, // Store the original ID for navigation
-          name: service.serviceDetails[0]?.name || "Unknown Service",
-          logo: service.serviceDetails[0]?.image?.[0] || "/api/placeholder/48/48",
-          userName: service.userDetails[0]?.name || service.name || "Unknown User",
+          name: service.serviceDetails?.[0]?.name || "Unknown Service",
+          logo: service.serviceDetails?.[0]?.image?.[0] || "/api/placeholder/48/48",
+          userName: service.userDetails?.[0]?.name || service.name || "Unknown User",
           status: service.status || "pending",
           team: service.deviceImages || ["/api/placeholder/40/40"],
           completion: service.completionPercentage || 0,
