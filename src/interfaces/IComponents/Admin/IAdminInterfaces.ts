@@ -35,7 +35,9 @@ export interface ApproveModalProps {
 export interface TopBarProps {
     heading: string;
     searchQuery: string;
+    pathName:string;
     onSearchChange: (query: string) => void;
+
 }
 
 

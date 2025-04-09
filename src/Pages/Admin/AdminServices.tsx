@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getAllServices } from "../../Api/admin";
 import { listUnlistService } from "../../Api/admin";
 import { deleteService } from "../../Api/admin";
 import TableCommon from "../../components/Common/TableCommon";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { ServiceData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
-
-
+import { useSearchParams } from "react-router-dom";
 
 const AdminServices: React.FC = () => {
+  const location = useLocation();
+  const pathName = location.pathname;
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
+  console.log("searldskfnldf",search);
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
     {
@@ -24,13 +28,19 @@ const AdminServices: React.FC = () => {
   ];
 
   const [services, setServices] = useState<ServiceData[]>([]);
-  const [searchQuery,setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+
+  const handleSearchChange = (query: string, results: any[] = []) => {
+    setSearchQuery(query);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+    
         console.log("enterd in the useEffrect in the AdminSerivce listing ");
-        const result = await getAllServices();
+        const result = await getAllServices(search);
         console.log("result reached in the frontend is ", result);
         if (result?.data) {
           setServices(result?.data?.data?.services);
@@ -41,7 +51,7 @@ const AdminServices: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [search]);
   const navigate = useNavigate();
   const handleClick = () => {
     console.log("button clicked");
@@ -61,8 +71,7 @@ const AdminServices: React.FC = () => {
           )
     );
   };
-  const navigationLink = '/admin/editService/';
-
+  const navigationLink = "/admin/editService/";
 
   const filteredService = services.filter((serivce) =>
     serivce.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -70,14 +79,19 @@ const AdminServices: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-    <div className="mb-5">
-    <TopBar heading="Mechanics" searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-    </div>
+      <div className="mb-5">
+        <TopBar
+          pathName={pathName}
+          heading="Services"
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+        />{" "}
+      </div>
       <div className="flex justify-end mx-10 my-5 ">
         <Button className="" onClick={handleClick} variant="contained">
           Add new Service
         </Button>
-      </div> 
+      </div>
 
       <div className="flex justify-center items-center mx-10  h-screen">
         <TableCommon

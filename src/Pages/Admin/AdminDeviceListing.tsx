@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   getAllDevices,
@@ -12,10 +12,13 @@ import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { DeviceData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
 const AdminDeviceListing: React.FC = () => {
+  const location = useLocation();
+  const pathName = location.pathname;
+  console.log("pathname is",pathName);
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
   const [devices, setDevices] = useState<DeviceData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const heading = "Adding new Device";
 
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
@@ -33,7 +36,7 @@ const AdminDeviceListing: React.FC = () => {
     const fetchData = async () => {
       try {
         console.log("entered in the useEffect in the adminservice listing ");
-        const result = await getAllDevices();
+        const result = await getAllDevices(search);
         console.log("result reached in the frontend", result);
         if (result?.data) {
           setDevices(result?.data?.data?.devices);
@@ -44,7 +47,7 @@ const AdminDeviceListing: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [search]);
 
   const updateDeviceStatus = (
     id: string,
@@ -76,6 +79,7 @@ const AdminDeviceListing: React.FC = () => {
     <div className="flex flex-col h-screen">
       <div className="mb-5">
         <TopBar
+          pathName={pathName}
           heading="Mechanics"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}

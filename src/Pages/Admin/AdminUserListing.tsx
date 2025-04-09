@@ -3,6 +3,7 @@ import TableCommon from "../../components/Common/TableCommon";
 import { getAllUsers, blockUser, deleteUser } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { UserData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const AdminUserListing: React.FC = () => {
   const columns = [
@@ -17,6 +18,11 @@ const AdminUserListing: React.FC = () => {
     },
     { id: "actions", label: "Actions", minWidth: 150, align: "right" },
   ];
+  const location = useLocation();
+  const pathName = location.pathname;
+  console.log("pathname is", pathName);
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
 
   const [data, setUsers] = useState<UserData[]>([]); // Initialize as an empty array
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -28,7 +34,7 @@ const AdminUserListing: React.FC = () => {
       try {
         setLoading(true); // Set loading to true before fetching
         setError(null); // Reset error state
-        const res = await getAllUsers();
+        const res = await getAllUsers(search);
         console.log("User details fetched:", res);
         setUsers(res?.data?.data?.users || []); // Ensure fallback to an empty array
       } catch (error) {
@@ -39,7 +45,7 @@ const AdminUserListing: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [search]);
 
   const updateUserStatus = (
     id: string,
@@ -81,6 +87,7 @@ const AdminUserListing: React.FC = () => {
     <div className="flex flex-col h-screen">
       <div className="mb-5">
         <TopBar
+          pathName={pathName}
           heading="Mechanics"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}

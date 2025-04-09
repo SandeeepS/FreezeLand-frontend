@@ -42,18 +42,18 @@ const getImageUrl = async (imageKey: string, type: string) => {
   }
 };
 
-const getAllUsers = async () => {
+const getAllUsers = async (search:string) => {
   try {
-    const result = await Api.get(adminRoutes.getAllUsers);
+    const result = await Api.get(adminRoutes.getAllUsers,{params:{search}});
     return result;
   } catch (error) {
     errorHandler(error as Error);
   }
 };
 
-const getAllMechanics = async () => {
+const getAllMechanics = async (search : string) => {
   try {
-    const result = await Api.get(adminRoutes.getAllMechanic);
+    const result = await Api.get(adminRoutes.getAllMechanic,{params:{search}});
     return result;
   } catch (error) {
     errorHandler(error as Error);
@@ -261,10 +261,10 @@ const addDevice = async (name: string) => {
   }
 };
 
-const getAllServices = async () => {
+const getAllServices = async (search:string) => {
   try {
     console.log("entered in the admin.ts");
-    const result = await Api.get(adminRoutes.getAllServices);
+    const result = await Api.get(adminRoutes.getAllServices,{params:{search}});
     if (result) {
       return result;
     }
@@ -274,10 +274,10 @@ const getAllServices = async () => {
   }
 };
 
-const getAllDevices = async () => {
+const getAllDevices = async (search:string) => {
   try {
     console.log("entered in the admin.ts for accessing the all devices ");
-    const result = await Api.get(adminRoutes.getAllDevices);
+    const result = await Api.get(adminRoutes.getAllDevices,{params:{search}});
     if (result) {
       return result;
     }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { deleteMech } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { MechData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
 
@@ -22,14 +22,18 @@ const AdminMechListing: React.FC = () => {
     },
     { id: "actions", label: "Actions", minWidth: 150, align: "right" },
   ];
-
+  const location = useLocation();
+  const pathName = location.pathname;
+  console.log("pathname is",pathName);
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
   const [mechs, setMech] = useState<MechData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getAllMechanics();
+        const res = await getAllMechanics(search);
         console.log("Mech details in the first useEeffect");
         setMech(res?.data?.data?.mechs);
       } catch (error) {
@@ -37,7 +41,7 @@ const AdminMechListing: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [search]);
 
   const updateMechStatus = (
     id: string,
@@ -68,6 +72,7 @@ const AdminMechListing: React.FC = () => {
     <div className="flex flex-col h-screen">
       <div className="mb-5">
         <TopBar
+        pathName={pathName}
           heading="Mechanics"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
