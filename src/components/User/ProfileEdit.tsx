@@ -13,11 +13,6 @@ interface UserProfile {
   image?: string;
 }
 
-// interface EditProfileFormValues {
-//   _id: string;
-//   name: string;
-//   phone: string;
-// }
 
 const validationSchema = object({
   name: string().required("Name is required"),

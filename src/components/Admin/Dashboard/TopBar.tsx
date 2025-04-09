@@ -1,11 +1,8 @@
 import { ChangeEvent } from "react";
+import { TopBarProps } from "../../../interfaces/IComponents/Admin/IAdminInterfaces";
 
 // import { FiCalendar } from "react-icons/fi";
-interface TopBarProps {
-  heading: string;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-}
+
 
 const TopBar: React.FC<TopBarProps> = ({
   heading,

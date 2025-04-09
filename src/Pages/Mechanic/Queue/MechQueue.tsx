@@ -6,45 +6,10 @@ import DynamicTable from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import { getAllAcceptedServices } from "../../../Api/mech";
-
-interface AllAcceptedServices {
-  _id: string;
-  name: string;
-  image: [];
-  serviceId: string;
-  userId: string;
-  defaultAddress: string;
-  discription: string;
-  locationName: object;
-  status: string;
-  currentMechanicId: string | null;
-  acceptedAt: Date | null;
-  workHistory: [
-    {
-      mechanicId: string;
-      status: string;
-      acceptedAt: Date;
-      canceledAt: Date | null;
-      reason: string | null;
-    }
-  ];
-  isBlocked: boolean;
-  isDeleted: boolean;
-  serviceDetails: object;
-  userDetails: object;
-}
-
-// Define the base data item type with optional fields
-export interface TableDataItem {
-  [key: string]: any;
-}
-
-// Define the column configuration
-export interface TableColumn {
-  key: string;
-  header: string;
-  render?: (value: any, item: TableDataItem) => React.ReactNode;
-}
+import {
+  AllAcceptedServices,
+  TableColumn,
+} from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
@@ -89,8 +54,9 @@ const MechQueue: React.FC = () => {
   const navigate = useNavigate();
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
   const mechanicId = mechanic?.data._id;
-  const [allAcceptedServices, setAllAcceptedServices] = 
-    useState<AllAcceptedServices[]>([]);
+  const [allAcceptedServices, setAllAcceptedServices] = useState<
+    AllAcceptedServices[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Fetch data
@@ -102,7 +68,6 @@ const MechQueue: React.FC = () => {
         console.log("data reached", result);
         if (result?.data?.result) {
           setAllAcceptedServices(result.data.result);
-       
         }
       } catch (error) {
         console.error(
@@ -196,64 +161,39 @@ const MechQueue: React.FC = () => {
     },
   ];
 
-  // Transform your data to match the table structure
+  // Transforming the  data to match the table structure
   const formattedData =
     allAcceptedServices.length > 0
       ? allAcceptedServices.map((service: any) => ({
-          id: service._id, // Store the original ID for navigation
+          id: service._id,
           name: service.serviceDetails?.[0]?.name || "Unknown Service",
-          logo: service.serviceDetails?.[0]?.image?.[0] || "/api/placeholder/48/48",
-          userName: service.userDetails?.[0]?.name || service.name || "Unknown User",
+          logo:
+            service.serviceDetails?.[0]?.image?.[0] || "/api/placeholder/48/48",
+          userName:
+            service.userDetails?.[0]?.name || service.name || "Unknown User",
           status: service.status || "pending",
           team: service.deviceImages || ["/api/placeholder/40/40"],
           completion: service.completionPercentage || 0,
-          // Include original data for reference
-          originalData: service
+          originalData: service,
         }))
       : [];
 
-  // Handle row click - Navigate to detail page
   const handleRowClick = (item: any) => {
     console.log("Clicked on service:", item);
-    // Navigate to the detail page with the service ID
     navigate(`/mech/complaintDetails/${item.id}`);
   };
 
   return (
     <DynamicTable
-      title="Registered Services"
+      title="Accepted Services"
       columns={serviceColumns}
-      data={
-        loading ? [] : formattedData.length > 0 ? formattedData : sampleData
-      }
+      data={formattedData}
       loading={loading}
-      emptyMessage="No services registered yet"
+      emptyMessage="No services Accepted yet"
       onRowClick={handleRowClick}
-      className="mt-16 cursor-pointer" // Added cursor-pointer to indicate clickable rows
+      className="mt-16 cursor-pointer"
     />
   );
 };
-
-// Sample data to use when API data is not available
-const sampleData = [
-  {
-    id: "sample1",
-    name: "Argon Design System",
-    logo: "/api/placeholder/48/48",
-    userName: "John Doe",
-    status: "pending",
-    team: ["/api/placeholder/40/40", "/api/placeholder/40/40"],
-    completion: 60,
-  },
-  {
-    id: "sample2",
-    name: "Angular Now UI Kit PRO",
-    logo: "/api/placeholder/48/48",
-    userName: "Jane Smith",
-    status: "completed",
-    team: ["/api/placeholder/40/40", "/api/placeholder/40/40"],
-    completion: 100,
-  },
-];
 
 export default MechQueue;

@@ -3,15 +3,9 @@ import { getAllServices } from "../../Api/user";
 import ServiceListingCard from "../Common/ServiceListingCard";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../variants";
+import { ServiceData } from "../../interfaces/IComponents/User/IUserInterfaces";
 
-interface ServiceData {
-  _id: string;
-  name: string;
-  discription: string;
-  status: boolean;
-  isDeleted: boolean;
-  imageKey: string;
-}
+
 
 const ServiceList: React.FC = () => {
   const [services, setServices] = useState<ServiceData[]>([]);

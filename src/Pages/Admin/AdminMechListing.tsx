@@ -5,14 +5,8 @@ import { useEffect } from "react";
 import { deleteMech } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { useNavigate } from "react-router-dom";
+import { MechData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
-interface MechData {
-  _id: string;
-  name: string;
-  email: string;
-  isBlocked: boolean;
-  isDeleted: boolean;
-}
 
 const AdminMechListing: React.FC = () => {
   const navigate = useNavigate();

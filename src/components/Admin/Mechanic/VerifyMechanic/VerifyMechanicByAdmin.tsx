@@ -2,14 +2,9 @@ import React, { useEffect, useState } from "react";
 import TopBar from "../../Dashboard/TopBar";
 import { getAllMechanics } from "../../../../Api/admin";
 import TableCommon2 from "../../../Common/TableCommon2";
+import { MechData } from "../../../../interfaces/IComponents/Admin/IAdminInterfaces";
 
-interface MechData {
-  _id: string;
-  name: string;
-  email: string;
-  isBlocked: boolean;
-  isDeleted: boolean;
-}
+
 
 const VerifyMechanicByAdmin: React.FC = () => {
   const heading = "Verify Mechanic";

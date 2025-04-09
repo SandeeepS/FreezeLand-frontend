@@ -17,6 +17,7 @@ const userRoutes = {
   getAllServices:"/user/getAllServices",
   getAllUserRegisteredServices:"/user/getAllUserRegisteredServices",
   getUserRegisteredServiceDetailsById:"/user/getUserRegisteredServiceDetailsById",
+  getMechanicDetails:"/user/getMechanicDetails",
   getImageUrl: "/user/getImageUrl",
 };
 

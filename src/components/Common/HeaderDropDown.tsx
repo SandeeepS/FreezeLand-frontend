@@ -4,32 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { CgProfile } from "react-icons/cg";
-import { MdContactless } from "react-icons/md";
-import { MdEventNote } from "react-icons/md";
-import { IoIosSettings } from "react-icons/io";
+// import { CgProfile } from "react-icons/cg";
+// import { MdContactless } from "react-icons/md";
+// import { MdEventNote } from "react-icons/md";
+// import { IoIosSettings } from "react-icons/io";
 import { MdPowerSettingsNew } from "react-icons/md";
-
-// Define interface for navigation items
-interface NavItem {
-  icon: React.ReactNode;
-  label: string;
-  path: string;
-}
-
-interface HeaderDropDownProps {
-  isOpen: boolean;
-  onClose: () => void;
-  logout: () => Promise<AxiosResponse | undefined>;
-  authLogout: () => void;
-  navigateTo: string;
-  // New props
-  coverImage: string;
-  profileImage: string;
-  userName: string;
-  userRole: string;
-  navigationItems: NavItem[];
-}
+import { HeaderDropDownProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
 const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   isOpen,

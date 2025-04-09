@@ -1,8 +1,7 @@
 import React from "react";
+import { AdminHeaderProps } from "../../interfaces/IComponents/Admin/IAdminInterfaces";
 
-interface AdminHeaderProps {
-  heading: string;
-}
+
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({ heading }) => {
   return (

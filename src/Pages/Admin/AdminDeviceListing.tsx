@@ -9,13 +9,7 @@ import {
 } from "../../Api/admin";
 import TableCommon from "../../components/Common/TableCommon";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
-
-interface DeviceData {
-  _id: string;
-  name: string;
-  isBlocked: boolean;
-  isDeleted: boolean;
-}
+import { DeviceData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
 const AdminDeviceListing: React.FC = () => {
   const [devices, setDevices] = useState<DeviceData[]>([]);

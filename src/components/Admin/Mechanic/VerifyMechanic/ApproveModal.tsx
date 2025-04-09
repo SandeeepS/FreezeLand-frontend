@@ -1,13 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { updateApprove } from "../../../../Api/admin";
-
-interface ApproveModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  id: string | undefined;
-  verifyStatus: boolean | undefined;
-}
+import { ApproveModalProps } from "../../../../interfaces/IComponents/Admin/IAdminInterfaces";
 
 const ApproveModal: React.FC<ApproveModalProps> = ({
   isOpen,

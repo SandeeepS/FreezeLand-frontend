@@ -3,14 +3,9 @@ import Header from "../User/Header";
 import InfoCard from "./InfoCard";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../App/store";
+import { UserDetails } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-interface UserDetails {
-  name: string;
-  email: string;
-  phone: number;
-  address?: string;
-  location?: string;
-}
+
 
 const Profile: React.FC = () => {
   const { userData } = useAppSelector((state) => state.auth);
@@ -27,6 +22,7 @@ const Profile: React.FC = () => {
     address: "123 Main St, New York, NY 10001",
   });
 
+  
   // useEffect to fetch the userDetails
   useEffect(() => {
 

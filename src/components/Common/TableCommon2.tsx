@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllMechanics } from "../../Api/admin";
+import { MechData } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-interface MechData {
-  _id: string;
-  name: string;
-  email: string;
-  isVerified: boolean;
-  isBlocked: boolean;
-  isDeleted: boolean;
-}
 
 const TableCommon2 = () => {
   const rowsLimit = 5;

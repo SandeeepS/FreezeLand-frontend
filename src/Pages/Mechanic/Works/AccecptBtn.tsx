@@ -3,12 +3,14 @@ import SwipeRightIcon from "@mui/icons-material/SwipeRight";
 import ConfirmationModal from "./ConformationModal";
 import { RootState, useAppSelector } from "../../../App/store";
 import { updateWorkAssigned } from "../../../Api/mech";
+import { useNavigate } from "react-router-dom";
 
 interface AcceptBtnProps {
   complaintId: string;
 }
 
 const AcceptBtn: React.FC<AcceptBtnProps> = ({ complaintId }) => {
+  const navigate = useNavigate();
     const mechanic = useAppSelector((state: RootState) => state.auth.mechData);
   const mechanicId = mechanic?.data._id;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +31,9 @@ const AcceptBtn: React.FC<AcceptBtnProps> = ({ complaintId }) => {
             const status = "accepted";
             const result = await updateWorkAssigned(complaintId,mechanicId,status);
             console.log("Result is from the backend is ",result);
+            if(result?.data.success == true){
+              navigate("/mech/queue");
+            }
         }catch(error){
             console.log(error as Error);
         }

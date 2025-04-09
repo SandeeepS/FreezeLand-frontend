@@ -6,35 +6,7 @@ import DynamicTable from "../../Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 
-interface AllRegisteredServices {
-  _id: string;
-  name: string;
-  image: [];
-  serviceId: string;
-  userId: string;
-  defaultAddress: string;
-  description: string;
-  locationName: object;
-  isBlocked: boolean;
-  isDeleted: boolean;
-  userDetails: object;
-  serviceDetails: object;
-  status?: string;
-  deviceImages?: string[];
-  completionPercentage?: number;
-}
 
-// Define the base data item type with optional fields
-export interface TableDataItem {
-  [key: string]: any;
-}
-
-// Define the column configuration
-export interface TableColumn {
-  key: string;
-  header: string;
-  render?: (value: any, item: TableDataItem) => React.ReactNode;
-}
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {

@@ -18,42 +18,8 @@ import { useNavigate } from "react-router-dom";
 
 import SortIcon from "@mui/icons-material/Sort";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { TableCommonProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-interface Column {
-  id: string;
-  label: string;
-  minWidth?: number;
-  align?: string;
-  format?: "Active" | "Blocked";
-}
-
-interface Data {
-  _id: string;
-  name: string;
-  email?: string;
-  isBlocked?: boolean;
-  isDeleted: boolean;
-  status?: boolean;
-}
-
-export interface BlockingResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface DeletingResponse {
-  success: boolean;
-  message: string;
-}
-
-interface TableCommonProps {
-  columns: Column[];
-  data: Data[];
-  updateStatus: (id: string, isBlocked: boolean, isDeleted: boolean) => void;
-  blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
-  deleteFunction: (id: string) => Promise<DeletingResponse>;
-  navLink: string;
-}
 
 const TableCommon: React.FC<TableCommonProps> = ({
   columns,

@@ -1,8 +1,6 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-interface ErrorFallbackProps {
-    error: unknown;
-    resetErrorBoundary: () => void;
-  }
+import { ErrorFallbackProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+
 
   const ErrorFallBack: React.FC<ErrorFallbackProps> =  ({ error, resetErrorBoundary }) => {
   console.log("Error occured ", error);

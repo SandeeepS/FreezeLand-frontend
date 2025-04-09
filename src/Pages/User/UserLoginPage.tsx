@@ -7,13 +7,11 @@ import { useDispatch } from "react-redux";
 import { setUserCredental } from "../../App/slices/AuthSlice";
 import OAuth from "../../components/Common/OAuth";
 import toast from "react-hot-toast";
+import { initialVal2 } from "../../interfaces/IPages/User/IUserInterfaces";
 
-interface initialVal{
-  email: string;
-  password: string;
-}
 
-const initialValues: initialVal = {
+
+const initialValues: initialVal2 = {
   email: "",
   password: "",
 };

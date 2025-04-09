@@ -1,30 +1,6 @@
 import React from "react";
-import { Circle } from "lucide-react";
+import { DynamicTableProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-// Define the base data item type with optional fields
-export interface TableDataItem {
-  [key: string]: any;
-}
-
-// Define the column configuration
-export interface TableColumn {
-  key: string;
-  header: string;
-  render?: (value: any, item: TableDataItem) => React.ReactNode;
-}
-
-// Define the table props
-interface DynamicTableProps {
-  columns: TableColumn[];
-  data: TableDataItem[];
-  title?: string;
-  loading?: boolean;
-  emptyMessage?: string;
-  className?: string;
-  onRowClick?: (item: TableDataItem) => void;
-}
-
-// Helper function to get status color
 export const getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
     case "pending":
@@ -40,7 +16,6 @@ export const getStatusColor = (status: string): string => {
   }
 };
 
-// Helper function to get progress bar colors
 export const getProgressColors = (status: string) => {
   switch (status.toLowerCase()) {
     case "completed":

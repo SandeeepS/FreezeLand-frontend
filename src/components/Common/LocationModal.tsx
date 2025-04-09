@@ -1,10 +1,8 @@
 import React from "react";
 import SearchBar from "./SearchBar";
 import PopularCities from "./PopularCities";
+import { LocationModalProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-interface LocationModalProps {
-    onClose: () => void; // Callback function to close the modal
-  }
 
 
 const LocationModal:React.FC<LocationModalProps> = ({onClose}) => {

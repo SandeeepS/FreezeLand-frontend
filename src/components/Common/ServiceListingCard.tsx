@@ -3,15 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {motion} from "framer-motion";
 import { fadeIn } from "../../variants";
 import { getImageUrl } from "../../Api/user";
-interface ServiceListingCardProps {
-  data: {
-    _id: string;
-    imageKey: string;
-    title?: string;
-    name?: string;
-    discription?: string;
-  };
-}
+import { ServiceListingCardProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+
 
 const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
   const [image,setImage] = React.useState<string>("");

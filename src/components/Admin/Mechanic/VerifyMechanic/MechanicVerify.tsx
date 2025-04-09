@@ -2,20 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getImageUrl, getMechanicById } from "../../../../Api/admin";
 import ApproveModal from "./ApproveModal"; // Import the modal component
+import { MechData } from "../../../../interfaces/IComponents/Admin/IAdminInterfaces";
 
-interface MechData {
-  _id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  isBlocked: boolean;
-  isDeleted: boolean;
-  isVerified: boolean;
-  employeeLicense: string; 
-  adharProof: string; 
-  image: string; 
-}
 
 const MechanicVerify: React.FC = () => {
   const { id } = useParams<{ id: string }>();

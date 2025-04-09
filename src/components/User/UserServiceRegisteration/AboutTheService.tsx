@@ -1,9 +1,6 @@
 import { CheckCircle } from 'lucide-react';
 import React from 'react'
-interface ServiceCardProps {
-    title: string;
-    points: string[];
-  }
+import { ServiceCardProps } from '../../../interfaces/IComponents/User/IUserInterfaces';
 
 const AboutTheService:React.FC<ServiceCardProps> = ({title,points}) => {
   return (

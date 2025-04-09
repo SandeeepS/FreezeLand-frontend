@@ -265,6 +265,24 @@ const getUserRegisteredServiceDetailsById = async (id: string) => {
   }
 };
 
+const getMechanicDetails = async (id: string) => {
+  try {
+    if (!id) {
+      console.warn("Mechanic ID is undefined or null in the user.ts");
+      return;
+    }
+    console.log("Fetching mechanic details for ID in the user.ts:", id);
+    const response = await Api.get(userRoutes.getMechanicDetails,{
+      params: { id },
+    });
+    console.log("Response from backend in the user.ts:", response);
+    return response;
+  } catch (error) {
+    console.error("Error fetching mechanic details in the user.ts:", error);
+    errorHandler(error as Error);
+  }
+};
+
 export {
   signup,
   login,
@@ -281,6 +299,7 @@ export {
   updateNewPassword,
   AddUserAddress,
   setDefaultAddress,
+  getMechanicDetails,
   registerComplaint,
   getAllServices,
   getAllUserRegisteredServices,

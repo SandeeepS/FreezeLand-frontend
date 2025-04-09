@@ -28,7 +28,7 @@ import MechLayOut from "./Pages/Mechanic/MechLayOut";
 import VerifyMechanic from "./Pages/Mechanic/VerifyMechanic";
 import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanic/VerifyMechanicByAdmin";
 import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicVerify";
-import ComplaintDetail from "./components/User/Queue/ComplaintDetail";
+import ComplaintDetail from "./components/User/Queue/ComplaintDetials/ComplaintDetail";
 import AllWorksPage from "./Pages/Mechanic/Works/AllWorksPage";
 import ComplaintDetailsPage from "./Pages/Mechanic/Works/ComplaintDetailsPage";
 import MechQueue from "./Pages/Mechanic/Queue/MechQueue";

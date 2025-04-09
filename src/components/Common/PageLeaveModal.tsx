@@ -1,10 +1,5 @@
 import React from "react";
-
-interface ConfirmationModalProps {
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
+import { ConfirmationModalProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
 const PageLeaveModal: React.FC<ConfirmationModalProps> = ({
   message,

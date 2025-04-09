@@ -1,20 +1,8 @@
-import React from "react";
-// import DataListing from "../../components/Admin/DataListing";
+import React, { useState, useEffect } from "react";
 import TableCommon from "../../components/Common/TableCommon";
-import { getAllUsers } from "../../Api/admin";
-import { useState } from "react";
-import { useEffect } from "react";
-import { blockUser } from "../../Api/admin";
-import { deleteUser } from "../../Api/admin";
+import { getAllUsers, blockUser, deleteUser } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
-
-interface UserData {
-  _id: string;
-  name: string;
-  email: string;
-  isBlocked: boolean;
-  isDeleted: boolean;
-}
+import { UserData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
 const AdminUserListing: React.FC = () => {
   const columns = [
@@ -30,17 +18,24 @@ const AdminUserListing: React.FC = () => {
     { id: "actions", label: "Actions", minWidth: 150, align: "right" },
   ];
 
-  const [data, setUsers] = useState<UserData[]>([]);
+  const [data, setUsers] = useState<UserData[]>([]); // Initialize as an empty array
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true); // Add loading state
+  const [error, setError] = useState<string | null>(null); // Add error state
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // Set loading to true before fetching
+        setError(null); // Reset error state
         const res = await getAllUsers();
-        console.log("user details in the first useEffect");
-        setUsers(res?.data?.data?.users); // Adjust according to your API response structure
+        console.log("User details fetched:", res);
+        setUsers(res?.data?.data?.users || []); // Ensure fallback to an empty array
       } catch (error) {
-        console.log(error as Error);
+        console.error("Error fetching user details:", error);
+        setError("Failed to fetch user data. Please try again later.");
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
     fetchData();
@@ -53,18 +48,34 @@ const AdminUserListing: React.FC = () => {
   ) => {
     setUsers((prevUsers) =>
       isDeleted
-        ? prevUsers.filter((user) => user._id !== id) // Remove deleted user
+        ? prevUsers.filter((user) => user._id !== id)
         : prevUsers.map((user) =>
             user._id === id ? { ...user, isBlocked } : user
           )
     );
   };
 
-  const filteredUsers = data.filter(
+  const filteredUsers = data?.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -78,7 +89,7 @@ const AdminUserListing: React.FC = () => {
       <div className="flex-grow mx-4">
         <TableCommon
           columns={columns}
-          data={filteredUsers}
+          data={filteredUsers || []} // Ensure fallback to an empty array
           updateStatus={updateUserStatus}
           blockUnblockFunciton={blockUser}
           deleteFunction={deleteUser}

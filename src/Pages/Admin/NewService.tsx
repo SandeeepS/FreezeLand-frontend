@@ -5,14 +5,9 @@ import { ServiceListingValidation } from "../../components/Common/Validations";
 import { addService, getS3SingUrl } from "../../Api/admin";
 import { useNavigate } from "react-router-dom";
 import LargeModal from "../../components/Common/LargeModal";
-import PageLeaveModal from "../../components/Common/PageLeaveModal";
+import { InewService } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
-export interface InewService {
-  name: string;
-  discription: string[]; // Changed to an array of strings
-  serviceCharge: number; // Added serviceCharge field
-  imageKey: string;
-}
+
 
 const NewService: React.FC = () => {
   const navigate = useNavigate();

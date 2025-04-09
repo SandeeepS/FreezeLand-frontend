@@ -6,14 +6,9 @@ import { listUnlistService } from "../../Api/admin";
 import { deleteService } from "../../Api/admin";
 import TableCommon from "../../components/Common/TableCommon";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
+import { ServiceData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
-interface ServiceData {
-  _id: string;
-  name: string;
-  discription: string;
-  status: boolean;
-  isDeleted: boolean;
-}
+
 
 const AdminServices: React.FC = () => {
   const columns = [

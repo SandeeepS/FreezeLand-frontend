@@ -1,9 +1,6 @@
 import React from "react";
+import { ConformationModalProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-interface ConformationModalProps {
-  onClose: () => void;
-  show: boolean;
-}
 
 const ConformationModal: React.FC<ConformationModalProps> = ({
   onClose,

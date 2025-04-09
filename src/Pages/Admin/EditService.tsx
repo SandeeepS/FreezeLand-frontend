@@ -6,15 +6,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getService, editExistService, getS3SingUrl } from "../../Api/admin";
 import LargeModal from "../../components/Common/LargeModal";
 import toast from "react-hot-toast";
+import { InewService } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 // import PageLeaveModal from "../../components/Common/PageLeaveModal";
 
-export interface InewService {
-  _id: string;
-  name: string;
-  discription: string[];
-  serviceCharge: number;
-  imageKey: string;
-}
+
 
 const EditService: React.FC = () => {
   const { id } = useParams();

@@ -1,34 +1,8 @@
 import React, { useRef } from "react";
-import { FormikProps } from "formik";
 import { FiMapPin } from "react-icons/fi";
 import PreviewImage from "../../User/PreviewImage";
 import { AddAddress } from "../../../interfaces/AddAddress";
-import { Iconcern } from "../../../interfaces/Iconcern";
-import { UserData } from "../../../interfaces/UserData";
-
-interface ServiceFormProps {
-  formik: FormikProps<{
-    name: string;
-    discription: string;
-    location: string;
-    file: File | null;
-    defaultAddress: string;
-  }>;
-  userProfile: UserData | undefined;
-  defaultAddress: string;
-  setDefaultAddress: (value: string) => void;
-  locationName: {
-    address: string;
-    latitude: number | null;
-    longitude: number | null;
-  };
-  locationError: string | undefined;
-  validateLocationName: (value: any) => { ok: boolean; message?: string };
-  handleFetchLocation: () => void;
-  handleRemoveLocation: () => void;
-  showLocationOptions: boolean;
-  setShowLocationOptions: (value: boolean) => void;
-}
+import { ServiceFormProps } from "../../../interfaces/IComponents/User/IUserInterfaces";
 
 const ServiceForm: React.FC<ServiceFormProps> = ({
   formik,
