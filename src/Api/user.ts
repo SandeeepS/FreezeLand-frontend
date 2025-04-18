@@ -5,6 +5,8 @@ import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
 
+
+
 const signup = async ({
   name,
   phone,
@@ -25,7 +27,7 @@ const signup = async ({
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    return {error};
   }
 };
 
@@ -73,16 +75,29 @@ const googleLogin = async (
   }
 };
 
-const verifyOtp = async (otpnum: string) => {
+//function to verify otp
+const verifyOtp = async (id:string,otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
-    const result = await Api.post(userRoutes.veryfyOtp, { otp });
+    const result = await Api.post(userRoutes.veryfyOtp, {id, otp });
+    console.log("result after verifyin in the veifyOTP in user.ts",result);
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    return {error};
   }
 };
+
+//accessing the tempUserDeatils using id 
+// const getTempUserData = async (id:stirng) => {
+//   try{
+//     const result = await Api.get(userRoutes.getTempUserData,{params:{id}});
+//     return result;
+//   }catch(error) {
+//     console.log(error as Error);
+//     errorHandler(error as Error);
+//   }
+// }
 
 const forgotPassword = async (email: string) => {
   try {
@@ -300,6 +315,7 @@ export {
   AddUserAddress,
   setDefaultAddress,
   getMechanicDetails,
+  // getTempUserData,
   registerComplaint,
   getAllServices,
   getAllUserRegisteredServices,

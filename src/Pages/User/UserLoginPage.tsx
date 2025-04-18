@@ -27,15 +27,13 @@ const UserLoginPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await login(values.email, values.password);
-          if (result !== null) {
-            {
-              console.log("result fron the front end ", result);
-            }
-            dispatch(setUserCredental(result?.data.data.data));
+          console.log("result is ",result);
+          if (result?.data.data.success) {
+            console.log("result fron the front end ", result);
+            dispatch(setUserCredental(result?.data.data?.userId));
             navigate("/user/homepage");
           } else {
-            console.log("result fron the signup form is", result);
-            toast.error("Incorrect password or email");
+            navigate("/login")
           }
         } catch (error) {
           console.log(error);

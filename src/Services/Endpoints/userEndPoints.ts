@@ -3,6 +3,7 @@ const userRoutes = {
   signup: "/user/registration",
   googleLogin: "/user/google-login",
   veryfyOtp: "/user/veryfy-otp",
+  getTempUserData:"/user/getTempUserData",
   forgotPassword: "/user/forgot-password",
   forgotVerifyOtp: "/user/verify-forgot-otp",
   updateNewPassword: "/user/update-newpassword",

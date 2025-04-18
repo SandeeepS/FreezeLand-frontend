@@ -7,6 +7,7 @@ import {
   FormData,
   initialVal3,
 } from "../../interfaces/IPages/User/IUserInterfaces";
+import errorHandler from "../../Api/errorHandler";
 
 const initialValues: initialVal3 = {
   name: "",
@@ -37,9 +38,14 @@ const UserSignupPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await signup(formData);
+          if(result.error){
+            errorHandler(result.error);
+            return;
+          }
           console.log("resutl is", result);
           if (result) {
-            navigate("/otp-page");
+            const userId = result.data.result._id;
+            navigate(`/otp-page/${userId}`);
           }
           console.log("result from the signup form is", result);
         } catch (error) {

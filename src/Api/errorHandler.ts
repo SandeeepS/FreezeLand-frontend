@@ -12,29 +12,31 @@ type ErrorResponse = {
 const errorHandler = async (error: Error | AxiosError) => {
   try {
     const axiosError = error as AxiosError;
-    console.log(" jkhfodshfodsfhosdhfosdfhsd",axiosError)
-    if(axiosError.status === 401){
+    console.log("Error details:", axiosError);
+
+    if (axiosError.response?.status === 401) {
       console.log("Unauthorized error, logging out...");
-      await logout(); 
-      store.dispatch(userLogout())
-      toast.error(axiosError.message);
+      await logout();
+      store.dispatch(userLogout());
+      const errorMessage =
+        (axiosError.response?.data as ErrorResponse)?.message ||
+        "Authentication failed";
+        console.log("error message in the error hander is ",errorMessage)
+      toast.error(errorMessage);
       return;
     }
+
     if (axiosError.response?.data) {
       const errorResponse = axiosError.response.data as ErrorResponse;
-      if (errorResponse.message === "User is blocked by admin!") {
-        toast.error(errorResponse.message);
-      } else if (
-        errorResponse.message === "Professional is blocked by admin!"
-      ) {
-        toast.error(errorResponse.message);
-      } else {
-        toast.error(errorResponse.message);
-      }
+      toast.error(errorResponse.message || "An error occurred");
+    } else if (axiosError.message) {
+      toast.error(axiosError.message);
     } else {
-      toast.error("Something went wrong.Please try again!");
+      toast.error("Something went wrong. Please try again!");
     }
   } catch (error) {
+    console.error("Error in errorHandler:", error);
+    toast.error("An unexpected error occurred");
     throw error as Error;
   }
 };

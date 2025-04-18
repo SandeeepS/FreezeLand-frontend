@@ -65,7 +65,7 @@ function App() {
           <Route path="" element={<UserLoggedOut />}>
             <Route path="/signup" element={<UserSignupPage />}/>
             <Route path="/login" element={<UserLoginPage />} />
-            <Route path="otp-page" element={<UserOtpPage />} />
+            <Route path="otp-page/:id" element={<UserOtpPage />} />
             <Route path="/user/forget-password" element={<ForgetPassword />} />
           </Route>
 

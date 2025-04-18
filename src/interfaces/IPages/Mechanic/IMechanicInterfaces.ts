@@ -47,7 +47,7 @@ export interface AllAcceptedServices {
   }
 
   //used in MechanicLoginPage.tsx
-  export interface initialValues{
+  export interface initialValues2{
     email: string;
     password: string;
   }

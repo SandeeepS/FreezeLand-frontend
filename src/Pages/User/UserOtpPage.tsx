@@ -1,18 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { resendOtp, verifyOtp } from "../../Api/user";
-import { useNavigate } from "react-router-dom";
+import { getTempUserData, resendOtp, verifyOtp } from "../../Api/user";
+import { useNavigate, useParams } from "react-router-dom";
 import { setUserCredental, saveUser } from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
 
 const UserOtpPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [otp, setOTP] = useState<string>("");
   const [seconds, setSeconds] = useState(60);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { userData } = useAppSelector((state) => state.auth);
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     try {
+  //       const tempUserDetails = await getTempUserData(id);
+  //       console.log(
+  //         "tempUserData in the otp entering page is",
+  //         tempUserDetails
+  //       );
+  //     } catch (error) {
+  //       console.log(error as Error);
+  //       throw error;
+  //     }
+  //   };
+  //   fetch();
+  // }, []);
 
   useEffect(() => {
     if (userData) navigate("/user/home");
@@ -34,14 +49,15 @@ const UserOtpPage: React.FC = () => {
 
   const handleVerify = async () => {
     console.log("OTP:", otp);
-    const result = await verifyOtp(otp);
-    console.log(result);
-    if (result?.data.data.success) {
-      console.log(`everything is fine your token is `);
-      console.log(result.data.data.token);
-      dispatch(setUserCredental(result.data.data.token));
-      dispatch(saveUser(result.data.data.data));
-      navigate("/user");
+    const result = await verifyOtp(id as string, otp);
+    console.log("result of verify otp in the userOtpPage", result);
+    if (result.data.success) {
+      console.log(
+        "userDAta form the backend to the dispatch",
+        result.data.data
+      );
+      dispatch(setUserCredental(result.data.data));
+      navigate("/login");
     }
   };
   const resendOTP = async () => {
