@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { setUserCredental, saveUser } from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
+import errorHandler from "../../Api/errorHandler.ts";
+import toast from "react-hot-toast";
 
 const UserOtpPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,17 +50,27 @@ const UserOtpPage: React.FC = () => {
   };
 
   const handleVerify = async () => {
-    console.log("OTP:", otp);
-    const result = await verifyOtp(id as string, otp);
-    console.log("result of verify otp in the userOtpPage", result);
-    if (result.data.success) {
-      console.log(
-        "userDAta form the backend to the dispatch",
-        result.data.data
-      );
-      dispatch(setUserCredental(result.data.data));
-      navigate("/login");
+    if (!otp.trim()) {
+      toast.error("Please enter the OTP");
+      return;
     }
+    
+    try {
+      console.log("Verifying OTP:", otp);
+      
+      const result = await verifyOtp(id as string, otp);
+      console.log("result of verify otp in the userOtpPage", result);
+      
+      if (result.data.success) {
+        console.log("userData from the backend to dispatch", result.data.data);
+        dispatch(setUserCredental(result.data.data));
+        toast.success("OTP verified successfully!");
+        navigate("/login");
+      }
+    } catch (error) {
+      // Use the error handler to display appropriate toast messages
+      await errorHandler(error as Error);
+    } 
   };
   const resendOTP = async () => {
     try {
