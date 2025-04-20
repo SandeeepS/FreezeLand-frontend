@@ -49,6 +49,7 @@ const UserOtpPage: React.FC = () => {
     setOTP(e.target.value);
   };
 
+  //function to handle otp verification 
   const handleVerify = async () => {
     if (!otp.trim()) {
       toast.error("Please enter the OTP");
