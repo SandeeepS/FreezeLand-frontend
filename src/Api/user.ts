@@ -298,6 +298,21 @@ const getMechanicDetails = async (id: string) => {
   }
 };
 
+//function to get the service details to the user side for registering the service 
+
+const getService = async (id: string | undefined) => {
+  try {
+    console.log("entered in the getService funciton in the user ts", id);
+    const result = await Api.get(`${userRoutes.getService}${id}`);
+    if (result) {
+      return result;
+    }
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
 export {
   signup,
   login,
@@ -306,6 +321,7 @@ export {
   getProfile,
   verifyOtp,
   resendOtp,
+  getService,
   getImageUrl,
   forgotPassword,
   EditUserDetails,

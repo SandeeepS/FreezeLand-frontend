@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getService } from "../../Api/admin";
-import { getProfile } from "../../Api/user";
+import { getProfile, getService } from "../../Api/user";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
