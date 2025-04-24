@@ -188,13 +188,14 @@ const getAllUserRegisteredServices = async (userId: string) => {
   }
 };
 
-const EditUserDetails = async ({ _id, name, phone }: FormData) => {
+const EditUserDetails = async ({ _id, name, phone,imageKey }: FormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
     const result = await Api.put(userRoutes.editUser, {
       _id,
       name,
       phone,
+      imageKey
     });
     console.log("result from the backend is ", result);
     return result;

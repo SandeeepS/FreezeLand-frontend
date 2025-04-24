@@ -40,7 +40,8 @@ const NewService: React.FC = () => {
 
   const handleSubmit = async (values: InewService) => {
     console.log("handlesubmit triggered");
-    const response = await getS3SingUrl(fileName, fileType);
+    const folderName = "ServiceImages";
+    const response = await getS3SingUrl(fileName, fileType,folderName);
     if (response?.data.uploadURL) {
       const uploadResponse = await fetch(response.data.uploadURL, {
         method: "PUT",

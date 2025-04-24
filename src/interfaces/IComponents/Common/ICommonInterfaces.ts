@@ -84,7 +84,7 @@ export interface UserDetails {
   phone: number | string;
   address?: string;
   location?: string;
-  profile?:string;
+  profile_picture?:string;
   defaultAddressDetails:object;
   
 }

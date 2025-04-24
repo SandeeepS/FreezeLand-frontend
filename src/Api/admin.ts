@@ -215,7 +215,7 @@ const adminLogout = async () => {
   }
 };
 
-const getS3SingUrl = async (fileName: string, fileType: string) => {
+const getS3SingUrl = async (fileName: string, fileType: string,folderName:string) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the admin.ts file",
@@ -224,7 +224,7 @@ const getS3SingUrl = async (fileName: string, fileType: string) => {
     );
 
     const result = await Api.get(adminRoutes.getPresignedUrl, {
-      params: { fileName, fileType },
+      params: { fileName, fileType,folderName },
     });
     return result;
   } catch (error) {
