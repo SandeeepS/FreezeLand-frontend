@@ -12,7 +12,7 @@ import UserOtpPage from "./Pages/User/UserOtpPage";
 import MechOtpPage from "./Pages/Mechanic/MechOtpPage";
 import ForgetPassword from "./Pages/User/ForgetPassword";
 import ForgetPasswordForMech from "./Pages/Mechanic/ForgetPasswordForMech";
-import Profile from "./components/Common/Profile";
+import Profile from "./components/User/Profile";
 import Layout from "./components/Admin/Layout";
 import Address from "./components/User/Address";
 import History from "./components/User/History";

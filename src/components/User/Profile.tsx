@@ -1,28 +1,56 @@
 import React, { useEffect, useState } from "react";
-import Header from "../User/Header";
-import InfoCard from "./InfoCard";
+import Header from "./Header";
+import InfoCard from "../Common/InfoCard";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../App/store";
 import { UserDetails } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { getProfile } from "../../Api/user";
 
 const Profile: React.FC = () => {
-  const { userData } = useAppSelector((state) => state.auth);
-  const userId = userData?._id;
-  const navigate = useNavigate();
-
-  // Mock data - in real app this would come from props or context
-  const [userDetails] = useState<UserDetails>({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: 1234567890,
-    location: "New York",
-    address: "123 Main St, New York, NY 10001",
+  const userData = useAppSelector((state) => state.auth.userData);
+  const [userDetails, setUserDetails] = useState<UserDetails>({
+    name: "",
+    phone: "",
+    email: "",
+    location: "",
+    address: "",
+    defaultAddressDetails: {
+      district: "",
+      state: "",
+      pin: "",
+      landMark: "",
+    },
   });
+  const navigate = useNavigate();
 
   // useEffect to fetch the userDetails
   useEffect(() => {
-    // Fetch user details logic here
-  }, []);
+    const fetchData = async () => {
+      try {
+        console.log("triggered the fetch data function");
+        const userId = userData.toString();
+        const result = await getProfile(userId);
+        console.log("User profile details from the backend is ", result);
+        if (result) {
+          const data = result.data.data.data;
+          setUserDetails({
+            ...data,
+            defaultAddressDetails: data.defaultAddressDetails || {
+              district: "",
+              state: "",
+              pin: "",
+              landMark: "",
+            },
+          });
+        }
+      } catch (error) {
+        console.log("error occurred while fetching the userDetails", error);
+        throw error as Error;
+      }
+    };
+
+    fetchData();
+  }, [userData]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -51,7 +79,7 @@ const Profile: React.FC = () => {
                 {userDetails.name}
               </h1>
               <p className="text-gray-600">
-                {userDetails.location || "Location not added"}
+                {userDetails.location || "Location"}
               </p>
             </div>
 
@@ -79,7 +107,6 @@ const Profile: React.FC = () => {
             </div>
           </div>
         </div>
-
 
         {/* Personal Information Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -150,7 +177,7 @@ const Profile: React.FC = () => {
         {/* Address Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Address</h2>
+            <h2 className="text-xl font-semibold text-gray-800">Default Address</h2>
             <button
               onClick={() => navigate("/user/addresses")}
               className="flex items-center px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md transition-colors duration-200"
@@ -174,7 +201,18 @@ const Profile: React.FC = () => {
           </div>
           <div>
             <textarea
-              value={userDetails.address || "Address is not Added"}
+              value={
+                userDetails.defaultAddressDetails
+                  ? `                    District: ${
+                      userDetails.defaultAddressDetails.district || "N/A"
+                    }
+                    State: ${userDetails.defaultAddressDetails.state || "N/A"}
+                    Pin: ${userDetails.defaultAddressDetails.pin || "N/A"}
+                    Landmark: ${
+                      userDetails.defaultAddressDetails.landMark || "N/A"
+                    }`
+                  : "Address is not Added"
+              }
               readOnly
               rows={3}
               className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

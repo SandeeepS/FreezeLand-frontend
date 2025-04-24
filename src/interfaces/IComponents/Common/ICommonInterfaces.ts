@@ -81,9 +81,12 @@ export interface PopularCitiesProps {
 export interface UserDetails {
   name: string;
   email: string;
-  phone: number;
+  phone: number | string;
   address?: string;
   location?: string;
+  profile?:string;
+  defaultAddressDetails:object;
+  
 }
 
 //used in ServiceListingCards.tsx
