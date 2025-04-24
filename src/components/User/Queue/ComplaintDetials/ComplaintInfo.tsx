@@ -3,7 +3,6 @@ import { CalendarToday, Handyman, LocationOn, Warning } from "@mui/icons-materia
 import { Props2 } from "../../../../interfaces/IComponents/User/IUserInterfaces";
 
 
-
 const ComplaintInfo: React.FC<Props2> = ({ serviceDetails, complaint, deviceImages }) => (
   <div className="md:col-span-2">
     <h2 className="text-xl font-semibold mb-4">Service Details</h2>
@@ -51,21 +50,7 @@ const ComplaintInfo: React.FC<Props2> = ({ serviceDetails, complaint, deviceImag
       </div>
     )}
 
-    <div className="mb-6">
-      <h2 className="text-xl font-semibold mb-4">Completion Status</h2>
-      <div className="bg-gray-50 p-5 rounded-lg">
-        <div className="flex justify-between mb-2">
-          <span className="font-medium">Progress</span>
-          <span>{complaint.completionPercentage || 0}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
-          <div
-            className="bg-blue-600 h-2.5 rounded-full"
-            style={{ width: `${complaint.completionPercentage || 0}%` }}
-          ></div>
-        </div>
-      </div>
-    </div>
+
   </div>
 );
 

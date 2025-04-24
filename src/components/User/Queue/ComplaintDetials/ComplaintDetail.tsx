@@ -8,10 +8,15 @@ import {
 import ComplaintHeader from "./ComplaintHeader";
 import ComplaintInfo from "./ComplaintInfo";
 import CustomerInfo from "./CustomerInfo";
-import MechanicInfo from "./MechanicInfo"; // Import the new component
-import { IComplaintDetails, IMechanicDetails } from "../../../../interfaces/IComponents/User/IUserInterfaces";
+import MechanicInfo from "./MechanicInfo";
+import {
+  IComplaintDetails,
+  IMechanicDetails,
+} from "../../../../interfaces/IComponents/User/IUserInterfaces";
+import StatusProgressBar from "../../../Common/StatusProgressBar";
 
 const ComplaintDetail: React.FC = () => {
+  // Existing code...
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -19,6 +24,7 @@ const ComplaintDetail: React.FC = () => {
   const [mechanicDetails, setMechanicDetails] =
     useState<IMechanicDetails | null>(null);
 
+  // Existing useEffects...
   useEffect(() => {
     const fetchComplaintDetail = async () => {
       try {
@@ -34,17 +40,26 @@ const ComplaintDetail: React.FC = () => {
     };
 
     if (id) fetchComplaintDetail();
+
+    // Set up polling for real-time updates every 30 seconds
+    const pollingInterval = setInterval(async () => {
+      try {
+        const result = await getUserRegisteredServiceDetailsById(id as string);
+        if (result?.data.result[0]) setComplaint(result.data.result[0]);
+      } catch (error) {
+        console.error("Error polling complaint details:", error);
+      }
+    }, 30000);
+
+    return () => clearInterval(pollingInterval);
   }, [id]);
 
-  // Fetch mechanic details based on currentMechanicId
+  // Mechanic details fetch
   useEffect(() => {
     const fetchMechanicDetails = async () => {
       if (complaint?.currentMechanicId) {
         try {
           const result = await getMechanicDetails(complaint.currentMechanicId);
-          console.log("Mechanic details fetched:", result);
-
-          // Format the mechanic details with acceptedAt from complaint
           const mechanic = result?.data.result;
           if (mechanic) {
             setMechanicDetails({
@@ -61,6 +76,7 @@ const ComplaintDetail: React.FC = () => {
     fetchMechanicDetails();
   }, [complaint?.currentMechanicId, complaint?.acceptedAt]);
 
+  // Loading and error handling...
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -104,8 +120,16 @@ const ComplaintDetail: React.FC = () => {
           status={complaint.status || "pending"}
         />
 
+        {/* Enhanced Status Progress Bar with compact design */}
+        <div className="px-6 py-3 border-t border-b border-gray-100 bg-gray-50">
+          <StatusProgressBar
+            currentStatus={complaint.status || "pending"}
+            compact={false}
+            className="max-w-3xl mx-auto"
+          />
+        </div>
+
         <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
-          {/* Make ComplaintInfo take up more space */}
           <div className="md:col-span-6">
             <ComplaintInfo
               serviceDetails={serviceDetails}
@@ -114,14 +138,12 @@ const ComplaintDetail: React.FC = () => {
             />
           </div>
 
-          {/* User and mechanic info side by side on larger screens, stacked on mobile */}
           <div className="md:col-span-6 grid grid-cols-1 gap-6">
             <CustomerInfo
               userDetails={userDetails}
               fallbackName={complaint.name}
             />
 
-            {/* Only show mechanic info if there's a current mechanic assigned */}
             {complaint.currentMechanicId && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}
