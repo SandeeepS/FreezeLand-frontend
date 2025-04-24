@@ -85,5 +85,50 @@ export interface AllAcceptedServices {
     adharProof: File | string;
     employeeLicense: File | null;
   }
+
+
+
+  // Define the complaint details interface
+ export interface ComplaintDetails {
+    _id: string;
+    name: string;
+    image?: string[];
+    serviceId?: string;
+    userId: string;
+    defaultAddress: string;
+    discription: string;
+    locationName?: object;
+    status: string;
+    deviceImages?: string[];
+    currentMechanicId?:string;
+    completionPercentage: number;
+    priority: string;
+    createdAt: string;
+    userDetails?: {
+      name: string;
+      password: string;
+      email: string;
+      phone: number;
+      profile_picture: string;
+      defaultAddress: string;
+      role: string;
+    };
+    serviceDetails?: {
+      name: string;
+      imageKey: string;
+      discription: string[];
+      serviceCharge: number;
+      createdAt: Date;
+    };
+    estimatedCompletionDate?: string;
+    lastUpdated?: string;
+    notes?: string[];
+    workHistory?: {
+      date: string;
+      action: string;
+      notes: string;
+      completionPercentage: number;
+    }[];
+  }
   
   

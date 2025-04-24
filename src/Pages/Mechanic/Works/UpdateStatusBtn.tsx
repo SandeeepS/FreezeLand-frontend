@@ -2,52 +2,47 @@ import React, { useState, useEffect } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import CancelIcon from "@mui/icons-material/Cancel";
+import BlockIcon from "@mui/icons-material/Block";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import HelpIcon from "@mui/icons-material/Help";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import { updateComplaintStatus } from "../../../Api/mech";
+import { ComplaintStatus, getNextStatus, getStatusConfig, isStatusUpdateAllowed } from "../../../Enums/StatusEnums";
 
 interface UpdateStatusBtnProps {
   complaintId: string;
-  currentStatus?: string;
-  onStatusChange?: (newStatus: string) => void;
+  currentStatus: string;
+  onStatusChange?: (newStatus: ComplaintStatus) => void;
 }
 
 const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
   complaintId,
-  currentStatus = "pending",
+  currentStatus = ComplaintStatus.PENDING,
   onStatusChange,
 }) => {
-  const [status, setStatus] = useState<string>(currentStatus || "pending");
+  const [status, setStatus] = useState<ComplaintStatus>(currentStatus as ComplaintStatus);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
-  const [nextStatus, setNextStatus] = useState<string>("");
+  const [nextStatus, setNextStatus] = useState<ComplaintStatus>(ComplaintStatus.PENDING);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
   // Update internal state when prop changes
   useEffect(() => {
     if (currentStatus) {
-      setStatus(currentStatus);
+      setStatus(currentStatus as ComplaintStatus);
     }
   }, [currentStatus]);
 
-  // Define the next status in the sequence
-  const getNextStatus = (currentStatus: string): string => {
-    switch (currentStatus.toLowerCase()) {
-      case "pending":
-        return "on process";
-      case "on process":
-        return "completed";
-      default:
-        return "completed";
-    }
-  };
-
   const handleOpenConfirmDialog = () => {
-    // Don't open dialog if already completed
-    if (status.toLowerCase() === "completed") {
+    // Don't open dialog if status update not allowed
+    if (!isStatusUpdateAllowed(status)) {
       return;
     }
 
@@ -63,96 +58,79 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
   const updateStatusInDatabase = async () => {
     handleCloseConfirmDialog();
     setIsUpdating(true);
+    setUpdateError(null);
 
     try {
       const response = await updateComplaintStatus(complaintId, nextStatus);
-      console.log("response is ", response);
-
+      
       if (!response || !response.data || !response.data.result) {
         throw new Error("Failed to update status");
       }
 
-      setStatus(response.data.result.status);
+      const updatedStatus = response.data.result.status as ComplaintStatus;
+      setStatus(updatedStatus);
 
       if (onStatusChange) {
-        onStatusChange(response.data.result.status);
+        onStatusChange(updatedStatus);
       }
     } catch (error) {
       console.error("Error updating status:", error);
+      setUpdateError("Failed to update status. Please try again.");
     } finally {
       setIsUpdating(false);
     }
   };
 
-  // Get the correct status configuration based on current status
-  const getStatusConfig = (currentStatus: string) => {
-    const normalizedStatus = currentStatus.toLowerCase().replace(/\s+/g, "");
+  // Get status configuration
+  const statusConfig = getStatusConfig(status);
 
-    if (normalizedStatus === "pending") {
-      return {
-        color: "bg-yellow-500 hover:bg-yellow-600",
-        icon: <HourglassEmptyIcon className="mr-1" />,
-        text: "Pending - Update Status",
-      };
-    } else if (
-      normalizedStatus === "onprocess" ||
-      normalizedStatus === "on process"
-    ) {
-      return {
-        color: "bg-blue-500 hover:bg-blue-600",
-        icon: <SettingsIcon className="mr-1" />,
-        text: "On Process - Update Status",
-      };
-    } else if (normalizedStatus === "completed") {
-      return {
-        color: "bg-green-500", // Remove hover effect for completed status
-        icon: <CheckCircleIcon className="mr-1" />,
-        text: "Completed",
-      };
+  // Helper function to render the correct icon
+  const renderIcon = () => {
+    switch (statusConfig.icon) {
+      case "CheckCircle":
+        return <CheckCircleIcon className="mr-1" />;
+      case "Settings":
+        return <SettingsIcon className="mr-1" />;
+      case "HourglassEmpty":
+        return <HourglassEmptyIcon className="mr-1" />;
+      case "Cancel":
+        return <CancelIcon className="mr-1" />;
+      case "Block":
+        return <BlockIcon className="mr-1" />;
+      case "ThumbUp":
+        return <ThumbUpIcon className="mr-1" />;
+      default:
+        return <HelpIcon className="mr-1" />;
     }
-
-    // Default fallback
-    return {
-      color: "bg-yellow-500 hover:bg-yellow-600",
-      icon: <HourglassEmptyIcon className="mr-1" />,
-      text: "Pending - Update Status",
-    };
   };
 
-  // Get current configuration
-  const currentConfig = getStatusConfig(status);
-
-  // Helper function to format status text for display
-  const formatStatusText = (status: string): string => {
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
-  const isCompleted = status.toLowerCase() === "completed";
+  const updateAllowed = isStatusUpdateAllowed(status);
 
   return (
     <div>
-      {isCompleted ? (
-        // For completed status - just a static display with no click handler
-        <div
-          className={`${currentConfig.color} text-white font-bold py-2 px-4 rounded flex items-center`}
-        >
-          {currentConfig.icon}
-          {currentConfig.text}
+      {!updateAllowed ? (
+        // For completed/canceled/blocked status - just a static display with no click handler
+        <div className={`${statusConfig.color} text-white font-bold py-2 px-4 rounded flex items-center`}>
+          {renderIcon()}
+          {statusConfig.text}
         </div>
       ) : (
         // For other statuses - clickable button
         <button
           onClick={handleOpenConfirmDialog}
           disabled={isUpdating}
-          className={`${
-            currentConfig.color
-          } text-white font-bold py-2 px-4 rounded flex items-center ${
+          className={`${statusConfig.color} text-white font-bold py-2 px-4 rounded flex items-center ${
             isUpdating ? "opacity-75 cursor-not-allowed" : ""
           }`}
         >
-          {currentConfig.icon}
-          {isUpdating ? "Updating..." : currentConfig.text}
+          {isUpdating ? <CircularProgress size={20} color="inherit" className="mr-2" /> : renderIcon()}
+          {isUpdating ? "Updating..." : `${statusConfig.text} - Update Status`}
         </button>
+      )}
+
+      {/* Error message */}
+      {updateError && (
+        <div className="mt-2 text-red-500 text-sm">{updateError}</div>
       )}
 
       {/* Confirmation Dialog */}
@@ -168,12 +146,11 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to update the status from{" "}
-            <strong>{formatStatusText(status)}</strong> to{" "}
-            <strong>{formatStatusText(nextStatus)}</strong>?
-            {nextStatus.toLowerCase() === "completed" && (
+            <strong>{getStatusConfig(status).text}</strong> to{" "}
+            <strong>{getStatusConfig(nextStatus).text}</strong>?
+            {nextStatus === ComplaintStatus.COMPLETED && (
               <p className="mt-2 text-red-500">
-                Note: Once marked as Completed, the status cannot be changed
-                again.
+                Note: Once marked as Completed, the status cannot be changed again.
               </p>
             )}
           </DialogContentText>

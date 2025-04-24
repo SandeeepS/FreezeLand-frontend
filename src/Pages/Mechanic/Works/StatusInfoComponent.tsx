@@ -1,133 +1,88 @@
-// StatusInfoComponent.tsx
 import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import BuildIcon from "@mui/icons-material/Build";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import SettingsIcon from "@mui/icons-material/Settings";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import CancelIcon from "@mui/icons-material/Cancel";
+import BlockIcon from "@mui/icons-material/Block";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import WarningIcon from "@mui/icons-material/Warning";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import ErrorIcon from "@mui/icons-material/Error";
+import FlagIcon from "@mui/icons-material/Flag";
+import HelpIcon from "@mui/icons-material/Help";
+import { ComplaintStatus, getStatusConfig } from "../../../Enums/StatusEnums";
 
-interface StatusInfoProps {
+interface StatusInfoComponentProps {
   status: string;
   priority: string;
 }
 
-const StatusInfoComponent: React.FC<StatusInfoProps> = ({
+const StatusInfoComponent: React.FC<StatusInfoComponentProps> = ({
   status,
   priority,
 }) => {
-  // Helper function to get status information
-  const getStatusInfo = (status: string) => {
-    switch (status) {
-      case "pending":
-        return {
-          color: "text-orange-500",
-          bgColor: "bg-orange-100",
-          icon: <AccessTimeIcon className="text-orange-500" />,
-          text: "Waiting to be assigned",
-        };
-      case "in progress":
-        return {
-          color: "text-blue-500",
-          bgColor: "bg-blue-100",
-          icon: <BuildIcon className="text-blue-500" />,
-          text: "Work in progress",
-        };
-      case "delayed":
-        return {
-          color: "text-red-500",
-          bgColor: "bg-red-100",
-          icon: <WarningIcon className="text-red-500" />,
-          text: "Experiencing delays",
-        };
-      case "on schedule":
-        return {
-          color: "text-teal-500",
-          bgColor: "bg-teal-100",
-          icon: <CheckCircleIcon className="text-teal-500" />,
-          text: "Proceeding as planned",
-        };
-      case "completed":
-        return {
-          color: "text-emerald-500",
-          bgColor: "bg-emerald-100",
-          icon: <CheckCircleIcon className="text-emerald-500" />,
-          text: "Service completed",
-        };
-      default:
-        return {
-          color: "text-gray-500",
-          bgColor: "bg-gray-100",
-          icon: <AccessTimeIcon className="text-gray-500" />,
-          text: "Status unknown",
-        };
+  const statusConfig = getStatusConfig(status as ComplaintStatus);
+
+  // Priority configuration
+  const getPriorityConfig = (priority: string) => {
+    const normalizedPriority = priority.toLowerCase();
+    
+    if (normalizedPriority === "high") {
+      return {
+        icon: <ErrorIcon className="mr-2" />,
+        text: "High Priority",
+        color: "text-red-600",
+        bgColor: "bg-red-100",
+      };
+    } else if (normalizedPriority === "medium") {
+      return {
+        icon: <WarningIcon className="mr-2" />,
+        text: "Medium Priority",
+        color: "text-yellow-600",
+        bgColor: "bg-yellow-100",
+      };
+    } else {
+      return {
+        icon: <FlagIcon className="mr-2" />,
+        text: "Normal Priority",
+        color: "text-green-600",
+        bgColor: "bg-green-100",
+      };
     }
   };
 
-  // Helper function for priority icon and color
-  const getPriorityInfo = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return {
-          color: "text-red-500",
-          bgColor: "bg-red-100",
-          icon: <PriorityHighIcon className="text-red-500" />,
-        };
-      case "medium":
-        return {
-          color: "text-orange-500",
-          bgColor: "bg-orange-100",
-          icon: <ReportProblemIcon className="text-orange-500" />,
-        };
-      case "low":
-        return {
-          color: "text-green-500",
-          bgColor: "bg-green-100",
-          icon: <CheckCircleIcon className="text-green-500" />,
-        };
+  const priorityConfig = getPriorityConfig(priority);
+
+  // Render status icon based on status
+  const renderStatusIcon = () => {
+    switch (statusConfig.icon) {
+      case "CheckCircle":
+        return <CheckCircleIcon className="mr-2" />;
+      case "Settings":
+        return <SettingsIcon className="mr-2" />;
+      case "HourglassEmpty":
+        return <HourglassEmptyIcon className="mr-2" />;
+      case "Cancel":
+        return <CancelIcon className="mr-2" />;
+      case "Block":
+        return <BlockIcon className="mr-2" />;
+      case "ThumbUp":
+        return <ThumbUpIcon className="mr-2" />;
       default:
-        return {
-          color: "text-gray-500",
-          bgColor: "bg-gray-100",
-          icon: <ReportProblemIcon className="text-gray-500" />,
-        };
+        return <HelpIcon className="mr-2" />;
     }
   };
-
-  const statusInfo = getStatusInfo(status);
-  const priorityInfo = getPriorityInfo(priority);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
-      <h3 className="font-semibold text-lg mb-4">Status Information</h3>
-
-      <div
-        className={`flex items-center p-3 rounded-lg mb-4 ${statusInfo.bgColor}`}
-      >
-        {statusInfo.icon}
-        <div className="ml-3">
-          <p className={`font-medium ${statusInfo.color}`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </p>
-          <p className="text-sm">{statusInfo.text}</p>
+    <div className="bg-white p-5 rounded-lg shadow-md mb-6">
+      <h2 className="text-xl font-semibold mb-4">Status Information</h2>
+      <div className="flex flex-col md:flex-row md:space-x-4">
+        <div className={`flex items-center ${statusConfig.bgColor} ${statusConfig.textColor} p-3 rounded-md mb-3 md:mb-0 md:flex-1`}>
+          {renderStatusIcon()}
+          <span className="font-semibold">{statusConfig.text}</span>
         </div>
-      </div>
-
-      <div
-        className={`flex items-center p-3 rounded-lg mb-4 ${priorityInfo.bgColor}`}
-      >
-        {priorityInfo.icon}
-        <div className="ml-3">
-          <p className={`font-medium ${priorityInfo.color}`}>
-            {priority.charAt(0).toUpperCase() + priority.slice(1)} Priority
-          </p>
-          <p className="text-sm">
-            {priority === "high"
-              ? "Requires immediate attention"
-              : priority === "medium"
-              ? "Should be addressed soon"
-              : "Can be addressed in standard timeframe"}
-          </p>
+        <div className={`flex items-center ${priorityConfig.bgColor} ${priorityConfig.color} p-3 rounded-md md:flex-1`}>
+          {priorityConfig.icon}
+          <span className="font-semibold">{priorityConfig.text}</span>
         </div>
       </div>
     </div>

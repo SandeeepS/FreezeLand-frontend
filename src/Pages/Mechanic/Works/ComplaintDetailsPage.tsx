@@ -1,62 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-// Import components
 import ServiceDetailsComponent from "./ServiceDetailsComponent";
 import CustomerDetailsComponent from "./CustomerDetailsComponent";
 import StatusInfoComponent from "./StatusInfoComponent";
 
-// Import the API function to fetch complaint details
 import { getComplaintDetails } from "../../../Api/mech";
 import LocationDetail from "./LocationDetail";
 import GoogleMapLocation from "./GoogleMapLocation";
 import AccecptBtn from "./AccecptBtn";
 import UpdateStatusBtn from "./UpdateStatusBtn";
-
-// Define the complaint details interface
-interface ComplaintDetails {
-  _id: string;
-  name: string;
-  image?: string[];
-  serviceId?: string;
-  userId: string;
-  defaultAddress: string;
-  discription: string;
-  locationName?: object;
-  status: string;
-  deviceImages?: string[];
-  currentMechanicId?:string;
-  completionPercentage: number;
-  priority: string;
-  createdAt: string;
-  userDetails?: {
-    name: string;
-    password: string;
-    email: string;
-    phone: number;
-    profile_picture: string;
-    defaultAddress: string;
-    role: string;
-  };
-  serviceDetails?: {
-    name: string;
-    imageKey: string;
-    discription: string[];
-    serviceCharge: number;
-    createdAt: Date;
-  };
-  estimatedCompletionDate?: string;
-  lastUpdated?: string;
-  notes?: string[];
-  workHistory?: {
-    date: string;
-    action: string;
-    notes: string;
-    completionPercentage: number;
-  }[];
-}
+import { ComplaintDetails } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { ComplaintStatus } from "../../../Enums/StatusEnums";
 
 const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -65,13 +21,12 @@ const ComplaintDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("details");
-  const [isAccepted, setIsAccepted] = useState<boolean>(false);
 
   // Format date function
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US",{
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -80,38 +35,50 @@ const ComplaintDetailsPage: React.FC = () => {
     });
   };
 
-  // Fetch complaint details
-  useEffect(() => {
-    const fetchComplaintDetails = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        if (id) {
-          const result = await getComplaintDetails(id);
-          console.log("result is ", result);
-          if (result && result.data.result && result.data.result.length > 0) {
-            const complaintData = result.data.result[0];
-
-            // Set isAccepted based on status (not pending means already accepted)
-            setIsAccepted(complaintData.status !== "pending");
-            setComplaint(complaintData);
-            console.log("complaints after set ", complaint);
-          } else {
-            setError("No data found for this service request.");
-          }
+  // Fetch complaint details - extract to reusable function for refreshing data
+  const fetchComplaintDetails = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      if (id) {
+        const result = await getComplaintDetails(id);
+        
+        if (result && result.data.result && result.data.result.length > 0) {
+          const complaintData = result.data.result[0];
+          setComplaint(complaintData);
+        } else {
+          setError("No data found for this service request.");
         }
-      } catch (error) {
-        console.error("Error fetching complaint details:", error);
-        setError(
-          "Failed to load service request data. Please try again later."
-        );
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchComplaintDetails();
+    } catch (error) {
+      console.error("Error fetching complaint details:", error);
+      setError(
+        "Failed to load service request data. Please try again later."
+      );
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchComplaintDetails();
+  }, [fetchComplaintDetails]);
+
+  // Handle status changes
+  const handleStatusChange = useCallback((newStatus: ComplaintStatus) => {
+    // Update local state immediately for better UX
+    if (complaint) {
+      setComplaint({
+        ...complaint,
+        status: newStatus
+      });
+    }
+    
+    // Optionally refresh data from server to ensure everything is in sync
+    fetchComplaintDetails();
+  }, [complaint, fetchComplaintDetails]);
 
   // Handle back button
   const handleBack = () => {
@@ -161,21 +128,37 @@ const ComplaintDetailsPage: React.FC = () => {
     );
   }
 
+  // Check if complaint is accepted or in progress
+  const isAccepted = complaint.status !== ComplaintStatus.PENDING;
+
   return (
     <div className="px-4 py-6 bg-gray-50 min-h-screen mt-32">
       {/* Header with back button */}
       <div className="flex items-center mb-6">
+        <button
+          onClick={handleBack}
+          className="mr-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-3 rounded-full flex items-center"
+        >
+          <ArrowBackIcon fontSize="small" />
+        </button>
+        
         <h1 className="text-2xl font-bold flex-grow">
           Service Request Details
         </h1>
-        
-           {/* Show UpdateBtn if currentMechanicId exists, otherwise show AcceptBtn */}
-           {complaint.currentMechanicId ? (
-          <UpdateStatusBtn complaintId={complaint._id} currentStatus={complaint.status} />
+
+        {/* Show UpdateBtn if currentMechanicId exists, otherwise show AcceptBtn */}
+        {complaint.currentMechanicId ? (
+          <UpdateStatusBtn
+            complaintId={complaint._id}
+            currentStatus={complaint.status}
+            onStatusChange={handleStatusChange}
+          />
         ) : (
-          <AccecptBtn complaintId={complaint._id} />
+          <AccecptBtn 
+            complaintId={complaint._id} 
+            onStatusChange={handleStatusChange}
+          />
         )}
-    
       </div>
 
       {/* Main content */}
@@ -192,7 +175,7 @@ const ComplaintDetailsPage: React.FC = () => {
 
         {/* Right column - Customer and status info */}
         <div className={`lg:col-span-${isAccepted ? 1 : 3}`}>
-          {/* Only render StatusInfoComponent if we have status and priority */}
+          {/* Status info card */}
           {complaint.status && complaint.priority && (
             <StatusInfoComponent
               status={complaint.status}
@@ -208,7 +191,7 @@ const ComplaintDetailsPage: React.FC = () => {
 
           {/* Location details */}
           <LocationDetail location={complaint.locationName} />
-          <GoogleMapLocation location={complaint.locationName}/>
+          <GoogleMapLocation location={complaint.locationName} />
         </div>
       </div>
     </div>
