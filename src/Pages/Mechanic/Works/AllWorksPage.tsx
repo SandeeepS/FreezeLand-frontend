@@ -6,8 +6,8 @@ import DynamicTable from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 
-// You'll need to create this API function
-import { getAllUserRegisteredServices } from "../../../Api/mech";
+// You'll need to create these API functions
+import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/mech";
 
 interface ComplaintService {
   _id: string;
@@ -21,7 +21,7 @@ interface ComplaintService {
   isBlocked: boolean;
   isDeleted: boolean;
   userDetails: object;
-  serviceDetails: object;
+  serviceDetails: any[]; // Made it more specific as an array
   status?: string;
   deviceImages?: string[];
   completionPercentage?: number;
@@ -54,20 +54,6 @@ const getStatusColor = (status: string): string => {
       return "text-red-500";
     case "on schedule":
       return "text-teal-500";
-    default:
-      return "text-gray-500";
-  }
-};
-
-// Helper function to get priority color
-const getPriorityColor = (priority: string): string => {
-  switch (priority) {
-    case "high":
-      return "text-red-500";
-    case "medium":
-      return "text-orange-500";
-    case "low":
-      return "text-green-500";
     default:
       return "text-gray-500";
   }
@@ -117,10 +103,14 @@ const formatDate = (dateString: string) => {
 
 const AllWorksPage: React.FC = () => {
   const navigate = useNavigate();
-//   const mechanicId = useSelector((state: RootState) => state.auth.mechData?._id);
+  // const mechanicId = useSelector((state: RootState) => state.auth.mechData?._id);
 
   const [allComplaints, setAllComplaints] = useState<ComplaintService[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  
+  // Add state for storing image URLs
+  const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
+  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>({});
 
   // Fetch data
   useEffect(() => {
@@ -129,11 +119,13 @@ const AllWorksPage: React.FC = () => {
         setLoading(true);
         // Replace with your actual API call for mechanics
         const result = await getAllUserRegisteredServices();
-        console.log("Complaints data:1111", result);
+        console.log("Complaints data:", result);
 
         if (result?.allRegisteredUserServices) {
           setAllComplaints(result.allRegisteredUserServices);
-          console.log("Complaints data:", allComplaints);
+          
+          // Fetch images for services and devices
+          fetchAllImages(result.allRegisteredUserServices);
         }
       } catch (error) {
         console.error("Error fetching complaints:", error);
@@ -143,6 +135,60 @@ const AllWorksPage: React.FC = () => {
     };
     fetchData();
   }, []);
+  
+  // Fetch image URLs for all services and devices
+  const fetchAllImages = async (complaints: ComplaintService[]) => {
+    const serviceImagesMap: Record<string, string> = {};
+    const deviceImagesMap: Record<string, string[]> = {};
+
+    for (const complaint of complaints) {
+      // Fetch service logo image from serviceDetails
+      if (
+        complaint.serviceDetails &&
+        complaint.serviceDetails.length > 0 &&
+        complaint.serviceDetails[0].imageKey
+      ) {
+        try {
+          const imageResult = await getImageUrl(
+            complaint.serviceDetails[0].imageKey,
+            "service"
+          );
+          if (imageResult && imageResult.data && imageResult.data.url) {
+            serviceImagesMap[complaint._id] = imageResult.data.url;
+          }
+        } catch (error) {
+          console.error("Error fetching service image:", error);
+        }
+      }
+
+      // Fetch device images from the image field
+      if (complaint.image && complaint.image.length > 0) {
+        const deviceImageUrls: string[] = [];
+
+        for (const deviceImg of complaint.image) {
+          try {
+            const deviceImgResult = await getImageUrl(deviceImg, "service");
+            if (
+              deviceImgResult &&
+              deviceImgResult.data &&
+              deviceImgResult.data.url
+            ) {
+              deviceImageUrls.push(deviceImgResult.data.url);
+            }
+          } catch (error) {
+            console.error("Error fetching device image:", error);
+          }
+        }
+
+        if (deviceImageUrls.length > 0) {
+          deviceImagesMap[complaint._id] = deviceImageUrls;
+        }
+      }
+    }
+
+    setServiceImages(serviceImagesMap);
+    setDeviceImages(deviceImagesMap);
+  };
 
   // Define the columns for the complaints table
   const complaintColumns: TableColumn[] = [
@@ -152,7 +198,7 @@ const AllWorksPage: React.FC = () => {
       render: (value, item) => (
         <div className="flex items-center">
           <img
-            src={item.logo || "/api/placeholder/48/48"}
+            src={serviceImages[item.id] || "/api/placeholder/48/48"}
             className="h-12 w-12 bg-white rounded-full border"
             alt={item.name}
           />
@@ -165,25 +211,13 @@ const AllWorksPage: React.FC = () => {
     {
       key: "userName",
       header: "Customer",
-      render: (value, item) => (
-        <div className="flex flex-col">
-          <span className="font-medium">{value}</span>
-          <span className="text-sm text-gray-500">{item.location || "No location"}</span>
-        </div>
+      render: (value) => (
+        <div className="font-medium">{value}</div>
       ),
     },
     {
       key: "dateCreated",
       header: "Date Created",
-    },
-    {
-      key: "priority",
-      header: "Priority",
-      render: (value) => (
-        <div className={`font-medium ${getPriorityColor(value)}`}>
-          {value || "normal"}
-        </div>
-      ),
     },
     {
       key: "status",
@@ -200,16 +234,22 @@ const AllWorksPage: React.FC = () => {
       header: "Device Images",
       render: (value, item) => (
         <div className="flex">
-          {item.deviceImages?.map((image: string, idx: number) => (
+          {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
               key={idx}
-              src={image || "/api/placeholder/40/40"}
+              src={imgUrl || "/api/placeholder/40/40"}
               alt={`device-${idx}`}
               className={`w-10 h-10 rounded-full border-2 border-white shadow ${
                 idx > 0 ? "-ml-4" : ""
               }`}
             />
-          ))}
+          )) || (
+            <img
+              src="/api/placeholder/40/40"
+              alt="No device image"
+              className="w-10 h-10 rounded-full border-2 border-white shadow"
+            />
+          )}
         </div>
       ),
     },
@@ -260,16 +300,12 @@ const AllWorksPage: React.FC = () => {
       ? allComplaints.map((complaint: any) => ({
           id: complaint._id,
           name: complaint.serviceDetails[0]?.name || "Unknown Service",
-          logo: complaint.serviceDetails[0]?.image?.[0] || "/api/placeholder/48/48",
           userName: complaint.name || "Unknown User",
-          location: complaint.defaultAddress || "No address provided",
           status: complaint.status || "pending",
-          priority: complaint.priority || "medium",
           dateCreated: complaint.createdAt ? formatDate(complaint.createdAt) : "Unknown date",
-          deviceImages: complaint.deviceImages || ["/api/placeholder/40/40"],
           completion: complaint.completionPercentage || 0,
           description: complaint.description || "No description provided",
-          // Include original data for reference
+          // Original data for reference
           originalData: complaint
         }))
       : [];

@@ -18,7 +18,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
   setShowLocationOptions,
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
-
+  console.log("userDeatisl frm the form ",userProfile);
   return (
     <form
       className="w-full max-w-lg flex-row items-center justify-center"

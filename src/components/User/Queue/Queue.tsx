@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Circle } from "lucide-react";
+import { Circle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAllUserRegisteredServices } from "../../../Api/user";
+import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/user";
 import DynamicTable from "../../Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
-
-
+import {
+  AllRegisteredServices,
+  TableColumn,
+} from "../../../interfaces/IComponents/User/IUserInterfaces";
+import EmptyStateBox from "./EmptyStateBox";
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
@@ -49,11 +52,18 @@ const getProgressColors = (status: string) => {
 
 const Queue: React.FC = () => {
   const navigate = useNavigate();
-  const userId = useSelector((state: RootState) => state.auth.userData?._id);
-
-  const [allRegisteredServices, setAllRegisteredService] = 
-    useState<AllRegisteredServices[]>([]);
+  const userData = useSelector((state: RootState) => state.auth.userData);
+  const userId = userData.toString();
+  const [allRegisteredServices, setAllRegisteredService] = useState<
+    AllRegisteredServices[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [serviceImages, setServiceImages] = useState<Record<string, string>>(
+    {}
+  );
+  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
+    {}
+  );
 
   // Fetch data
   useEffect(() => {
@@ -68,6 +78,9 @@ const Queue: React.FC = () => {
             "Registered services from the frontend:",
             result.allRegisteredUserServices
           );
+
+          // Fetch images for each service
+          fetchServiceImages(result.allRegisteredUserServices);
         }
       } catch (error) {
         console.error(
@@ -81,6 +94,60 @@ const Queue: React.FC = () => {
     fetchData();
   }, [userId]);
 
+  // Fetch image URLs for all services
+  const fetchServiceImages = async (services: AllRegisteredServices[]) => {
+    const serviceImagesMap: Record<string, string> = {};
+    const deviceImagesMap: Record<string, string[]> = {};
+
+    for (const service of services) {
+      // Fetch service logo image from serviceDetails
+      if (
+        service.serviceDetails &&
+        service.serviceDetails.length > 0 &&
+        service.serviceDetails[0].imageKey
+      ) {
+        try {
+          const imageResult = await getImageUrl(
+            service.serviceDetails[0].imageKey,
+            "service"
+          );
+          if (imageResult && imageResult.data && imageResult.data.url) {
+            serviceImagesMap[service._id] = imageResult.data.url;
+          }
+        } catch (error) {
+          console.error("Error fetching service image:", error);
+        }
+      }
+
+      // Fetch device images from the image field
+      if (service.image && service.image.length > 0) {
+        const deviceImageUrls: string[] = [];
+
+        for (const deviceImg of service.image) {
+          try {
+            const deviceImgResult = await getImageUrl(deviceImg, "service");
+            if (
+              deviceImgResult &&
+              deviceImgResult.data &&
+              deviceImgResult.data.url
+            ) {
+              deviceImageUrls.push(deviceImgResult.data.url);
+            }
+          } catch (error) {
+            console.error("Error fetching device image:", error);
+          }
+        }
+
+        if (deviceImageUrls.length > 0) {
+          deviceImagesMap[service._id] = deviceImageUrls;
+        }
+      }
+    }
+
+    setServiceImages(serviceImagesMap);
+    setDeviceImages(deviceImagesMap);
+  };
+
   // Define the columns for the service table
   const serviceColumns: TableColumn[] = [
     {
@@ -89,7 +156,7 @@ const Queue: React.FC = () => {
       render: (value, item) => (
         <div className="flex items-center">
           <img
-            src={item.logo || "/api/placeholder/48/48"}
+            src={serviceImages[item.id] || "/api/placeholder/48/48"}
             className="h-12 w-12 bg-white rounded-full border"
             alt={item.name}
           />
@@ -118,16 +185,22 @@ const Queue: React.FC = () => {
       header: "Device Image",
       render: (value, item) => (
         <div className="flex">
-          {item.team?.map((member: string, idx: number) => (
+          {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
               key={idx}
-              src={member || "/api/placeholder/40/40"}
+              src={imgUrl || "/api/placeholder/40/40"}
               alt="device"
               className={`w-10 h-10 rounded-full border-2 border-blueGray-50 shadow ${
                 idx > 0 ? "-ml-4" : ""
               }`}
             />
-          ))}
+          )) || (
+            <img
+              src="/api/placeholder/40/40"
+              alt="No device image"
+              className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
+            />
+          )}
         </div>
       ),
     },
@@ -160,32 +233,36 @@ const Queue: React.FC = () => {
   const formattedData =
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: any) => ({
-          id: service._id, // Store the original ID for navigation
+          id: service._id,
           name: service.serviceDetails[0]?.name || "Unknown Service",
-          logo: service.serviceDetails[0]?.image?.[0] || "/api/placeholder/48/48",
-          userName: service.userDetails[0]?.name || service.name || "Unknown User",
+          userName: service.name || "Unknown User",
           status: service.status || "pending",
-          team: service.deviceImages || ["/api/placeholder/40/40"],
           completion: service.completionPercentage || 0,
-          // Include original data for reference
-          originalData: service
+          originalData: service,
         }))
       : [];
 
   // Handle row click - Navigate to detail page
   const handleRowClick = (item: any) => {
     console.log("Clicked on service:", item);
-    // Navigate to the detail page with the service ID
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
 
+  // If no data is available and we're not loading, show the empty state
+  if (!loading && allRegisteredServices.length === 0) {
+    return (
+      <div className="mt-16">
+        <EmptyStateBox />
+      </div>
+    );
+  }
+
+  // Otherwise show the table with real data
   return (
     <DynamicTable
       title="Registered Services"
       columns={serviceColumns}
-      data={
-        loading ? [] : formattedData.length > 0 ? formattedData : sampleData
-      }
+      data={loading ? [] : formattedData}
       loading={loading}
       emptyMessage="No services registered yet"
       onRowClick={handleRowClick}
@@ -193,27 +270,5 @@ const Queue: React.FC = () => {
     />
   );
 };
-
-// Sample data to use when API data is not available
-const sampleData = [
-  {
-    id: "sample1",
-    name: "Argon Design System",
-    logo: "/api/placeholder/48/48",
-    userName: "John Doe",
-    status: "pending",
-    team: ["/api/placeholder/40/40", "/api/placeholder/40/40"],
-    completion: 60,
-  },
-  {
-    id: "sample2",
-    name: "Angular Now UI Kit PRO",
-    logo: "/api/placeholder/48/48",
-    userName: "Jane Smith",
-    status: "completed",
-    team: ["/api/placeholder/40/40", "/api/placeholder/40/40"],
-    completion: 100,
-  },
-];
 
 export default Queue;
