@@ -3,7 +3,7 @@ import { FaCamera, FaTrash} from "react-icons/fa";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
-import { getProfile, EditUserDetails } from "../../Api/user";
+import { getProfile, EditUserDetails, getImageUrl } from "../../Api/user";
 import { getS3SingUrl } from "../../Api/admin"; // Import the getS3SingUrl function
 import Header from "../User/Header";
 import { useAppSelector } from "../../App/store";
@@ -15,7 +15,7 @@ interface UserProfile {
   email?: string;
   image?: string;
   location?: string;
-  imageKey?: string; // Added imageKey to hold the S3 key
+  profile_picture?: string; 
 }
 
 const validationSchema = object({
@@ -38,6 +38,8 @@ const ProfileEdit: React.FC = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
+  const [profileImage,setProfileImage] = useState<string>("");
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -52,7 +54,28 @@ const ProfileEdit: React.FC = () => {
       }
     };
     fetchUserProfile();
-  }, []);
+  }, [userData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if ( userProfile && userProfile.profile_picture) {
+          const result = await getImageUrl(
+            userProfile.profile_picture,
+            "service"
+          );
+          if (result) {
+            setProfileImage(result.data.url);
+          }
+        }
+      } catch (error) {
+        console.log(error as Error);
+      }
+    }
+    fetchData();
+  },[userProfile])
+
+
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -114,7 +137,7 @@ const ProfileEdit: React.FC = () => {
                 name: userProfile.name || "",
                 phone: userProfile.phone || "",
                 location: userProfile.location || "",
-                imageKey: userProfile.imageKey || "",
+                profile_picture: userProfile.profile_picture || "",
               }}
               validationSchema={validationSchema}
               enableReinitialize
@@ -137,7 +160,7 @@ const ProfileEdit: React.FC = () => {
                       });
                       
                       // Update the imageKey in the values
-                      values.imageKey = response.data.key;
+                      values.profile_picture = response.data.key;
                     }
                   }
                   
@@ -163,7 +186,7 @@ const ProfileEdit: React.FC = () => {
                       <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-white shadow-lg">
                         <img
                           className="w-full h-full object-cover"
-                          src={previewImage || DEFAULT_PROFILE_IMAGE}
+                          src={profileImage|| DEFAULT_PROFILE_IMAGE}
                           alt="Profile"
                         />
                       </div>

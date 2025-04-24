@@ -1,5 +1,3 @@
-import React from "react";
-import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
@@ -20,11 +18,11 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   coverImage,
   profileImage,
   userName,
-  userRole,
   navigationItems,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   if (!isOpen) return null;
 
   const handleLogout = async () => {
@@ -70,7 +68,6 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
 
       <div className="text-center mt-2">
         <h2 className="font-semibold text-black">{userName}</h2>
-        <p className="text-gray-500">{userRole}</p>
       </div>
 
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-400" />

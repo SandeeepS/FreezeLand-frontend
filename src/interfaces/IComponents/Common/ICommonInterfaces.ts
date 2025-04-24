@@ -89,6 +89,12 @@ export interface UserDetails {
   
 }
 
+export interface UserDetailsInProfile{
+  name:string;
+  profile_picture?:string;
+
+}
+
 //used in ServiceListingCards.tsx
 export interface ServiceListingCardProps {
   data: {
