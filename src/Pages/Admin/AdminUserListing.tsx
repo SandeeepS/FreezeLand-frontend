@@ -24,10 +24,10 @@ const AdminUserListing: React.FC = () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
 
-  const [data, setUsers] = useState<UserData[]>([]); // Initialize as an empty array
+  const [data, setUsers] = useState<UserData[]>([]); 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
+  const [loading, setLoading] = useState<boolean>(true); 
+  const [error, setError] = useState<string | null>(null); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +86,7 @@ const AdminUserListing: React.FC = () => {
   return (
     <div className="flex flex-col h-screen">
       <div className="mb-5">
+        
         <TopBar
           pathName={pathName}
           heading="Mechanics"
