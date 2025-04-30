@@ -7,11 +7,13 @@ import { useDispatch } from "react-redux";
 import { setUserCredental } from "../../App/slices/AuthSlice";
 import OAuth from "../../components/Common/OAuth";
 import toast from "react-hot-toast";
-import { initialVal2 } from "../../interfaces/IPages/User/IUserInterfaces";
 
+interface initialVal{
+  email: string;
+  password: string;
+}
 
-
-const initialValues: initialVal2 = {
+const initialValues: initialVal = {
   email: "",
   password: "",
 };
@@ -27,13 +29,15 @@ const UserLoginPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await login(values.email, values.password);
-          console.log("result is ",result);
-          if (result?.data.data.success) {
-            console.log("result fron the front end ", result);
-            dispatch(setUserCredental(result?.data.data?.userId));
+          if (result !== null) {
+            {
+              console.log("result fron the front end ", result);
+            }
+            dispatch(setUserCredental(result?.data.data.data));
             navigate("/user/homepage");
           } else {
-            navigate("/login")
+            console.log("result fron the signup form is", result);
+            toast.error("Incorrect password or email");
           }
         } catch (error) {
           console.log(error);

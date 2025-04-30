@@ -5,6 +5,4 @@ const Api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-
-
 export default Api;

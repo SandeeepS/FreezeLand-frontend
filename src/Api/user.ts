@@ -5,8 +5,6 @@ import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
 
-
-
 const signup = async ({
   name,
   phone,
@@ -27,7 +25,7 @@ const signup = async ({
     return result;
   } catch (error) {
     console.log(error);
-    return {error};
+    errorHandler(error as Error);
   }
 };
 
@@ -75,29 +73,16 @@ const googleLogin = async (
   }
 };
 
-//function to verify otp
-const verifyOtp = async (id:string,otpnum: string) => {
+const verifyOtp = async (otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
-    const result = await Api.post(userRoutes.veryfyOtp, {id, otp });
-    console.log("result after verifyin in the veifyOTP in user.ts",result);
+    const result = await Api.post(userRoutes.veryfyOtp, { otp });
     return result;
   } catch (error) {
     console.log(error as Error);
-    return {error};
+    errorHandler(error as Error);
   }
 };
-
-//accessing the tempUserDeatils using id 
-// const getTempUserData = async (id:stirng) => {
-//   try{
-//     const result = await Api.get(userRoutes.getTempUserData,{params:{id}});
-//     return result;
-//   }catch(error) {
-//     console.log(error as Error);
-//     errorHandler(error as Error);
-//   }
-// }
 
 const forgotPassword = async (email: string) => {
   try {
@@ -134,7 +119,7 @@ const resendOtp = async () => {
 
 const logout = async () => {
   try {
-    console.log("entered in the logout function user.ts");
+    console.log("entered in the logout function user.ts")
     return await Api.get(userRoutes.logout);
   } catch (error) {
     console.log("error in the logout in the user.ts", error as Error);
@@ -166,20 +151,17 @@ const getAllServices = async () => {
       return result;
     }
   } catch (error) {
-    console.log("error in the user.ts");
+    console.log("error in the user.ts")
     console.log(error);
     errorHandler(error as Error);
   }
 };
 
 //getting all registered complaint of the user
-const getAllUserRegisteredServices = async (userId: string) => {
+const getAllRegisteredService = async () => {
   try {
-    const result = await Api.get(userRoutes.getAllUserRegisteredServices, {
-      params: { userId },
-    });
-    console.log("details reached in the user.ts tttt", result);
-    return result.data;
+    const result = await Api.get(userRoutes.getAllRegisteredService);
+    return result;
   } catch (error) {
     console.log(
       "error occured while fetching the user registerd services form the user.ts"
@@ -188,14 +170,13 @@ const getAllUserRegisteredServices = async (userId: string) => {
   }
 };
 
-const EditUserDetails = async ({ _id, name, phone,imageKey }: FormData) => {
+const EditUserDetails = async ({ _id, name, phone }: FormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
     const result = await Api.put(userRoutes.editUser, {
       _id,
       name,
       phone,
-      imageKey
     });
     console.log("result from the backend is ", result);
     return result;
@@ -258,58 +239,8 @@ const registerComplaint = async (data: Iconcern) => {
     console.log("enterd in the registerCompaint funciton in the user.ts", data);
     const result = await Api.post(userRoutes.registerService, { data });
     console.log("result after registering the user complaint is ", result);
-    return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
-  }
-};
-
-const getUserRegisteredServiceDetailsById = async (id: string) => {
-  try {
-    console.log(
-      "Entered in the getUserRegisteredServiceDetailsById in the user.ts"
-    );
-    const result = await Api.get(
-      userRoutes.getUserRegisteredServiceDetailsById,
-      { params: { id } }
-    );
-    return result;
-  } catch (error) {
-    console.log(error as Error);
-    errorHandler(error as Error);
-  }
-};
-
-const getMechanicDetails = async (id: string) => {
-  try {
-    if (!id) {
-      console.warn("Mechanic ID is undefined or null in the user.ts");
-      return;
-    }
-    console.log("Fetching mechanic details for ID in the user.ts:", id);
-    const response = await Api.get(userRoutes.getMechanicDetails,{
-      params: { id },
-    });
-    console.log("Response from backend in the user.ts:", response);
-    return response;
-  } catch (error) {
-    console.error("Error fetching mechanic details in the user.ts:", error);
-    errorHandler(error as Error);
-  }
-};
-
-//function to get the service details to the user side for registering the service 
-
-const getService = async (id: string | undefined) => {
-  try {
-    console.log("entered in the getService funciton in the user ts", id);
-    const result = await Api.get(`${userRoutes.getService}${id}`);
-    if (result) {
-      return result;
-    }
-  } catch (error) {
-    console.log(error);
     errorHandler(error as Error);
   }
 };
@@ -322,7 +253,6 @@ export {
   getProfile,
   verifyOtp,
   resendOtp,
-  getService,
   getImageUrl,
   forgotPassword,
   EditUserDetails,
@@ -331,10 +261,7 @@ export {
   updateNewPassword,
   AddUserAddress,
   setDefaultAddress,
-  getMechanicDetails,
-  // getTempUserData,
   registerComplaint,
   getAllServices,
-  getAllUserRegisteredServices,
-  getUserRegisteredServiceDetailsById,
+  getAllRegisteredService,
 };

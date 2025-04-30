@@ -4,18 +4,22 @@ import AdminHeader from "./AdminHeader";
 import { DeviceListingValidation } from "../Common/Validations";
 import { addDevice } from "../../Api/admin";
 import { useNavigate } from "react-router-dom";
-import { InewDevice } from "../../interfaces/IComponents/Admin/IAdminInterfaces";
+
+export interface InewDevice {
+  name: string;
+
+}
 
 const AddNewDevice: React.FC = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleSubmit = async (values: InewDevice) => {
-    console.log("device name from the form is ", values.name);
-    const result = await addDevice(values.name);
-    if (result) {
-      navigate("/admin/devices");
+    const handleSubmit = async (values : InewDevice) => {
+        console.log("device name from the form is ",values.name);
+        const result = await addDevice(values.name);
+        if(result) {
+            navigate('/admin/devices');
+        }
     }
-  };
   return (
     <div>
       <AdminHeader heading="Adding New Service" />

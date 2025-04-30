@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
-import { CarouselProps } from "../../interfaces/IComponents/User/IUserInterfaces";
 
+interface Slide {
+  image: string;
+  text1: string;
+  text2: string;
+  text3: string;
+  text4: string;
+}
 
+interface CarouselProps {
+  slides: Slide[];
+}
 
 const CarousalComponent: React.FC<CarouselProps> = ({ slides }) => {
   const [current, setCurrent] = useState<number>(0);

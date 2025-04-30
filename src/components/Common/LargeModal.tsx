@@ -3,14 +3,15 @@ import { useState } from "react";
 import { Slider } from "@mui/material";
 import Cropper from "react-easy-crop";
 import { Point, Area } from "react-easy-crop";
-import { ModalProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-const LargeModal: React.FC<ModalProps> = ({
-  image,
-  isOpen,
-  onClose,
-  onCropedImageBack,
-}) => {
+interface ModalProps {
+  image: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onCropedImageBack:(croppedImage:string) => void;
+}
+
+const LargeModal: React.FC<ModalProps> = ({ image, isOpen, onClose,onCropedImageBack }) => {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -44,7 +45,7 @@ const LargeModal: React.FC<ModalProps> = ({
 
         // Convert canvas to base64 image
         const croppedImage = imageCanvas.toDataURL("image/jpeg");
-        console.log("cropped image is ", croppedImage);
+        console.log("cropped image is ",croppedImage)
         onCropedImageBack(croppedImage); // Pass cropped image back to parent
       };
 

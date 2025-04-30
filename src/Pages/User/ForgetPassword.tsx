@@ -4,14 +4,18 @@ import {
   forgotVerifyOtp,
   resendOtp,
   updateNewPassword,
-} from "../../Api/user";
+} from "../../Api/user"
+import { UserData } from "../../interfaces/UserData";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { newPasswordValidation } from "../../components/Common/Validations";
-import { initialVal } from "../../interfaces/IPages/User/IUserInterfaces";
-import UserData from "../../interfaces/UserData";
+
+interface initialVal {
+  password: string;
+  cpassword: string;
+}
 
 const initialValues: initialVal = {
   password: "",
@@ -39,7 +43,7 @@ const ForgetPassword: React.FC = () => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
-  const handlSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(!loading);
     try {
@@ -103,7 +107,9 @@ const ForgetPassword: React.FC = () => {
           <div className="mt-28 bg-gray-100 p-3 rounded-xl shadow-3xl ">
             <div className="p-4 sm:p-7">
               <div className="text-center">
-                <h1 className="block text-2xl font-bold ">Forgot password?</h1>
+                <h1 className="block text-2xl font-bold ">
+                  Forgot password?
+                </h1>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   Remember your password?
                   <Link
@@ -174,7 +180,9 @@ const ForgetPassword: React.FC = () => {
               <h1 className="text-2xl font-semibold text-center mb-6">
                 Enter OTP
               </h1>
-              <p className=" text-center mb-4">Code sent to your Email</p>
+              <p className=" text-center mb-4">
+                Code sent to your Email
+              </p>
               <div className="flex justify-center my-2">
                 <input
                   type="text"
@@ -291,4 +299,4 @@ const ForgetPassword: React.FC = () => {
   );
 };
 
-export default ForgetPassword;
+export default  ForgetPassword;

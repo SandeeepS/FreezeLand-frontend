@@ -32,9 +32,9 @@ const NotVerifiedPage = () => {
         >
           <path
             stroke="currentColor"
-            strokeLinecap="round" // Updated to camelCase
-            strokeLinejoin="round" // Updated to camelCase
-            strokeWidth="2" // Updated to camelCase
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
             d="M1 5h12m0 0L9 1m4 4L9 9"
           />
         </svg>

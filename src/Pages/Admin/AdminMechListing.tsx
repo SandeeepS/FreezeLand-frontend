@@ -4,12 +4,16 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { deleteMech } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { MechData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
+interface MechData {
+  _id: string;
+  name: string;
+  email: string;
+  isBlocked: boolean;
+  isDeleted: boolean;
+}
 
 const AdminMechListing: React.FC = () => {
-  const navigate = useNavigate();
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
     { id: "email", label: "Email", minWidth: 100 },
@@ -22,18 +26,13 @@ const AdminMechListing: React.FC = () => {
     },
     { id: "actions", label: "Actions", minWidth: 150, align: "right" },
   ];
-  const location = useLocation();
-  const pathName = location.pathname;
-  console.log("pathname is",pathName);
-  const [searchParams] = useSearchParams();
-  const search = searchParams.get("search") || "";
-  const [mechs, setMech] = useState<MechData[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const [mechs, setMech] = useState<MechData[]>([]);
+  const header = "Mechanics";
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getAllMechanics(search);
+        const res = await getAllMechanics();
         console.log("Mech details in the first useEeffect");
         setMech(res?.data?.data?.mechs);
       } catch (error) {
@@ -41,7 +40,7 @@ const AdminMechListing: React.FC = () => {
       }
     };
     fetchData();
-  }, [search]);
+  }, []);
 
   const updateMechStatus = (
     id: string,
@@ -59,33 +58,12 @@ const AdminMechListing: React.FC = () => {
 
   const handleVerifyMechanic = () => {
     console.log("button clicked");
-<<<<<<< HEAD
   }
 
   return (
     <div className="flex flex-col">
       <div>
         <TopBar heading={header} />
-=======
-    navigate("/admin/verifyMechanic");
-  };
-
-  const filteredMechs = mechs.filter(
-    (mech) =>
-      mech.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      mech.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  return (
-    <div className="flex flex-col h-screen">
-      <div className="mb-5">
-        <TopBar
-        pathName={pathName}
-          heading="Mechanics"
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
->>>>>>> week-3.1
       </div>
       <div className="flex justify-end p-4">
         <button
@@ -99,7 +77,7 @@ const AdminMechListing: React.FC = () => {
       <div className="flex justify-center items-center mx-10 pt-7 h-screen">
         <TableCommon
           columns={columns}
-          data={filteredMechs}
+          data={mechs}
           updateStatus={updateMechStatus}
           blockUnblockFunciton={blockMech}
           deleteFunction={deleteMech}

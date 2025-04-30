@@ -17,58 +17,23 @@ const adminLogin = async (email: string, password: string) => {
   }
 };
 
-const updateApprove = async (id:string | undefined,verificationStatus:boolean | undefined) => {
-  console.log("entered in the updateApprove");
-  try{
-    console.log("kkkkkk",id, verificationStatus);
-    const result = await Api.put(adminRoutes.updateApprove,{},{
-      params:{id,verificationStatus}
-    })
-    return result;
-  }catch(error){
-    errorHandler(error as Error);
-  }
-}
-
-const getImageUrl = async (imageKey: string, type: string) => {
+const getAllUsers = async () => {
   try {
-    const result = await Api.get(adminRoutes.getImageUrl, {
-      params: { imageKey, type },
-    });
-    return result;
-  } catch (error) {
-    console.log(error as Error);
-    errorHandler(error as Error);
-  }
-};
-
-const getAllUsers = async (search:string) => {
-  try {
-    const result = await Api.get(adminRoutes.getAllUsers,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllUsers);
     return result;
   } catch (error) {
     errorHandler(error as Error);
   }
 };
 
-const getAllMechanics = async (search : string) => {
+const getAllMechanics = async () => {
   try {
-    const result = await Api.get(adminRoutes.getAllMechanic,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllMechanic);
     return result;
   } catch (error) {
     errorHandler(error as Error);
   }
 };
-
-const getMechanicById = async (id:string) => {
-  try{
-    const result = await Api.get(`${adminRoutes.getMechanicById}/${id}`);
-    console.log("mechanic details from teh admin.ts",result);
-    return result;
-  }catch(error){
-    errorHandler(error as Error);
-  }
-}
 
 const blockUser = async (id: string): Promise<BlockingResponse> => {
   try {
@@ -215,7 +180,7 @@ const adminLogout = async () => {
   }
 };
 
-const getS3SingUrl = async (fileName: string, fileType: string,folderName:string) => {
+const getS3SingUrl = async (fileName: string, fileType: string) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the admin.ts file",
@@ -224,7 +189,7 @@ const getS3SingUrl = async (fileName: string, fileType: string,folderName:string
     );
 
     const result = await Api.get(adminRoutes.getPresignedUrl, {
-      params: { fileName, fileType,folderName },
+      params: { fileName, fileType },
     });
     return result;
   } catch (error) {
@@ -261,10 +226,10 @@ const addDevice = async (name: string) => {
   }
 };
 
-const getAllServices = async (search:string) => {
+const getAllServices = async () => {
   try {
     console.log("entered in the admin.ts");
-    const result = await Api.get(adminRoutes.getAllServices,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllServices);
     if (result) {
       return result;
     }
@@ -274,10 +239,10 @@ const getAllServices = async (search:string) => {
   }
 };
 
-const getAllDevices = async (search:string) => {
+const getAllDevices = async () => {
   try {
     console.log("entered in the admin.ts for accessing the all devices ");
-    const result = await Api.get(adminRoutes.getAllDevices,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllDevices);
     if (result) {
       return result;
     }
@@ -306,7 +271,6 @@ const editExistService = async (
 ) => {
   try {
     const result = await Api.put(adminRoutes.editExistService, { _id, values });
-    console.log("result form front end",result);
     return result;
   } catch (error) {
     console.log(error as Error);
@@ -333,7 +297,4 @@ export {
   deleteUser,
   blockMech,
   deleteMech,
-  getMechanicById,
-  getImageUrl,
-  updateApprove
 };

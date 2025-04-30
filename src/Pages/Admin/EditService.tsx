@@ -1,394 +1,138 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import AdminHeader from "../../components/Admin/AdminHeader";
 import { ServiceListingValidation } from "../../components/Common/Validations";
 import { useNavigate, useParams } from "react-router-dom";
-import { getService, editExistService, getS3SingUrl } from "../../Api/admin";
-import LargeModal from "../../components/Common/LargeModal";
-import toast from "react-hot-toast";
-import { InewService } from "../../interfaces/IPages/Admin/IAdminInterfaces";
-// import PageLeaveModal from "../../components/Common/PageLeaveModal";
+import { getService } from "../../Api/admin";
+import { editExistService } from "../../Api/admin";
 
+export interface InewService {
+  _id:string;
+  name: string;
+  discription: string; 
+}
 
+const NewService: React.FC = () => {
 
-const EditService: React.FC = () => {
-  const { id } = useParams();
+  const {id} = useParams()
+  console.log("Id of the service from the service listing page is ",id);
+  const [serviceDetails,setServiceDetails] = useState<InewService>()
   const navigate = useNavigate();
 
-  const [serviceDetails, setServiceDetails] = useState<InewService | null>(
-    null
-  );
-  const [isFormDirty, setIsFormDirty] = useState(false);
-  const [image, setImage] = useState<string>("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [modalImage, setModalImage] = useState<string | undefined>(undefined);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string>("");
-  const [fileType, setFileType] = useState<string>("");
-  // const [showConfirmation, setShowConfirmation] = useState(false);
 
-
-
-  useEffect(() => {
+   useEffect(() => {
     const fetchServiceDetails = async () => {
-      try {
+      try{
         const response = await getService(id);
-        console.log("Service details fetched:", response?.data);
-        setServiceDetails(response?.data);
-        setImage(response?.data.imageKey || "");
-      } catch (error) {
-        console.error("Error fetching service details:", error);
+        console.log("service details from the frontend is ",response?.data);
+        setServiceDetails(response?.data)
+      }catch(error){
+        console.log(error as Error)
       }
-    };
+    }
 
     fetchServiceDetails();
-  }, [id]);
+   },[id])
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (isFormDirty){
-        event.preventDefault();
-        event.returnValue = ""; // Required for some browsers to show the confirmation dialog
-      }
-    };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [isFormDirty]);
-
-  const handleSubmit = async (values: InewService) => {
-    console.log("Submitting edited service:", values);
-
-    if (imageFile) {
-      const response = await getS3SingUrl(fileName, fileType);
-      if (response?.data.uploadURL) {
-        const uploadResponse = await fetch(response.data.uploadURL, {
-          method: "PUT",
-          headers: {
-            "Content-Type": fileType,
-          },
-          body: imageFile,
-        });
-
-        console.log("Image upload response:", uploadResponse);
-        values.imageKey = response.data.key;
-      }
-    }
-
-    const result = await editExistService(id, values);
-    console.log("REsult form the fornt efhsdjlfndsfjsdhfsdfsf",result)
-    if (result?.data.success == true) {
-      console.log("Service updated successfully.");
-      setIsFormDirty(false);
-      navigate("/admin/services");
-    }else{
-      toast.error(result?.data.message);
-    }
-  };
-
-  const onImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: any) => void
-  ) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const fileLink = URL.createObjectURL(file);
-      setFieldValue("imageKey", file.name);
-      setImageFile(file);
-      setImage(fileLink);
-      setFileName(file.name);
-      setFileType(file.type);
-    }
-  };
-
-  const handleCropComplete = (croppedImage: string) => {
-    setImage(croppedImage);
-  };
-
-  const handleClickedImage = (image: string): void => {
-    setModalImage(image);
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalImage(undefined);
-  };
-
-  // const handleConfirmLeave = () => {
-  //   setIsFormDirty(false);
-  //   setShowConfirmation(false);
-  //   navigate(-1); // Going  back to the previous page
-  // };
-
-  // const handleCancelLeave = () => {
-  //   setShowConfirmation(false);
-  // };
 
   return (
     <div>
       <AdminHeader heading="Edit Existing Service" />
       <div className="flex justify-center items-center py-10 h-screen">
-        {serviceDetails && (
-          <Formik
-            initialValues={{
-              name: serviceDetails.name || "",
-              discription: serviceDetails.discription || [],
-              serviceCharge: serviceDetails.serviceCharge || 0,
-              imageKey: serviceDetails.imageKey || "",
-            }}
-            validationSchema={ServiceListingValidation}
-            enableReinitialize={true}
-            onSubmit={handleSubmit}
-          >
-            {({
-              handleSubmit,
-              handleChange,
-              handleBlur,
-              values,
-              errors,
-              touched,
-              setFieldValue,
-            }) => {
-              const [newDescription, setNewDescription] = useState<string>("");
+        {
+        <Formik
+          initialValues={{
+            name:serviceDetails?.name || "",
+            discription:serviceDetails?.discription || "",
+          }}
+          validationSchema={ServiceListingValidation}
+          enableReinitialize={true}
+          onSubmit={async (values) => {
+            console.log("submited addressdetails" , values);
+            let _id:string | undefined;
+            if(serviceDetails){
+              _id= serviceDetails?._id
+            }
+            const result = await editExistService(_id,values);
+            if(result) {
+              console.log("result reached the frontend");
+              navigate("/admin/services");
 
-              const addDescription = () => {
-                if (newDescription.trim()) {
-                  setFieldValue("discription", [
-                    ...values.discription,
-                    newDescription.trim(),
-                  ]);
-                  setNewDescription("");
-                }
-              };
-
-              const removeDescription = (index: number) => {
-                const updatedDescriptions = values.discription.filter(
-                  (_, i) => i !== index
-                );
-                setFieldValue("discription", updatedDescriptions);
-              };
-
-              return (
-                <form
-                  className="bg-white shadow-md rounded-lg p-8 w-full max-w-4xl mt-72"
-                  onSubmit={(e) => {
-                    setIsFormDirty(false);
-                    handleSubmit(e);
-                  }}
-                  onChange={() => setIsFormDirty(true)}
+            }
+          }}
+        >
+          {(formik) => (
+            <form
+              className="bg-white shadow-md rounded-lg p-8 w-full max-w-lg"
+              onSubmit={formik.handleSubmit}
+            >
+              <h2 className="text-2xl font-bold text-center mb-6">Edit  Service</h2>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="name"
                 >
-                  <h2 className="text-2xl font-bold text-center mb-6">
-                    Edit Service
-                  </h2>
+                  Service Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  name="name"
+                  value={formik.values.name}
+                  onChange={ formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Enter  the service name"
 
-                  {/* Service Name */}
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="name"
-                    >
-                      Service Name
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      value={values.name}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setIsFormDirty(true);
-                      }}
-                      onBlur={handleBlur}
-                      placeholder="Enter service name"
-                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${
-                        errors.name && touched.name
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {errors.name && touched.name && (
-                      <small className="text-red-500">{errors.name}</small>
-                    )}
-                  </div>
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${
+                    formik.errors.name && formik.touched.name ? "border-red-500" : "border-gray-300"
+                  }`}
+                />
+                {formik.errors.name && formik.touched.name && (
+                  <small className="text-red-500">{formik.errors.name}</small>
+                )}
+              </div>
 
-                  {/* Service Charge */}
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="serviceCharge"
-                    >
-                      Service Charge
-                    </label>
-                    <input
-                      id="serviceCharge"
-                      type="number"
-                      value={values.serviceCharge}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setIsFormDirty(true);
-                      }}
-                      onBlur={handleBlur}
-                      placeholder="Enter service charge"
-                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${
-                        errors.serviceCharge && touched.serviceCharge
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {errors.serviceCharge && touched.serviceCharge && (
-                      <small className="text-red-500">
-                        {errors.serviceCharge}
-                      </small>
-                    )}
-                  </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="discription"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="discription"
+                  name="discription"
+                  value={formik.values.discription}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Enter a brief description of the service"
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500 ${
+                    formik.errors.discription && formik.touched.discription ? "border-red-500" : "border-gray-300"
+                  }`}
+                  rows={4}
+                ></textarea>
+                {formik.errors.discription && formik.touched.discription && (
+                  <small className="text-red-500">{formik.errors.discription}</small>
+                )}
+              </div>
 
-                  {/* Description */}
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="discription"
-                    >
-                      Description
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={newDescription}
-                        onChange={(e) => setNewDescription(e.target.value)}
-                        placeholder="Enter a description point"
-                        className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={addDescription}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                      >
-                        Add
-                      </button>
-                    </div>
-                    {errors.discription && touched.discription && (
-                      <small className="text-red-500">
-                        {errors.discription}
-                      </small>
-                    )}
-                    <ul className="mt-2">
-                      {values.discription.map((desc, index) => (
-                        <li
-                          key={index}
-                          className="flex items-center justify-between bg-gray-100 p-2 rounded-md mb-2"
-                        >
-                          <span>{desc}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeDescription(index)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            Remove
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Upload Image */}
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="dropzone-file"
-                  >
-                    Upload Image
-                  </label>
-                  <div className="flex items-center justify-center w-full">
-                    <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg
-                          className="w-8 h-8 mb-4 text-gray-500"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 16"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                          />
-                        </svg>
-                        <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">Click to upload</span>{" "}
-                          or drag and drop
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p>
-                      </div>
-                      <input
-                        id="dropzone-file"
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => onImageChange(e, setFieldValue)}
-                      />
-                    </label>
-                  </div>
-                  {errors.imageKey && touched.imageKey && (
-                    <small className="text-red-500">{errors.imageKey}</small>
-                  )}
-                  {image && (
-                    <div
-                      className="w-48 h-48 p-5 cursor-pointer"
-                      onClick={() => handleClickedImage(image)}
-                    >
-                      <img
-                        src={image}
-                        alt="Selected"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex justify-center">
-                    <button
-                      type="submit"
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow focus:outline-none focus:ring focus:ring-blue-300"
-                    >
-                      Save Changes
-                    </button>
-                  </div>
-                </form>
-              );
-            }}
-          </Formik>
-        )}
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow focus:outline-none focus:ring focus:ring-blue-300"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          )}
+      
+        </Formik>
+}
       </div>
-
-      {/* Modal for displaying the image */}
-      {isModalOpen && modalImage && (
-        <div>
-          <LargeModal
-            image={modalImage}
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            onCropedImageBack={handleCropComplete}
-          />
-        </div>
-      )}
-
-      {/* Page Leave Modal
-      {showConfirmation && (
-        <PageLeaveModal
-          message="You have unsaved changes. Are you sure you want to leave?"
-          onConfirm={handleConfirmLeave}
-          onCancel={handleCancelLeave}
-        />
-      )}
-        */}
     </div>
   );
 };
 
-export default EditService;
+export default NewService;

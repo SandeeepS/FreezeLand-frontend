@@ -1,21 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import { getImageUrl, getProfile, logout } from "../../Api/user";
+import { logout } from "../../Api/user";
 import { userLogout } from "../../App/slices/AuthSlice";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
 import { MdContactless } from "react-icons/md";
 import { MdEventNote } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
-import { useAppSelector } from "../../App/store";
-import { UserDetailsInProfile } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
 const Header: React.FC = () => {
-  const userData = useAppSelector((state) => state.auth.userData);
-  const [userProfileDetails,setUserProfileDetails] = useState<UserDetailsInProfile>();
-
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(false);
@@ -44,40 +39,6 @@ const Header: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try{
-        const userId = userData.toString();
-        const result = await getProfile(userId)
-        setUserProfileDetails(result?.data.data.data);
-      }catch(error){
-        console.log("error occured while accessing the userDeatils in the Header.tsx");
-        throw error as Error;
-      }
-    }
-    fetchData();
-  },[])
-
-     const [image, setImage] = React.useState<string>("");
-  
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            if (userProfileDetails?.profile_picture) {
-              const result = await getImageUrl(
-                userProfileDetails.profile_picture,
-                "service"
-              );
-              if (result) {
-                setImage(result.data.url);
-              }
-            }
-          } catch (error) {
-            console.log(error as Error);
-          }
-        };
-        fetchData();
-      }, [userProfileDetails]);
   const handleNav = () => {
     setNav(!nav);
   };
@@ -89,6 +50,7 @@ const Header: React.FC = () => {
   return (
     <>
       <div className="text-white font-bold h-[90px] flex justify-between w-full bg-freeze-color">
+        
         <h1 className="w-full text-3xl text-black font-exo p-6">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>
@@ -96,28 +58,18 @@ const Header: React.FC = () => {
         <ul className="p-4 hidden md:flex">
           <li
             className="p-4 cursor-pointer"
-            onClick={() => {
-              navigate("/user/homepage"); 
-              window.scrollTo({ top: 0, behavior: "smooth" }); 
-            }}            
-            
+            onClick={() => navigate("/user/homepage")}
           >
             HOME
           </li>
 
-          <li className="p-4 cursor-pointer">
-            <a href="#serviceList" className="p-4 cursor-pointer uppercase  ">
-              Services
-            </a>
-          </li>
-
-          
+          <li className="p-4 cursor-pointer">SERVICES</li>
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/user/queue")}
           >
             QUEUE
-          </li> 
+          </li>
 
           <li className="p-2 cursor-pointer">
             <button
@@ -125,7 +77,7 @@ const Header: React.FC = () => {
               onClick={toggleCard}
             >
               <img
-                src= { image ||"https://cdn-icons-png.flaticon.com/128/64/64572.png"}
+                src="https://cdn-icons-png.flaticon.com/128/64/64572.png"
                 alt="Profile Avatar"
                 className="h-10 w-10 rounded-full object-cover"
               />
@@ -139,9 +91,10 @@ const Header: React.FC = () => {
                 logout={logout}
                 authLogout={userLogout}
                 navigateTo={navigateTo}
-                coverImage={image ||  "https://example.com/user-cover.jpg"}
-                profileImage= {image || "https://example.com/user-profile.jpg"}
-                userName={userProfileDetails?.name || "Name"}
+                coverImage="https://example.com/user-cover.jpg"
+                profileImage="https://example.com/user-profile.jpg"
+                userName="Sarah Smith"
+                userRole="Freelance Web Designer"
                 navigationItems={userNavigationItems}
               />
             </div>

@@ -1,9 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+// import DataListing from "../../components/Admin/DataListing";
 import TableCommon from "../../components/Common/TableCommon";
-import { getAllUsers, blockUser, deleteUser } from "../../Api/admin";
+import { getAllUsers } from "../../Api/admin";
+import { useState } from "react";
+import { useEffect } from "react";
+import { blockUser } from "../../Api/admin";
+import { deleteUser } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
-import { UserData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
-import { useLocation, useSearchParams } from "react-router-dom";
+
+
+
+interface UserData {
+  _id: string;
+  name: string;
+  email: string;
+  isBlocked: boolean;
+  isDeleted: boolean;
+}
 
 const AdminUserListing: React.FC = () => {
   const columns = [
@@ -18,34 +31,22 @@ const AdminUserListing: React.FC = () => {
     },
     { id: "actions", label: "Actions", minWidth: 150, align: "right" },
   ];
-  const location = useLocation();
-  const pathName = location.pathname;
-  console.log("pathname is", pathName);
-  const [searchParams] = useSearchParams();
-  const search = searchParams.get("search") || "";
 
-  const [data, setUsers] = useState<UserData[]>([]); // Initialize as an empty array
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true); // Add loading state
-  const [error, setError] = useState<string | null>(null); // Add error state
+  const [data, setUsers] = useState<UserData[]>([]);
+  const heading = "Users";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // Set loading to true before fetching
-        setError(null); // Reset error state
-        const res = await getAllUsers(search);
-        console.log("User details fetched:", res);
-        setUsers(res?.data?.data?.users || []); // Ensure fallback to an empty array
+        const res = await getAllUsers();
+        console.log("user details in the first useEffect");
+        setUsers(res?.data?.data?.users); // Adjust according to your API response structure
       } catch (error) {
-        console.error("Error fetching user details:", error);
-        setError("Failed to fetch user data. Please try again later.");
-      } finally {
-        setLoading(false); // Set loading to false after fetching
+        console.log(error as Error);
       }
     };
     fetchData();
-  }, [search]);
+  }, []);
 
   const updateUserStatus = (
     id: string,
@@ -54,53 +55,22 @@ const AdminUserListing: React.FC = () => {
   ) => {
     setUsers((prevUsers) =>
       isDeleted
-        ? prevUsers.filter((user) => user._id !== id)
+        ? prevUsers.filter((user) => user._id !== id) // Remove deleted user
         : prevUsers.map((user) =>
             user._id === id ? { ...user, isBlocked } : user
           )
     );
   };
 
-  const filteredUsers = data?.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-screen">
       <div className="mb-5">
-<<<<<<< HEAD
       <TopBar heading={heading} />
-=======
-        <TopBar
-          pathName={pathName}
-          heading="Mechanics"
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
->>>>>>> week-3.1
       </div>
       <div className="flex-grow mx-4">
         <TableCommon
           columns={columns}
-          data={filteredUsers || []} // Ensure fallback to an empty array
+          data={data}
           updateStatus={updateUserStatus}
           blockUnblockFunciton={blockUser}
           deleteFunction={deleteUser}

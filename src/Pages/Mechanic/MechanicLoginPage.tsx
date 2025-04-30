@@ -7,9 +7,13 @@ import toast from "react-hot-toast";
 import { useAppSelector } from "../../App/store";
 import { setMechCredential } from "../../App/slices/AuthSlice";
 import { useDispatch } from "react-redux";
-import { initialValues2 } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
-const initialValues:initialValues2 = {
+interface initialVal {
+  email: string;
+  password: string;
+}
+
+const initialValues: initialVal = {
   email: "",
   password: "",
 };

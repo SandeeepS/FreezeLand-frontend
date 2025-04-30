@@ -2,12 +2,24 @@ import { useFormik } from "formik";
 import { SignupValidation } from "../../components/Common/Validations";
 import { useNavigate } from "react-router-dom";
 import { mechSignup } from "../../Api/mech";
-import {
-  FormData,
-  initialVal2,
-} from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
-const initialValues: initialVal2 = {
+export interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  cpassword: string;
+}
+
+interface initialVal {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  cpassword: string;
+}
+
+const initialValues: initialVal = {
   name: "",
   email: "",
   phone: "",
@@ -21,7 +33,8 @@ const MechanicSignupPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: SignupValidation,
     onSubmit: (values) => {
-      const formData: FormData = {
+
+      const formData : FormData= {
         name: values.name,
         email: values.email,
         phone: values.phone,
@@ -31,6 +44,7 @@ const MechanicSignupPage: React.FC = () => {
 
       const hanSub = async () => {
         try {
+          
           const result = await mechSignup(formData);
           if (result) {
             navigate("/mech/veryfy-otp");

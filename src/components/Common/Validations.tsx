@@ -87,12 +87,8 @@ export const AddressValidation = Yup.object({
 
 export const ServiceListingValidation = Yup.object({
   name: Yup.string().min(3).required("Service name is required"),
-  discription: Yup.array()
-    .of(Yup.string().min(3, "Each description must be at least 3 characters"))
-    .min(1, "At least one description is required"), 
-  serviceCharge: Yup.number()
-    .required("Service charge is required")
-    .min(1, "Service charge must be greater than zero"), 
+  discription: Yup.string().min(3).required("Description is required"),
+  image: Yup.string().required("Image is required"),
 });
 
 export const DeviceListingValidation = Yup.object({

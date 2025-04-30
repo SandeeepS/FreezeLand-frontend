@@ -7,8 +7,11 @@ import toast from "react-hot-toast";
 import { useAppSelector } from "../../App/store";
 import { useDispatch } from "react-redux";
 import { setAdminCredential } from "../../App/slices/AuthSlice";
-import { initialVal } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 
+interface initialVal{
+  email: string;
+  password: string;
+}
 
 const initialValues: initialVal = {
   email: "",

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { PreviewImageProps } from "../../interfaces/IComponents/User/IUserInterfaces";
+
+interface PreviewImageProps {
+  file: File | null; // Expecting a File or null as the prop
+}
 
 const PreviewImage: React.FC<PreviewImageProps> = ({ file }) => {
   const [preview, setPreview] = useState<string | null>(null);

@@ -64,13 +64,13 @@ const AdminMainHeader: React.FC = () => {
             HOME
           </li>
 
-          {/* <li className="p-4 cursor-pointer">SERVICES</li> */}
-          {/* <li
+          <li className="p-4 cursor-pointer">SERVICES</li>
+          <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/admin/queue")}
           >
             QUEUE
-          </li> */}
+          </li>
 
           <li className="p-2 cursor-pointer">
             <button

@@ -7,9 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getProfile } from "../../Api/user";
 import Footer from "./Footer";
-import { userDetails } from "../../interfaces/IComponents/User/IUserInterfaces";
 
-
+interface userDetails {
+  _id?: string;
+  name: string;
+  email: string;
+  phone: number;
+  address?: string;
+  location?: string;
+}
 
 const AllAddress: React.FC = () => {
   const [allAddress, setAllAddress] = useState<AddAddress[]>([]);
