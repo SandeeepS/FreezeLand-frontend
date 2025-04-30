@@ -7,7 +7,7 @@ export enum ComplaintStatus {
     BLOCKED = "blocked"
   }
   
-  // Helper functions for status management
+  // Helper functions for status management to set the next statess 
   export const getNextStatus = (currentStatus: ComplaintStatus): ComplaintStatus => {
     switch (currentStatus) {
       case ComplaintStatus.PENDING:
