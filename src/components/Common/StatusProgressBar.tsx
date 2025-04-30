@@ -35,7 +35,7 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
       textColor: "text-blue-700",
     },
     {
-      status: ComplaintStatus.IN_PROGRESS,
+      status: ComplaintStatus.ON_PROCESS,
       label: "In Progress",
       icon: <BuildIcon fontSize={compact ? "small" : "medium"} />,
       color: "bg-purple-500",
@@ -61,7 +61,7 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
     currentStatus === ComplaintStatus.BLOCKED;
 
   return (
-    <div className={`${className} py-2`}>
+    <div className={`${className} py-2 `}>
    
       {isSpecialStatus ? (
         <div className="flex items-center justify-center p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -159,7 +159,7 @@ const getEstimatedTime = (status: string): string => {
       return "Waiting for mechanic to accept";
     case ComplaintStatus.ACCEPTED:
       return "About 2-3 hours";
-    case ComplaintStatus.IN_PROGRESS:
+    case ComplaintStatus.ON_PROCESS:
       return "About 1 hour remaining";
     case ComplaintStatus.COMPLETED:
       return "Service completed";

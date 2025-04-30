@@ -4,7 +4,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import ServiceDetailsComponent from "./ServiceDetailsComponent";
 import CustomerDetailsComponent from "./CustomerDetailsComponent";
-import StatusInfoComponent from "./StatusInfoComponent";
 
 import { getComplaintDetails } from "../../../Api/mech";
 import LocationDetail from "./LocationDetail";
@@ -119,27 +118,23 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
     );
   }
-
-  // Check if complaint is accepted or in progress
+  
   const isAccepted = complaint.status !== ComplaintStatus.PENDING;
 
   return (
     <div className="px-4 py-6 bg-gray-50 min-h-screen mt-32">
-      {/* Header section with status progress bar */}
+      {/* Header section with status progress bar  and accept / update button*/}
       <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
-        {/* Header with back button and status controls */}
-        <div className="flex items-center p-4 border-b border-gray-100">
-          <button
-            onClick={handleBack}
-            className="mr-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-3 rounded-full flex items-center"
-          >
-            <ArrowBackIcon fontSize="small" />
-          </button>
 
-          <h1 className="text-2xl font-bold flex-grow">
-            Service Request Details
-          </h1>
+        {/* Status Progress Bar */}
+        <div className="px-6 py-4 bg-gray-50">
+          <StatusProgressBar
+            currentStatus={complaint.status}
+            className="max-w-3xl mx-auto "
+          />
+        </div>
 
+        <div className="flex items-center p-4 border-b border-gray-100 justify-end">
           {/* Show UpdateBtn if currentMechanicId exists, otherwise show AcceptBtn */}
           {complaint.currentMechanicId ? (
             <UpdateStatusBtn
@@ -153,14 +148,6 @@ const ComplaintDetailsPage: React.FC = () => {
               onStatusChange={handleStatusChange}
             />
           )}
-        </div>
-
-        {/* Enhanced Status Progress Bar */}
-        <div className="px-6 py-4 bg-gray-50">
-          <StatusProgressBar
-            currentStatus={complaint.status}
-            className="max-w-3xl mx-auto"
-          />
         </div>
       </div>
 
@@ -178,8 +165,6 @@ const ComplaintDetailsPage: React.FC = () => {
 
         {/* Right column - Customer and status info */}
         <div className={`lg:col-span-${isAccepted ? 1 : 3}`}>
-      
-
           {/* Customer info card */}
           <CustomerDetailsComponent
             complaint={complaint}
