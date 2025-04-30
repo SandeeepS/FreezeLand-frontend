@@ -13,12 +13,10 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { newPasswordValidation } from "../../components/Common/Validations";
+import { initialVal } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
 
-interface initialVal {
-  password: string;
-  cpassword: string;
-}
+
 
 const initialValues: initialVal = {
   password: "",

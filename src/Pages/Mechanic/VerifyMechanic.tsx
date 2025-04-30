@@ -9,22 +9,9 @@ import {
   verifyMechanic,
 } from "../../Api/mech";
 import toast from "react-hot-toast";
+import { Device, MechanicForm } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
-interface Device {
-  _id: string;
-  name: string;
-  isBlocked?: boolean;
-  isDeleted?: boolean;
-}
 
-export interface MechanicForm {
-  name: string;
-  id: string;
-  mechanicType: string[];
-  photo: File | null;
-  adharProof: File | string;
-  employeeLicense: File | null;
-}
 
 const VerifyMechanic: React.FC = () => {
   const mechanic = useSelector((state: RootState) => state.auth.mechData);

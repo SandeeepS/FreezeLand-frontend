@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import AntarticaImage from "../../Images/Antartica.jpg";
+import { userDetails } from '../../interfaces/IComponents/User/IUserInterfaces';
 
 
-interface UserDetails {
-  name: string;
-  email: string;
-  phone: number;
-  address?: string;
-  location?: string;
-}
+
 
 const ProfileDetails: React.FC = () => {
   // Mock data - in real app this would come from props or context
-  const [userDetails] = useState<UserDetails>({
+  const [userDetails] = useState<userDetails>({
     name: "John Doe",
     email: "john@example.com",
     phone: 1234567890,

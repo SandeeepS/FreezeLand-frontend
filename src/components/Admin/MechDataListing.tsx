@@ -3,13 +3,8 @@ import { blockUser, getAllMechanics } from "../../Api/admin";
 import Swal from "sweetalert2";
 // import { Button, Pagination, Tooltip } from "@nextui-org/react";
 import toast from "react-hot-toast";
+import { MechData } from "../../interfaces/IComponents/Admin/IAdminInterfaces";
 
-interface MechData {
-  _id: string;
-  name: string;
-  email: string;
-  isBlocked: boolean;
-}
 
 const MechDataListing: React.FC = () => {
   const [mechanics, setMechanics] = useState<MechData[]>([]);

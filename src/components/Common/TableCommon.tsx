@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,10 +9,14 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import IconButton from "@mui/material/IconButton";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+<<<<<<< HEAD
 interface Column {
   id: string;
   label: string;
@@ -48,6 +52,12 @@ interface TableCommonProps {
   deleteFunction: (id: string) => Promise<DeletingResponse>;
   navLink: string;
 }
+=======
+import SortIcon from "@mui/icons-material/Sort";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { TableCommonProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+
+>>>>>>> week-3.1
 
 const TableCommon: React.FC<TableCommonProps> = ({
   columns,
@@ -59,17 +69,28 @@ const TableCommon: React.FC<TableCommonProps> = ({
 }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [filter, setFilter] = useState<"all" | "blocked" | "unblocked">("all");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
 
-  console.log("first getting props data is ", data);
+  // Filter Data
+  const filteredData = data.filter((user) => {
+    if (filter === "blocked") return user.isBlocked;
+    if (filter === "unblocked") return !user.isBlocked;
+    return true;
+  });
 
-  useEffect(() => {
-    console.log("Fetched data: ", data);
-  }, [data]);
+  // Sort Data
+  const sortedData = [...filteredData].sort((a, b) => {
+    if (sortOrder === "asc") return a.name.localeCompare(b.name);
+    return b.name.localeCompare(a.name);
+  });
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
-    console.log(event);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,11 +98,17 @@ const TableCommon: React.FC<TableCommonProps> = ({
     setPage(0);
   };
 
+<<<<<<< HEAD
   const handleBlockUnblock = async (id: string, isCurrentlyBlocked: boolean) => {
+=======
+  const handleBlockUnblock = async (
+    id: string,
+    isCurrentlyBlocked: boolean
+  ) => {
+>>>>>>> week-3.1
     try {
       Swal.fire({
         title: "Are you sure?",
-        text: "",
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -92,11 +119,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
           blockUnblockFunciton(id).then((result) => {
             if (result?.success) {
               updateStatus(id, !isCurrentlyBlocked, false);
-              Swal.fire({
-                title: "Success!",
-                text: "",
-                icon: "success",
-              });
+              Swal.fire({ title: "Success!", icon: "success" });
             } else {
               toast.error(result?.message);
             }
@@ -109,8 +132,11 @@ const TableCommon: React.FC<TableCommonProps> = ({
   };
 
   const handleEdit = (_id: string | undefined) => {
+<<<<<<< HEAD
     console.log(`Edit action for: ${_id}`);
     console.log("navigation is ", navLink);
+=======
+>>>>>>> week-3.1
     navigate(`${navLink}${_id}`);
   };
 
@@ -118,7 +144,6 @@ const TableCommon: React.FC<TableCommonProps> = ({
     try {
       Swal.fire({
         title: "Are you sure?",
-        text: "",
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -129,11 +154,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
           deleteFunction(id).then((result) => {
             if (result?.success) {
               updateStatus(id, isCurrentlyDeleted, true);
-              Swal.fire({
-                title: "success!",
-                text: "",
-                icon: "success",
-              });
+              Swal.fire({ title: "Deleted!", icon: "success" });
             } else toast.error(result?.message);
           });
         }
@@ -144,9 +165,72 @@ const TableCommon: React.FC<TableCommonProps> = ({
   };
 
   return (
+<<<<<<< HEAD
     <Paper sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
       <TableContainer sx={{ flexGrow: 1 }}>
         <Table stickyHeader aria-label="sticky table" sx={{ height: "100%" }}>
+=======
+    <Paper
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Filter & Sort Options */}
+      <div className="flex justify-end p-4 space-x-4">
+        {/* Filter Icon Button with Dropdown */}
+        <div>
+          <IconButton onClick={(e) => setFilterAnchorEl(e.currentTarget)}>
+            <FilterListIcon />
+          </IconButton>
+          <Menu
+            anchorEl={filterAnchorEl}
+            open={Boolean(filterAnchorEl)}
+            onClose={() => setFilterAnchorEl(null)}
+          >
+            <MenuItem
+              selected={filter === "all"}
+              onClick={() => {
+                setFilter("all");
+                setFilterAnchorEl(null);
+              }}
+            >
+              All Users
+            </MenuItem>
+            <MenuItem
+              selected={filter === "blocked"}
+              onClick={() => {
+                setFilter("blocked");
+                setFilterAnchorEl(null);
+              }}
+            >
+              Blocked Users
+            </MenuItem>
+            <MenuItem
+              selected={filter === "unblocked"}
+              onClick={() => {
+                setFilter("unblocked");
+                setFilterAnchorEl(null);
+              }}
+            >
+              Unblocked Users
+            </MenuItem>
+          </Menu>
+        </div>
+
+        {/* Sort Icon Button */}
+        <IconButton
+          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+        >
+          <SortIcon />
+        </IconButton>
+      </div>
+
+      <TableContainer sx={{ flexGrow: 1 }}>
+        <Table stickyHeader aria-label="sticky table">
+>>>>>>> week-3.1
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -157,6 +241,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
+<<<<<<< HEAD
             {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((datas) => (
               <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
                 <TableCell>{datas.name}</TableCell>
@@ -203,13 +288,65 @@ const TableCommon: React.FC<TableCommonProps> = ({
                 </TableCell>
               </TableRow>
             ))}
+=======
+            {sortedData
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((datas) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
+                  <TableCell>{datas.name}</TableCell>
+                  {datas.email && <TableCell>{datas.email}</TableCell>}
+                  <TableCell align="right">
+                    {datas.isBlocked ? "Blocked" : "Active"}
+                  </TableCell>
+                  <TableCell align="right">
+                    <ToggleButton
+                      value="check"
+                      selected={!datas.isBlocked}
+                      onChange={() =>
+                        handleBlockUnblock(datas._id, datas.isBlocked)
+                      }
+                      sx={{
+                        backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                        color: "white",
+                        width: "120px",
+                        "&.Mui-selected": {
+                          backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                        },
+                        "&:hover": {
+                          backgroundColor: datas.isBlocked
+                            ? "#ff4d4d"
+                            : "#81c784",
+                        },
+                      }}
+                    >
+                      {datas.isBlocked ? "Blocked" : "Unblocked"}
+                    </ToggleButton>
+                    <Button
+                      variant="outlined"
+                      sx={{ marginLeft: "10px" }}
+                      onClick={() => handleEdit(datas._id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDelete(datas._id, datas.isDeleted)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+>>>>>>> week-3.1
           </TableBody>
         </Table>
       </TableContainer>
+
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[4, 10, 25]}
         component="div"
-        count={data.length}
+        count={sortedData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -110,7 +110,11 @@ const getAllMechanics = async () => {
 };
 
 //signedUrl
-const getS3SingUrlForMechCredinential = async (fileName: string, fileType: string,name:string) => {
+const getS3SingUrlForMechCredinential = async (
+  fileName: string,
+  fileType: string,
+  name: string
+) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the mech.ts file",
@@ -119,7 +123,7 @@ const getS3SingUrlForMechCredinential = async (fileName: string, fileType: strin
     );
 
     const result = await Api.get(mechRoutes.getS3SingUrlForMechCredinential, {
-      params: { fileName, fileType,name },
+      params: { fileName, fileType, name },
     });
     return result;
   } catch (error) {
@@ -142,9 +146,114 @@ const getAllDevices = async () => {
 const verifyMechanic = async (values: MechanicForm) => {
   try {
     console.log("entered in the verigy Mechinc in mech.ts");
-    console.log("values in the frontend mech.ts is ",values);
+    console.log("values in the frontend mech.ts is ", values);
     const response = await Api.post(mechRoutes.VerifyMechanic, { values });
     return response;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+const getMechanicDetails = async (id: string) => {
+  try {
+    if (!id) {
+      console.warn("Mechanic ID is undefined or null");
+      return;
+    }
+    console.log("Fetching mechanic details for ID:", id);
+    const response = await Api.get(mechRoutes.getMechanicDetails, {
+      params: { id },
+    });
+    console.log("Response from backend:", response);
+    return response;
+  } catch (error) {
+    console.error("Error fetching mechanic details:", error);
+    errorHandler(error as Error);
+  }
+};
+
+//function to get all userRegistered compliants in the mechside
+const getAllUserRegisteredServices = async () => {
+  try {
+    const result = await Api.get(mechRoutes.getAllUserRegisteredServices);
+    console.log("details reached in the mech.ts tttt", result);
+    return result.data;
+  } catch (error) {
+    console.log(
+      "error occured while fetching the user registerd services form the mech.ts"
+    );
+    errorHandler(error as Error);
+  }
+};
+
+//function to get the specified complaint by id
+const getComplaintDetails = async (id: string) => {
+  try {
+    console.log("Entered in the getComplaintDetails in the mech.ts");
+    const result = await Api.get(mechRoutes.getComplaintDetails, {
+      params: { id },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+const getImageUrl = async (imageKey: string, type: string) => {
+  try {
+    const result = await Api.get(mechRoutes.getImageUrl, {
+      params: { imageKey, type },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+const updateWorkAssigned = async (
+  complaintId: string,
+  mechanicId: string,
+  status: string
+) => {
+  try {
+    console.log("ehtered in the updateWorkAssigned");
+    const result = await Api.put(mechRoutes.updateWorkAssigned, {
+      complaintId,
+      mechanicId,
+      status,
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+//function to get all accepted cmpliants by teh mechanic
+const getAllAcceptedServices = async (mechanicId: string) => {
+  try {
+    console.log("Entered in the getAllAcceptedService");
+    const result = await Api.get(mechRoutes.getAllAcceptedServices, {
+      params: { mechanicId },
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+};
+
+//function to update the complaint status by mechanic
+const updateComplaintStatus = async (complaintId:string, nextStatus: string) => {
+  try {
+    console.log("Entered in the updateComplaintStatus",complaintId,nextStatus);
+    const result = await Api.put(mechRoutes.updateComplaintStatus,{}, {
+      params: {complaintId, nextStatus },
+    });
+    return result;
   } catch (error) {
     console.log(error as Error);
     errorHandler(error as Error);
@@ -155,6 +264,7 @@ export {
   mechLogin,
   mLogout,
   mechSignup,
+  getImageUrl,
   verifyMechOtp,
   resendMechOtp,
   forgotPasswordMech,
@@ -163,5 +273,11 @@ export {
   getAllMechanics,
   getAllDevices,
   verifyMechanic,
-  getS3SingUrlForMechCredinential
+  getComplaintDetails,
+  getMechanicDetails,
+  getS3SingUrlForMechCredinential,
+  getAllUserRegisteredServices,
+  updateWorkAssigned,
+  getAllAcceptedServices,
+  updateComplaintStatus,
 };

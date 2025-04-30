@@ -10,7 +10,14 @@ const mechRoutes = {
   getAllMechanics:"/mech/getAllMechanics",
   getAllDevices:"/mech/getAllDevices",
   VerifyMechanic:"mech/verifyMechanic",
+  getMechanicDetails:"mech/getMechanicDetails",
   getS3SingUrlForMechCredinential:"mech/getS3SingUrlForMechCredinential",
+  getAllUserRegisteredServices:"mech/getAllUserRegisteredServices",
+  getComplaintDetails:"mech/getComplaintDetails",
+  getImageUrl:"mech/getImageUrl",
+  updateWorkAssigned:"mech/updateWorkAssigned",
+  getAllAcceptedServices:"mech/getAllAcceptedServices",
+  updateComplaintStatus:"mech/updateComplaintStatus",
   logout: "/mech/logout",
 };
 

@@ -1,0 +1,171 @@
+import React from "react";
+import { ComplaintStatus } from "../../Enums/StatusEnums";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import BuildIcon from "@mui/icons-material/Build";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
+import BlockIcon from "@mui/icons-material/Block";
+
+interface StatusProgressBarProps {
+  currentStatus: string;
+  className?: string;
+  compact?: boolean;
+}
+
+const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
+  currentStatus,
+  className = "",
+  compact = false,
+}) => {
+  // Define the status steps in order
+  const statusSteps = [
+    {
+      status: ComplaintStatus.PENDING,
+      label: "Pending",
+      icon: <AssignmentTurnedInIcon fontSize={compact ? "small" : "medium"} />,
+      color: "bg-yellow-500",
+      textColor: "text-yellow-700",
+    },
+    {
+      status: ComplaintStatus.ACCEPTED,
+      label: "Accepted",
+      icon: <CheckCircleIcon fontSize={compact ? "small" : "medium"} />,
+      color: "bg-blue-500",
+      textColor: "text-blue-700",
+    },
+    {
+      status: ComplaintStatus.IN_PROGRESS,
+      label: "In Progress",
+      icon: <BuildIcon fontSize={compact ? "small" : "medium"} />,
+      color: "bg-purple-500",
+      textColor: "text-purple-700",
+    },
+    {
+      status: ComplaintStatus.COMPLETED,
+      label: "Completed",
+      icon: <DoneAllIcon fontSize={compact ? "small" : "medium"} />,
+      color: "bg-green-500",
+      textColor: "text-green-700",
+    },
+  ];
+
+  // Determine current step index
+  const currentStepIndex = statusSteps.findIndex(
+    (step) => step.status === currentStatus
+  );
+
+  // Handle special statuses (canceled, blocked)
+  const isSpecialStatus =
+    currentStatus === ComplaintStatus.CANCELED ||
+    currentStatus === ComplaintStatus.BLOCKED;
+
+  return (
+    <div className={`${className} py-2`}>
+   
+      {isSpecialStatus ? (
+        <div className="flex items-center justify-center p-3 bg-red-50 border border-red-200 rounded-lg">
+          {currentStatus === ComplaintStatus.CANCELED ? (
+            <ReportProblemIcon className="text-red-500 mr-2" />
+          ) : (
+            <BlockIcon className="text-red-500 mr-2" />
+          )}
+          <span className="font-medium text-red-700">
+            {currentStatus === ComplaintStatus.CANCELED
+              ? "This service request has been canceled"
+              : "This service request has been blocked"}
+          </span>
+        </div>
+      ) : (
+        <div className="relative">
+          {/* Status labels at top */}
+          <div className="flex justify-between mb-1">
+            {statusSteps.map((step, index) => {
+              const isActive = index <= currentStepIndex;
+              return (
+                <div
+                  key={`label-${step.status}`}
+                  className={`text-xs font-medium ${
+                    isActive ? step.textColor : "text-gray-400"
+                  } ${compact ? "text-center w-16" : "w-24 text-center"}`}
+                  style={{
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  {step.label}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Progress bar container */}
+          <div className="relative flex items-center justify-between">
+            {/* Connecting lines */}
+            <div className="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-1 bg-gray-200 rounded-full z-0"></div>
+            
+            {/* Active progress line */}
+            <div
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-blue-500 rounded-full z-10 transition-all duration-500 ease-in-out"
+              style={{
+                width: currentStepIndex >= 0 ? 
+                  `calc(${(currentStepIndex) / (statusSteps.length - 1) * 100}% + ${currentStepIndex > 0 ? (compact ? "12px" : "16px") : "0px"})` : 
+                  "0%",
+              }}
+            ></div>
+
+            {/* Status circles */}
+            {statusSteps.map((step, index) => {
+              const isActive = index <= currentStepIndex;
+              const isCurrentStep = index === currentStepIndex;
+
+              return (
+                <div
+                  key={`step-${step.status}`}
+                  className="z-20 flex flex-col items-center relative"
+                >
+                  {/* Step circle */}
+                  <div
+                    className={`${compact ? "w-6 h-6" : "w-8 h-8"} rounded-full flex items-center justify-center 
+                    ${isActive ? step.color : "bg-gray-200"} 
+                    ${
+                      isCurrentStep ? 
+                        "ring-4 ring-opacity-50 ring-blue-200 shadow-lg scale-110" : 
+                        ""
+                    } transition-all duration-300 ease-in-out`}
+                  >
+                    <div className="text-white">{step.icon}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Time estimate - only shown in non-compact mode */}
+          {!compact && (
+            <div className="mt-4 text-xs text-gray-500 text-center">
+              Estimated completion: {getEstimatedTime(currentStatus)}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Helper function to get estimated time based on status
+const getEstimatedTime = (status: string): string => {
+  switch (status) {
+    case ComplaintStatus.PENDING:
+      return "Waiting for mechanic to accept";
+    case ComplaintStatus.ACCEPTED:
+      return "About 2-3 hours";
+    case ComplaintStatus.IN_PROGRESS:
+      return "About 1 hour remaining";
+    case ComplaintStatus.COMPLETED:
+      return "Service completed";
+    default:
+      return "Timeline unavailable";
+  }
+};
+
+export default StatusProgressBar;

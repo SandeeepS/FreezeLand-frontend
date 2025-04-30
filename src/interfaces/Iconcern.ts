@@ -1,7 +1,12 @@
 export interface Iconcern {
-  name: string;
-  imageKey: string;
+  _id?:string;
+  name:string
+  image: string[];
   defaultAddress:string;
   discription: string;
   locationName: object;
+  userId?:string;
+  serviceId?:string;
+ 
+
 }
