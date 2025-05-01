@@ -118,19 +118,23 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
     );
   }
-  
+
   const isAccepted = complaint.status !== ComplaintStatus.PENDING;
 
   return (
-    <div className="px-4 py-6 bg-gray-50 min-h-screen mt-32">
-      {/* Header section with status progress bar  and accept / update button*/}
-      <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
+    <div className="px-4 py-4 bg-gray-50 min-h-screen mt-32">
+      {/**Heading  */}
+      <div className="flex justify-center items-center mb-8 font-exo text-xl font-bold">
+      <h1>Registered Complaint Details </h1>
 
+      </div>
+      {/* Header section with status progress bar and accept / update button*/}
+      <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
         {/* Status Progress Bar */}
         <div className="px-6 py-4 bg-gray-50">
           <StatusProgressBar
             currentStatus={complaint.status}
-            className="max-w-3xl mx-auto "
+            className="max-w-3xl mx-auto"
           />
         </div>
 
@@ -151,20 +155,25 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column - Service info */}
-        {isAccepted && (
-          <ServiceDetailsComponent
-            complaint={complaint}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            formatDate={formatDate}
-          />
-        )}
+      {/* Main content with conditional layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left column - Google Map (Always shows on the left in the new layout) */}
+        <div className="lg:col-span-1">
+          <GoogleMapLocation location={complaint.locationName} />
+        </div>
 
-        {/* Right column - Customer and status info */}
-        <div className={`lg:col-span-${isAccepted ? 1 : 3}`}>
+        {/* Right column - Service info, Customer info, and Location details */}
+        <div className="lg:col-span-1 flex flex-col space-y-6">
+          {/* Service details component (only if accepted) */}
+          {isAccepted && (
+            <ServiceDetailsComponent
+              complaint={complaint}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              formatDate={formatDate}
+            />
+          )}
+
           {/* Customer info card */}
           <CustomerDetailsComponent
             complaint={complaint}
@@ -173,7 +182,6 @@ const ComplaintDetailsPage: React.FC = () => {
 
           {/* Location details */}
           <LocationDetail location={complaint.locationName} />
-          <GoogleMapLocation location={complaint.locationName} />
         </div>
       </div>
     </div>

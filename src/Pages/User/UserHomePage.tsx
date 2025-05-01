@@ -6,6 +6,7 @@ import ServiceList from "../../components/User/ServiceList";
 import Promo2 from "../../components/User/WhyChooseUs";
 import Footer from "../../components/User/Footer";
 import LocationModal from "../../components/Common/LocationModal";
+import InitialLoader from "./InitialLoader";
 
 const slides = [
   {
@@ -26,6 +27,13 @@ const slides = [
 
 const UserHomePage: React.FC = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Show the LocationModal after 2 seconds
@@ -47,37 +55,46 @@ const UserHomePage: React.FC = () => {
   };
 
   return (
-    <div className="home flex flex-col overflow-hidden">
-      <div className="fixed top-0 left-0 w-full z-10">
-        <Header />
-      </div>
-      <div className="flex-1 overflow-y-auto snap-y snap-mandatory " style={{scrollBehavior:'smooth'}}>
-        <div className="carosal-compment mt-[90px]">
-          <CarousalComponent slides={slides} />
-        </div>
-        <section id="promo1"  >
-          <Promo1 />
-        </section>
-        <section id="serviceList" >
-          <ServiceList />
-        </section>
-        <section id="promo2">
-          <Promo2 />
-        </section>
-        <div>
-          <Footer />
-        </div>
-      </div>
-
-      {/* Show the LocationModal */}
-      {showLocationModal && (
-        <div className="fixed inset-0  justify-center bg-black bg-opacity-50 z-50">
-          <div ref={modalRef}>
-            <LocationModal onClose={handleCloseModal} />
+    <>
+      {showSplash ? (
+        <InitialLoader />
+      ) : (
+        <div className="home flex flex-col overflow-hidden">
+          <div className="fixed top-0 left-0 w-full z-10">
+            <Header />
           </div>
+          <div
+            className="flex-1 overflow-y-auto snap-y snap-mandatory "
+            style={{ scrollBehavior: "smooth" }}
+          >
+            <div className="carosal-compment mt-[90px]">
+              <CarousalComponent slides={slides} />
+            </div>
+            <section id="promo1">
+              <Promo1 />
+            </section>
+            <section id="serviceList">
+              <ServiceList />
+            </section>
+            <section id="promo2">
+              <Promo2 />
+            </section>
+            <div>
+              <Footer />
+            </div>
+          </div>
+
+          {/* Show the LocationModal */}
+          {showLocationModal && (
+            <div className="fixed inset-0  justify-center bg-black bg-opacity-50 z-50">
+              <div ref={modalRef}>
+                <LocationModal onClose={handleCloseModal} />
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

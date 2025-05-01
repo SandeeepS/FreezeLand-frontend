@@ -52,7 +52,9 @@ const MechanicHomePage = lazy(() => import("./Pages/Mechanic/MechanicHomePage"))
 const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPage"));
 
 
+
 function App() {
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
