@@ -11,6 +11,7 @@ import { MechanicData } from "../../../interfaces/IComponents/Mechanic/IMechanic
 
 const AssignedWorks: React.FC = () => {
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
+  console.log("mechainc frm the store is ",mechanic);
   const mechanicId = mechanic?.data._id;
   console.log("mechanic id ", mechanicId);
   const [mechanicDetails, setMechanicDetails] = useState<MechanicData | null>(

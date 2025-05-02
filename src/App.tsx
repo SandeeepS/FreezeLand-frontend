@@ -32,6 +32,7 @@ import ComplaintDetail from "./components/User/Queue/ComplaintDetials/ComplaintD
 import AllWorksPage from "./Pages/Mechanic/Works/AllWorksPage";
 import ComplaintDetailsPage from "./Pages/Mechanic/Works/ComplaintDetailsPage";
 import MechQueue from "./Pages/Mechanic/Queue/MechQueue";
+import MechanicProfile from "./components/Mech/Profile/MechanicProfile";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -128,6 +129,7 @@ function App() {
               <Route path="/mech/allWorks" element={<AllWorksPage/>} />
               <Route path="/mech/complaintDetails/:id" element={<ComplaintDetailsPage/>}/>
               <Route path="/mech/queue" element={<MechQueue/>} />
+              <Route path="/mech/profile" element={<MechanicProfile/>}/>
             </Route>
           </Route>
 

@@ -6,7 +6,7 @@ import ServiceList from "../../components/User/ServiceList";
 import Promo2 from "../../components/User/WhyChooseUs";
 import Footer from "../../components/User/Footer";
 import LocationModal from "../../components/Common/LocationModal";
-import InitialLoader from "./InitialLoader";
+import InitialLoader from "../Common/InitialLoader";
 
 const slides = [
   {

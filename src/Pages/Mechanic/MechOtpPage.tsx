@@ -39,7 +39,7 @@ const MechOtpPage: React.FC = () => {
     if (result?.data.data.success) {
       console.log(`everything is fine your token is `);
       console.log(result.data.data.token);
-      dispatch(setMechCredential(result.data.data.token));
+      dispatch(setMechCredential(result.data.data._id));
       dispatch(saveMech(result.data.data.data));
       navigate("/mech/homepage");
     }

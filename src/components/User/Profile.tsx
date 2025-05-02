@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
-import InfoCard from "../Common/InfoCard";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../App/store";
 import { UserDetails } from "../../interfaces/IComponents/Common/ICommonInterfaces";
@@ -18,7 +16,7 @@ const Profile: React.FC = () => {
     location: "",
     address: "",
     profile_picture: "",
-    defaultAddressDetails: {
+    defaultAddressDetails:{
       district: "",
       state: "",
       pin: "",
@@ -78,9 +76,6 @@ const Profile: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="fixed top-0 z-10 w-full">
-        <Header />
-      </div>
 
       <div className="container mx-auto px-4 pt-24 pb-12">
         {/* Profile Header Section */}

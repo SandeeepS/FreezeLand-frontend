@@ -3,7 +3,16 @@ import Footer from "../../components/User/Footer";
 import MechHeader from "../../components/Mech/MechHeader";
 import MechPromo1 from "../../components/Mech/MechPromo1";
 import AssignedWorks from "../../components/Mech/AssignedWroks/AssignedWorks";
+import { useEffect, useState } from "react";
+import InitialLoader from "../Common/InitialLoader";
 const MechanicHomePage: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const slides = [
     {
       image: "/src/Images/technicianWork.jpg",
@@ -30,20 +39,28 @@ const MechanicHomePage: React.FC = () => {
 
   return (
     <>
-      <MechHeader />
-      <div className=" m-auto pt-5">
-        <CarousalComponent slides={slides} />
-      </div>
-      <>
-        <MechPromo1 />
-      </>
-      <>
-        <AssignedWorks />
-      </>
+      {showSplash ? (
+        <InitialLoader />
+      ) : (
+        <div className="home flex flex-col overflow-hidden">
+          <div className="fixed top-0 left-0 w-full z-10">
+            <MechHeader />
+          </div>
+          <div className="m-auto pt-5">
+            <CarousalComponent slides={slides} />
+          </div>
+          <>
+            <MechPromo1 />
+          </>
+          <>
+            <AssignedWorks />
+          </>
 
-      <div className="mt-5">
-        <Footer />
-      </div>
+          <div className="mt-5">
+            <Footer />
+          </div>
+        </div>
+      )}
     </>
   );
 };
