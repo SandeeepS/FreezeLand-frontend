@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 // import { IoIosSettings } from "react-icons/io";
 import { MdPowerSettingsNew } from "react-icons/md";
 import { HeaderDropDownProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { persistor } from "../../App/store";
 
 const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   isOpen,
@@ -39,6 +40,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
         if (result.isConfirmed) {
           logout().then(() => console.log(""));
           dispatch(authLogout());
+          persistor.purge();
           toast.success("You are logged out!");
           navigate(navigateTo);
         }

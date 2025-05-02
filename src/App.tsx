@@ -115,7 +115,7 @@ function App() {
           <Route path="" element={<MechLoggedOut />}>
             <Route path="/mech/login" element={<MechanicLoginPage />} />
             <Route path="/mech/signuppage" element={<MechanicSignupPage />} />
-            <Route path="/mech/veryfy-otp" element={<MechOtpPage />} />
+            <Route path="/mech/veryfy-otp/:id" element={<MechOtpPage />} />
             <Route
               path="/mech/forgot-password"
               element={<ForgetPasswordForMech/>}

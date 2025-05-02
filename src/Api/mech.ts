@@ -1,8 +1,7 @@
 import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
-import { FormData } from "../Pages/Mechanic/MechanicSignupPage";
 import errorHandler from "./errorHandler";
-import { MechanicForm } from "../Pages/Mechanic/VerifyMechanic";
+import { FormData, MechanicForm } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
 const mechSignup = async ({
   name,
@@ -38,10 +37,10 @@ const mechLogin = async (email: string, password: string) => {
   }
 };
 
-const verifyMechOtp = async (otpnum: string) => {
+const verifyMechOtp = async (id:string, otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
-    const result = await Api.post(mechRoutes.veryfyOtp, { otp });
+    const result = await Api.post(mechRoutes.veryfyOtp, {id, otp });
     return result;
   } catch (error) {
     console.log(error);
