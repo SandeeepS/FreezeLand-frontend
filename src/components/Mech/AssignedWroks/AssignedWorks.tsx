@@ -25,7 +25,7 @@ const AssignedWorks: React.FC = () => {
       }
       try {
         console.log("Fetching mechanic details for ID:", mechanicId);
-        const response = await getMechanicDetails(mechanicId);
+        const response = await getMechanicDetails(mechanicId.id);
         console.log("Mechanic details from backend:", response?.data.result);
         setMechanicDetails(response?.data.result); // Set the fetched mechanic details
       } catch (error) {
