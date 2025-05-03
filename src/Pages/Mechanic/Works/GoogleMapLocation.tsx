@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Map as GoogleMap,
   GoogleApiWrapper,
@@ -25,20 +25,38 @@ interface DistanceInfo {
   error: string | null;
 }
 
+interface NavigationStatus {
+  isActive: boolean;
+  currentStep: number;
+  totalSteps: number;
+  nextDirection: string;
+}
+
 const MapContainer: React.FC<MapContainerProps> = (props) => {
   const { google, location } = props;
-  const [currentPosition, setCurrentPosition] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-  const [distanceInfo, setDistanceInfo] = useState<DistanceInfo>({
-    distance: "",
-    duration: "",
-    loading: true,
-    error: null,
+  const [mapState, setMapState] = useState({
+    currentPosition: null as { lat: number; lng: number } | null,
+    distanceInfo: {
+      distance: "",
+      duration: "",
+      loading: true,
+      error: null,
+    } as DistanceInfo,
+    directions: null as any,
+    navigation: {
+      isActive: false,
+      currentStep: 0,
+      totalSteps: 0,
+      nextDirection: "",
+    } as NavigationStatus,
+    showInfoWindow: false,
+    activeMarker: null as any
   });
-  const [showInfoWindow, setShowInfoWindow] = useState(false);
-  const [activeMarker, setActiveMarker] = useState<any>(null);
+  
+  // Refs for map and directionsRenderer
+  const mapRef = useRef<any>(null);
+  const directionsRendererRef = useRef<any>(null);
+  const isInitialMount = useRef(true);
 
   const mapStyles = {
     width: "100%",
@@ -52,53 +70,61 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
     height: "300px",
   };
 
-  // Get current position
+  // Get current position - only run once on component mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setCurrentPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
+          setMapState(prev => ({
+            ...prev,
+            currentPosition: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            }
+          }));
         },
         (error) => {
           console.error("Error getting current position:", error);
-          setDistanceInfo((prev) => ({
+          setMapState(prev => ({
             ...prev,
-            loading: false,
-            error:
-              "Unable to get your current location. Please enable location services.",
+            distanceInfo: {
+              ...prev.distanceInfo,
+              loading: false,
+              error: "Unable to get your current location. Please enable location services."
+            }
           }));
         }
       );
     } else {
-      setDistanceInfo((prev) => ({
+      setMapState(prev => ({
         ...prev,
-        loading: false,
-        error: "Geolocation is not supported by this browser.",
+        distanceInfo: {
+          ...prev.distanceInfo,
+          loading: false,
+          error: "Geolocation is not supported by this browser."
+        }
       }));
     }
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once
 
-  // Calculate distance and duration when current position is available
+  // Calculate route only when currentPosition changes or when component mounts
   useEffect(() => {
     if (
-      !currentPosition ||
+      !mapState.currentPosition ||
       !google ||
       !location.latitude ||
       !location.longitude
     )
       return;
 
-    const calculateDistanceAndDuration = () => {
+    const calculateRoute = () => {
       const directionsService = new google.maps.DirectionsService();
 
       directionsService.route(
         {
           origin: new google.maps.LatLng(
-            currentPosition.lat,
-            currentPosition.lng
+            mapState.currentPosition.lat,
+            mapState.currentPosition.lng
           ),
           destination: new google.maps.LatLng(
             location.latitude,
@@ -108,88 +134,194 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK && result) {
+            // Batch all state updates together
             const route = result.routes[0];
-            if (route && route.legs.length > 0) {
-              const leg = route.legs[0];
-              setDistanceInfo({
-                distance: leg.distance.text,
-                duration: leg.duration.text,
+            const leg = route && route.legs.length > 0 ? route.legs[0] : null;
+            
+            setMapState(prev => ({
+              ...prev,
+              directions: result,
+              distanceInfo: {
+                distance: leg?.distance?.text || "",
+                duration: leg?.duration?.text || "",
                 loading: false,
                 error: null,
-              });
-            }
+              },
+              navigation: {
+                ...prev.navigation,
+                totalSteps: leg?.steps?.length || 0,
+                nextDirection: leg?.steps?.[0]?.instructions || ""
+              }
+            }));
           } else {
-            setDistanceInfo({
-              distance: "",
-              duration: "",
-              loading: false,
-              error: "Unable to calculate distance and duration.",
-            });
+            setMapState(prev => ({
+              ...prev,
+              distanceInfo: {
+                distance: "",
+                duration: "",
+                loading: false,
+                error: "Unable to calculate distance and duration."
+              }
+            }));
           }
         }
       );
     };
 
-    calculateDistanceAndDuration();
-  }, [currentPosition, google, location]);
+    calculateRoute();
+  }, [mapState.currentPosition, google, location]);
 
-  const handleMarkerClick = (props: any, marker: any) => {
-    setActiveMarker(marker);
-    setShowInfoWindow(true);
-  };
+  // Update directions renderer when directions change or map/renderer is initialized
+  useEffect(() => {
+    if (mapState.directions && directionsRendererRef.current) {
+      directionsRendererRef.current.setDirections(mapState.directions);
+    }
+  }, [mapState.directions, directionsRendererRef.current]);
 
-  const handleInfoWindowClose = () => {
-    setShowInfoWindow(false);
-    setActiveMarker(null);
-  };
+  // Set up directions renderer when the map is loaded - memoize to prevent unnecessary re-creation
+  const onMapLoaded = useCallback((mapProps, map) => {
+    mapRef.current = map;
+    
+    if (google && map) {
+      directionsRendererRef.current = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true // We'll handle markers ourselves
+      });
+    }
+
+    // Apply directions if they already exist
+    if (mapState.directions && directionsRendererRef.current) {
+      directionsRendererRef.current.setDirections(mapState.directions);
+    }
+  }, [google, mapState.directions]);
+
+  // Memoize handlers to prevent unnecessary re-creation
+  const handleMarkerClick = useCallback((props: any, marker: any) => {
+    setMapState(prev => ({
+      ...prev,
+      activeMarker: marker,
+      showInfoWindow: true
+    }));
+  }, []);
+
+  const handleInfoWindowClose = useCallback(() => {
+    setMapState(prev => ({
+      ...prev,
+      showInfoWindow: false,
+      activeMarker: null
+    }));
+  }, []);
+
+  // Navigation functions - memoized to prevent recreation on every render
+  const startNavigation = useCallback(() => {
+    if (!mapState.directions) return;
+    
+    setMapState(prev => ({
+      ...prev,
+      navigation: {
+        ...prev.navigation,
+        isActive: true,
+        currentStep: 0
+      }
+    }));
+  }, [mapState.directions]);
+
+  const stopNavigation = useCallback(() => {
+    setMapState(prev => ({
+      ...prev,
+      navigation: {
+        ...prev.navigation,
+        isActive: false
+      }
+    }));
+  }, []);
+
+  const moveToNextStep = useCallback(() => {
+    setMapState(prev => {
+      if (prev.navigation.currentStep < prev.navigation.totalSteps - 1) {
+        const nextStep = prev.navigation.currentStep + 1;
+        const nextDirection = prev.directions?.routes[0]?.legs[0]?.steps[nextStep]?.instructions || "";
+        
+        return {
+          ...prev,
+          navigation: {
+            ...prev.navigation,
+            currentStep: nextStep,
+            nextDirection
+          }
+        };
+      } else {
+        return {
+          ...prev,
+          navigation: {
+            ...prev.navigation,
+            isActive: false
+          }
+        };
+      }
+    });
+  }, []);
+
+  // Memoize destination marker props to prevent re-renders
+  const destinationMarkerProps = useMemo(() => ({
+    position: {
+      lat: location.latitude,
+      lng: location.longitude,
+    },
+    title: "Destination",
+    name: location.address,
+    icon: {
+      url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+    }
+  }), [location]);
+
+  // Memoize current position marker props to prevent re-renders
+  const currentPositionMarkerProps = useMemo(() => 
+    mapState.currentPosition ? {
+      position: mapState.currentPosition,
+      title: "Your Location",
+      name: "Your Current Location",
+      icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+      }
+    } : null
+  , [mapState.currentPosition]);
 
   return (
     <div className="bg-white rounded-lg shadow p-6 mb-6">
       <h3 className="text-lg font-semibold mb-3">Location Map</h3>
       <div style={containerStyles}>
         <GoogleMap
-          google={google}
+          google={props.google}
           style={mapStyles}
           zoom={13}
           initialCenter={{
             lat: location.latitude,
             lng: location.longitude,
           }}
+          onReady={onMapLoaded}
         >
           {/* Destination marker */}
           <Marker
-            position={{
-              lat: location.latitude,
-              lng: location.longitude,
-            }}
-            title="Destination"
-            name={location.address}
+            {...destinationMarkerProps}
             onClick={handleMarkerClick}
-            icon={{
-              url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-            }}
           />
 
           {/* Current position marker */}
-          {currentPosition && (
+          {currentPositionMarkerProps && (
             <Marker
-              position={currentPosition}
-              title="Your Location"
-              name="Your Current Location"
+              {...currentPositionMarkerProps}
               onClick={handleMarkerClick}
-              icon={{
-                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-              }}
             />
           )}
 
           <InfoWindow
-            marker={activeMarker}
-            visible={showInfoWindow}
+            marker={mapState.activeMarker}
+            visible={mapState.showInfoWindow}
             onClose={handleInfoWindowClose}
           >
             <div className="p-2">
-              <h4 className="font-semibold">{activeMarker?.name || ""}</h4>
+              <h4 className="font-semibold">{mapState.activeMarker?.name || ""}</h4>
             </div>
           </InfoWindow>
         </GoogleMap>
@@ -197,57 +329,107 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
 
       {/* Distance and duration information */}
       <div className="mt-4 p-3 bg-gray-50 rounded">
-        {distanceInfo.loading ? (
+        {mapState.distanceInfo.loading ? (
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500 mr-2"></div>
             <span>Calculating distance and travel time...</span>
           </div>
-        ) : distanceInfo.error ? (
-          <div className="text-red-500">{distanceInfo.error}</div>
+        ) : mapState.distanceInfo.error ? (
+          <div className="text-red-500">{mapState.distanceInfo.error}</div>
         ) : (
-          <div className="flex flex-wrap">
-            <div className="w-full md:w-1/2 flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-600 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-                />
-              </svg>
-              <span className="font-medium">Distance: </span>
-              <span className="ml-1">{distanceInfo.distance}</span>
+          <>
+            <div className="flex flex-wrap mb-4">
+              <div className="w-full md:w-1/2 flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-600 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                  />
+                </svg>
+                <span className="font-medium">Distance: </span>
+                <span className="ml-1">{mapState.distanceInfo.distance}</span>
+              </div>
+              <div className="w-full md:w-1/2 flex items-center mt-2 md:mt-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-600 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span className="font-medium">Estimated travel time: </span>
+                <span className="ml-1">{mapState.distanceInfo.duration}</span>
+              </div>
             </div>
-            <div className="w-full md:w-1/2 flex items-center mt-2 md:mt-0">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-600 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span className="font-medium">Estimated travel time: </span>
-              <span className="ml-1">{distanceInfo.duration}</span>
+            
+            {/* Navigation controls */}
+            <div className="border-t pt-4 mt-2">
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="font-semibold">Navigation</h4>
+                <div>
+                  {!mapState.navigation.isActive ? (
+                    <button 
+                      onClick={startNavigation}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
+                      disabled={!mapState.directions}
+                    >
+                      Start Navigation
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={stopNavigation}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+                    >
+                      Stop Navigation
+                    </button>
+                  )}
+                </div>
+              </div>
+              
+              {mapState.navigation.isActive && (
+                <>
+                  <div className="bg-blue-50 p-3 rounded mb-3">
+                    <p className="font-medium">Current step: {mapState.navigation.currentStep + 1} of {mapState.navigation.totalSteps}</p>
+                    <div 
+                      className="mt-1 text-sm" 
+                      dangerouslySetInnerHTML={{ __html: mapState.navigation.nextDirection }}
+                    />
+                  </div>
+                  
+                  {/* This button is for demo purposes - in a real app, steps would advance automatically */}
+                  <button 
+                    onClick={moveToNextStep}
+                    className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm"
+                  >
+                    Simulate Next Step
+                  </button>
+                </>
+              )}
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
   );
 };
+
+// Wrap with React.memo to prevent re-renders if props haven't changed
+const MemoizedMapContainer = React.memo(MapContainer);
 
 interface GoogleMapLocationProps {
   location: {
@@ -259,6 +441,6 @@ interface GoogleMapLocationProps {
 
 const GoogleMapLocation = GoogleApiWrapper({
   apiKey: apiKey || "",
-})(MapContainer);
+})(MemoizedMapContainer);
 
-export default GoogleMapLocation as React.ComponentType<GoogleMapLocationProps>;
+export default React.memo(GoogleMapLocation) as React.ComponentType<GoogleMapLocationProps>;

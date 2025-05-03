@@ -30,7 +30,7 @@ const UserLoginPage: React.FC = () => {
           console.log("result is ",result);
           if (result?.data.data.success) {
             console.log("result fron the front end ", result);
-            dispatch(setUserCredental(result?.data.data?.userId));
+            dispatch(setUserCredental(result?.data.data.data));
             navigate("/user/homepage");
           } else {
             navigate("/login")

@@ -11,6 +11,7 @@ import { MdEventNote } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
 import { useAppSelector } from "../../App/store";
 import { UserDetailsInProfile } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { user } from "@nextui-org/react";
 
 const Header: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
@@ -47,8 +48,8 @@ const Header: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try{
-        const userId = userData.toString();
-        const result = await getProfile(userId)
+        const userId = userData?.id ;
+        const result = await getProfile(userId as string)
         setUserProfileDetails(result?.data.data.data);
       }catch(error){
         console.log("error occured while accessing the userDeatils in the Header.tsx");
@@ -143,6 +144,7 @@ const Header: React.FC = () => {
                 profileImage= {image || "https://example.com/user-profile.jpg"}
                 userName={userProfileDetails?.name || "Name"}
                 navigationItems={userNavigationItems}
+                userRole="user"
               />
             </div>
           </li>

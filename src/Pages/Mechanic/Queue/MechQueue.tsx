@@ -53,7 +53,7 @@ const getProgressColors = (status: string) => {
 const MechQueue: React.FC = () => {
   const navigate = useNavigate();
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
-  const mechanicId = mechanic?.data._id;
+  const mechanicId = mechanic?.id;
   const [allAcceptedServices, setAllAcceptedServices] = useState<
     AllAcceptedServices[]
   >([]);
@@ -64,7 +64,7 @@ const MechQueue: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getAllAcceptedServices(mechanicId);
+        const result = await getAllAcceptedServices(mechanicId as string);
         console.log("data reached", result);
         if (result?.data?.result) {
           setAllAcceptedServices(result.data.result);

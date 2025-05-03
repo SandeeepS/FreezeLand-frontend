@@ -88,13 +88,6 @@ const ComplaintDetail: React.FC = () => {
   if (!complaint) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center text-blue-600 mb-4"
-        >
-          <ArrowBack className="w-5 h-5" />
-          <span>Back to Complaints</span>
-        </button>
         <div className="bg-white rounded-lg shadow p-6 text-center">
           <Warning className="w-16 h-16 mx-auto text-red-500 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Complaint Not Found</h2>
@@ -113,14 +106,7 @@ const ComplaintDetail: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <ComplaintHeader
-          image={serviceDetails.image || "/api/placeholder/60/60"}
-          name={serviceDetails.name || "Unknown Service"}
-          requestId={complaint._id}
-          status={complaint.status || "pending"}
-        />
-
-        {/* Enhanced Status Progress Bar with compact design */}
+        {/* Status Progress Bar */}
         <div className="px-6 py-3 border-t border-b border-gray-100 bg-gray-50">
           <StatusProgressBar
             currentStatus={complaint.status || "pending"}
@@ -129,6 +115,12 @@ const ComplaintDetail: React.FC = () => {
           />
         </div>
 
+        <ComplaintHeader
+          image={serviceDetails.image || "/api/placeholder/60/60"}
+          name={serviceDetails.name || "Unknown Service"}
+          requestId={complaint._id}
+          status={complaint.status || "pending"}
+        />
         <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-6">
             <ComplaintInfo
@@ -137,13 +129,11 @@ const ComplaintDetail: React.FC = () => {
               deviceImages={deviceImages}
             />
           </div>
-
           <div className="md:col-span-6 grid grid-cols-1 gap-6">
             <CustomerInfo
               userDetails={userDetails}
               fallbackName={complaint.name}
             />
-
             {complaint.currentMechanicId && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}

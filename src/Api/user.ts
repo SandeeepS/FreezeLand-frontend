@@ -301,7 +301,7 @@ const getMechanicDetails = async (id: string) => {
 
 //function to get the service details to the user side for registering the service 
 
-const getService = async (id: string | undefined) => {
+const getService = async (id: string ) => {
   try {
     console.log("entered in the getService funciton in the user ts", id);
     const result = await Api.get(`${userRoutes.getService}${id}`);

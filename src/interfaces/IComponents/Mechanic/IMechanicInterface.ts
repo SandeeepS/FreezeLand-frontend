@@ -16,3 +16,14 @@ export interface MechanicData {
   __v: number;
 }
 
+export interface MechDetails {
+  name: string;
+  email: string;
+  phone: number | string;
+  address?: string;
+  location?: string;
+  profile_picture?:string;
+  defaultAddressDetails:object;
+  
+}
+

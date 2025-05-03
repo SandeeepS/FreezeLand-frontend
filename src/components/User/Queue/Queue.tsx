@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Circle, AlertCircle } from "lucide-react";
+import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/user";
 import DynamicTable from "../../Common/DynamicTable";
@@ -53,7 +53,7 @@ const getProgressColors = (status: string) => {
 const Queue: React.FC = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
-  const userId = userData.toString();
+  const userId = userData?.id;
   const [allRegisteredServices, setAllRegisteredService] = useState<
     AllRegisteredServices[]
   >([]);
@@ -70,7 +70,7 @@ const Queue: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getAllUserRegisteredServices(userId);
+        const result = await getAllUserRegisteredServices(userId as string);
         console.log("data reached", result);
         if (result?.allRegisteredUserServices) {
           setAllRegisteredService(result.allRegisteredUserServices);

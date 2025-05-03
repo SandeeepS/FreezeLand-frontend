@@ -37,7 +37,7 @@ const AdminLoginPage: React.FC = () => {
           console.log("response from the backend is ",response);
           if (response?.status === 200 && response.data.data.success) {
             console.log("clear...")
-            dispatch(setAdminCredential(response.data.data));
+            dispatch(setAdminCredential(response.data.data.data));
             navigate("/admin/dashboard");
             toast.success("Logged in successfully!");
           } else {

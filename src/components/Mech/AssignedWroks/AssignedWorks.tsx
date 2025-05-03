@@ -7,8 +7,6 @@ import { getMechanicDetails } from "../../../Api/mech";
 import AnimatedButton from "./AnimatedButton";
 import { MechanicData } from "../../../interfaces/IComponents/Mechanic/IMechanicInterface";
 
-
-
 const AssignedWorks: React.FC = () => {
   const mechanicId = useSelector((state: RootState) => state.auth.mechData);
   console.log("mechainc frm the store is ",mechanicId);

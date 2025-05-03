@@ -44,8 +44,8 @@ const ProfileEdit: React.FC = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userId = userData.toString();
-        const response = await getProfile(userId);
+        const userId = userData?.id
+        const response = await getProfile(userId as string);
         const userProfileData = response?.data.data.data;
         setUserProfile(userProfileData);
         setPreviewImage(userProfileData.image || DEFAULT_PROFILE_IMAGE);

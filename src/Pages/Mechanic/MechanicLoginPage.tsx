@@ -35,7 +35,7 @@ const MechanicLoginPage: React.FC = () => {
           const result = await mechLogin(values.email, values.password);
           if (result) {
             console.log("result reched in the login page  ", result);
-            dispatch(setMechCredential(result.data.data));
+            dispatch(setMechCredential(result.data.data.data));
             navigate("/mech/homepage");
           }
           console.log("result fron the login form is ", result);

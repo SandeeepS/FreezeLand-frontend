@@ -27,12 +27,12 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
 
   // useEffect to fetch the userDetails
-  useEffect(() => {
+  useEffect(() =>{
     const fetchData = async () => {
       try {
         console.log("triggered the fetch data function");
-        const userId = userData.toString();
-        const result = await getProfile(userId);
+        const userId = userData?.id
+        const result = await getProfile(userId as string);
         console.log("User profile details from the backend is ", result);
         if (result) {
           const data = result.data.data.data;
