@@ -18,6 +18,7 @@ const mechRoutes = {
   updateWorkAssigned:"mech/updateWorkAssigned",
   getAllAcceptedServices:"mech/getAllAcceptedServices",
   updateComplaintStatus:"mech/updateComplaintStatus",
+  editMechanic:"mech/editMechanic",
   logout: "/mech/logout",
 };
 

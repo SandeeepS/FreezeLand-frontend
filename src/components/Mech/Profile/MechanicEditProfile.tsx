@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { FaCamera, FaTrash} from "react-icons/fa";
+import { FaCamera, FaTrash } from "react-icons/fa";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
-import { getProfile, EditUserDetails, getImageUrl } from "../../Api/user";
-import { getS3SingUrl } from "../../Api/admin"; // Import the getS3SingUrl function
-import Header from "../User/Header";
-import { useAppSelector } from "../../App/store";
+import {
+  getImageUrl,
+  getMechanicDetails,
+  getS3SingUrlForMechCredinential,
+  updateMechanicDetails,
+} from "../../../Api/mech";
+import { useAppSelector } from "../../../App/store";
 
-interface UserProfile {
+interface MechanicProfile {
   _id?: string;
   name?: string;
   phone?: string;
   email?: string;
-  image?: string;
-  location?: string;
-  profile_picture?: string; 
+  imageKey?: string;
+  isVerified?: boolean;
 }
 
 const validationSchema = object({
@@ -23,47 +25,43 @@ const validationSchema = object({
   phone: string()
     .required("Phone number is required")
     .matches(/^\d{10}$/, "Phone number must be 10 digits"),
-  location: string(),
 });
 
 const DEFAULT_PROFILE_IMAGE = "/src/Images/businessman.png";
 
-const ProfileEdit: React.FC = () => {
-  const userData = useAppSelector((state) => state.auth.userData);
-  
+const MechanicProfileEdit: React.FC = () => {
+  const mechData = useAppSelector((state) => state.auth.mechData);
   const navigate = useNavigate();
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [mechProfile, setMechProfile] = useState<MechanicProfile | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
-  const [profileImage,setProfileImage] = useState<string>("");
-
+  const [profileImage, setProfileImage] = useState<string>("");
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchMechanicProfile = async () => {
       try {
-        const userId = userData?.id
-        const response = await getProfile(userId as string);
-        const userProfileData = response?.data.data.data;
-        setUserProfile(userProfileData);
-        setPreviewImage(userProfileData.image || DEFAULT_PROFILE_IMAGE);
+        const mechId = mechData?.id;
+        if (!mechId) return;
+
+        const response = await getMechanicDetails(mechId);
+        const profileData = response?.data?.result;
+        setMechProfile(profileData);
+        setPreviewImage(profileData?.photo || DEFAULT_PROFILE_IMAGE);
       } catch (error) {
-        console.error("Failed to fetch user profile:", error);
+        console.error("Failed to fetch mechanic profile:", error);
       }
     };
-    fetchUserProfile();
-  }, [userData]);
+    fetchMechanicProfile();
+  }, [mechData]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if ( userProfile && userProfile.profile_picture) {
-          const result = await getImageUrl(
-            userProfile.profile_picture,
-            "service"
-          );
+        if (mechProfile && mechProfile.imageKey) {
+          const result = await getImageUrl(mechProfile.imageKey, "mechProfile");
           if (result) {
             setProfileImage(result.data.url);
           }
@@ -71,20 +69,16 @@ const ProfileEdit: React.FC = () => {
       } catch (error) {
         console.log(error as Error);
       }
-    }
+    };
     fetchData();
-  },[userProfile])
-
-
+  }, [mechProfile]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setImageFile(file);
     setFileName(file.name);
     setFileType(file.type);
-    
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewImage(reader.result as string);
@@ -99,7 +93,7 @@ const ProfileEdit: React.FC = () => {
     setFileType("");
   };
 
-  if (!userProfile) {
+  if (!mechProfile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="p-4 bg-white rounded-lg shadow-md">
@@ -113,40 +107,40 @@ const ProfileEdit: React.FC = () => {
               </div>
             </div>
           </div>
-          <p className="text-center mt-4 text-gray-600">Loading user profile...</p>
+          <p className="text-center mt-4 text-gray-600">
+            Loading mechanic profile...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 mt-4">
-      <div className="container mx-auto   pt-24 pb-12">
+    <div className="flex flex-col min-h-screen bg-gray-50 mt-8">
+      <div className="container mx-auto  pt-24 pb-12 w-full">
         <div className=" mx-auto">
-   
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mx-4 h-screen">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden mx-5 h-screen ">
             <div className="h-24 bg-gradient-to-r from-black to-freeze-color"></div>
-          
             <Formik
               initialValues={{
-                _id: userProfile._id || "",
-                name: userProfile.name || "",
-                phone: userProfile.phone || "",
-                location: userProfile.location || "",
-                profile_picture: userProfile.profile_picture || "",
+                _id: mechProfile._id || "",
+                name: mechProfile.name || "",
+                phone: mechProfile.phone || "",
+                imageKey: mechProfile.imageKey || "",
               }}
               validationSchema={validationSchema}
               enableReinitialize
               onSubmit={async (values) => {
                 try {
                   setIsSubmitting(true);
-                  
-                  // Handle image upload to S3 if a new image is selected
                   if (imageFile) {
-                    const folderName = "UserProfile";
-                    const response = await getS3SingUrl(fileName, fileType,folderName);
+                    const folderName = "MechanicProfile";
+                    const response = await getS3SingUrlForMechCredinential(
+                      fileName,
+                      fileType,
+                      folderName
+                    );
                     if (response?.data.uploadURL) {
-                      // Upload the image to S3
                       await fetch(response.data.uploadURL, {
                         method: "PUT",
                         headers: {
@@ -154,16 +148,12 @@ const ProfileEdit: React.FC = () => {
                         },
                         body: imageFile,
                       });
-                      
-                      // Update the imageKey in the values
-                      values.profile_picture = response.data.key;
+                      values.imageKey = response.data.key;
                     }
                   }
-                  
-                  console.log("Submitting values:", values);
-                  const result = await EditUserDetails(values);
+                  const result = await updateMechanicDetails(values);
                   if (result?.status) {
-                    navigate("/user/account");
+                    navigate("/mech/account");
                   }
                 } catch (error) {
                   console.error("Failed to update profile:", error);
@@ -175,18 +165,15 @@ const ProfileEdit: React.FC = () => {
               {({ errors, touched }) => (
                 <Form className="p-6">
                   <input type="hidden" name="_id" />
-                  <input type="hidden" name="imageKey" />
-                  
                   <div className="flex flex-col items-center -mt-16 mb-6">
                     <div className="relative">
                       <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-white shadow-lg">
                         <img
                           className="w-full h-full object-cover"
-                          src={profileImage|| DEFAULT_PROFILE_IMAGE}
+                          src={profileImage || DEFAULT_PROFILE_IMAGE}
                           alt="Profile"
                         />
                       </div>
-                      
                       <div className="absolute bottom-0 right-0">
                         <label className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full cursor-pointer shadow-md hover:bg-blue-700 transition-colors text-white">
                           <FaCamera size={14} />
@@ -199,7 +186,6 @@ const ProfileEdit: React.FC = () => {
                         </label>
                       </div>
                     </div>
-
                     {imageFile && (
                       <button
                         type="button"
@@ -210,17 +196,14 @@ const ProfileEdit: React.FC = () => {
                         Remove uploaded photo
                       </button>
                     )}
-                    
                     <p className="mt-4 text-gray-600 font-medium">
-                      {userProfile.email}
+                      {mechProfile.email}
                     </p>
                   </div>
-
                   <div className="space-y-6 mt-4">
                     <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">
                       Edit Personal Information
                     </h2>
-                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -233,10 +216,11 @@ const ProfileEdit: React.FC = () => {
                           placeholder="Enter your name"
                         />
                         {errors.name && touched.name && (
-                          <div className="text-red-500 text-sm mt-1">{errors.name}</div>
+                          <div className="text-red-500 text-sm mt-1">
+                            {errors.name}
+                          </div>
                         )}
                       </div>
-
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Phone Number
@@ -254,11 +238,10 @@ const ProfileEdit: React.FC = () => {
                         )}
                       </div>
                     </div>
-
                     <div className="flex justify-end space-x-4 pt-4">
                       <button
                         type="button"
-                        onClick={() => navigate('/user/account')}
+                        onClick={() => navigate("/mech/account")}
                         className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                       >
                         Cancel
@@ -282,4 +265,4 @@ const ProfileEdit: React.FC = () => {
   );
 };
 
-export default ProfileEdit;
+export default MechanicProfileEdit;

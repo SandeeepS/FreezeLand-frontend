@@ -77,6 +77,14 @@ export interface PopularCitiesProps {
   onCityClick: () => void; // Callback function to handle city click
 }
 
+export interface AddressDetails {
+  district: string;
+  state: string;
+  pin: string;
+  landMark: string;
+}
+
+
 //used in the Profile.tsx
 export interface UserDetails {
   name: string;
@@ -85,7 +93,7 @@ export interface UserDetails {
   address?: string;
   location?: string;
   profile_picture?:string;
-  defaultAddressDetails:object;
+  defaultAddressDetails:AddressDetails;
   
 }
 

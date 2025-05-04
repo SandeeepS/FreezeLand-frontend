@@ -131,4 +131,12 @@ export interface AllAcceptedServices {
     }[];
   }
   
+
+  
+  export interface EditMechanicFormData{
+    _id : string;
+    name : string ;
+    phone : string;
+    imageKey : string;
+  }
   

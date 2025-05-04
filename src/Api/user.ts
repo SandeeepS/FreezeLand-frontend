@@ -1,11 +1,9 @@
-import { FormData } from "../Pages/User/UserSignupPage";
 import Api from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
 import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
-
-
+import { EditUserFormData, FormData } from "../interfaces/IPages/User/IUserInterfaces";
 
 const signup = async ({
   name,
@@ -188,7 +186,7 @@ const getAllUserRegisteredServices = async (userId: string) => {
   }
 };
 
-const EditUserDetails = async ({ _id, name, phone,imageKey }: FormData) => {
+const EditUserDetails = async ({ _id, name, phone,imageKey }: EditUserFormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
     const result = await Api.put(userRoutes.editUser, {

@@ -1,7 +1,8 @@
 import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
 import errorHandler from "./errorHandler";
-import { FormData, MechanicForm } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { EditMechanicFormData, FormData, MechanicForm } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { editMechDetails } from "../interfaces/IComponents/Mechanic/IMechanicInterface";
 
 const mechSignup = async ({
   name,
@@ -259,6 +260,23 @@ const updateComplaintStatus = async (complaintId:string, nextStatus: string) => 
   }
 };
 
+//editing mechanic Details 
+const updateMechanicDetails = async ( {_id, name, phone,imageKey }: EditMechanicFormData) => {
+  try{
+    console.log("Entered in the updateMechanicDetails in the mech.ts");
+    const result = await Api.put(mechRoutes.editMechanic, {
+      _id,
+      name,
+      phone,
+      imageKey
+    });
+    console.log("result from the backend is ", result);
+    return result;  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
   mLogout,
@@ -279,4 +297,5 @@ export {
   updateWorkAssigned,
   getAllAcceptedServices,
   updateComplaintStatus,
+  updateMechanicDetails,
 };

@@ -19,6 +19,14 @@ export interface initialVal {
     password: string;
     cpassword: string;
   }
+
+  export interface EditUserFormData{
+    _id : string;
+    name : string ;
+    phone : string;
+    imageKey : string;
+  }
+  
   export interface initialVal3 {
     name: string;
     email: string;

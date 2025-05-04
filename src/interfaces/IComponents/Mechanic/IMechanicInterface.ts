@@ -16,6 +16,14 @@ export interface MechanicData {
   __v: number;
 }
 
+
+export interface AddressDetails {
+  district: string;
+  state: string;
+  pin: string;
+  landMark: string;
+}
+
 export interface MechDetails {
   name: string;
   email: string;
@@ -23,7 +31,18 @@ export interface MechDetails {
   address?: string;
   location?: string;
   profile_picture?:string;
-  defaultAddressDetails:object;
+  defaultAddressDetails:AddressDetails;
   
+}
+
+export interface editMechDetails {
+  name: string;
+  phone: string;
+  email: string;
+  photo: string;
+  mechanicType: string[];
+  isVerified: boolean;
+  adharProof: string;
+  employeeLicense: string;
 }
 
