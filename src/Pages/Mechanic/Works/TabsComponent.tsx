@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -18,6 +18,11 @@ interface TabsComponentProps {
       notes: string;
       completionPercentage: number;
     }[];
+    serviceDetails: {
+      serviceName?: string;
+      serviceCharge?: number;
+      [key: string]: any;
+    };
   };
   formatDate: (dateString: string) => string;
 }
@@ -34,6 +39,14 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   const [newDescription, setNewDescription] = useState("");
   const [newAmount, setNewAmount] = useState<number>(0);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [serviceDetails, setServiceDetails] = useState<{
+    serviceName?: string;
+    serviceCharge?: number;
+  }>({});
+
+  useEffect(() => {
+    setServiceDetails(complaint.serviceDetails || {});
+  }, [complaint.serviceDetails]);
 
   // If currentMechanic or status is not present, don't render the component
   if (!complaint.currentMechanicId) {
@@ -41,26 +54,26 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   }
 
   const calculateTotal = () => {
-    return complaintItems.reduce((sum, item) => sum + item.amount, 0);
+    const serviceCharge = serviceDetails?.serviceCharge || 0;
+    const otherCharges = complaintItems.reduce((sum, item) => sum + item.amount, 0);
+    return serviceCharge + otherCharges;
   };
 
   const handleAddComplaint = () => {
     if (newDescription.trim() === "" || isNaN(newAmount)) return;
-    
+
     if (editIndex !== null) {
-      // Update existing item
       const updatedItems = [...complaintItems];
       updatedItems[editIndex] = { description: newDescription, amount: newAmount };
       setComplaintItems(updatedItems);
       setEditIndex(null);
     } else {
-      // Add new item
       setComplaintItems([
         ...complaintItems,
         { description: newDescription, amount: newAmount },
       ]);
     }
-    
+
     setNewDescription("");
     setNewAmount(0);
   };
@@ -74,7 +87,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
   const handleRemoveComplaint = (index: number) => {
     setComplaintItems(complaintItems.filter((_, i) => i !== index));
-    // Reset form if currently editing this item
     if (editIndex === index) {
       setEditIndex(null);
       setNewDescription("");
@@ -161,16 +173,12 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
           </div>
         ) : (
           <div>
-            <h3 className="font-semibold text-lg mb-4">
-              Complaint Descriptions
-            </h3>
+            <h3 className="font-semibold text-lg mb-4">Complaint Descriptions</h3>
 
             {/* Inputs and Add/Update Button */}
             <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  Description
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Description</label>
                 <input
                   type="text"
                   value={newDescription}
@@ -180,9 +188,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Amount
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Amount</label>
                 <input
                   type="number"
                   value={newAmount}
@@ -210,17 +216,29 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
             </div>
 
             {/* Bill-like UI */}
-            {complaintItems.length > 0 ? (
+            {(serviceDetails.serviceCharge || complaintItems.length > 0) ? (
               <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-                {/* Header */}
                 <div className="grid grid-cols-12 bg-gray-100 border-b border-gray-300 font-medium text-gray-700">
                   <div className="col-span-6 p-3">DESCRIPTION</div>
                   <div className="col-span-3 p-3 text-right">AMOUNT</div>
                   <div className="col-span-3 p-3 text-center">ACTIONS</div>
                 </div>
-                
-                {/* Bill Items */}
+
                 <div className="divide-y divide-gray-200">
+                  {serviceDetails.serviceCharge && (
+                    <div className="grid grid-cols-12 py-3 items-center bg-white">
+                      <div className="col-span-6 px-3">
+                        <p className="text-sm font-medium">
+                          {serviceDetails.serviceName || "Service Charge"}
+                        </p>
+                      </div>
+                      <div className="col-span-3 px-3 text-right">
+                        <p className="text-sm">₹{serviceDetails.serviceCharge.toFixed(2)}</p>
+                      </div>
+                      <div className="col-span-3 px-3 text-center text-gray-400 italic">—</div>
+                    </div>
+                  )}
+
                   {complaintItems.map((item, index) => (
                     <div key={index} className="grid grid-cols-12 py-3 items-center hover:bg-gray-50">
                       <div className="col-span-6 px-3">
@@ -248,18 +266,15 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                     </div>
                   ))}
                 </div>
-                
-                {/* Total */}
+
                 <div className="bg-gray-100 border-t border-gray-300 grid grid-cols-12 py-3 font-medium">
                   <div className="col-span-6 px-3 text-right">TOTAL</div>
                   <div className="col-span-3 px-3 text-right">₹{calculateTotal().toFixed(2)}</div>
-                  <div className="col-span-3"></div>
+                  <div className="col-span-3" />
                 </div>
               </div>
             ) : (
-              <p className="text-gray-500 italic">
-                No complaint details added yet.
-              </p>
+              <p className="text-gray-500 italic">No complaint details added yet.</p>
             )}
           </div>
         )}
