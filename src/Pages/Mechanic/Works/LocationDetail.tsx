@@ -11,16 +11,20 @@ interface LocationDetalProps {
 
 const LocationDetail: React.FC<LocationDetalProps> = ({ location }) => {
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
-      <h3 className="font-semibold text-lg mb-4">Location</h3>
+    <div className="bg-gray-200 rounded-lg shadow  mb-6">
+      <div className="flex flex-col items-center">
+        <h3 className="font-semibold text-lg mb-4">Location</h3>
+      </div>
 
-      <div className="flex items-start">
-        <LocationOnIcon className="text-gray-500 mr-3 mt-1" />
-        <div>
-          <p className="font-medium">Service Location</p>
-          <p className="text-sm text-gray-500">
-            {location.address || "No address provided"}
-          </p>
+      <div className="bg-gray-100">
+        <div className="flex items-start">
+          <LocationOnIcon className="text-gray-500 mr-3 mt-1" />
+          <div>
+            <p className="font-medium">Service Location</p>
+            <p className="text-sm text-gray-500">
+              {location.address || "No address provided"}
+            </p>
+          </div>
         </div>
       </div>
     </div>

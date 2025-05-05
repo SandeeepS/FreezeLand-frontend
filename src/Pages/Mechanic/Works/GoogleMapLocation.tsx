@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   Map as GoogleMap,
   GoogleApiWrapper,
   IProvidedProps,
   Marker,
   InfoWindow,
-} from "google-maps-react";
+  IMarkerProps,
+} from "google-maps-react"; // Added IMarkerProps import
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 interface LocationProps {
@@ -42,7 +49,7 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
       loading: true,
       error: null,
     } as DistanceInfo,
-    directions: null as any,
+    directions: null as google.maps.DirectionsResult | null,
     navigation: {
       isActive: false,
       currentStep: 0,
@@ -50,12 +57,15 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
       nextDirection: "",
     } as NavigationStatus,
     showInfoWindow: false,
-    activeMarker: null as any
+    activeMarker: null as google.maps.Marker | null,
+    selectedPlace: null as any,
   });
-  
+
   // Refs for map and directionsRenderer
-  const mapRef = useRef<any>(null);
-  const directionsRendererRef = useRef<any>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(
+    null
+  );
   const isInitialMount = useRef(true);
 
   const mapStyles = {
@@ -75,34 +85,35 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setMapState(prev => ({
+          setMapState((prev) => ({
             ...prev,
             currentPosition: {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
-            }
+            },
           }));
         },
         (error) => {
           console.error("Error getting current position:", error);
-          setMapState(prev => ({
+          setMapState((prev) => ({
             ...prev,
             distanceInfo: {
               ...prev.distanceInfo,
               loading: false,
-              error: "Unable to get your current location. Please enable location services."
-            }
+              error:
+                "Unable to get your current location. Please enable location services.",
+            },
           }));
         }
       );
     } else {
-      setMapState(prev => ({
+      setMapState((prev) => ({
         ...prev,
         distanceInfo: {
           ...prev.distanceInfo,
           loading: false,
-          error: "Geolocation is not supported by this browser."
-        }
+          error: "Geolocation is not supported by this browser.",
+        },
       }));
     }
   }, []); // Empty dependency array ensures this runs only once
@@ -123,8 +134,8 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
       directionsService.route(
         {
           origin: new google.maps.LatLng(
-            mapState.currentPosition.lat,
-            mapState.currentPosition.lng
+            mapState.currentPosition?.lat ?? 0,
+            mapState.currentPosition?.lng ?? 0
           ),
           destination: new google.maps.LatLng(
             location.latitude,
@@ -137,8 +148,8 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
             // Batch all state updates together
             const route = result.routes[0];
             const leg = route && route.legs.length > 0 ? route.legs[0] : null;
-            
-            setMapState(prev => ({
+
+            setMapState((prev) => ({
               ...prev,
               directions: result,
               distanceInfo: {
@@ -150,18 +161,18 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
               navigation: {
                 ...prev.navigation,
                 totalSteps: leg?.steps?.length || 0,
-                nextDirection: leg?.steps?.[0]?.instructions || ""
-              }
+                nextDirection: leg?.steps?.[0]?.instructions || "",
+              },
             }));
           } else {
-            setMapState(prev => ({
+            setMapState((prev) => ({
               ...prev,
               distanceInfo: {
                 distance: "",
                 duration: "",
                 loading: false,
-                error: "Unable to calculate distance and duration."
-              }
+                error: "Unable to calculate distance and duration.",
+              },
             }));
           }
         }
@@ -179,152 +190,179 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
   }, [mapState.directions, directionsRendererRef.current]);
 
   // Set up directions renderer when the map is loaded - memoize to prevent unnecessary re-creation
-  const onMapLoaded = useCallback((mapProps, map) => {
-    mapRef.current = map;
-    
-    if (google && map) {
-      directionsRendererRef.current = new google.maps.DirectionsRenderer({
-        map: map,
-        suppressMarkers: true // We'll handle markers ourselves
-      });
-    }
 
-    // Apply directions if they already exist
-    if (mapState.directions && directionsRendererRef.current) {
-      directionsRendererRef.current.setDirections(mapState.directions);
-    }
-  }, [google, mapState.directions]);
+  interface IMapProps {
+    google: typeof google;
+    map: google.maps.Map;
+  }
+
+  const onMapLoaded = useCallback(
+    (mapProps: IMapProps, map: google.maps.Map) => {
+      mapRef.current = map;
+
+      if (google && map) {
+        directionsRendererRef.current = new google.maps.DirectionsRenderer({
+          map: map,
+          suppressMarkers: true, // We'll handle markers ourselves
+        });
+      }
+
+      // Apply directions if they already exist
+      if (mapState.directions && directionsRendererRef.current) {
+        directionsRendererRef.current.setDirections(mapState.directions);
+      }
+    },
+    [google, mapState.directions]
+  );
 
   // Memoize handlers to prevent unnecessary re-creation
-  const handleMarkerClick = useCallback((props: any, marker: any) => {
-    setMapState(prev => ({
+  // Fix: Updated the handleMarkerClick function to match the expected types
+  const handleMarkerClick = useCallback((props: any, marker: any, e: any) => {
+    setMapState((prev) => ({
       ...prev,
       activeMarker: marker,
-      showInfoWindow: true
+      showInfoWindow: true,
+      selectedPlace: props,
     }));
   }, []);
 
   const handleInfoWindowClose = useCallback(() => {
-    setMapState(prev => ({
+    setMapState((prev) => ({
       ...prev,
       showInfoWindow: false,
-      activeMarker: null
+      activeMarker: null,
     }));
   }, []);
 
   // Navigation functions - memoized to prevent recreation on every render
   const startNavigation = useCallback(() => {
     if (!mapState.directions) return;
-    
-    setMapState(prev => ({
+
+    setMapState((prev) => ({
       ...prev,
       navigation: {
         ...prev.navigation,
         isActive: true,
-        currentStep: 0
-      }
+        currentStep: 0,
+      },
     }));
   }, [mapState.directions]);
 
   const stopNavigation = useCallback(() => {
-    setMapState(prev => ({
+    setMapState((prev) => ({
       ...prev,
       navigation: {
         ...prev.navigation,
-        isActive: false
-      }
+        isActive: false,
+      },
     }));
   }, []);
 
   const moveToNextStep = useCallback(() => {
-    setMapState(prev => {
+    setMapState((prev) => {
       if (prev.navigation.currentStep < prev.navigation.totalSteps - 1) {
         const nextStep = prev.navigation.currentStep + 1;
-        const nextDirection = prev.directions?.routes[0]?.legs[0]?.steps[nextStep]?.instructions || "";
-        
+        const nextDirection =
+          prev.directions?.routes[0]?.legs[0]?.steps[nextStep]?.instructions ||
+          "";
+
         return {
           ...prev,
           navigation: {
             ...prev.navigation,
             currentStep: nextStep,
-            nextDirection
-          }
+            nextDirection,
+          },
         };
       } else {
         return {
           ...prev,
           navigation: {
             ...prev.navigation,
-            isActive: false
-          }
+            isActive: false,
+          },
         };
       }
     });
   }, []);
 
   // Memoize destination marker props to prevent re-renders
-  const destinationMarkerProps = useMemo(() => ({
-    position: {
-      lat: location.latitude,
-      lng: location.longitude,
-    },
-    title: "Destination",
-    name: location.address,
-    icon: {
-      url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-    }
-  }), [location]);
+  const destinationMarkerProps = useMemo(
+    () => ({
+      position: {
+        lat: location.latitude,
+        lng: location.longitude,
+      },
+      title: "Destination",
+      name: location.address,
+      icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+      },
+    }),
+    [location]
+  );
 
   // Memoize current position marker props to prevent re-renders
-  const currentPositionMarkerProps = useMemo(() => 
-    mapState.currentPosition ? {
-      position: mapState.currentPosition,
-      title: "Your Location",
-      name: "Your Current Location",
-      icon: {
-        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-      }
-    } : null
-  , [mapState.currentPosition]);
+  const currentPositionMarkerProps = useMemo(
+    () =>
+      mapState.currentPosition
+        ? {
+            position: mapState.currentPosition,
+            title: "Your Location",
+            name: "Your Current Location",
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            },
+          }
+        : null,
+    [mapState.currentPosition]
+  );
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
-      <h3 className="text-lg font-semibold mb-3">Location Map</h3>
-      <div style={containerStyles}>
-        <GoogleMap
-          google={props.google}
-          style={mapStyles}
-          zoom={13}
-          initialCenter={{
-            lat: location.latitude,
-            lng: location.longitude,
-          }}
-          onReady={onMapLoaded}
-        >
-          {/* Destination marker */}
-          <Marker
-            {...destinationMarkerProps}
-            onClick={handleMarkerClick}
-          />
+    <div className="bg-gray-200 rounded-lg shadow p-3 mb-6">
+      <div className="flex flex-col items-center ">
+        <h3 className="text-lg font-semibold mb-3">Location</h3>
+      </div>
+      <div className="bg-gray-50">
+        <div style={containerStyles}>
+          <div style={containerStyles}>
+            <GoogleMap
+              google={props.google}
+              style={mapStyles}
+              zoom={13}
+              initialCenter={{
+                lat: location.latitude,
+                lng: location.longitude,
+              }}
+              onReady={(mapProps, map) =>
+                map && onMapLoaded(mapProps as IMapProps, map)
+              }
+            >
+              {/* Destination marker */}
+              <Marker {...destinationMarkerProps} onClick={handleMarkerClick} />
 
-          {/* Current position marker */}
-          {currentPositionMarkerProps && (
-            <Marker
-              {...currentPositionMarkerProps}
-              onClick={handleMarkerClick}
-            />
-          )}
+              {/* Current position marker */}
+              {currentPositionMarkerProps && (
+                <Marker
+                  {...currentPositionMarkerProps}
+                  onClick={handleMarkerClick}
+                />
+              )}
 
-          <InfoWindow
-            marker={mapState.activeMarker}
-            visible={mapState.showInfoWindow}
-            onClose={handleInfoWindowClose}
-          >
-            <div className="p-2">
-              <h4 className="font-semibold">{mapState.activeMarker?.name || ""}</h4>
-            </div>
-          </InfoWindow>
-        </GoogleMap>
+              <InfoWindow
+                marker={mapState.activeMarker}
+                visible={mapState.showInfoWindow}
+                onClose={handleInfoWindowClose}
+              >
+                <div className="p-2">
+                  <h4 className="font-semibold">
+                    {mapState.selectedPlace?.name || ""}
+                  </h4>
+                </div>
+              </InfoWindow>
+            </GoogleMap>
+          </div>
+        </div>
       </div>
 
       {/* Distance and duration information */}
@@ -376,14 +414,14 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
                 <span className="ml-1">{mapState.distanceInfo.duration}</span>
               </div>
             </div>
-            
+
             {/* Navigation controls */}
             <div className="border-t pt-4 mt-2">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-semibold">Navigation</h4>
                 <div>
                   {!mapState.navigation.isActive ? (
-                    <button 
+                    <button
                       onClick={startNavigation}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
                       disabled={!mapState.directions}
@@ -391,7 +429,7 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
                       Start Navigation
                     </button>
                   ) : (
-                    <button 
+                    <button
                       onClick={stopNavigation}
                       className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
                     >
@@ -400,19 +438,24 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
                   )}
                 </div>
               </div>
-              
+
               {mapState.navigation.isActive && (
                 <>
                   <div className="bg-blue-50 p-3 rounded mb-3">
-                    <p className="font-medium">Current step: {mapState.navigation.currentStep + 1} of {mapState.navigation.totalSteps}</p>
-                    <div 
-                      className="mt-1 text-sm" 
-                      dangerouslySetInnerHTML={{ __html: mapState.navigation.nextDirection }}
+                    <p className="font-medium">
+                      Current step: {mapState.navigation.currentStep + 1} of{" "}
+                      {mapState.navigation.totalSteps}
+                    </p>
+                    <div
+                      className="mt-1 text-sm"
+                      dangerouslySetInnerHTML={{
+                        __html: mapState.navigation.nextDirection,
+                      }}
                     />
                   </div>
-                  
+
                   {/* This button is for demo purposes - in a real app, steps would advance automatically */}
-                  <button 
+                  <button
                     onClick={moveToNextStep}
                     className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm"
                   >
@@ -443,4 +486,6 @@ const GoogleMapLocation = GoogleApiWrapper({
   apiKey: apiKey || "",
 })(MemoizedMapContainer);
 
-export default React.memo(GoogleMapLocation) as React.ComponentType<GoogleMapLocationProps>;
+export default React.memo(
+  GoogleMapLocation
+) as React.ComponentType<GoogleMapLocationProps>;

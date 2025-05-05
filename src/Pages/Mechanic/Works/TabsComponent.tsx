@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import BuildIcon from "@mui/icons-material/Build";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
 
 interface TabsComponentProps {
   activeTab: string;
@@ -29,14 +28,33 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   complaint,
   formatDate,
 }) => {
+  const [complaintItems, setComplaintItems] = useState<
+    { description: string; amount: number }[]
+  >([]);
+  const [newDescription, setNewDescription] = useState("");
+  const [newAmount, setNewAmount] = useState<number>(0);
   // If currentMechanic or status is not present, don't render the component
   if (!complaint.currentMechanicId) {
     return null;
   }
 
+  const handleAddComplaint = () => {
+    if (newDescription.trim() === "" || isNaN(newAmount)) return;
+    setComplaintItems([
+      ...complaintItems,
+      { description: newDescription, amount: newAmount },
+    ]);
+    setNewDescription("");
+    setNewAmount(0);
+  };
+
+  const handleRemoveComplaint = (index: number) => {
+    setComplaintItems(complaintItems.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="bg-white rounded-lg shadow mb-6">
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 bg-gray-200">
         <nav className="flex">
           <button
             className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
@@ -56,7 +74,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
             }`}
             onClick={() => setActiveTab("worklog")}
           >
-            Work History
+            Work Details
           </button>
         </nav>
       </div>
@@ -104,88 +122,77 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 </div>
               </div>
             </div>
-
-            <div className="mt-6">
-              <h3 className="font-semibold text-lg mb-3">Progress</h3>
-              <div className="flex items-center">
-                <span className="mr-2">{complaint.completionPercentage}%</span>
-                <div className="relative w-full">
-                  <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
-                    <div
-                      style={{
-                        width: `${complaint.completionPercentage}%`,
-                      }}
-                      className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                        complaint.status === "completed"
-                          ? "bg-emerald-500"
-                          : complaint.status === "delayed"
-                          ? "bg-red-500"
-                          : "bg-blue-500"
-                      }`}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         ) : (
           <div>
-            <h3 className="font-semibold text-lg mb-3">Work History</h3>
-            {complaint.workHistory && complaint.workHistory.length > 0 ? (
-              <div className="flow-root">
-                <ul className="-mb-8">
-                  {complaint.workHistory.map((workItem, index) => (
-                    <li key={index}>
-                      <div className="relative pb-8">
-                        {index !== complaint.workHistory!.length - 1 ? (
-                          <span
-                            className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                            aria-hidden="true"
-                          ></span>
-                        ) : null}
-                        <div className="relative flex space-x-3">
-                          <div>
-                            <span
-                              className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${
-                                index === complaint.workHistory!.length - 1 &&
-                                complaint.status === "completed"
-                                  ? "bg-green-500"
-                                  : "bg-blue-500"
-                              }`}
-                            >
-                              {index === complaint.workHistory!.length - 1 &&
-                              complaint.status === "completed" ? (
-                                <CheckCircleIcon className="h-5 w-5 text-white" />
-                              ) : (
-                                <BuildIcon className="h-5 w-5 text-white" />
-                              )}
-                            </span>
-                          </div>
-                          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">
-                                {workItem.action}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {workItem.notes}
-                              </p>
-                              <p className="mt-1 text-xs text-gray-500">
-                                Progress: {workItem.completionPercentage}%
-                              </p>
-                            </div>
-                            <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                              {formatDate(workItem.date)}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+            <h3 className="font-semibold text-lg mb-4">
+              Complaint Descriptions
+            </h3>
+
+            {/* Inputs and Add Button */}
+            <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter complaint description"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Amount
+                </label>
+                <input
+                  type="number"
+                  value={newAmount}
+                  onChange={(e) => setNewAmount(parseFloat(e.target.value))}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Amount"
+                />
+              </div>
+              <div>
+                <button
+                  onClick={handleAddComplaint}
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
+            {/* Display List */}
+            {complaintItems.length > 0 ? (
+              <div className="space-y-4">
+                {complaintItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-100 p-4 rounded-md shadow flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold">
+                        {item.description}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Amount: ₹{item.amount}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveComplaint(index)}
+                      className="text-red-500 hover:text-red-700 font-medium"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
               </div>
             ) : (
               <p className="text-gray-500 italic">
-                No work history available yet.
+                No complaint details added yet.
               </p>
             )}
           </div>

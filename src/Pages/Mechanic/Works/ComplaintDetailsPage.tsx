@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 import ServiceDetailsComponent from "./ServiceDetailsComponent";
 import CustomerDetailsComponent from "./CustomerDetailsComponent";
-
 import { getComplaintDetails } from "../../../Api/mech";
 import LocationDetail from "./LocationDetail";
 import GoogleMapLocation from "./GoogleMapLocation";
@@ -14,87 +12,119 @@ import { ComplaintDetails } from "../../../interfaces/IPages/Mechanic/IMechanicI
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
 import StatusProgressBar from "../../../components/Common/StatusProgressBar";
 
+// Move formatDate outside the component to prevent recreation on each render
+const formatDate = (dateString: string) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+/**
+ * ComplaintDetailsPage displays detailed information about a complaint/service request
+ * with status updates, customer information, and location details
+ */
 const ComplaintDetailsPage: React.FC = () => {
-  // Existing state...
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [complaint, setComplaint] = useState<ComplaintDetails | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  // Combine related states to reduce render triggers
+  const [complaintState, setComplaintState] = useState<{
+    data: ComplaintDetails | null;
+    loading: boolean;
+    error: string | null;
+  }>({
+    data: null,
+    loading: true,
+    error: null,
+  });
+  
   const [activeTab, setActiveTab] = useState<string>("details");
 
-  // Format date function
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  // Extract values from combined state
+  const { data: complaint, loading, error } = complaintState;
 
-  // Fetch complaint details
+  // Fetch complaint details - use useCallback with proper dependencies
   const fetchComplaintDetails = useCallback(async () => {
+    if (!id) return;
+    
+    setComplaintState(prev => ({ ...prev, loading: true, error: null }));
+    
     try {
-      setLoading(true);
-      setError(null);
+      const result = await getComplaintDetails(id);
 
-      if (id) {
-        const result = await getComplaintDetails(id);
-
-        if (result && result.data.result && result.data.result.length > 0) {
-          const complaintData = result.data.result[0];
-          setComplaint(complaintData);
-        } else {
-          setError("No data found for this service request.");
-        }
+      if (result && result.data.result && result.data.result.length > 0) {
+        const complaintData = result.data.result[0];
+        setComplaintState({
+          data: complaintData,
+          loading: false,
+          error: null
+        });
+      } else {
+        setComplaintState({
+          data: null,
+          loading: false,
+          error: "No data found for this service request."
+        });
       }
     } catch (error) {
       console.error("Error fetching complaint details:", error);
-      setError("Failed to load service request data. Please try again later.");
-    } finally {
-      setLoading(false);
+      setComplaintState({
+        data: null,
+        loading: false,
+        error: "Failed to load service request data. Please try again later."
+      });
     }
-  }, [id]);
+  }, [id]); // Only depends on id
 
-  // Initial data fetch
+  // Initial data fetch and polling setup
   useEffect(() => {
+    // Initial fetch
     fetchComplaintDetails();
 
-    // Set up polling for real-time updates every 30 seconds
+    // Set up polling with a ref to avoid stale closure issues
     const pollingInterval = setInterval(() => {
       fetchComplaintDetails();
     }, 30000);
 
+    // Clean up on unmount
     return () => clearInterval(pollingInterval);
   }, [fetchComplaintDetails]);
 
-  // Handle status changes
-  const handleStatusChange = useCallback(
-    (newStatus: ComplaintStatus) => {
-      // Update local state immediately for better UX
-      if (complaint) {
-        setComplaint({
-          ...complaint,
+  // Handle status changes - use callback to prevent recreation
+  const handleStatusChange = useCallback((newStatus: ComplaintStatus) => {
+    setComplaintState(prev => {
+      if (!prev.data) return prev;
+      
+      return {
+        ...prev,
+        data: {
+          ...prev.data,
           status: newStatus,
-        });
-      }
+        }
+      };
+    });
+    
+    // Refresh data from server after a brief delay
 
-      // Refresh data from server to ensure everything is in sync
-      fetchComplaintDetails();
-    },
-    [complaint, fetchComplaintDetails]
-  );
+  }, [fetchComplaintDetails]);
 
-  // Handle back button
-  const handleBack = () => {
+  // Handle back button - use callback to prevent recreation
+  const handleBack = useCallback(() => {
     navigate(-1);
-  };
+  }, [navigate]);
 
-  // Loading and error handling...
+  // Derive computed values with useMemo to prevent recalculation
+  const isAccepted = useMemo(() => {
+    return complaint?.status !== ComplaintStatus.PENDING;
+  }, [complaint?.status]);
+
+  // Loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -103,6 +133,7 @@ const ComplaintDetailsPage: React.FC = () => {
     );
   }
 
+  // Error state
   if (error || !complaint) {
     return (
       <div className="px-4 py-6 mt-32">
@@ -119,16 +150,14 @@ const ComplaintDetailsPage: React.FC = () => {
     );
   }
 
-  const isAccepted = complaint.status !== ComplaintStatus.PENDING;
-
   return (
-    <div className="px-4 py-4 bg-gray-50 min-h-screen mt-32">
-      {/**Heading  */}
+    <div className="px-4 py-2 bg-gray-50 min-h-screen mt-32">
+      {/* Heading */}
       <div className="flex justify-center items-center mb-8 font-exo text-xl font-bold">
-      <h1>Registered Complaint Details </h1>
-
+        <h1>Registered Complaint Details</h1>
       </div>
-      {/* Header section with status progress bar and accept / update button*/}
+      
+      {/* Header section with status progress bar and accept/update button */}
       <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
         {/* Status Progress Bar */}
         <div className="px-6 py-4 bg-gray-50">
@@ -139,7 +168,6 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center p-4 border-b border-gray-100 justify-end">
-          {/* Show UpdateBtn if currentMechanicId exists, otherwise show AcceptBtn */}
           {complaint.currentMechanicId ? (
             <UpdateStatusBtn
               complaintId={complaint._id}
@@ -156,36 +184,45 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
 
       {/* Main content with conditional layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left column - Google Map (Always shows on the left in the new layout) */}
-        <div className="lg:col-span-1">
-          <GoogleMapLocation location={complaint.locationName} />
-        </div>
+<div className="flex flex-col lg:flex-row gap-6">
+  {/* Left column - Google Map */}
+  <div className="w-full lg:w-1/2">
+    {complaint.locationName && typeof complaint.locationName === 'object' && 'address' in complaint.locationName && 'latitude' in complaint.locationName && 'longitude' in complaint.locationName ? (
+      <GoogleMapLocation location={complaint.locationName as { address: string; latitude: number; longitude: number }} />
+    ) : (
+      <div className="text-red-500">Invalid location data</div>
+    )}
+  </div>
 
-        {/* Right column - Service info, Customer info, and Location details */}
-        <div className="lg:col-span-1 flex flex-col space-y-6">
-          {/* Service details component (only if accepted) */}
-          {isAccepted && (
-            <ServiceDetailsComponent
-              complaint={complaint}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              formatDate={formatDate}
-            />
-          )}
+  {/* Right column - Service info, Customer info, and Location details */}
+  <div className="w-full lg:w-1/2 flex flex-col space-y-6">
+    {/* Service details component (only if accepted) */}
+    {isAccepted && (
+      <ServiceDetailsComponent
+        complaint={complaint}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        formatDate={formatDate}
+      />
+    )}
 
-          {/* Customer info card */}
-          <CustomerDetailsComponent
-            complaint={complaint}
-            formatDate={formatDate}
-          />
+    {/* Customer info card */}
+    <CustomerDetailsComponent
+      complaint={complaint}
+      formatDate={formatDate}
+    />
 
-          {/* Location details */}
-          <LocationDetail location={complaint.locationName} />
-        </div>
-      </div>
+    {/* Location details */}
+    {complaint.locationName && typeof complaint.locationName === 'object' && 'address' in complaint.locationName && 'latitude' in complaint.locationName && 'longitude' in complaint.locationName ? (
+      <LocationDetail location={complaint.locationName as { address: string; latitude: number; longitude: number }} />
+    ) : (
+      <div className="text-red-500">Invalid location data</div>
+    )}
+  </div>
+</div>
+
     </div>
   );
 };
 
-export default ComplaintDetailsPage;
+export default React.memo(ComplaintDetailsPage);

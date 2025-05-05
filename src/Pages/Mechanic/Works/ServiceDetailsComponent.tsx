@@ -59,7 +59,7 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
   }, [complaint.serviceDetails]);
   return (
     <div className="lg:col-span-2">
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
         <div className="flex items-start mb-4">
           <img
             src={serviceImage || "/api/placeholder/80/80"}

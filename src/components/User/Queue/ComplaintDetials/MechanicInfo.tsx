@@ -71,7 +71,7 @@ const MechanicInfo: React.FC<{ mechanicDetails?: MechanicDetails }> = ({
             </p>
           </div>
         </div>
-
+        
         <div className="space-y-2">
           <div className="flex items-center text-sm">
             <Phone className="text-gray-500 mr-2 w-4 h-4" />
