@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge";
 import { Props } from "../../../../interfaces/IComponents/User/IUserInterfaces";
-import { getService } from "../../../../Api/user";
+import { getImageUrl} from "../../../../Api/user";
 
 const ComplaintHeader: React.FC<Props> = ({
   image,
@@ -11,27 +11,31 @@ const ComplaintHeader: React.FC<Props> = ({
 }) => {
   console.log(requestId);
   //useEffect for getting the service details from the backend
+  const [serviceImage,setServiceImage] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getService(requestId);
-        console.log(
-          "service deatils from the backend from  the backend is ",
-          result
-        );
+        const imageurl = await getImageUrl(image,"user");
+        if (imageurl?.data?.url) {
+          setServiceImage(imageurl.data.url);
+        } else {
+          console.error("Image URL not found in API response:", imageurl);
+        }
       } catch (error) {
         console.log(error as Error);
         throw error as Error;
       }
     };
     fetchData();
-  }, [requestId]);
+  }, [image]);
+
+
   return (
-    <div className="p-6 border-b ">
+    <div className="p-6 border-b bg-gray-200 rounded-lg  ">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
           <img
-            src={image}
+            src={serviceImage}
             alt={name}
             className="w-16 h-16 rounded-full mr-4 border"
           />

@@ -5,7 +5,6 @@ import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
 import { getProfile, EditUserDetails, getImageUrl } from "../../Api/user";
 import { getS3SingUrl } from "../../Api/admin"; // Import the getS3SingUrl function
-import Header from "../User/Header";
 import { useAppSelector } from "../../App/store";
 
 interface UserProfile {
@@ -49,6 +48,7 @@ const ProfileEdit: React.FC = () => {
         const userProfileData = response?.data.data.data;
         setUserProfile(userProfileData);
         setPreviewImage(userProfileData.image || DEFAULT_PROFILE_IMAGE);
+        console.log(previewImage)
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
       }
@@ -68,7 +68,7 @@ const ProfileEdit: React.FC = () => {
             setProfileImage(result.data.url);
           }
         }
-      } catch (error) {
+      } catch (error){
         console.log(error as Error);
       }
     }
@@ -154,7 +154,6 @@ const ProfileEdit: React.FC = () => {
                         },
                         body: imageFile,
                       });
-                      
                       // Update the imageKey in the values
                       values.profile_picture = response.data.key;
                     }
@@ -199,7 +198,7 @@ const ProfileEdit: React.FC = () => {
                         </label>
                       </div>
                     </div>
-
+                  
                     {imageFile && (
                       <button
                         type="button"

@@ -126,7 +126,7 @@ const MechanicProfileEdit: React.FC = () => {
                 _id: mechProfile._id || "",
                 name: mechProfile.name || "",
                 phone: mechProfile.phone || "",
-                imageKey: mechProfile.imageKey || "",
+                photo: mechProfile.imageKey || "",
               }}
               validationSchema={validationSchema}
               enableReinitialize
@@ -148,7 +148,7 @@ const MechanicProfileEdit: React.FC = () => {
                         },
                         body: imageFile,
                       });
-                      values.imageKey = response.data.key;
+                      values.photo = response.data.key;
                     }
                   }
                   const result = await updateMechanicDetails(values);

@@ -137,6 +137,6 @@ export interface AllAcceptedServices {
     _id : string;
     name : string ;
     phone : string;
-    imageKey : string;
+    photo : string;
   }
   

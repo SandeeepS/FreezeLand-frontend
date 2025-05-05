@@ -4,9 +4,11 @@ import { Props2 } from "../../../../interfaces/IComponents/User/IUserInterfaces"
 
 
 const ComplaintInfo: React.FC<Props2> = ({ serviceDetails, complaint, deviceImages }) => (
-  <div className="md:col-span-2">
-    <h2 className="text-xl font-semibold mb-4">Service Details</h2>
-    <div className="bg-gray-50 p-5 rounded-lg mb-6">
+  <div className="md:col-span-2  bg-gray-300 rounded-lg h-full">
+    <div className="flex flex-col items-center ">
+    <h2 className="text-xl font-semibold my-2">Service Details</h2>
+    </div>
+    <div className="bg-gray-100 p-5  mb-6 h-full">
       <div className="flex items-start mb-4">
         <Handyman className="w-5 h-5 mr-3 mt-1 text-gray-500" />
         <div>

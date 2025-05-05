@@ -24,9 +24,9 @@ export interface initialVal {
     _id : string;
     name : string ;
     phone : string;
-    imageKey : string;
+    profile_picture : string;
   }
-  
+
   export interface initialVal3 {
     name: string;
     email: string;

@@ -5,6 +5,7 @@ import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
 import { EditUserFormData, FormData } from "../interfaces/IPages/User/IUserInterfaces";
 
+
 const signup = async ({
   name,
   phone,
@@ -186,14 +187,14 @@ const getAllUserRegisteredServices = async (userId: string) => {
   }
 };
 
-const EditUserDetails = async ({ _id, name, phone,imageKey }: EditUserFormData) => {
+const EditUserDetails = async ({ _id, name, phone,profile_picture }: EditUserFormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
     const result = await Api.put(userRoutes.editUser, {
       _id,
       name,
       phone,
-      imageKey
+      profile_picture
     });
     console.log("result from the backend is ", result);
     return result;

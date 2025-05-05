@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowBack, Warning } from "@mui/icons-material";
+import { useParams } from "react-router-dom";
+import { Warning } from "@mui/icons-material";
 import {
   getMechanicDetails,
   getUserRegisteredServiceDetailsById,
@@ -15,69 +15,92 @@ import {
 } from "../../../../interfaces/IComponents/User/IUserInterfaces";
 import StatusProgressBar from "../../../Common/StatusProgressBar";
 
-const ComplaintDetail: React.FC = () => {
-  // Existing code...
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [complaint, setComplaint] = useState<IComplaintDetails>();
-  const [mechanicDetails, setMechanicDetails] =
-    useState<IMechanicDetails | null>(null);
+interface IServiceDetails {
+  image?: string;
+  name?: string;
+}
 
-  // Existing useEffects...
+/**
+ * ComplaintDetail component displays detailed information about a service complaint
+ * including customer information, mechanic details and complaint status
+ */
+const ComplaintDetail: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [complaint, setComplaint] = useState<IComplaintDetails | undefined>(undefined);
+  const [mechanicDetails, setMechanicDetails] = useState<IMechanicDetails | null>(null);
+
+  // Fetch complaint details and set up polling for real-time updates
   useEffect(() => {
+    let pollingInterval: NodeJS.Timeout;
+
     const fetchComplaintDetail = async () => {
+      if (!id) return;
+      
       try {
-        setLoading(true);
-        const result = await getUserRegisteredServiceDetailsById(id as string);
-        console.log("result from the backend is ", result);
-        if (result?.data.result[0]) setComplaint(result.data.result[0]);
+        setIsLoading(true);
+        const result = await getUserRegisteredServiceDetailsById(id);
+        
+        if (result?.data?.result?.[0]) {
+          setComplaint(result.data.result[0]);
+        }
       } catch (error) {
         console.error("Error fetching complaint details:", error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    if (id) fetchComplaintDetail();
-
-    // Set up polling for real-time updates every 30 seconds
-    const pollingInterval = setInterval(async () => {
-      try {
-        const result = await getUserRegisteredServiceDetailsById(id as string);
-        if (result?.data.result[0]) setComplaint(result.data.result[0]);
-      } catch (error) {
-        console.error("Error polling complaint details:", error);
-      }
-    }, 30000);
-
-    return () => clearInterval(pollingInterval);
-  }, [id]);
-
-  // Mechanic details fetch
-  useEffect(() => {
-    const fetchMechanicDetails = async () => {
-      if (complaint?.currentMechanicId) {
+    const setupPolling = () => {
+      // Poll for updates every 30 seconds
+      pollingInterval = setInterval(async () => {
+        if (!id) return;
+        
         try {
-          const result = await getMechanicDetails(complaint.currentMechanicId);
-          const mechanic = result?.data.result;
-          if (mechanic) {
-            setMechanicDetails({
-              ...mechanic,
-              acceptedAt: complaint.acceptedAt,
-            });
+          const result = await getUserRegisteredServiceDetailsById(id);
+          if (result?.data?.result?.[0]) {
+            setComplaint(result.data.result[0]);
           }
         } catch (error) {
-          console.error("Error fetching mechanic details:", error);
+          console.error("Error polling complaint details:", error);
         }
+      }, 30000);
+    };
+
+    fetchComplaintDetail();
+    setupPolling();
+
+    // Clean up interval on component unmount
+    return () => {
+      if (pollingInterval) clearInterval(pollingInterval);
+    };
+  }, [id]);
+
+  // Fetch mechanic details when complaint or mechanic ID changes
+  useEffect(() => {
+    const fetchMechanicDetails = async () => {
+      if (!complaint?.currentMechanicId) return;
+      
+      try {
+        const result = await getMechanicDetails(complaint.currentMechanicId);
+        const mechanic = result?.data?.result;
+        
+        if (mechanic) {
+          setMechanicDetails({
+            ...mechanic,
+            acceptedAt: complaint.acceptedAt,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching mechanic details:", error);
       }
     };
 
     fetchMechanicDetails();
   }, [complaint?.currentMechanicId, complaint?.acceptedAt]);
 
-  // Loading and error handling...
-  if (loading) {
+  // Render loading state
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -85,6 +108,7 @@ const ComplaintDetail: React.FC = () => {
     );
   }
 
+  // Render error state if complaint not found
   if (!complaint) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -99,17 +123,19 @@ const ComplaintDetail: React.FC = () => {
     );
   }
 
-  const serviceDetails = complaint.serviceDetails?.[0] || {};
+  // Extract data from complaint
+  const serviceDetails: IServiceDetails = complaint.serviceDetails?.[0] || {};
   const userDetails = complaint.userDetails?.[0] || {};
-  const deviceImages = complaint?.deviceImages || [];
+  const deviceImages = complaint.deviceImages || [];
+  const status = complaint.status || "pending";
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
         {/* Status Progress Bar */}
-        <div className="px-6 py-3 border-t border-b border-gray-100 bg-gray-50">
+        <div className="px-6 py-3 border-t border-b border-gray-100 ">
           <StatusProgressBar
-            currentStatus={complaint.status || "pending"}
+            currentStatus={status}
             compact={false}
             className="max-w-3xl mx-auto"
           />
@@ -119,9 +145,11 @@ const ComplaintDetail: React.FC = () => {
           image={serviceDetails.image || "/api/placeholder/60/60"}
           name={serviceDetails.name || "Unknown Service"}
           requestId={complaint._id}
-          status={complaint.status || "pending"}
+          status={status}
         />
+        
         <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Left column - Complaint information */}
           <div className="md:col-span-6">
             <ComplaintInfo
               serviceDetails={serviceDetails}
@@ -129,11 +157,14 @@ const ComplaintDetail: React.FC = () => {
               deviceImages={deviceImages}
             />
           </div>
+          
+          {/* Right column - Customer and mechanic information */}
           <div className="md:col-span-6 grid grid-cols-1 gap-6">
             <CustomerInfo
               userDetails={userDetails}
               fallbackName={complaint.name}
             />
+            
             {complaint.currentMechanicId && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}
