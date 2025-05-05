@@ -25,15 +25,10 @@ const formatDate = (dateString: string) => {
   });
 };
 
-/**
- * ComplaintDetailsPage displays detailed information about a complaint/service request
- * with status updates, customer information, and location details
- */
 const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Combine related states to reduce render triggers
   const [complaintState, setComplaintState] = useState<{
     data: ComplaintDetails | null;
     loading: boolean;
@@ -46,7 +41,6 @@ const ComplaintDetailsPage: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<string>("details");
 
-  // Extract values from combined state
   const { data: complaint, loading, error } = complaintState;
 
   // Fetch complaint details - use useCallback with proper dependencies
@@ -82,41 +76,24 @@ const ComplaintDetailsPage: React.FC = () => {
     }
   }, [id]); // Only depends on id
 
-  // Initial data fetch and polling setup
   useEffect(() => {
-    // Initial fetch
     fetchComplaintDetails();
-
-    // Set up polling with a ref to avoid stale closure issues
-    const pollingInterval = setInterval(() => {
-      fetchComplaintDetails();
-    }, 30000);
-
-    // Clean up on unmount
-    return () => clearInterval(pollingInterval);
   }, [fetchComplaintDetails]);
 
-  // Handle status changes - use callback to prevent recreation
-  const handleStatusChange = useCallback(
-    (newStatus: ComplaintStatus) => {
-      setComplaintState((prev) => {
-        if (!prev.data) return prev;
+  const handleStatusChange = useCallback((newStatus: ComplaintStatus) => {
+    setComplaintState((prev) => {
+      if (!prev.data) return prev;
 
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            status: newStatus,
-          },
-        };
-      });
+      return {
+        ...prev,
+        data: {
+          ...prev.data,
+          status: newStatus,
+        },
+      };
+    });
+  }, []);
 
-      // Refresh data from server after a brief delay
-    },
-    [fetchComplaintDetails]
-  );
-
-  // Handle back button - use callback to prevent recreation
   const handleBack = useCallback(() => {
     navigate(-1);
   }, [navigate]);

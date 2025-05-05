@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-
+import { Pencil, Trash2 } from "lucide-react";
 
 interface TabsComponentProps {
   activeTab: string;
@@ -10,8 +10,8 @@ interface TabsComponentProps {
     lastUpdated?: string;
     estimatedCompletionDate?: string;
     completionPercentage: number;
-    status?: string; // Made optional to handle cases where it might be missing
-    currentMechanicId?: string; // Added currentMechanic field
+    status?: string;
+    currentMechanicId?: string;
     workHistory?: {
       date: string;
       action: string;
@@ -33,23 +33,59 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   >([]);
   const [newDescription, setNewDescription] = useState("");
   const [newAmount, setNewAmount] = useState<number>(0);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+
   // If currentMechanic or status is not present, don't render the component
   if (!complaint.currentMechanicId) {
     return null;
   }
 
+  const calculateTotal = () => {
+    return complaintItems.reduce((sum, item) => sum + item.amount, 0);
+  };
+
   const handleAddComplaint = () => {
     if (newDescription.trim() === "" || isNaN(newAmount)) return;
-    setComplaintItems([
-      ...complaintItems,
-      { description: newDescription, amount: newAmount },
-    ]);
+    
+    if (editIndex !== null) {
+      // Update existing item
+      const updatedItems = [...complaintItems];
+      updatedItems[editIndex] = { description: newDescription, amount: newAmount };
+      setComplaintItems(updatedItems);
+      setEditIndex(null);
+    } else {
+      // Add new item
+      setComplaintItems([
+        ...complaintItems,
+        { description: newDescription, amount: newAmount },
+      ]);
+    }
+    
     setNewDescription("");
     setNewAmount(0);
   };
 
+  const handleEditComplaint = (index: number) => {
+    const item = complaintItems[index];
+    setNewDescription(item.description);
+    setNewAmount(item.amount);
+    setEditIndex(index);
+  };
+
   const handleRemoveComplaint = (index: number) => {
     setComplaintItems(complaintItems.filter((_, i) => i !== index));
+    // Reset form if currently editing this item
+    if (editIndex === index) {
+      setEditIndex(null);
+      setNewDescription("");
+      setNewAmount(0);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditIndex(null);
+    setNewDescription("");
+    setNewAmount(0);
   };
 
   return (
@@ -129,7 +165,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
               Complaint Descriptions
             </h3>
 
-            {/* Inputs and Add Button */}
+            {/* Inputs and Add/Update Button */}
             <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700">
@@ -155,40 +191,70 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                   placeholder="Amount"
                 />
               </div>
-              <div>
+              <div className="flex gap-2">
                 <button
                   onClick={handleAddComplaint}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow"
                 >
-                  Add
+                  {editIndex !== null ? "Update" : "Add"}
                 </button>
+                {editIndex !== null && (
+                  <button
+                    onClick={cancelEdit}
+                    className="inline-flex items-center px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 shadow"
+                  >
+                    Cancel
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Display List */}
+            {/* Bill-like UI */}
             {complaintItems.length > 0 ? (
-              <div className="space-y-4">
-                {complaintItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-100 p-4 rounded-md shadow flex justify-between items-center"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold">
-                        {item.description}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Amount: ₹{item.amount}
-                      </p>
+              <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+                {/* Header */}
+                <div className="grid grid-cols-12 bg-gray-100 border-b border-gray-300 font-medium text-gray-700">
+                  <div className="col-span-6 p-3">DESCRIPTION</div>
+                  <div className="col-span-3 p-3 text-right">AMOUNT</div>
+                  <div className="col-span-3 p-3 text-center">ACTIONS</div>
+                </div>
+                
+                {/* Bill Items */}
+                <div className="divide-y divide-gray-200">
+                  {complaintItems.map((item, index) => (
+                    <div key={index} className="grid grid-cols-12 py-3 items-center hover:bg-gray-50">
+                      <div className="col-span-6 px-3">
+                        <p className="text-sm">{item.description}</p>
+                      </div>
+                      <div className="col-span-3 px-3 text-right">
+                        <p className="text-sm">₹{item.amount.toFixed(2)}</p>
+                      </div>
+                      <div className="col-span-3 px-3 flex justify-center space-x-2">
+                        <button
+                          onClick={() => handleEditComplaint(index)}
+                          className="p-1 text-blue-600 hover:text-blue-800 rounded"
+                          title="Edit"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleRemoveComplaint(index)}
+                          className="p-1 text-red-600 hover:text-red-800 rounded"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => handleRemoveComplaint(index)}
-                      className="text-red-500 hover:text-red-700 font-medium"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                
+                {/* Total */}
+                <div className="bg-gray-100 border-t border-gray-300 grid grid-cols-12 py-3 font-medium">
+                  <div className="col-span-6 px-3 text-right">TOTAL</div>
+                  <div className="col-span-3 px-3 text-right">₹{calculateTotal().toFixed(2)}</div>
+                  <div className="col-span-3"></div>
+                </div>
               </div>
             ) : (
               <p className="text-gray-500 italic">
