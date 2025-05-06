@@ -12,6 +12,10 @@ import { ComplaintDetails } from "../../../interfaces/IPages/Mechanic/IMechanicI
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
 import StatusProgressBar from "../../../components/Common/StatusProgressBar";
 
+import { useSelector } from "react-redux"; // Import useSelector to access current user ID
+import { RootState } from "../../../App/store"; // Import RootState type
+import FloatingChat from "../../../components/Common/Chat/FloatingChat";
+
 // Move formatDate outside the component to prevent recreation on each render
 const formatDate = (dateString: string) => {
   if (!dateString) return "N/A";
@@ -28,6 +32,10 @@ const formatDate = (dateString: string) => {
 const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  // Get current user from Redux store
+  const currentUser = useSelector((state: RootState) => state.auth.userData);
+  const currentUserId = currentUser?.id || '';
 
   const [complaintState, setComplaintState] = useState<{
     data: ComplaintDetails | null;
@@ -258,6 +266,15 @@ const ComplaintDetailsPage: React.FC = () => {
           Cancel Service Request
         </button>
       </div>
+
+      {/* Add Floating Chat component only if the complaint has been accepted */}
+      {isAccepted && complaint._id && complaint.userId && complaint.currentMechanicId && (
+        <FloatingChat 
+          complaintId={complaint._id}
+          userId={complaint.userId}
+          mechanicId={complaint.currentMechanicId}
+        />
+      )}
     </div>
   );
 };
