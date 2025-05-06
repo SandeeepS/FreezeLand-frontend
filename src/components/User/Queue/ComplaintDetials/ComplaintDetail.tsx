@@ -28,8 +28,11 @@ interface IServiceDetails {
 const ComplaintDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [complaint, setComplaint] = useState<IComplaintDetails | undefined>(undefined);
-  const [mechanicDetails, setMechanicDetails] = useState<IMechanicDetails | null>(null);
+  const [complaint, setComplaint] = useState<IComplaintDetails | undefined>(
+    undefined
+  );
+  const [mechanicDetails, setMechanicDetails] =
+    useState<IMechanicDetails | null>(null);
 
   // Fetch complaint details and set up polling for real-time updates
   useEffect(() => {
@@ -37,11 +40,11 @@ const ComplaintDetail: React.FC = () => {
 
     const fetchComplaintDetail = async () => {
       if (!id) return;
-      
+
       try {
         setIsLoading(true);
         const result = await getUserRegisteredServiceDetailsById(id);
-        
+
         if (result?.data?.result?.[0]) {
           setComplaint(result.data.result[0]);
         }
@@ -56,7 +59,7 @@ const ComplaintDetail: React.FC = () => {
       // Poll for updates every 30 seconds
       pollingInterval = setInterval(async () => {
         if (!id) return;
-        
+
         try {
           const result = await getUserRegisteredServiceDetailsById(id);
           if (result?.data?.result?.[0]) {
@@ -81,11 +84,11 @@ const ComplaintDetail: React.FC = () => {
   useEffect(() => {
     const fetchMechanicDetails = async () => {
       if (!complaint?.currentMechanicId) return;
-      
+
       try {
         const result = await getMechanicDetails(complaint.currentMechanicId);
         const mechanic = result?.data?.result;
-        
+
         if (mechanic) {
           setMechanicDetails({
             ...mechanic,
@@ -148,7 +151,7 @@ const ComplaintDetail: React.FC = () => {
           requestId={complaint._id}
           status={status}
         />
-        
+
         <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Left column - Complaint information */}
           <div className="md:col-span-6">
@@ -158,14 +161,14 @@ const ComplaintDetail: React.FC = () => {
               deviceImages={deviceImages}
             />
           </div>
-          
+
           {/* Right column - Customer and mechanic information */}
           <div className="md:col-span-6 grid grid-cols-1 gap-6">
             <CustomerInfo
               userDetails={userDetails}
               fallbackName={complaint.name}
             />
-            
+
             {complaint.currentMechanicId && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}
@@ -173,9 +176,9 @@ const ComplaintDetail: React.FC = () => {
         </div>
       </div>
 
-          {/* Add Floating Chat component only if the complaint has been accepted */}
-          {complaint._id && complaint.userId && complaint.currentMechanicId && (
-        <FloatingChat 
+      {/* Add Floating Chat component only if the complaint has been accepted */}
+      {complaint._id && complaint.userId && complaint.currentMechanicId && (
+        <FloatingChat
           complaintId={complaint._id}
           userId={complaint.userId}
           mechanicId={complaint.currentMechanicId}
