@@ -42,7 +42,7 @@ function Footer() {
             <h4>Download App for Your Smartphone</h4>
           </div>
         </div>
-
+        
         <hr className="my-8 border-gray-200" />
 
         <div className="text-center text-sm">
