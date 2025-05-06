@@ -14,6 +14,7 @@ import {
   IMechanicDetails,
 } from "../../../../interfaces/IComponents/User/IUserInterfaces";
 import StatusProgressBar from "../../../Common/StatusProgressBar";
+import FloatingChat from "../../../Common/Chat/FloatingChat";
 
 interface IServiceDetails {
   image?: string;
@@ -171,6 +172,15 @@ const ComplaintDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+          {/* Add Floating Chat component only if the complaint has been accepted */}
+          {complaint._id && complaint.userId && complaint.currentMechanicId && (
+        <FloatingChat 
+          complaintId={complaint._id}
+          userId={complaint.userId}
+          mechanicId={complaint.currentMechanicId}
+        />
+      )}
     </div>
   );
 };

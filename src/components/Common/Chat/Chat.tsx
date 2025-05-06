@@ -159,7 +159,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     return (
       <div className="fixed bottom-4 right-4 w-64 bg-white rounded-t-lg shadow-lg z-50">
         <div 
-          className="bg-blue-600 text-white p-3 rounded-t-lg flex justify-between items-center cursor-pointer"
+          className="bg-freeze-color text-white p-3 rounded-t-lg flex justify-between items-center cursor-pointer"
           onClick={toggleMinimize}
         >
           <span className="font-medium">Chat</span>
@@ -176,7 +176,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   return (
     <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg z-50 flex flex-col" style={{ height: "400px" }}>
       {/* Chat header */}
-      <div className="bg-blue-600 text-white p-3 rounded-t-lg flex justify-between items-center">
+      <div className="bg-freeze-color text-white p-3 rounded-t-lg flex justify-between items-center">
         <span className="font-medium">Support Chat</span>
         <div className="flex items-center space-x-2">
           <button onClick={toggleMinimize} className="text-white focus:outline-none">
@@ -247,7 +247,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           />
           <button 
             onClick={sendMessage}
-            className="bg-blue-600 text-white px-4 focus:outline-none hover:bg-blue-700"
+            className="bg-freeze-color text-white px-4 focus:outline-none hover:bg-blue-700"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />

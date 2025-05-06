@@ -89,7 +89,6 @@ function App() {
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
               <Route path="/user/service/:id" element={<Service />} />
               <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />} />
-              <Route path="/user/chat" element={<Chat/>} /> 
 
             </Route>
           </Route>
