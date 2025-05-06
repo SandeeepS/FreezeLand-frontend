@@ -11,18 +11,21 @@ export interface AuthState {
     id: string;
     name: string;
     email:string;
+    role:string;
   }
   
   interface UserDataType {
     id: string;
     name: string;
     email:string;
+    role:string;
   }
   
   interface MechDataType {
   id:string;
   name: string;
   email: string;
+  role:string;
   }
   
   interface UserAddressType {
