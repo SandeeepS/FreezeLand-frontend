@@ -28,6 +28,7 @@ export interface IComplaintDetails {
   isBlocked: boolean;
   isDeleted: boolean;
   deviceImages?: any[];
+  chatId:string;
 }
 
 export interface IMechanicDetails {

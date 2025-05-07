@@ -6,9 +6,11 @@ interface FloatingChatProps {
   complaintId: string;
   userId: string;
   mechanicId: string;
+  roomId:string;
+  senderType:string;
 }
 
-const FloatingChat: React.FC<FloatingChatProps> = ({ complaintId, userId, mechanicId }) => {
+const FloatingChat: React.FC<FloatingChatProps> = ({ complaintId, userId, mechanicId,roomId,senderType }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleChat = () => {
@@ -33,6 +35,8 @@ const FloatingChat: React.FC<FloatingChatProps> = ({ complaintId, userId, mechan
           userId={userId}
           mechanicId={mechanicId}
           onClose={toggleChat}
+          roomId={roomId}
+          senderType={senderType}
         />
       )}
     </div>

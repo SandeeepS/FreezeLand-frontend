@@ -129,6 +129,7 @@ export interface AllAcceptedServices {
       notes: string;
       completionPercentage: number;
     }[];
+    chatId:string
   }
   
 

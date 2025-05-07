@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import io, { Socket } from "socket.io-client";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../App/store";
+import { getComplaintDetails } from "../../../Api/chat";
 
 // Define message interface
-interface Message {
-  sender: string;
-  content: string;
-  timestamp: string;
-  senderType: "user" | "mechanic";
+export interface Message {
+  senderId: string;
+  message: string;
+  sendAt: string;
+  senderType: string;
 }
 
 interface ChatBoxProps {
@@ -17,6 +16,13 @@ interface ChatBoxProps {
   mechanicId: string;
   isMinimized?: boolean;
   onClose?: () => void;
+  roomId: string;
+  senderType: string;
+}
+
+interface ComplaintDetails {
+  userId: string;
+  currentMechanicId: string;
 }
 
 const ENDPOINT = "http://localhost:5000"; // Your server URL
@@ -27,6 +33,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   mechanicId,
   isMinimized = false,
   onClose,
+  roomId,
+  senderType,
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -37,15 +45,23 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Get current user info from Redux store
-  const currentUser = useSelector((state: RootState) => state.auth.userData);
-  const userType = currentUser?.role?.toLowerCase() || "user"; // 'user' or 'mechanic'
-  const currentUserId = currentUser?.id;
+  const [complaintDetails, setComplaintDetails] =
+    useState<ComplaintDetails | null>(null);
 
-  // Generate room ID from complaint ID
-  const roomId = `complaint_${complaintId}`;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const complaintDetails = await getComplaintDetails(complaintId);
+        console.log("ComplaintDetails in the chat page is", complaintDetails);
+        setComplaintDetails(complaintDetails?.data.result[0]);
+      } catch (error) {
+        console.log(error as Error);
+        throw error as Error;
+      }
+    };
+    fetchData();
+  }, []);
 
-  // Connect to socket.io when component mounts
   useEffect(() => {
     const newSocket = io(ENDPOINT, { withCredentials: true });
     setSocket(newSocket);
@@ -56,7 +72,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     };
   }, []);
 
-  // Handle socket events and join room
   useEffect(() => {
     if (!socket) return;
 
@@ -66,7 +81,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     // Load previous messages
     socket.emit("get_messages", { roomId });
 
-    // Message handler
     const messageHandler = (data: Message) => {
       setMessages((prev) => [...prev, data]);
     };
@@ -104,19 +118,27 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Get current user ID based on sender type
+  let senderId: string = "";  
+  if (senderType === "User" && complaintDetails?.userId) {
+    senderId = complaintDetails.userId;
+  } else if (senderType === "Mechanic" && complaintDetails?.currentMechanicId) {
+    senderId = complaintDetails.currentMechanicId;
+  }
+
   // Send message function
   const sendMessage = () => {
-    if (newMessage.trim() === "" || !socket) return;
+    if (newMessage.trim() === "" || !socket || !senderId) return;
 
     const messageData: Message = {
-      sender: currentUserId || "",
-      content: newMessage,
-      timestamp: new Date().toISOString(),
-      senderType: userType as "user" | "mechanic",
+      senderId: senderId,
+      message: newMessage,
+      sendAt: new Date().toISOString(),
+      senderType: senderType,
     };
 
     socket.emit("send_message", {
-      room: roomId,
+      roomId: roomId,
       ...messageData,
     });
 
@@ -125,7 +147,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     // Cancel typing indicator when message is sent
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
-      socket.emit("typing", { room: roomId, isTyping: false, user: currentUserId });
+      socket.emit("typing", {
+        room: roomId,
+        isTyping: false,
+        user: senderId,
+      });
     }
   };
 
@@ -134,8 +160,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     setNewMessage(e.target.value);
 
     // Send typing indicator
-    if (socket) {
-      socket.emit("typing", { room: roomId, isTyping: true, user: currentUserId });
+    if (socket && senderId) {
+      socket.emit("typing", {
+        room: roomId,
+        isTyping: true,
+        user: senderId,
+      });
 
       // Clear previous timeout
       if (typingTimeoutRef.current) {
@@ -144,7 +174,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
       // Set timeout to stop typing indicator after 2 seconds of inactivity
       typingTimeoutRef.current = setTimeout(() => {
-        socket.emit("typing", { room: roomId, isTyping: false, user: currentUserId });
+        socket.emit("typing", {
+          room: roomId,
+          isTyping: false,
+          user: senderId,
+        });
       }, 2000);
     }
   };
@@ -158,14 +192,23 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   if (minimized) {
     return (
       <div className="fixed bottom-4 right-4 w-64 bg-white rounded-t-lg shadow-lg z-50">
-        <div 
+        <div
           className="bg-freeze-color text-white p-3 rounded-t-lg flex justify-between items-center cursor-pointer"
           onClick={toggleMinimize}
         >
           <span className="font-medium">Chat</span>
           <div className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                clipRule="evenodd"
+              />
             </svg>
           </div>
         </div>
@@ -174,20 +217,44 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg z-50 flex flex-col" style={{ height: "400px" }}>
+    <div
+      className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg z-50 flex flex-col"
+      style={{ height: "400px" }}
+    >
       {/* Chat header */}
       <div className="bg-freeze-color text-white p-3 rounded-t-lg flex justify-between items-center">
-        <span className="font-medium">Support Chat</span>
+        <span className="font-medium">{senderType == "Mechanic"? "User":"Mechanic"}</span>
         <div className="flex items-center space-x-2">
-          <button onClick={toggleMinimize} className="text-white focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          <button
+            onClick={toggleMinimize}
+            className="text-white focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
             </svg>
           </button>
           {onClose && (
             <button onClick={onClose} className="text-white focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
               </svg>
             </button>
           )}
@@ -203,23 +270,33 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           </div>
         ) : (
           messages.map((msg, index) => {
-            const isMine = msg.sender === currentUserId;
-            
+            // This is the fixed line - compare message senderId with current user senderId
+            const isMine = msg.senderId === senderId;
+
             return (
-              <div 
-                key={index} 
-                className={`flex mb-2 ${isMine ? 'justify-end' : 'justify-start'}`}
+              <div
+                key={index}
+                className={`flex mb-2 ${
+                  isMine ? "justify-end" : "justify-start"
+                }`}
               >
-                <div 
+                <div
                   className={`px-3 py-2 rounded-lg max-w-xs ${
-                    isMine 
-                      ? 'bg-blue-600 text-white rounded-br-none' 
-                      : 'bg-gray-200 text-gray-800 rounded-bl-none'
+                    isMine
+                      ? "bg-freeze-color text-white rounded-br-none"
+                      : "bg-gray-200 text-gray-800 rounded-bl-none"
                   }`}
                 >
-                  <p>{msg.content}</p>
-                  <span className={`block text-xs ${isMine ? 'text-blue-100' : 'text-gray-500'} mt-1`}>
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <p>{msg.message}</p>
+                  <span
+                    className={`block text-xs ${
+                      isMine ? "text-blue-100" : "text-gray-500"
+                    } mt-1`}
+                  >
+                    {new Date(msg.sendAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                 </div>
               </div>
@@ -241,16 +318,26 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             type="text"
             value={newMessage}
             onChange={handleInputChange}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            onKeyPress={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Type a message..."
             className="flex-1 p-2 focus:outline-none"
           />
-          <button 
+          <button
             onClick={sendMessage}
             className="bg-freeze-color text-white px-4 focus:outline-none hover:bg-blue-700"
+            disabled={!senderId}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+                clipRule="evenodd"
+              />
             </svg>
           </button>
         </div>

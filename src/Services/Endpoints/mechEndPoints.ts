@@ -19,6 +19,7 @@ const mechRoutes = {
   getAllAcceptedServices:"mech/getAllAcceptedServices",
   updateComplaintStatus:"mech/updateComplaintStatus",
   editMechanic:"mech/editMechanic",
+  createRoom:"mech/createRoom",
   logout: "/mech/logout",
 };
 

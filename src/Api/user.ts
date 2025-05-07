@@ -4,6 +4,7 @@ import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
 import { EditUserFormData, FormData } from "../interfaces/IPages/User/IUserInterfaces";
+import { Message } from "../components/Common/Chat/Chat";
 
 
 const signup = async ({
@@ -312,6 +313,9 @@ const getService = async (id: string ) => {
     errorHandler(error as Error);
   }
 };
+
+
+
 
 export {
   signup,

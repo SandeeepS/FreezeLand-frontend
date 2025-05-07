@@ -215,7 +215,8 @@ const getImageUrl = async (imageKey: string, type: string) => {
 const updateWorkAssigned = async (
   complaintId: string,
   mechanicId: string,
-  status: string
+  status: string,
+  roomId:string,
 ) => {
   try {
     console.log("ehtered in the updateWorkAssigned");
@@ -223,6 +224,7 @@ const updateWorkAssigned = async (
       complaintId,
       mechanicId,
       status,
+      roomId
     });
     return result;
   } catch (error) {
@@ -276,8 +278,20 @@ const updateMechanicDetails = async ( {_id, name, phone,photo }: EditMechanicFor
   }
 }
 
+const createRoom = async (userId:string,mechId:string) => {
+  try{
+    console.log("Entered in the createRoom funciton in the mechts");
+    const result = await Api.post(mechRoutes.createRoom,{userId,mechId});
+    return result;
+  }catch(error){
+    console.log(error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
+  createRoom,
   mLogout,
   mechSignup,
   getImageUrl,

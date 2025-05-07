@@ -3,20 +3,24 @@ import SwipeRightIcon from "@mui/icons-material/SwipeRight";
 import CircularProgress from "@mui/material/CircularProgress";
 import ConfirmationModal from "./ConformationModal";
 import { RootState, useAppSelector } from "../../../App/store";
-import { updateWorkAssigned } from "../../../Api/mech";
+import { createRoom, updateWorkAssigned } from "../../../Api/mech";
 import { useNavigate } from "react-router-dom";
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
 
 
 interface AcceptBtnProps {
   complaintId: string;
+  userId:string;
+  mechId:string;
   onStatusChange?: (newStatus: ComplaintStatus) => void;
 }
 
-const AcceptBtn: React.FC<AcceptBtnProps> = ({ complaintId, onStatusChange }) => {
+const AcceptBtn: React.FC<AcceptBtnProps> = ({ complaintId, userId,mechId,onStatusChange }) => {
+  console.log("complaintId is  ",complaintId);
+  console.log("userId is ",userId);
   const navigate = useNavigate();
   const mechanic = useAppSelector((state: RootState) => state.auth.mechData);
-  const mechanicId = mechanic?.data._id;
+  const mechanicId = mechanic?.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +39,10 @@ const AcceptBtn: React.FC<AcceptBtnProps> = ({ complaintId, onStatusChange }) =>
     
     try {
       const status = ComplaintStatus.ACCEPTED;
-      const result = await updateWorkAssigned(complaintId, mechanicId, status);
+      const room = await createRoom(userId,mechId);
+      console.log("created Room id is",room);
+      const roomId = room?.data.result.id;
+      const result = await updateWorkAssigned(complaintId, mechanicId as string, status,roomId);
       
       if (result?.data.success === true) {
         if (onStatusChange) {

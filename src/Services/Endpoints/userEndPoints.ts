@@ -21,6 +21,7 @@ const userRoutes = {
   getMechanicDetails:"/user/getMechanicDetails",
   getService:"/user/getService/",
   getImageUrl: "/user/getImageUrl",
+  getMessages:"/user/getMessages",
 };
 
 export default userRoutes;

@@ -4,7 +4,6 @@ import { getProfile, getService } from "../../Api/user";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
-import { UserData } from "../../interfaces/UserData";
 import { Iconcern } from "../../interfaces/Iconcern";
 import { ServiceFormValidation } from "../../components/Common/Validations";
 import { registerComplaint } from "../../Api/user";
@@ -16,6 +15,7 @@ import ServiceDetails from "../../components/User/UserServiceRegisteration/Servi
 import ServiceForm from "../../components/User/UserServiceRegisteration/ServiceForm";
 import AboutTheService from "../../components/User/UserServiceRegisteration/AboutTheService";
 import ConformationModal from "../../components/Common/ConformationModal";
+import UserData from "../../interfaces/UserData";
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -23,7 +23,7 @@ const Service: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const userData = useSelector((state: RootState) => state.auth.userData);
-  const userId = userData.toString();
+  const userId = userData?.id;
   const [service, setServices] = useState<Iconcern>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState({
@@ -58,8 +58,8 @@ const Service: React.FC = () => {
     const fetchData = async () => {
       try {
         const [serviceResult, profileResult] = await Promise.all([
-          getService(id),
-          getProfile(userId),
+          getService(id as string),
+          getProfile(userId as string),
         ]);
         if (serviceResult) {
           setServices(serviceResult.data);
@@ -196,7 +196,7 @@ const Service: React.FC = () => {
               name: "",
               discription: "",
               location: "",
-              file: null,
+              file: null as File | null,
               defaultAddress: "",
             }}
             validationSchema={ServiceFormValidation}
@@ -218,7 +218,7 @@ const Service: React.FC = () => {
                 if (values.file) {
                   const folderName = "ServiceComplaints";
                   try {
-                    const fileName = values.file.name ;
+                    const fileName = (values.file as File)?.name || "";
                     const fileType = values.file.type;
 
                     const response = await getS3SingUrl(

@@ -172,6 +172,7 @@ const ComplaintDetail: React.FC = () => {
             {complaint.currentMechanicId && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}
+
           </div>
         </div>
       </div>
@@ -179,9 +180,12 @@ const ComplaintDetail: React.FC = () => {
       {/* Add Floating Chat component only if the complaint has been accepted */}
       {complaint._id && complaint.userId && complaint.currentMechanicId && (
         <FloatingChat
+          
           complaintId={complaint._id}
           userId={complaint.userId}
           mechanicId={complaint.currentMechanicId}
+          roomId={complaint.chatId}
+          senderType= "User"
         />
       )}
     </div>

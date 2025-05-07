@@ -32,10 +32,11 @@ const formatDate = (dateString: string) => {
 const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+  const [userComplaintDetails,setUserComplaintDetails] = useState<unknown>();
+
   // Get current user from Redux store
-  const currentUser = useSelector((state: RootState) => state.auth.userData);
-  const currentUserId = currentUser?.id || '';
+  const mechDetails = useSelector((state: RootState) => state.auth.mechData);
+  const currentMechId = mechDetails?.id || '';
 
   const [complaintState, setComplaintState] = useState<{
     data: ComplaintDetails | null;
@@ -59,9 +60,10 @@ const ComplaintDetailsPage: React.FC = () => {
 
     try {
       const result = await getComplaintDetails(id);
-
+      console.log("complaint details in the complaintDetailPage is ",result);
       if (result && result.data.result && result.data.result.length > 0) {
         const complaintData = result.data.result[0];
+        setUserComplaintDetails(result.data.result[0]);
         setComplaintState({
           data: complaintData,
           loading: false,
@@ -167,6 +169,8 @@ const ComplaintDetailsPage: React.FC = () => {
             <div>
               <AccecptBtn
                 complaintId={complaint._id}
+                userId = {userComplaintDetails?.userId}
+                mechId = {currentMechId}
                 onStatusChange={handleStatusChange}
               />
             </div>
@@ -273,6 +277,8 @@ const ComplaintDetailsPage: React.FC = () => {
           complaintId={complaint._id}
           userId={complaint.userId}
           mechanicId={complaint.currentMechanicId}
+          roomId={complaint.chatId}
+          senderType="Mechanic"
         />
       )}
     </div>
