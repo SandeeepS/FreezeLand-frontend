@@ -15,6 +15,8 @@ import {
 } from "../../../../interfaces/IComponents/User/IUserInterfaces";
 import StatusProgressBar from "../../../Common/StatusProgressBar";
 import FloatingChat from "../../../Common/Chat/FloatingChat";
+import WorkDetailsBill from "./WorkDetailsBill";
+import PaymentButton from "./PaymentButton";
 
 interface IServiceDetails {
   image?: string;
@@ -23,7 +25,7 @@ interface IServiceDetails {
 
 /**
  * ComplaintDetail component displays detailed information about a service complaint
- * including customer information, mechanic details and complaint status
+ * including customer information, mechanic details, work details bill and complaint status
  */
 const ComplaintDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -133,6 +135,16 @@ const ComplaintDetail: React.FC = () => {
   const deviceImages = complaint.deviceImages || [];
   const status = complaint.status || "pending";
 
+  // Check if work has started (mechanic assigned and has added some work details)
+  const hasWorkDetails =
+    complaint.workDetails && complaint.workDetails.length > 0;
+  const workStarted =
+    complaint.currentMechanicId &&
+    (complaint.status === "accepted" ||
+      complaint.status === "onProcess" ||
+      complaint.status === "completed" ||
+      hasWorkDetails);
+
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -172,20 +184,27 @@ const ComplaintDetail: React.FC = () => {
             {complaint.currentMechanicId && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}
-
           </div>
         </div>
+      </div>
+      <div>
+        {/* Work Details Bill if work has started */}
+        {workStarted && <WorkDetailsBill complaint={complaint} />}
+      </div>
+      <div>
+        {status == "completed" && (
+          <PaymentButton complaintId={complaint._id} status={status} />
+        )}
       </div>
 
       {/* Add Floating Chat component only if the complaint has been accepted */}
       {complaint._id && complaint.userId && complaint.currentMechanicId && (
         <FloatingChat
-          
           complaintId={complaint._id}
           userId={complaint.userId}
           mechanicId={complaint.currentMechanicId}
           roomId={complaint.chatId}
-          senderType= "User"
+          senderType="User"
         />
       )}
     </div>

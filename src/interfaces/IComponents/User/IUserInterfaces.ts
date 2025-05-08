@@ -25,6 +25,12 @@ export interface IComplaintDetails {
       reason: string | null;
     }
   ];
+  workDetails:[{
+    description: string;
+    amount: number;
+    addedAt: Date;
+  }]
+  
   isBlocked: boolean;
   isDeleted: boolean;
   deviceImages?: any[];

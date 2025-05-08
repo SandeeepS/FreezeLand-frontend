@@ -124,10 +124,10 @@ function App() {
             />
           </Route>
 
-          <Route path="" element={<MechLoggedIn />}>
-            <Route path="/mech" element={<MechLayOut />}>
-              <Route path="/mech/homepage" element={<MechanicHomePage />} />
-              <Route path="/mech/verifyMechanic" element={<VerifyMechanic />} />
+          <Route path="" element={<MechLoggedIn/>}>
+            <Route path="/mech" element={<MechLayOut/>}>
+              <Route path="/mech/homepage" element={<MechanicHomePage />}/>
+              <Route path="/mech/verifyMechanic" element={<VerifyMechanic />}/>
               <Route path="/mech/allWorks" element={<AllWorksPage/>} />
               <Route path="/mech/complaintDetails/:id" element={<ComplaintDetailsPage/>}/>
               <Route path="/mech/queue" element={<MechQueue/>} />
