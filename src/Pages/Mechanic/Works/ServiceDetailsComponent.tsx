@@ -42,6 +42,7 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
   setActiveTab,
   formatDate,
 }) => {
+  console.log("complaint details in the serviceDetailsComponnet ",complaint);
   const [serviceImage, setServiceImage] = useState<string>("");
 
   useEffect(() => {

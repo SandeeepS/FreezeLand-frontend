@@ -289,6 +289,18 @@ const createRoom = async (userId:string,mechId:string) => {
   }
 }
 
+//function to update the workDetails by mechanic
+const updateWorkDetails = async (complaintId:string,workDetails:object) => {
+  try{
+    console.log("reached in the updateWorkDetails ",complaintId ,workDetails);
+    const result = await Api.post(mechRoutes.updateWorkDetails,{complaintId,workDetails:workDetails});
+    return result;
+  }catch(error){
+    console.log("Error while updating the workdetails in the mech.ts");
+    errorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
   createRoom,
@@ -297,6 +309,7 @@ export {
   getImageUrl,
   verifyMechOtp,
   resendMechOtp,
+  updateWorkDetails,
   forgotPasswordMech,
   forgotVerifyOtpMech,
   updateNewPasswordMech,

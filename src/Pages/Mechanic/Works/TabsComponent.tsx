@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Save } from "lucide-react";
+import { updateWorkDetails } from "../../../Api/mech";
 
 interface TabsComponentProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   complaint: {
+    _id: string;
     createdAt: string;
     lastUpdated?: string;
     estimatedCompletionDate?: string;
@@ -18,11 +20,13 @@ interface TabsComponentProps {
       notes: string;
       completionPercentage: number;
     }[];
-    workDetails: {
-      description: string;
-      cost: number;
-      addedAt: Date;
-    };
+    workDetails: [
+      {
+        description: string;
+        cost: number;
+        addedAt: Date;
+      }
+    ];
     serviceDetails: {
       serviceName?: string;
       serviceCharge?: number;
@@ -30,7 +34,10 @@ interface TabsComponentProps {
     };
   };
   formatDate: (dateString: string) => string;
-  updateComplaint?: (complaintId: string, data: { workDetails: WorkDetailItem[] }) => Promise<void>;
+  updateComplaint?: (
+    complaintId: string,
+    data: { workDetails: WorkDetailItem[] }
+  ) => Promise<void>;
   complaintId: string;
 }
 
@@ -59,10 +66,9 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   useEffect(() => {
     setServiceDetails(complaint.serviceDetails[0] || {});
 
-    // Initialize complaintItems from the database if they exist
     if (complaint.workDetails && Array.isArray(complaint.workDetails)) {
       // Skip the first item which is the service charge
-      const workItems = complaint.workDetails.slice(1) || [];
+      const workItems = complaint.workDetails || [];
       setComplaintItems(workItems);
     }
   }, [complaint.serviceDetails, complaint.workDetails]);
@@ -83,23 +89,20 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
   // Function to update the database with the current workDetails
   const updateWorkDetailsInDatabase = async () => {
-    if (!updateComplaint) return;
-
+    console.log("entered in the updateWorkDeatils");
+    if (!complaintItems.length) return;
     setIsUpdating(true);
-
     try {
-      // Create the workDetails array with serviceCharge as the first item
-      const workDetails = [
-        {
-          description: serviceDetails.serviceName || "Service Charge",
-          amount: serviceDetails.serviceCharge || 0,
-        },
-        ...complaintItems,
-      ];
-
-      // Update the complaint in the database
-      await updateComplaint(complaintId, { workDetails });
-      console.log("Work details updated successfully");
+      const workDetails = [...complaintItems];
+      if (!complaint._id) {
+        console.error("Missing complaint ID");
+        return;
+      }
+      const updatedData = await updateWorkDetails(complaint._id, workDetails);
+      console.log(
+        "Work details updated successfully and reached in the frontend ",
+        updatedData
+      );
     } catch (error) {
       console.error("Error updating work details:", error);
     } finally {
@@ -130,9 +133,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
     setNewDescription("");
     setNewAmount(0);
-
-    // Update the database after changing the items
-    updateWorkDetailsInDatabase();
   };
 
   const handleEditComplaint = (index: number) => {
@@ -151,9 +151,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
       setNewDescription("");
       setNewAmount(0);
     }
-
-    // Update the database after removing an item
-    updateWorkDetailsInDatabase();
   };
 
   const cancelEdit = () => {
@@ -309,13 +306,15 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                   </div>
                   <div className="col-span-3 px-3 text-right">
                     <p className="text-sm">
-                      ₹{(serviceDetails?.serviceCharge || 0).toFixed(2)}
+                      ₹{Number((serviceDetails?.serviceCharge || 0)).toFixed(2)}
                     </p>
                   </div>
                   <div className="col-span-3 px-3 text-center text-gray-400 italic">
                     —
                   </div>
                 </div>
+
+
 
                 {complaintItems.map((item, index) => (
                   <div
@@ -364,6 +363,26 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 </div>
                 <div className="col-span-3" />
               </div>
+            </div>
+
+            {/* Save Button at the bottom */}
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={updateWorkDetailsInDatabase}
+                disabled={isUpdating}
+                className={`inline-flex items-center px-6 py-2 ${
+                  isUpdating ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+                } text-white rounded-md shadow`}
+              >
+                {isUpdating ? (
+                  "Saving..."
+                ) : (
+                  <>
+                    <Save size={18} className="mr-2" />
+                    Save All Changes
+                  </>
+                )}
+              </button>
             </div>
           </div>
         )}

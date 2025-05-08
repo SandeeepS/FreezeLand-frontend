@@ -20,6 +20,7 @@ const mechRoutes = {
   updateComplaintStatus:"mech/updateComplaintStatus",
   editMechanic:"mech/editMechanic",
   createRoom:"mech/createRoom",
+  updateWorkDetails:"mech/updateWorkDetails",
   logout: "/mech/logout",
 };
 
