@@ -18,13 +18,26 @@ interface TabsComponentProps {
       notes: string;
       completionPercentage: number;
     }[];
+    workDetails: {
+      description: string;
+      cost: number;
+      addedAt: Date;
+    };
     serviceDetails: {
       serviceName?: string;
       serviceCharge?: number;
-      [key: string]: any;
+      [key: string]: string | number | undefined;
     };
   };
   formatDate: (dateString: string) => string;
+  updateComplaint?: (complaintId: string, data: { workDetails: WorkDetailItem[] }) => Promise<void>;
+  complaintId: string;
+}
+
+// Interface for work details item
+interface WorkDetailItem {
+  description: string;
+  amount: number;
 }
 
 const TabsComponent: React.FC<TabsComponentProps> = ({
@@ -32,21 +45,27 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   setActiveTab,
   complaint,
   formatDate,
+  updateComplaint,
+  complaintId,
 }) => {
-  const [complaintItems, setComplaintItems] = useState<
-    { description: string; amount: number }[]
-  >([]);
+  console.log("complaint in the TabsComponent", complaint);
+  const [complaintItems, setComplaintItems] = useState<WorkDetailItem[]>([]);
   const [newDescription, setNewDescription] = useState("");
   const [newAmount, setNewAmount] = useState<number>(0);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [serviceDetails, setServiceDetails] = useState<{
-    serviceName?: string;
-    serviceCharge?: number;
-  }>({});
+  const [serviceDetails, setServiceDetails] = useState({});
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    setServiceDetails(complaint.serviceDetails || {});
-  }, [complaint.serviceDetails]);
+    setServiceDetails(complaint.serviceDetails[0] || {});
+
+    // Initialize complaintItems from the database if they exist
+    if (complaint.workDetails && Array.isArray(complaint.workDetails)) {
+      // Skip the first item which is the service charge
+      const workItems = complaint.workDetails.slice(1) || [];
+      setComplaintItems(workItems);
+    }
+  }, [complaint.serviceDetails, complaint.workDetails]);
 
   // If currentMechanic or status is not present, don't render the component
   if (!complaint.currentMechanicId) {
@@ -55,27 +74,65 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
   const calculateTotal = () => {
     const serviceCharge = serviceDetails?.serviceCharge || 0;
-    const otherCharges = complaintItems.reduce((sum, item) => sum + item.amount, 0);
+    const otherCharges = complaintItems.reduce(
+      (sum, item) => sum + item.amount,
+      0
+    );
     return serviceCharge + otherCharges;
+  };
+
+  // Function to update the database with the current workDetails
+  const updateWorkDetailsInDatabase = async () => {
+    if (!updateComplaint) return;
+
+    setIsUpdating(true);
+
+    try {
+      // Create the workDetails array with serviceCharge as the first item
+      const workDetails = [
+        {
+          description: serviceDetails.serviceName || "Service Charge",
+          amount: serviceDetails.serviceCharge || 0,
+        },
+        ...complaintItems,
+      ];
+
+      // Update the complaint in the database
+      await updateComplaint(complaintId, { workDetails });
+      console.log("Work details updated successfully");
+    } catch (error) {
+      console.error("Error updating work details:", error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const handleAddComplaint = () => {
     if (newDescription.trim() === "" || isNaN(newAmount)) return;
 
+    let updatedItems: WorkDetailItem[];
+
     if (editIndex !== null) {
-      const updatedItems = [...complaintItems];
-      updatedItems[editIndex] = { description: newDescription, amount: newAmount };
+      updatedItems = [...complaintItems];
+      updatedItems[editIndex] = {
+        description: newDescription,
+        amount: newAmount,
+      };
       setComplaintItems(updatedItems);
       setEditIndex(null);
     } else {
-      setComplaintItems([
+      updatedItems = [
         ...complaintItems,
         { description: newDescription, amount: newAmount },
-      ]);
+      ];
+      setComplaintItems(updatedItems);
     }
 
     setNewDescription("");
     setNewAmount(0);
+
+    // Update the database after changing the items
+    updateWorkDetailsInDatabase();
   };
 
   const handleEditComplaint = (index: number) => {
@@ -86,12 +143,17 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   };
 
   const handleRemoveComplaint = (index: number) => {
-    setComplaintItems(complaintItems.filter((_, i) => i !== index));
+    const updatedItems = complaintItems.filter((_, i) => i !== index);
+    setComplaintItems(updatedItems);
+
     if (editIndex === index) {
       setEditIndex(null);
       setNewDescription("");
       setNewAmount(0);
     }
+
+    // Update the database after removing an item
+    updateWorkDetailsInDatabase();
   };
 
   const cancelEdit = () => {
@@ -173,12 +235,16 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
           </div>
         ) : (
           <div>
-            <h3 className="font-semibold text-lg mb-4">Complaint Descriptions</h3>
+            <h3 className="font-semibold text-lg mb-4">
+              Complaint Descriptions
+            </h3>
 
             {/* Inputs and Add/Update Button */}
             <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Description
+                </label>
                 <input
                   type="text"
                   value={newDescription}
@@ -188,7 +254,9 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Amount</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Amount
+                </label>
                 <input
                   type="number"
                   value={newAmount}
@@ -200,13 +268,21 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
               <div className="flex gap-2">
                 <button
                   onClick={handleAddComplaint}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow"
+                  disabled={isUpdating}
+                  className={`inline-flex items-center px-4 py-2 ${
+                    isUpdating ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                  } text-white rounded-md shadow`}
                 >
-                  {editIndex !== null ? "Update" : "Add"}
+                  {isUpdating
+                    ? "Saving..."
+                    : editIndex !== null
+                    ? "Update"
+                    : "Add"}
                 </button>
                 {editIndex !== null && (
                   <button
                     onClick={cancelEdit}
+                    disabled={isUpdating}
                     className="inline-flex items-center px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 shadow"
                   >
                     Cancel
@@ -215,67 +291,80 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
               </div>
             </div>
 
-            {/* Bill-like UI */}
-            {(serviceDetails.serviceCharge || complaintItems.length > 0) ? (
-              <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-                <div className="grid grid-cols-12 bg-gray-100 border-b border-gray-300 font-medium text-gray-700">
-                  <div className="col-span-6 p-3">DESCRIPTION</div>
-                  <div className="col-span-3 p-3 text-right">AMOUNT</div>
-                  <div className="col-span-3 p-3 text-center">ACTIONS</div>
-                </div>
-
-                <div className="divide-y divide-gray-200">
-                  {serviceDetails.serviceCharge && (
-                    <div className="grid grid-cols-12 py-3 items-center bg-white">
-                      <div className="col-span-6 px-3">
-                        <p className="text-sm font-medium">
-                          {serviceDetails.serviceName || "Service Charge"}
-                        </p>
-                      </div>
-                      <div className="col-span-3 px-3 text-right">
-                        <p className="text-sm">₹{serviceDetails.serviceCharge.toFixed(2)}</p>
-                      </div>
-                      <div className="col-span-3 px-3 text-center text-gray-400 italic">—</div>
-                    </div>
-                  )}
-
-                  {complaintItems.map((item, index) => (
-                    <div key={index} className="grid grid-cols-12 py-3 items-center hover:bg-gray-50">
-                      <div className="col-span-6 px-3">
-                        <p className="text-sm">{item.description}</p>
-                      </div>
-                      <div className="col-span-3 px-3 text-right">
-                        <p className="text-sm">₹{item.amount.toFixed(2)}</p>
-                      </div>
-                      <div className="col-span-3 px-3 flex justify-center space-x-2">
-                        <button
-                          onClick={() => handleEditComplaint(index)}
-                          className="p-1 text-blue-600 hover:text-blue-800 rounded"
-                          title="Edit"
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleRemoveComplaint(index)}
-                          className="p-1 text-red-600 hover:text-red-800 rounded"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-gray-100 border-t border-gray-300 grid grid-cols-12 py-3 font-medium">
-                  <div className="col-span-6 px-3 text-right">TOTAL</div>
-                  <div className="col-span-3 px-3 text-right">₹{calculateTotal().toFixed(2)}</div>
-                  <div className="col-span-3" />
-                </div>
+            {/* Bill-like UI - Always show this section with at least the service charge */}
+            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+              <div className="grid grid-cols-12 bg-gray-100 border-b border-gray-300 font-medium text-gray-700">
+                <div className="col-span-6 p-3">DESCRIPTION</div>
+                <div className="col-span-3 p-3 text-right">AMOUNT</div>
+                <div className="col-span-3 p-3 text-center">ACTIONS</div>
               </div>
-            ) : (
-              <p className="text-gray-500 italic">No complaint details added yet.</p>
-            )}
+
+              <div className="divide-y divide-gray-200">
+                {/* Always display service charge row, even if it's zero */}
+                <div className="grid grid-cols-12 py-3 items-center bg-white">
+                  <div className="col-span-6 px-3">
+                    <p className="text-sm font-medium">
+                      {serviceDetails.serviceName || "Service Charge"}
+                    </p>
+                  </div>
+                  <div className="col-span-3 px-3 text-right">
+                    <p className="text-sm">
+                      ₹{(serviceDetails?.serviceCharge || 0).toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="col-span-3 px-3 text-center text-gray-400 italic">
+                    —
+                  </div>
+                </div>
+
+                {complaintItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-12 py-3 items-center hover:bg-gray-50"
+                  >
+                    <div className="col-span-6 px-3">
+                      <p className="text-sm">{item.description}</p>
+                    </div>
+                    <div className="col-span-3 px-3 text-right">
+                      <p className="text-sm">₹{item.amount.toFixed(2)}</p>
+                    </div>
+                    <div className="col-span-3 px-3 flex justify-center space-x-2">
+                      <button
+                        onClick={() => handleEditComplaint(index)}
+                        disabled={isUpdating}
+                        className="p-1 text-blue-600 hover:text-blue-800 rounded"
+                        title="Edit"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleRemoveComplaint(index)}
+                        disabled={isUpdating}
+                        className="p-1 text-red-600 hover:text-red-800 rounded"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Display message if no custom complaint items yet */}
+                {complaintItems.length === 0 && (
+                  <div className="py-3 px-3 text-gray-500 italic text-center">
+                    No additional complaint details added yet.
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-gray-100 border-t border-gray-300 grid grid-cols-12 py-3 font-medium">
+                <div className="col-span-6 px-3 text-right">TOTAL</div>
+                <div className="col-span-3 px-3 text-right">
+                  ₹{calculateTotal().toFixed(2)}
+                </div>
+                <div className="col-span-3" />
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -32,11 +32,11 @@ const formatDate = (dateString: string) => {
 const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [userComplaintDetails,setUserComplaintDetails] = useState<unknown>();
+  const [userComplaintDetails, setUserComplaintDetails] = useState<unknown>();
 
   // Get current user from Redux store
   const mechDetails = useSelector((state: RootState) => state.auth.mechData);
-  const currentMechId = mechDetails?.id || '';
+  const currentMechId = mechDetails?.id || "";
 
   const [complaintState, setComplaintState] = useState<{
     data: ComplaintDetails | null;
@@ -60,7 +60,7 @@ const ComplaintDetailsPage: React.FC = () => {
 
     try {
       const result = await getComplaintDetails(id);
-      console.log("complaint details in the complaintDetailPage is ",result);
+      console.log("complaint details in the complaintDetailPage is ", result);
       if (result && result.data.result && result.data.result.length > 0) {
         const complaintData = result.data.result[0];
         setUserComplaintDetails(result.data.result[0]);
@@ -169,8 +169,8 @@ const ComplaintDetailsPage: React.FC = () => {
             <div>
               <AccecptBtn
                 complaintId={complaint._id}
-                userId = {userComplaintDetails?.userId}
-                mechId = {currentMechId}
+                userId={userComplaintDetails?.userId}
+                mechId={currentMechId}
                 onStatusChange={handleStatusChange}
               />
             </div>
@@ -178,6 +178,24 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
       </div>
 
+      <div className="mt-4 flex justify-center pb-4">
+        <button
+          onClick={() => {
+            // Implement your cancel request logic here
+            if (
+              window.confirm(
+                "Are you sure you want to cancel this service request?"
+              )
+            ) {
+              // Call your API endpoint to raise a cancel request
+              // Example: cancelServiceRequest(complaint._id)
+            }
+          }}
+          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded shadow-md flex items-center"
+        >
+          Cancel Service Request
+        </button>
+      </div>
       {/* Main content with conditional layout */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-1/2">
@@ -240,47 +258,19 @@ const ComplaintDetailsPage: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-8 flex justify-center pb-8">
-        <button
-          onClick={() => {
-            // Implement your cancel request logic here
-            if (
-              window.confirm(
-                "Are you sure you want to cancel this service request?"
-              )
-            ) {
-              // Call your API endpoint to raise a cancel request
-              // Example: cancelServiceRequest(complaint._id)
-            }
-          }}
-          className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded shadow-md flex items-center"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Cancel Service Request
-        </button>
-      </div>
-
       {/* Add Floating Chat component only if the complaint has been accepted */}
-      {isAccepted && complaint._id && complaint.userId && complaint.currentMechanicId && (
-        <FloatingChat 
-          complaintId={complaint._id}
-          userId={complaint.userId}
-          mechanicId={complaint.currentMechanicId}
-          roomId={complaint.chatId}
-          senderType="Mechanic"
-        />
-      )}
+      {isAccepted &&
+        complaint._id &&
+        complaint.userId &&
+        complaint.currentMechanicId && (
+          <FloatingChat
+            complaintId={complaint._id}
+            userId={complaint.userId}
+            mechanicId={complaint.currentMechanicId}
+            roomId={complaint.chatId}
+            senderType="Mechanic"
+          />
+        )}
     </div>
   );
 };
