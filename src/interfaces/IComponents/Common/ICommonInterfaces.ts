@@ -15,6 +15,8 @@ export interface DynamicTableProps {
   emptyMessage?: string;
   className?: string;
   onRowClick?: (item: TableDataItem) => void;
+  itemsPerPageOptions?: number[];
+  defaultItemsPerPage?: number;
 }
 
 export interface TableDataItem {
