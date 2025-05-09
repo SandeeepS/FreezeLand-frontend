@@ -103,7 +103,7 @@ const Queue: React.FC = () => {
       // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
-        service.serviceDetails.length > 0 &&
+        Array.isArray(service.serviceDetails) && service.serviceDetails.length > 0 &&
         service.serviceDetails[0].imageKey
       ) {
         try {
@@ -232,7 +232,7 @@ const Queue: React.FC = () => {
   // Transform your data to match the table structure
   const formattedData =
     allRegisteredServices.length > 0
-      ? allRegisteredServices.map((service: any) => ({
+      ? allRegisteredServices.map((service: AllRegisteredServices) => ({
           id: service._id,
           name: service.serviceDetails[0]?.name || "Unknown Service",
           userName: service.name || "Unknown User",
@@ -243,7 +243,7 @@ const Queue: React.FC = () => {
       : [];
 
   // Handle row click - Navigate to detail page
-  const handleRowClick = (item: any) => {
+  const handleRowClick = (item: { id: string; name: string; userName: string; status: string; completion: number; originalData: AllRegisteredServices }) => {
     console.log("Clicked on service:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };

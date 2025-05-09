@@ -46,8 +46,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   emptyMessage = "No data available",
   className = "",
   onRowClick,
-  itemsPerPageOptions = [10, 25, 50, 100],
-  defaultItemsPerPage = 10,
+  itemsPerPageOptions = [5, 25, 50, 100],
+  defaultItemsPerPage = 5,
 }) => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,7 +62,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const totalItems = data.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
+  console.log("indexOfLastItem", indexOfLastItem);
+
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  console.log("indexOfFirstItem", indexOfFirstItem);
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
   
   // Page navigation handlers
@@ -97,13 +100,13 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   };
 
   return (
-    <div className={`relative py-6 bg-blueGray-50 ${className}`}>
+    <div className={`relative py-4 bg-blueGray-50 ${className}`}>
       <div className="w-full mb-6 px-4">
         <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white text-black">
-          <div className="rounded-t mb-0 px-4 py-3 border-0">
+          <div className="rounded-t mb-0 px-2  border-0">
             <div className="flex flex-wrap items-center">
-              <div className="relative w-full px-1 max-w-full flex-grow flex-1 my-4">
-                <h3 className="font-bold text-xl text-black">{title}</h3>
+              <div className="relative w-full  max-w-full flex-grow flex-1 my-4 justify-start">
+                <h3 className="font-bold font-exo text-xl text-black">{title}</h3>
               </div>
             </div>
           </div>

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAllUserRegisteredServices } from "../../../Api/user";
 import DynamicTable from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
-import { getAllAcceptedServices } from "../../../Api/mech";
+import { getAllAcceptedServices, getImageUrl } from "../../../Api/mech";
 import {
   AllAcceptedServices,
   TableColumn,
@@ -58,6 +57,10 @@ const MechQueue: React.FC = () => {
     AllAcceptedServices[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
+  
+  // Add state for storing image URLs
+  const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
+  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>({});
 
   // Fetch data
   useEffect(() => {
@@ -68,6 +71,9 @@ const MechQueue: React.FC = () => {
         console.log("data reached", result);
         if (result?.data?.result) {
           setAllAcceptedServices(result.data.result);
+          console.log("Accepted services:", result.data.result);
+          // Fetch images for services and devices
+          fetchAllImages(result.data.result);
         }
       } catch (error) {
         console.error(
@@ -80,11 +86,63 @@ const MechQueue: React.FC = () => {
     };
     fetchData();
   }, [mechanicId]);
+  
+  // Fetch image URLs for all services and devices
+  const fetchAllImages = async (services: AllAcceptedServices[]) => {
+    const serviceImagesMap: Record<string, string> = {};
+    const deviceImagesMap: Record<string, string[]> = {};
+
+    for (const service of services) {
+      // Fetch service logo image from serviceDetails
+      if (service.serviceDetails && service.serviceDetails[0]?.imageKey ) {
+        try {
+          const imageResult = await getImageUrl(
+            service.serviceDetails[0].imageKey,
+            "service"
+          );
+          if (imageResult && imageResult.data && imageResult.data.url) {
+            serviceImagesMap[service._id] = imageResult.data.url;
+          }
+        } catch (error) {
+          console.error("Error fetching service image:", error);
+        }
+      }
+
+      // Fetch device images if available
+      if (service.image && service.image.length) {
+        const deviceImageUrls: string[] = [];
+
+        for (const deviceImg of service.image) {
+          try {
+            const deviceImgResult = await getImageUrl(deviceImg, "service");
+            if (
+              deviceImgResult &&
+              deviceImgResult.data &&
+              deviceImgResult.data.url
+            ) {
+              deviceImageUrls.push(deviceImgResult.data.url);
+            }
+          } catch (error) {
+            console.error("Error fetching device image:", error);
+          }
+        }
+
+        if (deviceImageUrls.length > 0) {
+          deviceImagesMap[service._id] = deviceImageUrls;
+        }
+      }
+    }
+
+    setServiceImages(serviceImagesMap);
+    setDeviceImages(deviceImagesMap);
+  };
 
   // You can use another useEffect to log the state after it's updated
   useEffect(() => {
     console.log("Accepted services from the frontend:", allAcceptedServices);
-  }, [allAcceptedServices]);
+    console.log("Service images:", serviceImages);
+    console.log("Device images:", deviceImages);
+  }, [allAcceptedServices, serviceImages, deviceImages]);
 
   // Define the columns for the service table
   const serviceColumns: TableColumn[] = [
@@ -94,7 +152,7 @@ const MechQueue: React.FC = () => {
       render: (value, item) => (
         <div className="flex items-center">
           <img
-            src={item.logo || "/api/placeholder/48/48"}
+            src={serviceImages[item.id] || "/api/placeholder/48/48"}
             className="h-12 w-12 bg-white rounded-full border"
             alt={item.name}
           />
@@ -123,16 +181,22 @@ const MechQueue: React.FC = () => {
       header: "Device Image",
       render: (value, item) => (
         <div className="flex">
-          {item.team?.map((member: string, idx: number) => (
+          {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
               key={idx}
-              src={member || "/api/placeholder/40/40"}
-              alt="device"
-              className={`w-10 h-10 rounded-full border-2 border-blueGray-50 shadow ${
+              src={imgUrl || "/api/placeholder/40/40"}
+              alt={`device-${idx}`}
+              className={`w-10 h-10 rounded-full border-2 border-white shadow ${
                 idx > 0 ? "-ml-4" : ""
               }`}
             />
-          ))}
+          )) || (
+            <img
+              src="/api/placeholder/40/40"
+              alt="No device image"
+              className="w-10 h-10 rounded-full border-2 border-white shadow"
+            />
+          )}
         </div>
       ),
     },
@@ -150,7 +214,7 @@ const MechQueue: React.FC = () => {
             >
               <div
                 style={{ width: `${value}%` }}
-                className={`shadow-none flex flex-col text-center whitespace-nowrap text-black justify-center ${
+                className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
                   getProgressColors(item.status).bar
                 }`}
               />
@@ -161,18 +225,15 @@ const MechQueue: React.FC = () => {
     },
   ];
 
-  // Transforming the  data to match the table structure
+  // Transforming the data to match the table structure
   const formattedData =
     allAcceptedServices.length > 0
       ? allAcceptedServices.map((service: any) => ({
           id: service._id,
           name: service.serviceDetails?.[0]?.name || "Unknown Service",
-          logo:
-            service.serviceDetails?.[0]?.image?.[0] || "/api/placeholder/48/48",
           userName:
             service.userDetails?.[0]?.name || service.name || "Unknown User",
           status: service.status || "pending",
-          team: service.deviceImages || ["/api/placeholder/40/40"],
           completion: service.completionPercentage || 0,
           originalData: service,
         }))

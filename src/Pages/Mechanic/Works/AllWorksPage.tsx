@@ -21,7 +21,7 @@ interface ComplaintService {
   isBlocked: boolean;
   isDeleted: boolean;
   userDetails: object;
-  serviceDetails: any[]; // Made it more specific as an array
+  serviceDetails: any[];
   status?: string;
   deviceImages?: string[];
   completionPercentage?: number;
@@ -305,7 +305,6 @@ const AllWorksPage: React.FC = () => {
           dateCreated: complaint.createdAt ? formatDate(complaint.createdAt) : "Unknown date",
           completion: complaint.completionPercentage || 0,
           description: complaint.description || "No description provided",
-          // Original data for reference
           originalData: complaint
         }))
       : [];
@@ -313,14 +312,12 @@ const AllWorksPage: React.FC = () => {
   // Handle row click - Navigate to detail page
   const handleRowClick = (item: any) => {
     console.log("Clicked on complaint:", item);
-    // Navigate to the detail page with the complaint ID
     navigate(`/mech/complaintDetails/${item.id}`);
   };
 
   // Handle action button click
   const handleTakeAction = (id: string) => {
     console.log("Taking action on complaint:", id);
-    // Navigate to the action page with the complaint ID
     navigate(`/mechanic/update-complaint/${id}`);
   };
 
