@@ -187,8 +187,8 @@ const ComplaintDetailsPage: React.FC = () => {
                 "Are you sure you want to cancel this service request?"
               )
             ) {
-              // Call your API endpoint to raise a cancel request
-              // Example: cancelServiceRequest(complaint._id)
+              // write api for cancel the service.
+          
             }
           }}
           className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded shadow-md flex items-center"
@@ -259,7 +259,7 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
 
       {/* Add Floating Chat component only if the complaint has been accepted */}
-      {isAccepted &&
+      {isAccepted  &&
         complaint._id &&
         complaint.userId &&
         complaint.currentMechanicId && (
