@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Warning } from "@mui/icons-material";
+
 import {
   getMechanicDetails,
   getUserRegisteredServiceDetailsById,
@@ -18,7 +19,7 @@ import FloatingChat from "../../../Common/Chat/FloatingChat";
 import WorkDetailsBill from "./WorkDetailsBill";
 import PaymentButton from "./PaymentButton";
 
-interface IServiceDetails {
+interface IServiceDetails{
   image?: string;
   name?: string;
 }
@@ -27,6 +28,7 @@ interface IServiceDetails {
  * ComplaintDetail component displays detailed information about a service complaint
  * including customer information, mechanic details, work details bill and complaint status
  */
+
 const ComplaintDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -35,7 +37,7 @@ const ComplaintDetail: React.FC = () => {
   );
   const [mechanicDetails, setMechanicDetails] =
     useState<IMechanicDetails | null>(null);
-
+  const [totalAmount, setTotalAmount] = useState<number>(0);
   // Fetch complaint details and set up polling for real-time updates
   useEffect(() => {
     let pollingInterval: NodeJS.Timeout;
@@ -189,11 +191,11 @@ const ComplaintDetail: React.FC = () => {
       </div>
       <div>
         {/* Work Details Bill if work has started */}
-        {workStarted && <WorkDetailsBill complaint={complaint} />}
+        {workStarted && <WorkDetailsBill complaint={complaint} setTotalAmount={setTotalAmount} />}
       </div>
       <div>
         {status == "completed" && (
-          <PaymentButton complaintId={complaint._id} status={status} />
+          <PaymentButton complaintId={complaint._id} status={status} mechanicId={mechanicDetails?._id as string} serviceId={complaint.serviceDetails?.[0]?._id} amount={totalAmount} />
         )}
       </div>
 

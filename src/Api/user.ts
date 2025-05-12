@@ -4,7 +4,8 @@ import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
 import { EditUserFormData, FormData } from "../interfaces/IPages/User/IUserInterfaces";
-import { Message } from "../components/Common/Chat/Chat";
+import { Message} from "../components/Common/Chat/Chat";
+import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentButton";
 
 
 const signup = async ({
@@ -314,6 +315,35 @@ const getService = async (id: string ) => {
   }
 };
 
+//funtion to handle the payment (stripe payment)
+const handlePayment = async (data:paymentData ) => {
+  try {    
+    console.log("Entered in the handlePayment function in the user.ts");
+    const result = await Api.post(userRoutes.handlePayment, { data });
+    console.log("result from the backend is ", result);
+    return result;
+  }catch(error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+}
+
+//function to send the section id to the backend to get the payment success
+const successPayment = async (sessionId: string) => {
+  try {
+    console.log("Entered in the successPayment function in the user.ts");
+    const result = await Api.get(userRoutes.successPayment, {
+      params: { sessionId },
+    });
+    console.log("result from the backend is ", result);
+    return result;
+    
+  }catch(error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+
+
 
 
 
@@ -336,6 +366,7 @@ export {
   setDefaultAddress,
   getMechanicDetails,
   // getTempUserData,
+  handlePayment,
   registerComplaint,
   getAllServices,
   getAllUserRegisteredServices,

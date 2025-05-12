@@ -1,6 +1,11 @@
 import React from "react";
 
-const ServiceDetails:React.FC = ({serviceImage,discription}) => {
+interface ServiceDetailsProps {
+  serviceImage: string;
+  discription: string;
+}
+
+const ServiceDetails: React.FC<ServiceDetailsProps> = ({ serviceImage, discription }) => {
   return (
     <div className="serviceImage md:w-[45%]">
       <div className="md:mb-12 flex justify-center">

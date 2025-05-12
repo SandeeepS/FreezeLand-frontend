@@ -34,6 +34,7 @@ import MechanicProfile from "./components/Mech/Profile/MechanicProfile";
 import MechanicEditProfile from "./components/Mech/Profile/MechanicEditProfile";
 import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanic/VerifyMechanicByAdmin";
 import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicVerify";
+import PaymentSuccessPage from "./Pages/User/Payment/PaymentSuccessPage";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -53,8 +54,6 @@ const MechanicLoginPage = lazy(() => import("./Pages/Mechanic/MechanicLoginPage"
 const MechanicHomePage = lazy(() => import("./Pages/Mechanic/MechanicHomePage"));
 const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPage"));
 
-
-
 function App() {
 
   return (
@@ -64,7 +63,6 @@ function App() {
         <Routes>
 
           <Route path="/user/homepage" element={<UserHomePage />} />
-
           {/* userRoutes */}
           <Route path="" element={<UserLoggedOut />}>
             <Route path="/signup" element={<UserSignupPage />}/>
@@ -87,8 +85,8 @@ function App() {
               <Route path="/user/showAllAddress" element={<AllAddress />} />
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
               <Route path="/user/service/:id" element={<Service />} />
-              <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />} />
-
+              <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />}/>
+              <Route path="/user/payment/success" element={<PaymentSuccessPage/>}/>
             </Route>
           </Route>
 
@@ -113,9 +111,9 @@ function App() {
           </Route>
 
           {/*Mechanic Routes*/}
-          <Route path="" element={<MechLoggedOut />}>
-            <Route path="/mech/login" element={<MechanicLoginPage />} />
-            <Route path="/mech/signuppage" element={<MechanicSignupPage />} />
+          <Route path="" element={<MechLoggedOut/>}>
+            <Route path="/mech/login" element={<MechanicLoginPage/>}/>
+            <Route path="/mech/signuppage" element={<MechanicSignupPage/>}/>
             <Route path="/mech/veryfy-otp/:id" element={<MechOtpPage />} />
             <Route
               path="/mech/forgot-password"

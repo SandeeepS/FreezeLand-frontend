@@ -1,9 +1,13 @@
 import React from "react";
 import { IComplaintDetails } from "../../../../interfaces/IComponents/User/IUserInterfaces";
 
+interface IWorkDetailsBillProps {
+  complaint: IComplaintDetails;
+  setTotalAmount: (amount: number) => void;
+}
 
 
-const WorkDetailsBill: React.FC<{ complaint: IComplaintDetails }> = ({ complaint }) => {
+const WorkDetailsBill: React.FC<IWorkDetailsBillProps> = ({ complaint , setTotalAmount}) => {
   const serviceDetails = complaint.serviceDetails?.[0] || {};
   const workDetails = complaint.workDetails || [];
 
@@ -14,6 +18,7 @@ const WorkDetailsBill: React.FC<{ complaint: IComplaintDetails }> = ({ complaint
       (sum, item) => sum + (item.amount || 0),
       0
     );
+    setTotalAmount(serviceCharge + otherCharges);
     return serviceCharge + otherCharges;
   };
 

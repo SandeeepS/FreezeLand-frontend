@@ -10,6 +10,8 @@ export interface Message {
   senderType: string;
 }
 
+
+
 interface ChatBoxProps {
   complaintId: string;
   userId: string;

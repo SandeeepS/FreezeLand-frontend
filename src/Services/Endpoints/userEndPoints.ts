@@ -22,6 +22,8 @@ const userRoutes = {
   getService:"/user/getService/",
   getImageUrl: "/user/getImageUrl",
   getMessages:"/user/getMessages",
+  handlePayment:"/user/handlePayment",
+  successPayment:"/user/successPayment",
 };
 
 export default userRoutes;

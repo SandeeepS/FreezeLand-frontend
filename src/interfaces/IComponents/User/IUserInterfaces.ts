@@ -14,7 +14,18 @@ export interface IComplaintDetails {
   status: string;
   currentMechanicId: string | null;
   acceptedAt: Date | null;
-  serviceDetails: object[];
+  serviceDetails: [
+    {
+      _id: string;
+      name: string;
+      imageKey: string;
+      discription: string[];
+      serviceCharge: number;
+      createdAt: Date;
+      isBlocked: boolean;
+      isDeleted: boolean;
+    }
+  ];
   userDetails: object[];
   workHistory: [
     {
@@ -25,16 +36,18 @@ export interface IComplaintDetails {
       reason: string | null;
     }
   ];
-  workDetails:[{
-    description: string;
-    amount: number;
-    addedAt: Date;
-  }]
-  
+  workDetails: [
+    {
+      description: string;
+      amount: number;
+      addedAt: Date;
+    }
+  ];
+
   isBlocked: boolean;
   isDeleted: boolean;
   deviceImages?: any[];
-  chatId:string;
+  chatId: string;
 }
 
 export interface IMechanicDetails {
@@ -72,48 +85,48 @@ export interface Props3 {
 
 //used in the StatusBadge.tsx
 export interface StatusBadgeProps {
-    status: string;
-  }
+  status: string;
+}
 
-  //used in queue.tsx
- export interface AllRegisteredServices {
-    _id: string;
-    name: string;
-    image: [];
-    serviceId: string;
-    userId: string;
-    defaultAddress: string;
-    description: string;
-    locationName: object;
-    isBlocked: boolean;
-    isDeleted: boolean;
-    userDetails: object;
-    serviceDetails: object;
-    status?: string;
-    deviceImages?: string[];
-    completionPercentage?: number;
-  }
-  
-  // Define the base data item type with optional fields
-  export interface TableDataItem {
-    [key: string]: any;
-  }
-  
-  // Define the column configuration
-  export interface TableColumn {
-    key: string;
-    header: string;
-    render?: (value: any, item: TableDataItem) => React.ReactNode;
-  }
+//used in queue.tsx
+export interface AllRegisteredServices {
+  _id: string;
+  name: string;
+  image: [];
+  serviceId: string;
+  userId: string;
+  defaultAddress: string;
+  description: string;
+  locationName: object;
+  isBlocked: boolean;
+  isDeleted: boolean;
+  userDetails: object;
+  serviceDetails: object;
+  status?: string;
+  deviceImages?: string[];
+  completionPercentage?: number;
+}
 
-  //used in the AboutTheService.tsx
- export  interface ServiceCardProps {
-      title: string;
-      points: string[];
+// Define the base data item type with optional fields
+export interface TableDataItem {
+  [key: string]: any;
+}
+
+// Define the column configuration
+export interface TableColumn {
+  key: string;
+  header: string;
+  render?: (value: any, item: TableDataItem) => React.ReactNode;
+}
+
+//used in the AboutTheService.tsx
+export interface ServiceCardProps {
+  title: string;
+  points: string[];
 }
 
 //used in ServiceForm.tsx
-export  interface ServiceFormProps {
+export interface ServiceFormProps {
   formik: FormikProps<{
     name: string;
     discription: string;
@@ -164,7 +177,6 @@ export interface PreviewImageProps {
   file: File | null;
 }
 
-
 export interface ServiceData {
   _id: string;
   name: string;
@@ -173,4 +185,3 @@ export interface ServiceData {
   isDeleted: boolean;
   imageKey: string;
 }
-

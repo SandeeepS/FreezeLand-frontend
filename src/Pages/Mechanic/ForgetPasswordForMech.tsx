@@ -21,6 +21,7 @@ import { initialVal } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces
 const initialValues: initialVal = {
   password: "",
   cpassword: "",
+  email:""
 };
 
 const ForgetPasswordForMech: React.FC = () => {
@@ -230,9 +231,7 @@ const ForgetPasswordForMech: React.FC = () => {
                 />
                 <div>
                   <h1 className="text-xl font-semibold">{mech?.name}</h1>
-                  <h1 className="text-md font-semibold">{mech?.headLine}</h1>
                   <h1 className="text-sm font-semibold">{mech?.email}</h1>
-                  <h1 className="text-sm font-semibold">{mech?.location}</h1>
                 </div>
               </div>
               <p className="text-sm text-gray-600 mb-6">
