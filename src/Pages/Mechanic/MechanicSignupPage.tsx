@@ -2,24 +2,12 @@ import { useFormik } from "formik";
 import { SignupValidation } from "../../components/Common/Validations";
 import { useNavigate } from "react-router-dom";
 import { mechSignup } from "../../Api/mech";
+import {
+  FormData,
+  initialVal2,
+} from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
-export interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  cpassword: string;
-}
-
-interface initialVal {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  cpassword: string;
-}
-
-const initialValues: initialVal = {
+const initialValues: initialVal2 = {
   name: "",
   email: "",
   phone: "",
@@ -33,8 +21,7 @@ const MechanicSignupPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: SignupValidation,
     onSubmit: (values) => {
-
-      const formData : FormData= {
+      const formData: FormData = {
         name: values.name,
         email: values.email,
         phone: values.phone,
@@ -44,10 +31,11 @@ const MechanicSignupPage: React.FC = () => {
 
       const hanSub = async () => {
         try {
-          
           const result = await mechSignup(formData);
           if (result) {
-            navigate("/mech/veryfy-otp");
+            const mechId = result.data.result._id;
+            console.log("mech id in the mechacinSignupPage before going to otp page ",mechId);
+            navigate(`/mech/veryfy-otp/${mechId}`);
           }
           console.log("result fron the signup form is ", result);
         } catch (error) {

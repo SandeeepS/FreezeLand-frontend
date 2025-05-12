@@ -3,24 +3,13 @@ import { SignupValidation } from "../../components/Common/Validations";
 import { signup } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
 import OAuth from "../../components/Common/OAuth";
+import {
+  FormData,
+  initialVal3,
+} from "../../interfaces/IPages/User/IUserInterfaces";
+import errorHandler from "../../Api/errorHandler";
 
-export interface FormData {
-  _id?:string;
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  cpassword: string;
-}
-interface initialVal {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  cpassword: string;
-}
-
-const initialValues: initialVal = {
+const initialValues: initialVal3 = {
   name: "",
   email: "",
   phone: "",
@@ -34,23 +23,32 @@ const UserSignupPage: React.FC = () => {
     initialValues: initialValues,
     validationSchema: SignupValidation,
     onSubmit: (values) => {
-      const formData:FormData = {
+      const formData: FormData = {
         name: values.name,
         email: values.email,
         phone: values.phone,
         password: values.password,
         cpassword: values.cpassword,
       };
-      console.log("checking the conformpasswod from the form data ",formData.cpassword,formData.password);
+      console.log(
+        "checking the conformpasswod from the form data ",
+        formData.cpassword,
+        formData.password
+      );
       const hanSub = async () => {
         try {
           const result = await signup(formData);
-          console.log("resutl is",result)
-          if (result){
-            navigate("/otp-page");
+          if(result.error){
+            errorHandler(result.error);
+            return;
           }
-          console.log("result from the signup form is",result);
-        } catch (error){
+          console.log("resutl is", result);
+          if (result) {
+            const userId = result.data.result._id;
+            navigate(`/otp-page/${userId}`);
+          }
+          console.log("result from the signup form is", result);
+        } catch (error) {
           console.log(error);
         }
       };

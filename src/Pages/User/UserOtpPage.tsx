@@ -1,18 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { resendOtp, verifyOtp } from "../../Api/user";
-import { useNavigate } from "react-router-dom";
-import { setUserCredental, saveUser } from "../../App/slices/AuthSlice.ts";
+import {  resendOtp, verifyOtp } from "../../Api/user";
+import { useNavigate, useParams } from "react-router-dom";
+import { setUserCredental } from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
+import errorHandler from "../../Api/errorHandler.ts";
+import toast from "react-hot-toast";
 
 const UserOtpPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [otp, setOTP] = useState<string>("");
   const [seconds, setSeconds] = useState(60);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { userData } = useAppSelector((state) => state.auth);
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     try {
+  //       const tempUserDetails = await getTempUserData(id);
+  //       console.log(
+  //         "tempUserData in the otp entering page is",
+  //         tempUserDetails
+  //       );
+  //     } catch (error) {
+  //       console.log(error as Error);
+  //       throw error;
+  //     }
+  //   };
+  //   fetch();
+  // }, []);
 
   useEffect(() => {
     if (userData) navigate("/user/home");
@@ -32,17 +49,29 @@ const UserOtpPage: React.FC = () => {
     setOTP(e.target.value);
   };
 
+  //function to handle otp verification 
   const handleVerify = async () => {
-    console.log("OTP:", otp);
-    const result = await verifyOtp(otp);
-    console.log(result);
-    if (result?.data.data.success) {
-      console.log(`everything is fine your token is `);
-      console.log(result.data.data.token);
-      dispatch(setUserCredental(result.data.data.token));
-      dispatch(saveUser(result.data.data.data));
-      navigate("/user");
+    if (!otp.trim()) {
+      toast.error("Please enter the OTP");
+      return;
     }
+    
+    try {
+      console.log("Verifying OTP:", otp);
+      
+      const result = await verifyOtp(id as string, otp);
+      console.log("result of verify otp in the userOtpPage", result);
+      
+      if (result.data.success) {
+        console.log("userData from the backend to dispatch", result.data.data);
+        dispatch(setUserCredental(result.data.data));
+        toast.success("OTP verified successfully!");
+        navigate("/login");
+      }
+    } catch (error) {
+      // Use the error handler to display appropriate toast messages
+      await errorHandler(error as Error);
+    } 
   };
   const resendOTP = async () => {
     try {

@@ -3,6 +3,7 @@ const userRoutes = {
   signup: "/user/registration",
   googleLogin: "/user/google-login",
   veryfyOtp: "/user/veryfy-otp",
+  getTempUserData:"/user/getTempUserData",
   forgotPassword: "/user/forgot-password",
   forgotVerifyOtp: "/user/verify-forgot-otp",
   updateNewPassword: "/user/update-newpassword",
@@ -15,8 +16,12 @@ const userRoutes = {
   setDefaultAddress:"/user/setDefaultAddress",
   registerService:"/user/registerService",
   getAllServices:"/user/getAllServices",
-  getAllRegisteredService:"/user/getAllRegisteredService",
+  getAllUserRegisteredServices:"/user/getAllUserRegisteredServices",
+  getUserRegisteredServiceDetailsById:"/user/getUserRegisteredServiceDetailsById",
+  getMechanicDetails:"/user/getMechanicDetails",
+  getService:"/user/getService/",
   getImageUrl: "/user/getImageUrl",
+  getMessages:"/user/getMessages",
 };
 
 export default userRoutes;

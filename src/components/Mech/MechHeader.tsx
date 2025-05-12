@@ -19,8 +19,8 @@ const MechHeader: React.FC = () => {
   const mechNavigationItems = [
     {
       icon: <CgProfile className="mr-2" />,
-      label: "Mechanic Profile",
-      path: "/mechanic/profile",
+      label: "Profile",
+      path: "/mech/profile",
     },
     {
       icon: <MdEventNote className="mr-2" />,
@@ -40,7 +40,7 @@ const MechHeader: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[100px] flex justify-between w-full bg-freeze-color">
+      <div className="text-white font-bold h-[100px] flex justify-between w-full bg-freeze-color ">
         <div className="flex-col">
           <h1 className="w-full text-3xl text-black font-exo p-8 pt-5 pb-0">
             FREEZE <span className="text-white font-exo">LAND</span>
@@ -56,7 +56,13 @@ const MechHeader: React.FC = () => {
             HOME
           </li>
 
-          <li className="p-4 cursor-pointer">SERVICES</li>
+          <li
+            className="p-4 cursor-pointer"
+            onClick={() => navigate("/mech/allWorks")}
+          >
+            WORKS
+          </li>
+
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/mech/queue")}

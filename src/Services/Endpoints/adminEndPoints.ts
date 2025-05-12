@@ -1,5 +1,7 @@
 const adminRoutes = {
   login: "/admin/login",
+  updateApprove:"/admin/updateApprove",
+  getImageUrl: "/admin/getImageUrl",
   getAllUsers: "/admin/users",
   getAllMechanic: "/admin/mechanics",
   blockUser: "/admin/users/block/",
@@ -17,6 +19,7 @@ const adminRoutes = {
   deleteService: "/admin/deleteService/",
   deleteDevice: "/admin/deleteDevice/",
   editExistService: "/admin/editExistService",
+  getMechanicById:"/admin/getMechanicById",
   logout: "/admin/logout",
 };
 

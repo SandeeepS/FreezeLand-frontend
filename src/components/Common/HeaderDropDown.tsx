@@ -1,35 +1,14 @@
-import React from "react";
-import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { CgProfile } from "react-icons/cg";
-import { MdContactless } from "react-icons/md";
-import { MdEventNote } from "react-icons/md";
-import { IoIosSettings } from "react-icons/io";
+// import { CgProfile } from "react-icons/cg";
+// import { MdContactless } from "react-icons/md";
+// import { MdEventNote } from "react-icons/md";
+// import { IoIosSettings } from "react-icons/io";
 import { MdPowerSettingsNew } from "react-icons/md";
-
-// Define interface for navigation items
-interface NavItem {
-  icon: React.ReactNode;
-  label: string;
-  path: string;
-}
-
-interface HeaderDropDownProps {
-  isOpen: boolean;
-  onClose: () => void;
-  logout: () => Promise<AxiosResponse | undefined>;
-  authLogout: () => void;
-  navigateTo: string;
-  // New props
-  coverImage: string;
-  profileImage: string;
-  userName: string;
-  userRole: string;
-  navigationItems: NavItem[];
-}
+import { HeaderDropDownProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { persistor } from "../../App/store";
 
 const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   isOpen,
@@ -40,11 +19,11 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   coverImage,
   profileImage,
   userName,
-  userRole,
   navigationItems,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   if (!isOpen) return null;
 
   const handleLogout = async () => {
@@ -61,6 +40,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
         if (result.isConfirmed) {
           logout().then(() => console.log(""));
           dispatch(authLogout());
+          persistor.purge();
           toast.success("You are logged out!");
           navigate(navigateTo);
         }
@@ -90,7 +70,6 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
 
       <div className="text-center mt-2">
         <h2 className="font-semibold text-black">{userName}</h2>
-        <p className="text-gray-500">{userRole}</p>
       </div>
 
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-400" />

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { resendMechOtp,verifyMechOtp } from "../../Api/mech.ts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { setMechCredential, saveMech } from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
 
 const MechOtpPage: React.FC = () => {
+  const {id} = useParams<{id:string}>();
+  console.log("id from the signupPage is",id)
   const [otp, setOTP] = useState<string>("");
   const [seconds, setSeconds] = useState(60);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -34,13 +35,11 @@ const MechOtpPage: React.FC = () => {
 
   const handleVerify = async () => {
     console.log("OTP:", otp);
-    const result = await verifyMechOtp(otp);
-    console.log(result);
-    if (result?.data.data.success) {
-      console.log(`everything is fine your token is `);
-      console.log(result.data.data.token);
-      dispatch(setMechCredential(result.data.data.token));
-      dispatch(saveMech(result.data.data.data));
+    const result = await verifyMechOtp(id as string, otp);
+    console.log("result from the verifyMechOtp funciton ",result);
+    if (result?.data.success) {
+      console.log(`everything is fine your mechId is  ${result.data.mechId}`);
+      dispatch(setMechCredential(result.data.mechId));
       navigate("/mech/homepage");
     }
   };

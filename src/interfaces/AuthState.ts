@@ -1,39 +1,31 @@
 export interface AuthState {
     adminData: AdminDataType | null;
-    userData: UserDataType ;
+    userData: UserDataType | null ;
     mechData: MechDataType | null;
-    user: UserAddressType | null;
-    mech: MechAddressType | null;
+    user: UserAddressType | null; //chck this is using , if not remove later
+    mech: MechAddressType | null; //chck this is using , if not remove later
   }
-  
-  // Define the actual types for AdminDataType, UserDataType, MechDataType, etc.
-  // Example:
 
-  
+
   interface AdminDataType {
     id: string;
     name: string;
+    email:string;
+    role:string;
   }
   
   interface UserDataType {
-    _id: string;
+    id: string;
     name: string;
+    email:string;
+    role:string;
   }
   
   interface MechDataType {
   id:string;
   name: string;
   email: string;
-  password: string;
-  phone: number;
-  role: string;
-  mechanicType: string[];
-  photo: string;
-  adharProof: string;
-  employeeLicense: string;
-  isVerified: boolean;
-  isBlocked: boolean;
-  isDeleted: boolean;
+  role:string;
   }
   
   interface UserAddressType {

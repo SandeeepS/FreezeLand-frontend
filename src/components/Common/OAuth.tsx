@@ -5,13 +5,11 @@ import app from '../../firebase';
 import { googleLogin } from '../../Api/user';
 import { useDispatch } from 'react-redux';
 import { saveUser, setUserCredental } from '../../App/slices/AuthSlice';
-import { useNavigate } from 'react-router-dom';
 
 const OAuth = () => {
 
     const auth = getAuth(app)
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleGoogleClick = async () => {
         try {
