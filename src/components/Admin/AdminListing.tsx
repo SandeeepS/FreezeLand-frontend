@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { MdOutlineReportProblem } from "react-icons/md";
+
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa6";
 import { GiMechaHead } from "react-icons/gi";
@@ -61,6 +63,12 @@ const AdminListing: React.FC = () => {
       icon: BsFillDeviceSsdFill,
       id: 5,
       path: "/admin/devices",
+    },
+    {
+      name: "Complaints",
+      icon: MdOutlineReportProblem,
+      id: 6,
+      path: "/admin/complaints",
     },
   ];
 

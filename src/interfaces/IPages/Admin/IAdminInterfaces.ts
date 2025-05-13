@@ -7,6 +7,38 @@ export interface DeviceData {
   isDeleted: boolean;
 }
 
+export interface ICompliantData {
+    _id: string;
+  name: string;
+  image: [];
+  serviceId: string;
+  userId: string;
+  defaultAddress: string;
+  discription: string;
+  locationName: object;
+  status: string;
+  currentMechanicId: string | null;
+  acceptedAt: Date | null;
+  workHistory: [
+    {
+      mechanicId: string;
+      status: string;
+      acceptedAt: Date;
+      canceledAt: Date | null;
+      reason: string | null;
+    }
+  ];
+  workDetails: [
+    {
+      description: string;
+      amount: number;
+      addedAt: Date;
+    }
+  ];
+  chatId?: mongoose.Types.ObjectId; //here the chat id referes to the room id .
+  isBlocked: boolean;
+  isDeleted: boolean;
+}
 //used in AdminLoginpage.tsx
 export interface initialVal{
     email: string;

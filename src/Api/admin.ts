@@ -1,8 +1,8 @@
 import {
   BlockingResponse,
   DeletingResponse,
-} from "../components/Common/TableCommon";
-import { InewService } from "../Pages/Admin/NewService";
+} from "../interfaces/IComponents/Common/ICommonInterfaces";
+import { InewService } from "../interfaces/IPages/Admin/IAdminInterfaces";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
 import errorHandler from "./errorHandler";
@@ -17,18 +17,25 @@ const adminLogin = async (email: string, password: string) => {
   }
 };
 
-const updateApprove = async (id:string | undefined,verificationStatus:boolean | undefined) => {
+const updateApprove = async (
+  id: string | undefined,
+  verificationStatus: boolean | undefined
+) => {
   console.log("entered in the updateApprove");
-  try{
-    console.log("kkkkkk",id, verificationStatus);
-    const result = await Api.put(adminRoutes.updateApprove,{},{
-      params:{id,verificationStatus}
-    })
+  try {
+    console.log("kkkkkk", id, verificationStatus);
+    const result = await Api.put(
+      adminRoutes.updateApprove,
+      {},
+      {
+        params: { id, verificationStatus },
+      }
+    );
     return result;
-  }catch(error){
+  } catch (error) {
     errorHandler(error as Error);
   }
-}
+};
 
 const getImageUrl = async (imageKey: string, type: string) => {
   try {
@@ -42,33 +49,37 @@ const getImageUrl = async (imageKey: string, type: string) => {
   }
 };
 
-const getAllUsers = async (search:string) => {
+const getAllUsers = async (search: string) => {
   try {
-    const result = await Api.get(adminRoutes.getAllUsers,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllUsers, {
+      params: { search },
+    });
     return result;
   } catch (error) {
     errorHandler(error as Error);
   }
 };
 
-const getAllMechanics = async (search : string) => {
+const getAllMechanics = async (search: string) => {
   try {
-    const result = await Api.get(adminRoutes.getAllMechanic,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllMechanic, {
+      params: { search },
+    });
     return result;
   } catch (error) {
     errorHandler(error as Error);
   }
 };
 
-const getMechanicById = async (id:string) => {
-  try{
+const getMechanicById = async (id: string) => {
+  try {
     const result = await Api.get(`${adminRoutes.getMechanicById}/${id}`);
-    console.log("mechanic details from teh admin.ts",result);
+    console.log("mechanic details from teh admin.ts", result);
     return result;
-  }catch(error){
+  } catch (error) {
     errorHandler(error as Error);
   }
-}
+};
 
 const blockUser = async (id: string): Promise<BlockingResponse> => {
   try {
@@ -215,7 +226,11 @@ const adminLogout = async () => {
   }
 };
 
-const getS3SingUrl = async (fileName: string, fileType: string,folderName:string) => {
+const getS3SingUrl = async (
+  fileName: string,
+  fileType: string,
+  folderName: string
+) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the admin.ts file",
@@ -224,7 +239,7 @@ const getS3SingUrl = async (fileName: string, fileType: string,folderName:string
     );
 
     const result = await Api.get(adminRoutes.getPresignedUrl, {
-      params: { fileName, fileType,folderName },
+      params: { fileName, fileType, folderName },
     });
     return result;
   } catch (error) {
@@ -261,10 +276,12 @@ const addDevice = async (name: string) => {
   }
 };
 
-const getAllServices = async (search:string) => {
+const getAllServices = async (search: string) => {
   try {
     console.log("entered in the admin.ts");
-    const result = await Api.get(adminRoutes.getAllServices,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllServices, {
+      params: { search },
+    });
     if (result) {
       return result;
     }
@@ -274,10 +291,12 @@ const getAllServices = async (search:string) => {
   }
 };
 
-const getAllDevices = async (search:string) => {
+const getAllDevices = async (search: string) => {
   try {
     console.log("entered in the admin.ts for accessing the all devices ");
-    const result = await Api.get(adminRoutes.getAllDevices,{params:{search}});
+    const result = await Api.get(adminRoutes.getAllDevices, {
+      params: { search },
+    });
     if (result) {
       return result;
     }
@@ -306,10 +325,58 @@ const editExistService = async (
 ) => {
   try {
     const result = await Api.put(adminRoutes.editExistService, { _id, values });
-    console.log("result form front end",result);
+    console.log("result form front end", result);
     return result;
   } catch (error) {
     console.log(error as Error);
+  }
+};
+
+//function to get all the compliant registered by the user
+const getAllComplaints = async (search:string) => {
+  try {
+    const result = await Api.get(adminRoutes.getAllComplaints,{
+      params: {search},
+    });
+    return result;
+  } catch (error) {
+    console.log(error as Error);
+  }
+};
+
+//function to delete the complaint 
+const deleteComplaint = async (id: string): Promise<DeletingResponse> => {
+  try {
+    console.log("enterd in the admints for deleting device");
+    const response = await Api.put(`${adminRoutes.deleteComplaint}${id}`);
+    return {
+      success: response.data.success,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.log(error as Error);
+    return {
+      success: false,
+      message: "Failed to Delete  the device.",
+    };
+  }
+};
+
+//listing the complaints and unlisting 
+const listUnlistComplaints = async (id: string): Promise<BlockingResponse> => {
+  try {
+    console.log("entered in the listUnlistDevices");
+    const response = await Api.put(`${adminRoutes.listUnlistComplaints}${id}`);
+    return {
+      success: response.data.success,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.log(error as Error);
+    return {
+      success: false,
+      message: "Failed to List / unlist the Devices , admin.ts",
+    };
   }
 };
 
@@ -335,5 +402,8 @@ export {
   deleteMech,
   getMechanicById,
   getImageUrl,
-  updateApprove
+  updateApprove,
+  getAllComplaints,
+  listUnlistComplaints,
+  deleteComplaint
 };

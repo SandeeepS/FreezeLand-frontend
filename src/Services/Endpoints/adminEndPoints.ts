@@ -20,6 +20,9 @@ const adminRoutes = {
   deleteDevice: "/admin/deleteDevice/",
   editExistService: "/admin/editExistService",
   getMechanicById:"/admin/getMechanicById",
+  getAllComplaints: "/admin/getAllComplaints",
+  deleteComplaint: "/admin/deleteComplaint/",
+  listUnlistComplaints:"/admin/listUnlistComplaints/",
   logout: "/admin/logout",
 };
 

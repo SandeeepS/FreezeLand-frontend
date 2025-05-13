@@ -35,6 +35,7 @@ import MechanicEditProfile from "./components/Mech/Profile/MechanicEditProfile";
 import VerifyMechanicByAdmin from "./components/Admin/Mechanic/VerifyMechanic/VerifyMechanicByAdmin";
 import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicVerify";
 import PaymentSuccessPage from "./Pages/User/Payment/PaymentSuccessPage";
+import AdminComplaintListing from "./Pages/Admin/Complaints/AdminComplaintListing";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -107,6 +108,7 @@ function App() {
               <Route path="/admin/addNewDevice" element={<AddNewDevice />} />
               <Route path="/admin/verifyMechanic" element={<VerifyMechanicByAdmin/>} />
               <Route path="/admin/mechanic/details/:id" element={<MechanicVerify/>}/>
+              <Route path="/admin/complaints" element={<AdminComplaintListing/>}/>
             </Route>
           </Route>
 
