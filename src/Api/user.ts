@@ -3,10 +3,11 @@ import userRoutes from "../Services/Endpoints/userEndPoints";
 import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
-import { EditUserFormData, FormData } from "../interfaces/IPages/User/IUserInterfaces";
-import { Message} from "../components/Common/Chat/Chat";
+import {
+  EditUserFormData,
+  FormData,
+} from "../interfaces/IPages/User/IUserInterfaces";
 import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentButton";
-
 
 const signup = async ({
   name,
@@ -28,7 +29,7 @@ const signup = async ({
     return result;
   } catch (error) {
     console.log(error);
-    return {error};
+    return { error };
   }
 };
 
@@ -77,19 +78,19 @@ const googleLogin = async (
 };
 
 //function to verify otp
-const verifyOtp = async (id:string,otpnum: string) => {
+const verifyOtp = async (id: string, otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
-    const result = await Api.post(userRoutes.veryfyOtp, {id, otp });
-    console.log("result after verifyin in the veifyOTP in user.ts",result);
+    const result = await Api.post(userRoutes.veryfyOtp, { id, otp });
+    console.log("result after verifyin in the veifyOTP in user.ts", result);
     return result;
   } catch (error) {
     console.log(error as Error);
-    return {error};
+    return { error };
   }
 };
 
-//accessing the tempUserDeatils using id 
+//accessing the tempUserDeatils using id
 // const getTempUserData = async (id:stirng) => {
 //   try{
 //     const result = await Api.get(userRoutes.getTempUserData,{params:{id}});
@@ -189,14 +190,19 @@ const getAllUserRegisteredServices = async (userId: string) => {
   }
 };
 
-const EditUserDetails = async ({ _id, name, phone,profile_picture }: EditUserFormData) => {
+const EditUserDetails = async ({
+  _id,
+  name,
+  phone,
+  profile_picture,
+}: EditUserFormData) => {
   try {
     console.log("Entered in the EditUserDetails in the user.ts");
     const result = await Api.put(userRoutes.editUser, {
       _id,
       name,
       phone,
-      profile_picture
+      profile_picture,
     });
     console.log("result from the backend is ", result);
     return result;
@@ -289,7 +295,7 @@ const getMechanicDetails = async (id: string) => {
       return;
     }
     console.log("Fetching mechanic details for ID in the user.ts:", id);
-    const response = await Api.get(userRoutes.getMechanicDetails,{
+    const response = await Api.get(userRoutes.getMechanicDetails, {
       params: { id },
     });
     console.log("Response from backend in the user.ts:", response);
@@ -300,9 +306,9 @@ const getMechanicDetails = async (id: string) => {
   }
 };
 
-//function to get the service details to the user side for registering the service 
+//function to get the service details to the user side for registering the service
 
-const getService = async (id: string ) => {
+const getService = async (id: string) => {
   try {
     console.log("entered in the getService funciton in the user ts", id);
     const result = await Api.get(`${userRoutes.getService}${id}`);
@@ -316,17 +322,17 @@ const getService = async (id: string ) => {
 };
 
 //funtion to handle the payment (stripe payment)
-const handlePayment = async (data:paymentData ) => {
-  try {    
+const handlePayment = async (data: paymentData) => {
+  try {
     console.log("Entered in the handlePayment function in the user.ts");
     const result = await Api.post(userRoutes.handlePayment, { data });
     console.log("result from the backend is ", result);
     return result;
-  }catch(error) {
+  } catch (error) {
     console.log(error);
     errorHandler(error as Error);
   }
-}
+};
 
 //function to send the section id to the backend to get the payment success
 const successPayment = async (sessionId: string) => {
@@ -337,15 +343,11 @@ const successPayment = async (sessionId: string) => {
     });
     console.log("result from the backend is ", result);
     return result;
-    
-  }catch(error) {
+  } catch (error) {
     console.log(error);
     errorHandler(error as Error);
   }
-
-
-
-
+};
 
 export {
   signup,
@@ -365,7 +367,7 @@ export {
   AddUserAddress,
   setDefaultAddress,
   getMechanicDetails,
-  // getTempUserData,
+  successPayment,
   handlePayment,
   registerComplaint,
   getAllServices,

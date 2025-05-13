@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { SiTicktick } from "react-icons/si";
 import { RxCrossCircled } from "react-icons/rx";
 // Ensure this is the correct path
 import Loader from "../../Common/Icon/Loader";
+import { successPayment } from "../../../Api/user";
 
 const PaymentSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState();
   const [orderStatus, setOrderStatus] = useState<boolean | null>(null);
-  const [countdown, setCountdown] = useState(20); 
+  const [countdown, setCountdown] = useState(20);
+
+  const continueToHomePage = () => {
+    navigate("/user/homepage");
+  };
 
   useEffect(() => {
     // Only fetch details if they aren't already saved in state
@@ -24,17 +28,17 @@ const PaymentSuccess = () => {
 
         if (sessionId) {
           try {
-            const response = await axios.get(orderEndpoint.SuccessPayment, {
-              params: { sessionId },
-            });
-            console.log(response.data, "response.data");
-            const { message, success, data } = response.data;
-            if (success) {
+            const response = await successPayment(sessionId);
+            console.log(response, "response.data");
+            const exactData = response?.data.result.response;
+            console.log("exact data is ",exactData);
+
+            const { message, status, data } = exactData;
+            if (status == "SUCCESS") {
               console.log(message);
               setOrderStatus(true);
               console.log("PAYMENT SUCCESS");
               setOrderDetails(data);
-              sessionStorage.setItem("orderDetails", JSON.stringify(data)); // Save to sessionStorage
             } else {
               setOrderStatus(false);
               setOrderDetails(data);
@@ -66,15 +70,13 @@ const PaymentSuccess = () => {
     }
   }, [orderStatus, countdown, navigate, orderDetails]);
 
-
-
   console.log(orderDetails, "this is order details");
 
   if (!orderDetails) return <Loader />;
 
   return orderStatus ? (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-t">
-      <div className="flex flex-col text-center items-center gap-4 border-rounded rounded-lg bg-[#DDB3FF] p-10 shadow-lg">
+      <div className="flex flex-col text-center items-center gap-4 border-rounded rounded-lg bg-white p-10 shadow-2xl">
         <h1 className="text-green-500 text-7xl">
           <SiTicktick />
         </h1>
@@ -90,10 +92,10 @@ const PaymentSuccess = () => {
         <p>Provide image here if image is there ?</p>
 
         <button
-          className="bg-[#7C24F0] border-rounded rounded-lg p-2 shadow-lg text-white font-semibold hover:bg-[#6211cd] transition-all"
-        //   onClick={continueToCourse}
+          className="bg-freeze-color border-rounded rounded-lg p-2 shadow-lg text-white font-semibold hover:bg-blue-700 transition-all"
+            onClick={continueToHomePage}
         >
-          Continue to home page 
+          Continue to home page
         </button>
       </div>
     </div>
@@ -110,9 +112,9 @@ const PaymentSuccess = () => {
 
         <button
           className="bg-[#7C24F0] border-rounded rounded-lg p-2 shadow-lg text-white font-semibold hover:bg-[#6211cd] transition-all"
-        //   onClick={continueToCourse}
+          onClick={continueToHomePage}
         >
-          Back to service details page 
+          Back to service details page
         </button>
       </div>
     </div>
