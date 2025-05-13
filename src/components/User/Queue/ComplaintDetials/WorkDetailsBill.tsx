@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IComplaintDetails } from "../../../../interfaces/IComponents/User/IUserInterfaces";
 
 interface IWorkDetailsBillProps {
@@ -6,18 +6,26 @@ interface IWorkDetailsBillProps {
   setTotalAmount: (amount: number) => void;
 }
 
-
-const WorkDetailsBill: React.FC<IWorkDetailsBillProps> = ({ complaint , setTotalAmount}) => {
-  const serviceDetails = complaint.serviceDetails?.[0] || {};
-  const workDetails = complaint.workDetails || [];
-
+const WorkDetailsBill: React.FC<IWorkDetailsBillProps> = ({
+  complaint,
+  setTotalAmount,
+}) => {
+  const [workDetails, setWorkDetails] = React.useState<
+    { description: string; amount: number; addedAt: Date }[]
+  >([]);
+  const serviceDetails = complaint?.serviceDetails?.[0] || {};
+  
+  useEffect(() => {
+    setWorkDetails(complaint?.workDetails || []);
+  }, [complaint?.workDetails]);
+  
   // Calculate total bill amount
   const calculateTotal = () => {
     const serviceCharge = serviceDetails?.serviceCharge || 0;
-    const otherCharges = workDetails.reduce(
-      (sum, item) => sum + (item.amount || 0),
+    const otherCharges = workDetails?.reduce(
+      (sum, item) => sum + (item?.amount || 0),
       0
-    );
+    ) || 0;
     setTotalAmount(serviceCharge + otherCharges);
     return serviceCharge + otherCharges;
   };
@@ -35,43 +43,45 @@ const WorkDetailsBill: React.FC<IWorkDetailsBillProps> = ({ complaint , setTotal
           </div>
 
           <div className="divide-y divide-gray-200">
-            {/* Always display service charge row */}
-            <div className="grid grid-cols-12 py-3 items-center bg-white">
-              <div className="col-span-8 px-3">
-                <p className="text-sm font-medium">
-                  {serviceDetails.serviceName || "Service Charge"}
-                </p>
-              </div>
-              <div className="col-span-4 px-3 text-right">
-                <p className="text-sm">
-                  ₹{Number((serviceDetails?.serviceCharge || 0)).toFixed(2)}
-                </p>
-              </div>
-            </div>
-
-            {/* Display all work detail items */}
-            {workDetails.map((item, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-12 py-3 items-center bg-white"
-              >
+            {/* Only display service charge row if serviceDetails exists */}
+            {serviceDetails && (
+              <div className="grid grid-cols-12 py-3 items-center bg-white">
                 <div className="col-span-8 px-3">
-                  <p className="text-sm">{item.description}</p>
+                  <p className="text-sm font-medium">
+                    {serviceDetails?.name || "Service Charge"}
+                  </p>
                 </div>
                 <div className="col-span-4 px-3 text-right">
-                  <p className="text-sm">₹{(item.amount || item.cost || 0).toFixed(2)}</p>
+                  <p className="text-sm">
+                    ₹{Number(serviceDetails?.serviceCharge || 0).toFixed(2)}
+                  </p>
                 </div>
               </div>
-            ))}
+            )}
 
             {/* Display message if no items */}
-            {workDetails.length === 0 && (
+            {(!workDetails || workDetails.length === 0) && (
               <div className="py-3 px-3 text-gray-500 italic text-center">
                 No additional service details available.
               </div>
             )}
 
-            
+            {/* Display all work detail items */}
+            {workDetails && workDetails.length > 0 && workDetails.map((item, index) => (
+              item && (
+                <div
+                  key={index}
+                  className="grid grid-cols-12 py-3 items-center bg-white"
+                >
+                  <div className="col-span-8 px-3">
+                    <p className="text-sm">{item?.description || "Unknown service"}</p>
+                  </div>
+                  <div className="col-span-4 px-3 text-right">
+                    <p className="text-sm">₹{(item?.amount || 0).toFixed(2)}</p>
+                  </div>
+                </div>
+              )
+            ))}
           </div>
 
           {/* Total row */}

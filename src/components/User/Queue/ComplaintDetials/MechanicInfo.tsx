@@ -10,6 +10,7 @@ interface MechanicDetails {
   phone: string;
   email: string;
   acceptedAt?: string;
+  date?: string;
 }
 
 const MechanicInfo: React.FC<{ mechanicDetails?: MechanicDetails }> = ({

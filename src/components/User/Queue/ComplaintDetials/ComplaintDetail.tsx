@@ -183,7 +183,7 @@ const ComplaintDetail: React.FC = () => {
               fallbackName={complaint.name}
             />
 
-            {complaint.currentMechanicId && (
+            {complaint.currentMechanicId && mechanicDetails && (
               <MechanicInfo mechanicDetails={mechanicDetails} />
             )}
           </div>
