@@ -20,7 +20,6 @@ import SortIcon from "@mui/icons-material/Sort";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TableCommonProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
-
 const TableCommon: React.FC<TableCommonProps> = ({
   columns,
   data,
@@ -212,6 +211,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
                       }
                       sx={{
                         backgroundColor: datas.isBlocked ? "red" : "#90ee90",
+                        height: "35px",
                         color: "white",
                         width: "120px",
                         "&.Mui-selected": {
@@ -235,10 +235,15 @@ const TableCommon: React.FC<TableCommonProps> = ({
                     </Button>
                     <Button
                       variant="contained"
+                      sx={{ marginLeft: "10px" }}
                       color="error"
                       onClick={() => handleDelete(datas._id, datas.isDeleted)}
                     >
                       Delete
+                    </Button>
+
+                    <Button variant="outlined" sx={{ marginLeft: "10px" }}>
+                      View More
                     </Button>
                   </TableCell>
                 </TableRow>

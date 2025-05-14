@@ -9,17 +9,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { ICompliantData } from "../../../interfaces/IPages/Admin/IAdminInterfaces";
 import TableCommon from "../../../components/Common/TableCommon";
 
-const columns = [
-  { id: "name", label: "Name", minWidth: 170 },
-  {
-    id: "isBlocked",
-    label: "Status",
-    minWidth: 170,
-    align: "right",
-    format: (value: boolean) => (value ? "Blocked" : "Active"),
-  },
-  { id: "actions", label: "Actions", minWidth: 150, align: "right" },
-];
+
 
 const AdminComplaintListing = () => {
   const location = useLocation();
@@ -32,21 +22,33 @@ const AdminComplaintListing = () => {
   console.log("search is ", search);
 
 
+  const columns = [
+  { id: "name", label: "Name", minWidth: 170 },
+  {
+    id: "isBlocked",
+    label: "Status",
+    minWidth: 170,
+    align: "right",
+    format: (value: boolean) => (value ? "Blocked" : "Active"),
+  },
+  { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+];
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         console.log("entered in the useEffect in the admincomplaint listing ");
-        const result = await getAllComplaints();
+        const result = await getAllComplaints(search);
         console.log("result reached in the frontend", result);
         if (result?.data) {
-          setAllComplaints(result?.data?.data?.devices);
+          setAllComplaints(result?.data?.data?.complaints);
         }
       } catch (error) {
         console.log(error as Error);
       }
     };
     fetchData();
-  }, []);
+  }, [search]);
 
   const updateComplaintStatus = (
     id: string,

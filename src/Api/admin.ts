@@ -335,6 +335,7 @@ const editExistService = async (
 //function to get all the compliant registered by the user
 const getAllComplaints = async (search:string) => {
   try {
+    console.log("search value in the getAllComplaints in the admin.ts", search);
     const result = await Api.get(adminRoutes.getAllComplaints,{
       params: {search},
     });

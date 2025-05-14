@@ -17,6 +17,7 @@ const AdminDeviceListing: React.FC = () => {
   console.log("pathname is",pathName);
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
+  console.log("search is ", search);
   const [devices, setDevices] = useState<DeviceData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
