@@ -381,6 +381,17 @@ const listUnlistComplaints = async (id: string): Promise<BlockingResponse> => {
   }
 };
 
+//geting the complaint by id
+const getComplaintById = async (id: string) => {
+  try {
+    const result = await Api.get(`${adminRoutes.getComplaintById}/${id}`);
+    console.log("complaint details from teh admin.ts", result);
+    return result;
+  } catch (error) {
+    errorHandler(error as Error);
+  }
+};
+
 export {
   adminLogin,
   adminLogout,
@@ -406,5 +417,6 @@ export {
   updateApprove,
   getAllComplaints,
   listUnlistComplaints,
-  deleteComplaint
+  deleteComplaint,
+  getComplaintById
 };

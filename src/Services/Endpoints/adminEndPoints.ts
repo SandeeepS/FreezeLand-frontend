@@ -23,6 +23,7 @@ const adminRoutes = {
   getAllComplaints: "/admin/getAllComplaints",
   deleteComplaint: "/admin/deleteComplaint/",
   listUnlistComplaints:"/admin/listUnlistComplaints/",
+  getComplaintById:"/admin/getComplaintById",
   logout: "/admin/logout",
 };
 

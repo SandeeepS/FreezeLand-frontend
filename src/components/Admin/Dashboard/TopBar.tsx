@@ -16,7 +16,7 @@ const TopBar: React.FC<TopBarProps> = ({
   // Debounce search input to prevent excessive API calls
   useEffect(() => {
     const timer = setTimeout(() => {
-        setinputDebounce(inputValue);
+        setinputDebounce(inputValue as string);
   
     }, 500); // 500ms delay
 

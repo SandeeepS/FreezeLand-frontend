@@ -5,13 +5,14 @@ import {
   listUnlistComplaints,
 } from "../../../Api/admin";
 import TopBar from "../../../components/Admin/Dashboard/TopBar";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ICompliantData } from "../../../interfaces/IPages/Admin/IAdminInterfaces";
 import TableCommon from "../../../components/Common/TableCommon";
 
 
 
 const AdminComplaintListing = () => {
+  const naviagte = useNavigate()
   const location = useLocation();
   const pathName = location.pathname;
   console.log("pathname is", pathName);
@@ -64,6 +65,10 @@ const AdminComplaintListing = () => {
     );
   };
 
+  const handleViewMoreAboutComplaint = (id: string) => {
+    naviagte(`/admin/viewMoreComplaintDetails/${id}`);  
+  }
+
   const navigationLink = "/admin/editDevice/";
 
   const filteredComplaint = allComplaints
@@ -94,6 +99,8 @@ const AdminComplaintListing = () => {
           blockUnblockFunciton={listUnlistComplaints}
           deleteFunction={deleteComplaint}
           navLink={navigationLink}
+          role={"admin"}
+          handleViewMore={handleViewMoreAboutComplaint}
         />
       </div>
     </div>

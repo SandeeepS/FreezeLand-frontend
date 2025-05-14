@@ -150,7 +150,9 @@ export interface TableCommonProps {
   updateStatus: (id: string, isBlocked: boolean, isDeleted: boolean) => void;
   blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
   deleteFunction: (id: string) => Promise<DeletingResponse>;
+  handleViewMore?:(id:string)=>void;
   navLink: string;
+  role?:string;
 }
 
 //used in TableCommon2

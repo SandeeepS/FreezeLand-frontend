@@ -27,6 +27,8 @@ const TableCommon: React.FC<TableCommonProps> = ({
   blockUnblockFunciton,
   deleteFunction,
   navLink,
+  role,
+  handleViewMore
 }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
@@ -117,6 +119,8 @@ const TableCommon: React.FC<TableCommonProps> = ({
       console.log(error as Error);
     }
   };
+
+
 
   return (
     <Paper
@@ -241,10 +245,17 @@ const TableCommon: React.FC<TableCommonProps> = ({
                     >
                       Delete
                     </Button>
-
-                    <Button variant="outlined" sx={{ marginLeft: "10px" }}>
-                      View More
-                    </Button>
+                    {role && handleViewMore && role === "admin" && (
+                      <Button
+                        variant="contained"
+                        sx={{ marginLeft: "10px" }}
+                        color="primary"
+                        onClick={() => handleViewMore(datas._id)}
+                      >
+                        View More
+                      </Button>
+                    )}
+               
                   </TableCell>
                 </TableRow>
               ))}
