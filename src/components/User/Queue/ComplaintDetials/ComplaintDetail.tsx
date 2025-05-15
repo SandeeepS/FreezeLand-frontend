@@ -18,8 +18,9 @@ import StatusProgressBar from "../../../Common/StatusProgressBar";
 import FloatingChat from "../../../Common/Chat/FloatingChat";
 import WorkDetailsBill from "./WorkDetailsBill";
 import PaymentButton from "./PaymentButton";
+import ServiceCancelBtn from "../../../Common/ServiceCancelBtn";
 
-interface IServiceDetails{
+interface IServiceDetails {
   image?: string;
   name?: string;
 }
@@ -147,6 +148,9 @@ const ComplaintDetail: React.FC = () => {
       complaint.status === "completed" ||
       hasWorkDetails);
 
+  // Check if we should show the cancel button (only when status is exactly "accepted")
+  const showCancelButton = status === "accepted";
+
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -158,6 +162,13 @@ const ComplaintDetail: React.FC = () => {
             className="max-w-3xl mx-auto"
           />
         </div>
+
+        {/*Service Cancel Button if status is "accepted" */}
+        {showCancelButton && (
+          <div className="mt-4 flex justify-center pb-4">
+            <ServiceCancelBtn complaintId={complaint._id} userRole="user"  />
+          </div>
+        )}
 
         <ComplaintHeader
           image={serviceDetails.image || "/api/placeholder/60/60"}
@@ -189,13 +200,25 @@ const ComplaintDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
       <div>
         {/* Work Details Bill if work has started */}
-        {workStarted && <WorkDetailsBill complaint={complaint} setTotalAmount={setTotalAmount} />}
+        {workStarted && (
+          <WorkDetailsBill
+            complaint={complaint}
+            setTotalAmount={setTotalAmount}
+          />
+        )}
       </div>
       <div>
         {status == "completed" && (
-          <PaymentButton complaintId={complaint._id} status={status} mechanicId={mechanicDetails?._id as string} serviceId={complaint.serviceDetails?.[0]?._id} amount={totalAmount} />
+          <PaymentButton
+            complaintId={complaint._id}
+            status={status}
+            mechanicId={mechanicDetails?._id as string}
+            serviceId={complaint.serviceDetails?.[0]?._id}
+            amount={totalAmount}
+          />
         )}
       </div>
 

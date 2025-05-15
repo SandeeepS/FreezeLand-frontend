@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { cancelComplaint } from "../../Api/admin";
 import ConfirmationModal2 from "./ConfirmationModal2";
 import SuccessModal from "./Modal/SuccessModal";
+import { useNavigate } from "react-router-dom";
 
 interface ServiceCancelBtnProps {
   complaintId: string;
@@ -12,6 +13,13 @@ const ServiceCancelBtn: React.FC<ServiceCancelBtnProps> = ({
   complaintId,
   userRole = "user",
 }) => {
+  const navigate = useNavigate();
+  let redirectLink : string;
+  if(userRole == "user"){
+     redirectLink = "/user/homepage";
+  }else if(userRole == "mechanic"){
+     redirectLink = "/mech/homepage"
+  }
   const [showModal, setShowModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
@@ -58,6 +66,9 @@ const ServiceCancelBtn: React.FC<ServiceCancelBtnProps> = ({
 
   const closeStatusModal = () => {
     setShowStatusModal(false);
+      if (isSuccess && redirectLink) {
+    navigate(redirectLink);
+  }
   };
 
   return (

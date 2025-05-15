@@ -11,7 +11,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   isOpen, 
   message, 
   onClose,
-  isSuccess 
+  isSuccess, 
+  
 }) => {
   if (!isOpen) return null;
 

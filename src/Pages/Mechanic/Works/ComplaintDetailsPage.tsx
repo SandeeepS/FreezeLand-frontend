@@ -114,6 +114,11 @@ const ComplaintDetailsPage: React.FC = () => {
     return complaint?.status !== ComplaintStatus.PENDING;
   }, [complaint?.status]);
 
+  // Check if complaint status is specifically "ACCEPTED" for cancel button
+  const showCancelButton = useMemo(() => {
+    return complaint?.status === ComplaintStatus.ACCEPTED;
+  }, [complaint?.status]);
+
   // Loading state
   if (loading) {
     return (
@@ -179,13 +184,16 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-4 flex justify-center pb-4">
-        <ServiceCancelBtn
-          complaintId={complaint._id}
-          userRole="mechanic"
+      {/* Only show cancel button if status is ACCEPTED */}
+      {showCancelButton && (
+        <div className="mt-4 flex justify-center pb-4">
+          <ServiceCancelBtn
+            complaintId={complaint._id}
+            userRole="mechanic"
+          />
+        </div>
+      )}
       
-        />
-      </div>
       {/* Main content with conditional layout */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-1/2">
