@@ -2,7 +2,26 @@ import React, { useRef } from "react";
 import { FiMapPin } from "react-icons/fi";
 import PreviewImage from "../../User/PreviewImage";
 import { AddAddress } from "../../../interfaces/AddAddress";
-import { ServiceFormProps } from "../../../interfaces/IComponents/User/IUserInterfaces";
+
+// Define ServiceFormProps interface properly
+interface ServiceFormProps {
+  formik: any; 
+  userProfile: any;
+  defaultAddress: string;
+  setDefaultAddress: (address: string) => void;
+  locationName: {
+    address: string;
+    latitude: number | null;
+    longitude: number | null;
+  };
+  locationError: string;
+  validateLocationName: (location: any) => { ok: boolean; message?: string };
+  handleFetchLocation: () => void;
+  handleRemoveLocation: () => void;
+  showLocationOptions: boolean;
+  setShowLocationOptions: (show: boolean) => void;
+  isSubmitting: boolean; // Add isSubmitting prop
+}
 
 const ServiceForm: React.FC<ServiceFormProps> = ({
   formik,
@@ -16,9 +35,10 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
   handleRemoveLocation,
   showLocationOptions,
   setShowLocationOptions,
+  isSubmitting, // Use this prop to disable the submit button
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
-  console.log("userDeatisl frm the form ",userProfile);
+  
   return (
     <form
       className="w-full max-w-lg flex-row items-center justify-center"
@@ -28,18 +48,20 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="grid-first-name"
+            htmlFor="name"
           >
             Name *
           </label>
           <input
             className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             id="name"
+            name="name" // Adding name attribute for formik
             type="text"
+            value={formik.values.name}
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
           />
-          {formik.errors.name && (
+          {formik.touched.name && formik.errors.name && (
             <small className="text-red-500">{formik.errors.name}</small>
           )}
         </div>
@@ -48,19 +70,21 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
         <div className="w-full px-3">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="grid-complaint"
+            htmlFor="discription"
           >
             Complaint Description *
           </label>
           <textarea
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="discription"
+            name="discription" // Adding name attribute for formik
             placeholder="Describe your complaint here..."
             rows={4}
+            value={formik.values.discription}
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
           ></textarea>
-          {formik.errors.discription && (
+          {formik.touched.discription && formik.errors.discription && (
             <small className="text-red-500">{formik.errors.discription}</small>
           )}
         </div>
@@ -68,7 +92,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
 
       {/* Upload Image */}
       <label
-        htmlFor=""
+        htmlFor="file"
         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
       >
         Upload Image*
@@ -76,18 +100,19 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
       <div className="flex items-center justify-center w-full mb-5">
         <input
           className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-          id="multiple_files"
+          id="file"
+          name="file"
           ref={fileRef}
           type="file"
-          name="file"
-          multiple
+          accept="image/*" // Restrict to image files
           onBlur={formik.handleBlur}
           onChange={(event) => {
-            formik.setFieldValue("file", event.target.files[0]);
+            const file = event.target.files?.[0] || null;
+            formik.setFieldValue("file", file);
           }}
         />
       </div>
-      {formik.errors.file && (
+      {formik.touched.file && formik.errors.file && (
         <small className="text-red-500">{formik.errors.file}</small>
       )}
       {formik.values.file && <PreviewImage file={formik.values.file} />}
@@ -107,18 +132,20 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
             name="defaultAddress"
             value={defaultAddress}
             onChange={(event) => {
-              formik.setFieldValue("defaultAddress", event.target.value);
-              setDefaultAddress(event.target.value);
+              const selectedValue = event.target.value;
+              formik.setFieldValue("defaultAddress", selectedValue);
+              setDefaultAddress(selectedValue);
             }}
+            onBlur={formik.handleBlur}
           >
             <option value="">Select Address</option>
-            {userProfile?.address.map((item: AddAddress) => (
+            {userProfile?.address?.map((item: AddAddress) => (
               <option key={item._id} value={item._id}>
                 {item.name}, {item.district}, {item.state}
               </option>
             ))}
           </select>
-          {formik.errors.defaultAddress && (
+          {formik.touched.defaultAddress && formik.errors.defaultAddress && (
             <small className="text-red-500">
               {formik.errors.defaultAddress}
             </small>
@@ -130,7 +157,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
       <div className="flex flex-wrap">
         <div className="w-full mb-6 my-5">
           <label
-            htmlFor=""
+            htmlFor="location"
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
           >
             Update Location*
@@ -145,7 +172,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
               : "Please enter your location"}
           </button>
 
-          {showLocationOptions && locationName.longitude == null && (
+          {showLocationOptions && locationName.longitude === null && (
             <div className="mt-2">
               <button
                 type="button"
@@ -160,7 +187,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
 
           {locationName.longitude !== null && (
             <button
-              type="submit"
+              type="button" // Changed from submit to button
               onClick={handleRemoveLocation}
               className="mt-2 flex items-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none w-full"
             >
@@ -177,9 +204,12 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
       <div className="w-full my-2">
         <button
           type="submit"
-          className="focus:outline-none text-white bg-green-400 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-full"
+          disabled={isSubmitting}
+          className={`focus:outline-none text-white ${
+            isSubmitting ? "bg-gray-400" : "bg-green-400 hover:bg-green-700"
+          } focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-full`}
         >
-          Submit
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </div>
     </form>

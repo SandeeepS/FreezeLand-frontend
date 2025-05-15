@@ -18,8 +18,14 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
   className = "",
   compact = false,
 }) => {
-  // Define the status steps in order
-  const statusSteps = [
+  // Check if status is any form of canceled
+  const isCanceled =
+    currentStatus === ComplaintStatus.CANCELED ||
+    currentStatus === "canceled_by_user" ||
+    currentStatus === "canceled_by_mechanic";
+
+  // Define the standard status steps in order
+  const standardStatusSteps = [
     {
       status: ComplaintStatus.PENDING,
       label: "Pending",
@@ -50,30 +56,53 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
     },
   ];
 
-  // Determine current step index
-  const currentStepIndex = statusSteps.findIndex(
-    (step) => step.status === currentStatus
-  );
+  // Create cancel step
+  const cancelStep = {
+    status: "CANCELED",
+    label: "Canceled",
+    icon: <ReportProblemIcon fontSize={compact ? "small" : "medium"} />,
+    color: "bg-red-500",
+    textColor: "text-red-700",
+  };
 
-  // Handle special statuses (canceled, blocked)
-  const isSpecialStatus =
-    currentStatus === ComplaintStatus.CANCELED ||
-    currentStatus === ComplaintStatus.BLOCKED;
+  // Choose the appropriate steps based on status
+  let statusSteps = [];
+
+  if (isCanceled) {
+    // For canceled status, we only show Pending -> Accepted -> Canceled
+    statusSteps = [
+      standardStatusSteps[0], // Pending
+      standardStatusSteps[1], // Accepted
+      cancelStep, // Canceled
+    ];
+  } else {
+    // For normal flow, show all standard steps
+    statusSteps = standardStatusSteps;
+  }
+
+  // Determine current step index
+  let currentStepIndex;
+
+  if (isCanceled) {
+    // If canceled, set to the cancel step (last in our modified flow)
+    currentStepIndex = 2;
+  } else {
+    // For standard statuses, find the index as normal
+    currentStepIndex = statusSteps.findIndex(
+      (step) => step.status === currentStatus
+    );
+  }
+
+  // Handle special status (blocked)
+  const isBlocked = currentStatus === ComplaintStatus.BLOCKED;
 
   return (
-    <div className={`${className} py-2 `}>
-   
-      {isSpecialStatus ? (
+    <div className={`${className} py-2`}>
+      {isBlocked ? (
         <div className="flex items-center justify-center p-3 bg-red-50 border border-red-200 rounded-lg">
-          {currentStatus === ComplaintStatus.CANCELED ? (
-            <ReportProblemIcon className="text-red-500 mr-2" />
-          ) : (
-            <BlockIcon className="text-red-500 mr-2" />
-          )}
+          <BlockIcon className="text-red-500 mr-2" />
           <span className="font-medium text-red-700">
-            {currentStatus === ComplaintStatus.CANCELED
-              ? "This service request has been canceled"
-              : "This service request has been blocked"}
+            This service request has been blocked
           </span>
         </div>
       ) : (
@@ -102,14 +131,25 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
           <div className="relative flex items-center justify-between">
             {/* Connecting lines */}
             <div className="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-1 bg-gray-200 rounded-full z-0"></div>
-            
+
             {/* Active progress line */}
             <div
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-blue-500 rounded-full z-10 transition-all duration-500 ease-in-out"
+              className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-1 ${
+                isCanceled ? "bg-red-500" : "bg-blue-500"
+              } rounded-full z-10 transition-all duration-500 ease-in-out`}
               style={{
-                width: currentStepIndex >= 0 ? 
-                  `calc(${(currentStepIndex) / (statusSteps.length - 1) * 100}% + ${currentStepIndex > 0 ? (compact ? "12px" : "16px") : "0px"})` : 
-                  "0%",
+                width:
+                  currentStepIndex >= 0
+                    ? `calc(${
+                        (currentStepIndex / (statusSteps.length - 1)) * 100
+                      }% + ${
+                        currentStepIndex > 0
+                          ? compact
+                            ? "12px"
+                            : "16px"
+                          : "0px"
+                      })`
+                    : "0%",
               }}
             ></div>
 
@@ -125,12 +165,16 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
                 >
                   {/* Step circle */}
                   <div
-                    className={`${compact ? "w-6 h-6" : "w-8 h-8"} rounded-full flex items-center justify-center 
+                    className={`${
+                      compact ? "w-6 h-6" : "w-8 h-8"
+                    } rounded-full flex items-center justify-center 
                     ${isActive ? step.color : "bg-gray-200"} 
                     ${
-                      isCurrentStep ? 
-                        "ring-4 ring-opacity-50 ring-blue-200 shadow-lg scale-110" : 
-                        ""
+                      isCurrentStep
+                        ? `ring-4 ring-opacity-50 ${
+                            isCanceled ? "ring-red-200" : "ring-blue-200"
+                          } shadow-lg scale-110`
+                        : ""
                     } transition-all duration-300 ease-in-out`}
                   >
                     <div className="text-white">{step.icon}</div>
@@ -139,11 +183,11 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
               );
             })}
           </div>
-          
+
           {/* Time estimate - only shown in non-compact mode */}
           {!compact && (
             <div className="mt-4 text-xs text-gray-500 text-center">
-              Estimated completion: {getEstimatedTime(currentStatus)}
+              {getEstimatedTime(currentStatus)}
             </div>
           )}
         </div>
@@ -154,6 +198,16 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
 
 // Helper function to get estimated time based on status
 const getEstimatedTime = (status: string): string => {
+  // Check if status is any form of canceled
+  const isCanceled =
+    status === ComplaintStatus.CANCELED ||
+    status === "canceled_by_user" ||
+    status === "canceled_by_mechanic";
+
+  if (isCanceled) {
+    return "Service request has been canceled";
+  }
+
   switch (status) {
     case ComplaintStatus.PENDING:
       return "Waiting for mechanic to accept";

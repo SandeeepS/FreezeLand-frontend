@@ -149,7 +149,7 @@ const ComplaintDetail: React.FC = () => {
       hasWorkDetails);
 
   // Check if we should show the cancel button (only when status is exactly "accepted")
-  const showCancelButton = status === "accepted";
+  const showCancelButton = status === "accepted" || status === "pending";
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24">

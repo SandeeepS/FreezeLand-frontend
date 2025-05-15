@@ -96,13 +96,16 @@ const MechQueue: React.FC = () => {
       // Fetch service logo image from serviceDetails
       if (service.serviceDetails && service.serviceDetails[0]?.imageKey ) {
         try {
+
           const imageResult = await getImageUrl(
             service.serviceDetails[0].imageKey,
             "service"
           );
+
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[service._id] = imageResult.data.url;
           }
+          
         } catch (error) {
           console.error("Error fetching service image:", error);
         }

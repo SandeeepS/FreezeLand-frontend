@@ -10,7 +10,7 @@ import { registerComplaint } from "../../Api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../App/store";
 import { getImageUrl } from "../../Api/user";
-import { getS3SingUrl } from "../../Api/admin"; // Import the getS3SingUrl function
+import { getS3SingUrl } from "../../Api/admin";
 import ConformationModal from "../../components/Common/ConformationModal";
 import UserData from "../../interfaces/UserData";
 import ServiceDetails from "../../components/User/UserServiceRegistration/ServiceDetails";
@@ -19,32 +19,34 @@ import AboutTheService from "../../components/User/UserServiceRegistration/About
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
+// Define LocationData interface
+interface LocationData {
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+}
+
 const Service: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const userData = useSelector((state: RootState) => state.auth.userData);
   const userId = userData?.id;
-  const [service, setServices] = useState<Iconcern>();
+  const [service, setServices] = useState<Iconcern | undefined>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
-  const [locationName, setLocationName] = useState({
+  const [locationName, setLocationName] = useState<LocationData>({
     address: "",
     latitude: null,
     longitude: null,
   });
-  const [userProfile, setUserProfile] = useState<UserData>();
+  const [userProfile, setUserProfile] = useState<UserData | undefined>();
   const [defaultAddress, setDefaultAddress] = useState<string>("");
-  const [defaultAddressDetails, setDefaultAddressDetails] =
-    useState<AddAddress>();
-  const [locationError, setLocationError] = useState<string | undefined>("");
-  const [serviceImage, setServiceImage] = useState<string | undefined>("");
+  const [defaultAddressDetails, setDefaultAddressDetails] = useState<AddAddress | undefined>();
+  const [locationError, setLocationError] = useState<string>("");
+  const [serviceImage, setServiceImage] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
-  // Add these states for image handling
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("");
-  const [fileType, setFileType] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // These services should probably come from the backend/API
   const services = [
     "Applicable for both window & Split ACs",
     "Advanced Foam-jet cleaning of indoor unit",
@@ -56,67 +58,55 @@ const Service: React.FC = () => {
     // Fetching data
     const fetchData = async () => {
       try {
+        if (!id || !userId) {
+          console.error("Missing id or userId");
+          return;
+        }
+
         const [serviceResult, profileResult] = await Promise.all([
-          getService(id as string),
-          getProfile(userId as string),
+          getService(id),
+          getProfile(userId),
         ]);
-        if (serviceResult) {
+        
+        if (serviceResult && serviceResult.data) {
           setServices(serviceResult.data);
 
-          const result = await getImageUrl(
-            serviceResult.data.imageKey,
-            "service"
-          );
-          if (result) {
-            setServiceImage(result.data.url);
+          if (serviceResult.data.imageKey) {
+            const result = await getImageUrl(
+              serviceResult.data.imageKey,
+              "service"
+            );
+            if (result && result.data && result.data.url) {
+              setServiceImage(result.data.url);
+            }
           }
         }
 
-        if (profileResult) {
+        if (profileResult && profileResult.data && profileResult.data.data) {
           const profileData = profileResult.data.data.data;
           console.log("Profile data fetched:", profileData);
+          
           if (profileData && profileData.address) {
             setUserProfile(profileData);
             const defaultAdd = profileData.address.find(
-              (addr: AddAddress) => addr._id == profileData.defaultAddress
+              (addr: AddAddress) => addr._id === profileData.defaultAddress
             );
-            setDefaultAddress(defaultAdd?._id || "");
-            setDefaultAddressDetails(defaultAdd);
+            
+            if (defaultAdd) {
+              setDefaultAddress(defaultAdd._id);
+              setDefaultAddressDetails(defaultAdd);
+            }
           } else {
             console.error("Address data missing in profile");
           }
         }
       } catch (error) {
-        console.log(error as Error);
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, [id]);
-
-  // Add function to handle image changes
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setImageFile(file);
-    setFileName(file.name);
-    setFileType(file.type);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  // Add function to remove selected image
-  const handleImageRemove = () => {
-    setPreviewImage(null);
-    setImageFile(null);
-    setFileName("");
-    setFileType("");
-  };
+  }, [id, userId]);
 
   const handleFetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -137,17 +127,19 @@ const Service: React.FC = () => {
           }
         } catch (error) {
           console.error("Error fetching location name:", error);
+          setLocationError("Failed to fetch location. Please try again.");
         }
       },
       (error) => {
         console.error("Error fetching location:", error);
+        setLocationError("Failed to get your location. Please enable location services.");
       },
       { enableHighAccuracy: true }
     );
   };
 
-  const validateLocationName = (value: any) => {
-    if (!value.address || !value.latitude || !value.longitude) {
+  const validateLocationName = (value: LocationData) => {
+    if (!value.address || value.latitude === null || value.longitude === null) {
       return { ok: false, message: "Location is required" };
     }
     return { ok: true };
@@ -169,10 +161,11 @@ const Service: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col mt-36 overflow-hidden ">
+      <div className="flex flex-col mt-36 overflow-hidden">
         <div className="flex flex-col justify-center items-center my-4">
-          <h2 className="font-bold font-sans text-lg ">{service?.name}</h2>
+          <h2 className="font-bold font-sans text-lg">{service?.name}</h2>
         </div>
+        
         {/* Main Content */}
         <div className="md:flex md:justify-between mt-10 md:pl-32 mx-6 md:w-full">
           {/* Service Details */}
@@ -184,28 +177,39 @@ const Service: React.FC = () => {
             <AboutTheService title="About the service" points={services} />
           </div>
         </div>
+        
         <div className="flex flex-col justify-center items-center my-4">
-          <h3 className="font-bold font-sans text-lg ">
+          <h3 className="font-bold font-sans text-lg">
             Enter More Details Here
           </h3>
         </div>
-        <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 md:pl-36 pl-6 ">
+        
+        <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 md:pl-36 pl-6">
           <Formik
             initialValues={{
               name: "",
               discription: "",
               location: "",
               file: null as File | null,
-              defaultAddress: "",
+              defaultAddress: defaultAddress, // Initialize with current defaultAddress
             }}
             validationSchema={ServiceFormValidation}
             enableReinitialize={true}
             onSubmit={async (values) => {
               try {
                 setIsSubmitting(true);
-                const isLocation = validateLocationName(locationName);
-                if (!isLocation.ok) {
-                  setLocationError(isLocation.message);
+                
+                // Validate location
+                const locationValidation = validateLocationName(locationName);
+                if (!locationValidation.ok) {
+                  setLocationError(locationValidation.message);
+                  setIsSubmitting(false);
+                  return;
+                }
+                
+                // Validate defaultAddress
+                if (!defaultAddress) {
+                  console.error("Default address is required");
                   setIsSubmitting(false);
                   return;
                 }
@@ -213,11 +217,11 @@ const Service: React.FC = () => {
                 setLocationError("");
                 let imageKey = "";
 
-                // Use the file from formik values instead of imageFile state
+                // Process image upload if file exists
                 if (values.file) {
                   const folderName = "ServiceComplaints";
                   try {
-                    const fileName = (values.file as File)?.name || "";
+                    const fileName = values.file.name || "";
                     const fileType = values.file.type;
 
                     const response = await getS3SingUrl(
@@ -225,29 +229,30 @@ const Service: React.FC = () => {
                       fileType,
                       folderName
                     );
-                    console.log("response after getting s3SignedURL", response);
-                    if (response?.data.uploadURL) {
+                    
+                    if (response?.data?.uploadURL) {
                       // Upload the image to S3
                       await fetch(response.data.uploadURL, {
                         method: "PUT",
                         headers: {
                           "Content-Type": fileType,
                         },
-                        body: values.file, // Use the file from formik values
+                        body: values.file,
                       });
 
                       // Save the imageKey
                       imageKey = response.data.key;
-                      console.log("image key saved:", imageKey);
+                      console.log("Image key saved:", imageKey);
                     }
                   } catch (error) {
                     console.error("Failed to upload image:", error);
                   }
                 }
 
+                // Prepare data for submission
                 const combinedData: Iconcern = {
                   name: values.name,
-                  image: imageKey ? [imageKey] : [], // Use an empty array if no imageKey
+                  image: imageKey ? [imageKey] : [],
                   defaultAddress: defaultAddress,
                   discription: values.discription,
                   locationName: locationName,
@@ -255,6 +260,9 @@ const Service: React.FC = () => {
                   serviceId: service?._id,
                 };
 
+                console.log("Submitting data:", combinedData);
+
+                // Register complaint
                 const result = await registerComplaint(combinedData);
                 if (result) {
                   console.log("Result from backend:", result);
@@ -268,21 +276,20 @@ const Service: React.FC = () => {
             }}
           >
             {(formik) => (
-              <>
-                <ServiceForm
-                  formik={formik}
-                  userProfile={userProfile}
-                  defaultAddress={defaultAddress}
-                  setDefaultAddress={setDefaultAddress}
-                  locationName={locationName}
-                  locationError={locationError}
-                  validateLocationName={validateLocationName}
-                  handleFetchLocation={handleFetchLocation}
-                  handleRemoveLocation={handleRemoveLocation}
-                  showLocationOptions={showLocationOptions}
-                  setShowLocationOptions={setShowLocationOptions}
-                />
-              </>
+              <ServiceForm
+                formik={formik}
+                userProfile={userProfile}
+                defaultAddress={defaultAddress}
+                setDefaultAddress={setDefaultAddress}
+                locationName={locationName}
+                locationError={locationError}
+                validateLocationName={validateLocationName}
+                handleFetchLocation={handleFetchLocation}
+                handleRemoveLocation={handleRemoveLocation}
+                showLocationOptions={showLocationOptions}
+                setShowLocationOptions={setShowLocationOptions}
+                isSubmitting={isSubmitting}
+              />
             )}
           </Formik>
         </div>
