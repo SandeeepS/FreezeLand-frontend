@@ -392,6 +392,18 @@ const getComplaintById = async (id: string) => {
   }
 };
 
+//function to cancel the service 
+const cancelComplaint = async (complaintId:string, userRole : string,reason:string) =>{
+  try{
+    console.log("reached in the admin.ts , and complaintId and userRole is ",complaintId,userRole,reason);
+    const result = await Api.post(adminRoutes.cancelComplaint,{complaintId,userRole,reason})
+    return result;
+  }catch(error) {
+    console.log("error occured while cancel the comlaint in the admin ts ",error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   adminLogin,
   adminLogout,
@@ -418,5 +430,6 @@ export {
   getAllComplaints,
   listUnlistComplaints,
   deleteComplaint,
-  getComplaintById
+  getComplaintById,
+  cancelComplaint
 };

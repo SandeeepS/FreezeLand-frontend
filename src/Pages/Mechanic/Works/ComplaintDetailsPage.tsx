@@ -15,6 +15,7 @@ import { useSelector } from "react-redux"; // Import useSelector to access curre
 import { RootState } from "../../../App/store"; // Import RootState type
 import FloatingChat from "../../../components/Common/Chat/FloatingChat";
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
+import ServiceCancelBtn from "../../../components/Common/ServiceCancelBtn";
 
 // Move formatDate outside the component to prevent recreation on each render
 const formatDate = (dateString: string) => {
@@ -179,22 +180,11 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
 
       <div className="mt-4 flex justify-center pb-4">
-        <button
-          onClick={() => {
-            // Implement your cancel request logic here
-            if (
-              window.confirm(
-                "Are you sure you want to cancel this service request?"
-              )
-            ) {
-              // write api for cancel the service.
-          
-            }
-          }}
-          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-2 rounded shadow-md flex items-center"
-        >
-          Cancel Service Request
-        </button>
+        <ServiceCancelBtn
+          complaintId={complaint._id}
+          userRole="mechanic"
+      
+        />
       </div>
       {/* Main content with conditional layout */}
       <div className="flex flex-col lg:flex-row gap-6">
@@ -259,7 +249,7 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
 
       {/* Add Floating Chat component only if the complaint has been accepted */}
-      {isAccepted  &&
+      {isAccepted &&
         complaint._id &&
         complaint.userId &&
         complaint.currentMechanicId && (

@@ -24,6 +24,7 @@ const adminRoutes = {
   deleteComplaint: "/admin/deleteComplaint/",
   listUnlistComplaints:"/admin/listUnlistComplaints/",
   getComplaintById:"/admin/getComplaintById",
+  cancelComplaint:"/admin/cancelComplaint",
   logout: "/admin/logout",
 };
 
