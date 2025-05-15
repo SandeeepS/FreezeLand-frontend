@@ -37,6 +37,7 @@ import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicV
 import PaymentSuccessPage from "./Pages/User/Payment/PaymentSuccessPage";
 import AdminComplaintListing from "./Pages/Admin/Complaints/AdminComplaintListing";
 import AdminCompliantDetailsPage from "./Pages/Admin/Complaints/AdminCompliantDetailsPage";
+import ServiceHistory from "./Pages/Admin/ServiceHistory/ServiceHistory";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -129,11 +130,12 @@ function App() {
             <Route path="/mech" element={<MechLayOut/>}>
               <Route path="/mech/homepage" element={<MechanicHomePage />}/>
               <Route path="/mech/verifyMechanic" element={<VerifyMechanic />}/>
-              <Route path="/mech/allWorks" element={<AllWorksPage/>} />
+              <Route path="/mech/allWorks" element={<AllWorksPage/>}/>
               <Route path="/mech/complaintDetails/:id" element={<ComplaintDetailsPage/>}/>
-              <Route path="/mech/queue" element={<MechQueue/>} />
+              <Route path="/mech/queue" element={<MechQueue/>}/>
               <Route path="/mech/profile" element={<MechanicProfile/>}/>
               <Route path="/mech/editProfile" element={<MechanicEditProfile/>}/>
+              <Route path="/mech/serviceHistory" element={<ServiceHistory/>}/>
             </Route>
           </Route>
 

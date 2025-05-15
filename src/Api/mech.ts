@@ -247,6 +247,17 @@ const getAllAcceptedServices = async (mechanicId: string) => {
   }
 };
 
+const getAllCompletedServices = async(mechanicId:string) => {
+  try{
+    console.log("Entered in the getAllCompleted in the mech.ts",mechanicId);
+    const result = await Api.get(mechRoutes.getAllCompletedServices);
+    return result;
+  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 //function to update the complaint status by mechanic
 const updateComplaintStatus = async (complaintId:string, nextStatus: string) => {
   try {
@@ -320,6 +331,7 @@ export {
   getMechanicDetails,
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,
+  getAllCompletedServices,
   updateWorkAssigned,
   getAllAcceptedServices,
   updateComplaintStatus,

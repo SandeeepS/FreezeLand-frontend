@@ -25,7 +25,7 @@ const MechHeader: React.FC = () => {
     {
       icon: <MdEventNote className="mr-2" />,
       label: "Service History",
-      path: "/mechanic/services",
+      path: "/mech/serviceHistory",
     },
     // Add more mechanic-specific navigation items
   ];
