@@ -78,7 +78,7 @@ const AdminDeviceListing: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="mb-5">
+      <div className="mb-5 mx-4">
         <TopBar
           pathName={pathName}
           heading="Mechanics"
@@ -92,7 +92,7 @@ const AdminDeviceListing: React.FC = () => {
         </Button>
       </div>
 
-      <div className="flex justify-center items-center mx-10  h-screen">
+      <div className="flex justify-center items-center mx-4 h-screen">
         <TableCommon
           columns={columns}
           data={filteredDevices}

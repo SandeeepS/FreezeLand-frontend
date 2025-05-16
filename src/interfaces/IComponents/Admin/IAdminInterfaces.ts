@@ -33,7 +33,7 @@ export interface ApproveModalProps {
 
 //used in TopBar.tsx
 export interface TopBarProps {
-    heading: string;
+    heading?: string;
     searchQuery: string;
     pathName:string;
     onSearchChange: (query: string) => void;

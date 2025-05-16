@@ -252,45 +252,45 @@ const AllWorksPage: React.FC = () => {
         </div>
       ),
     },
-    {
-      key: "completion",
-      header: "Progress",
-      render: (value, item) => (
-        <div className="flex items-center">
-          <span className="mr-2">{value}%</span>
-          <div className="relative w-full">
-            <div
-              className={`overflow-hidden h-2 text-xs flex rounded ${
-                getProgressColors(item.status).bg
-              }`}
-            >
-              <div
-                style={{ width: `${value}%` }}
-                className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                  getProgressColors(item.status).bar
-                }`}
-              />
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "action",
-      header: "Action",
-      render: (value, item) => (
-        <button 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md flex items-center"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleTakeAction(item.id);
-          }}
-        >
-          <BuildIcon sx={{ fontSize: 16 }} className="mr-1" />
-          {item.status === "pending" ? "Take Up" : "Update"}
-        </button>
-      ),
-    },
+    // {
+    //   key: "completion",
+    //   header: "Progress",
+    //   render: (value, item) => (
+    //     <div className="flex items-center">
+    //       <span className="mr-2">{value}%</span>
+    //       <div className="relative w-full">
+    //         <div
+    //           className={`overflow-hidden h-2 text-xs flex rounded ${
+    //             getProgressColors(item.status).bg
+    //           }`}
+    //         >
+    //           <div
+    //             style={{ width: `${value}%` }}
+    //             className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+    //               getProgressColors(item.status).bar
+    //             }`}
+    //           />
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   key: "action",
+    //   header: "Action",
+    //   render: (value, item) => (
+    //     <button 
+    //       className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md flex items-center"
+    //       onClick={(e) => {
+    //         e.stopPropagation();
+    //         handleTakeAction(item.id);
+    //       }}
+    //     >
+    //       <BuildIcon sx={{ fontSize: 16 }} className="mr-1" />
+    //       {item.status === "pending" ? "Take Up" : "Update"}
+    //     </button>
+    //   ),
+    // },
   ];
 
   // Transform data for the table

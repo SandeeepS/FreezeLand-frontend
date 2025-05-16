@@ -63,7 +63,6 @@ function App() {
   return (
     <> 
     <header>
-      <h1>FreezeLand</h1>
       <InstallPWA/>
     </header>
       <Toaster position="top-right" reverseOrder={false} />
