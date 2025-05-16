@@ -67,6 +67,8 @@ const PaymentButton: React.FC<paymentData> = ({
       console.log("sessionId", sessionId);
       if (stripe && sessionId) {
         const result = await stripe.redirectToCheckout({ sessionId });
+        console.log("payment result from the stripe is",result);
+
         setIsLoading(false);
         if (result.error) {
           toast.error(result.error.message || "An unexpected error occurred.");

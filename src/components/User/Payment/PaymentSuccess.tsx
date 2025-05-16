@@ -26,15 +26,14 @@ const PaymentSuccess = () => {
         console.log("entered in the payment success");
         console.log(sessionId, "sessionId");
 
-        if (sessionId) {
+        if (sessionId) { 
           try {
             const response = await successPayment(sessionId);
             console.log(response, "response.data");
             const exactData = response?.data.result.response;
             console.log("exact data is ",exactData);
-
             const { message, status, data } = exactData;
-            if (status == "SUCCESS") {
+            if (status == "SUCCESS"){
               console.log(message);
               setOrderStatus(true);
               console.log("PAYMENT SUCCESS");

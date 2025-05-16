@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Warning } from "@mui/icons-material";
-
 import {
   getMechanicDetails,
   getUserRegisteredServiceDetailsById,
@@ -40,12 +39,11 @@ const ComplaintDetail: React.FC = () => {
     useState<IMechanicDetails | null>(null);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   // Fetch complaint details and set up polling for real-time updates
-  useEffect(() => {
+  useEffect(() =>{
     let pollingInterval: NodeJS.Timeout;
 
     const fetchComplaintDetail = async () => {
       if (!id) return;
-
       try {
         setIsLoading(true);
         const result = await getUserRegisteredServiceDetailsById(id);
@@ -211,7 +209,7 @@ const ComplaintDetail: React.FC = () => {
         )}
       </div>
       <div>
-        {status == "completed" && (
+        {status == "completed"  && (
           <PaymentButton
             complaintId={complaint._id}
             status={status}
