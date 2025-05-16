@@ -5,8 +5,7 @@ import toast from "react-hot-toast";
 import { useAppSelector } from "../../../../App/store";
 import { useNavigate } from "react-router-dom";
 
-
-export interface paymentData  {
+export interface paymentData {
   complaintId: string;
   status: string;
   mechanicId: string;
@@ -35,7 +34,7 @@ const PaymentButton: React.FC<paymentData> = ({
 
     try {
       setIsLoading(true);
-    
+
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
       if (!stripe) {
@@ -67,7 +66,7 @@ const PaymentButton: React.FC<paymentData> = ({
       console.log("sessionId", sessionId);
       if (stripe && sessionId) {
         const result = await stripe.redirectToCheckout({ sessionId });
-        console.log("payment result from the stripe is",result);
+        console.log("payment result from the stripe is", result);
 
         setIsLoading(false);
         if (result.error) {

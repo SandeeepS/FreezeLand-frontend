@@ -38,6 +38,7 @@ import PaymentSuccessPage from "./Pages/User/Payment/PaymentSuccessPage";
 import AdminComplaintListing from "./Pages/Admin/Complaints/AdminComplaintListing";
 import AdminCompliantDetailsPage from "./Pages/Admin/Complaints/AdminCompliantDetailsPage";
 import ServiceHistory from "./Pages/Admin/ServiceHistory/ServiceHistory";
+import InstallPWA from "./components/PWA/InstallPWA";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -60,7 +61,11 @@ const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPag
 function App() {
 
   return (
-    <>
+    <> 
+    <header>
+      <h1>FreezeLand</h1>
+      <InstallPWA/>
+    </header>
       <Toaster position="top-right" reverseOrder={false} />
       <Suspense fallback={<div>...Loading</div>}>
         <Routes>

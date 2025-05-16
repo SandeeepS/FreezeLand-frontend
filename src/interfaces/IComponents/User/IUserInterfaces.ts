@@ -47,7 +47,7 @@ export interface IComplaintDetails {
   isBlocked: boolean;
   isDeleted: boolean;
   deviceImages?: any[];
-  orderId:string;
+  orderId: string;
   chatId: string;
 }
 
