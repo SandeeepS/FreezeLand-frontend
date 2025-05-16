@@ -209,7 +209,7 @@ const ComplaintDetail: React.FC = () => {
         )}
       </div>
       <div>
-        {status == "completed"  && (
+        {status == "completed" && complaint.orderId == null  && (
           <PaymentButton
             complaintId={complaint._id}
             status={status}
