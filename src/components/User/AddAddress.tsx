@@ -1,29 +1,30 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { Formik } from "formik";
-// import { getProfile } from "../../Api/user";
-// import { useNavigate } from "react-router-dom";
 import { AddressValidation } from "../Common/Validations";
 import { AddUserAddress, getProfile } from "../../Api/user";
-import { useState } from "react";
-// import { AddAddress as AddAddressInterface } from "../../interfaces/AddAddress";
 import { useSelector } from "react-redux";
 import { RootState } from "../../App/store";
-import  {IUserData}from "../../interfaces/IUserData"
+import { IUserData } from "../../interfaces/IUserData";
+import { useNavigate } from "react-router-dom";
 
 const AddAddress: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<IUserData | null>(
-    null
-  );
+  const [userProfile, setUserProfile] = useState<IUserData | null>(null);
   const userData = useSelector((state: RootState) => state.auth.userData);
+  const navigate = useNavigate();
+
+  
   console.log("userData from the store is ", userData);
   console.log("user id from the store is ", userData);
-  setUserProfile(userData);
-
+  
   useEffect(() => {
+    // Set user profile from Redux store
+    setUserProfile(userData);
+    
+    // Fetch user details from API
     const fetchUserDetails = async () => {
       try {
-        const userId = userData?._id;
+        const userId = userData?.id
         if (userId) {
           const response = await getProfile(userId);
           const user = response?.data.data.data;
@@ -37,8 +38,10 @@ const AddAddress: React.FC = () => {
         );
       }
     };
+    
     fetchUserDetails();
-  }, []);
+  }, [userData]);
+  
   return (
     <div className="h-full bg-white rounded-lg shadow-md flex flex-col">
       <div className="flex flex-col justify-center items-center my-6">
@@ -70,7 +73,8 @@ const AddAddress: React.FC = () => {
               }
               const result = await AddUserAddress(_id, values);
               if (result) {
-                console.log("result reached the frontend");
+                console.log("result reached the frontend",result);
+                navigate('/user/account');
               }
             }}
           >
