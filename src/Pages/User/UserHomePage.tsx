@@ -7,6 +7,8 @@ import Promo2 from "../../components/User/WhyChooseUs";
 import Footer from "../../components/User/Footer";
 import LocationModal from "../../components/Common/LocationModal";
 import InitialLoader from "../Common/InitialLoader";
+import { useAppSelector } from "../../App/store";
+import { getProfile } from "../../Api/user";
 
 const slides = [
   {
@@ -28,6 +30,8 @@ const slides = [
 const UserHomePage: React.FC = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const userData = useAppSelector((state) => state.auth.userData);
+  const userId = userData?.id;
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
@@ -36,18 +40,42 @@ const UserHomePage: React.FC = () => {
 
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Show the LocationModal after 2 seconds
+  // Fetch user data and check for location field
   useEffect(() => {
-    const location = localStorage.getItem("Location");
-    console.log("Location already exists", location);
-    if (!location) {
-      const timer = setTimeout(() => {
-        setShowLocationModal(true);
-      }, 2000);
+    const fetchData = async () => {
+      try {
+        const userProfile = await getProfile(userId as string);
+        console.log("User details in the homepage is", userProfile);
 
-      return () => clearTimeout(timer); // Cleanup the timer on unmount
+        // Check if location field exists in the user data
+        if (
+          userProfile &&
+          userProfile.data &&
+          userProfile.data.data &&
+          userProfile.data.data.data
+        ) {
+          const userData = userProfile.data.data.data;
+
+          if ("locationData" in userData) {
+            console.log("Location field is present:", userData.locationData);
+          } else {
+            const timer = setTimeout(() => {
+              setShowLocationModal(true);
+            }, 4000);
+
+            return () => clearTimeout(timer); // Cleanup the timer on unmount  
+          }
+        }
+      } catch (error) {
+        console.log(error as Error);
+        throw error;
+      }
+    };
+
+    if (userId) {
+      fetchData();
     }
-  }, []);
+  }, [userId]);
 
   // Callback to close the modal
   const handleCloseModal = () => {
@@ -88,7 +116,7 @@ const UserHomePage: React.FC = () => {
           {showLocationModal && (
             <div className="fixed inset-0  justify-center bg-black bg-opacity-50 z-50">
               <div ref={modalRef}>
-                <LocationModal onClose={handleCloseModal} />
+                <LocationModal onClose={handleCloseModal} userId={userId as string} />
               </div>
             </div>
           )}

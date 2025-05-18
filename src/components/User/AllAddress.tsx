@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { getProfile } from "../../Api/user";
 import Footer from "./Footer";
 import { userDetails } from "../../interfaces/IComponents/User/IUserInterfaces";
+import { useAppSelector } from "../../App/store";
 
 
 
@@ -15,11 +16,13 @@ const AllAddress: React.FC = () => {
   const [allAddress, setAllAddress] = useState<AddAddress[]>([]);
   const [user, setUser] = useState<userDetails>();
   const navigate = useNavigate();
+  const userData = useAppSelector((state) => state.auth.userData);
+  const userId = userData?.id;
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await getProfile();
+        const response = await getProfile(userId as string);
         const user = response?.data.data.data;
         console.log("User address from the backend is  ", user.address);
 

@@ -25,8 +25,8 @@ export const EditAddress: React.FC = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await getProfile();
-        const user = response?.data.data.data;
+        const response = await getProfile(id as string);
+        const user = response?.data.data;
         console.log(
           "User details from the backend in the EditAddress is ",
           user

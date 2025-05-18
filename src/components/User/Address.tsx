@@ -9,7 +9,7 @@ const Address: React.FC = () => {
   const navigate = useNavigate();
   const handleAddAddress = () => {
     console.log("clicked the add address");
-    navigate("/user/addAddress");
+    navigate("/user/AddAddress");
   };
 
   const handleButtonClick = () => {

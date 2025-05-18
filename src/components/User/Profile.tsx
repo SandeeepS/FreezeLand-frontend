@@ -200,7 +200,7 @@ const Profile: React.FC = () => {
               Default Address
             </h2>
             <button
-              onClick={() => navigate("/user/addresses")}
+              onClick={() => navigate("/user/showAllAddress")}
               className="flex items-center px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md transition-colors duration-200"
             >
               <svg

@@ -1,5 +1,5 @@
 import "./App.css";
-import  { Suspense, lazy } from "react";
+import { Suspense, lazy } from "react";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
 import AdminLoggedIn from "./components/Admin/AdminLoggedIn";
@@ -50,37 +50,43 @@ const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
 const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
 const NewService = lazy(() => import("./Pages/Admin/NewService"));
 
-const AdminDeviceListing = lazy(() => import("./Pages/Admin/AdminDeviceListing"));
+const AdminDeviceListing = lazy(
+  () => import("./Pages/Admin/AdminDeviceListing")
+);
 const EditServices = lazy(() => import("./Pages/Admin/EditService"));
 const Service = lazy(() => import("./Pages/User/Service"));
 const AddNewDevice = lazy(() => import("./components/Admin/AddNewDevice"));
-const MechanicLoginPage = lazy(() => import("./Pages/Mechanic/MechanicLoginPage"));
-const MechanicHomePage = lazy(() => import("./Pages/Mechanic/MechanicHomePage"));
-const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPage"));
+const MechanicLoginPage = lazy(
+  () => import("./Pages/Mechanic/MechanicLoginPage")
+);
+const MechanicHomePage = lazy(
+  () => import("./Pages/Mechanic/MechanicHomePage")
+);
+const MechanicSignupPage = lazy(
+  () => import("./Pages/Mechanic/MechanicSignupPage")
+);
 
 function App() {
-
   return (
-    <> 
-    <header>
-      <InstallPWA/>
-    </header>
+    <>
+      <header>
+        <InstallPWA />
+      </header>
       <Toaster position="top-right" reverseOrder={false} />
       <Suspense fallback={<div>...Loading</div>}>
         <Routes>
-
-          <Route path="/user/homepage" element={<UserHomePage />} />
           {/* userRoutes */}
           <Route path="" element={<UserLoggedOut />}>
-            <Route path="/signup" element={<UserSignupPage />}/>
+            <Route path="/signup" element={<UserSignupPage />} />
             <Route path="/login" element={<UserLoginPage />} />
             <Route path="otp-page/:id" element={<UserOtpPage />} />
             <Route path="/user/forget-password" element={<ForgetPassword />} />
           </Route>
 
-
           {/** new User layout */}
           <Route path="/user" element={<UserLoggedIn />}>
+            <Route path="/user/homepage" element={<UserHomePage />} />
+
             <Route path="/user" element={<UserLayout />}>
               <Route path="/user/account" element={<Profile />} />
               <Route path="/user/address" element={<Address />} />
@@ -92,8 +98,14 @@ function App() {
               <Route path="/user/showAllAddress" element={<AllAddress />} />
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
               <Route path="/user/service/:id" element={<Service />} />
-              <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />}/>
-              <Route path="/user/payment/success" element={<PaymentSuccessPage/>}/>
+              <Route
+                path="/user/registeredComplaintByUser/:id"
+                element={<ComplaintDetail />}
+              />
+              <Route
+                path="/user/payment/success"
+                element={<PaymentSuccessPage />}
+              />
             </Route>
           </Route>
 
@@ -112,34 +124,44 @@ function App() {
               <Route path="/admin/addNewService" element={<NewService />} />
               <Route path="/admin/editService/:id" element={<EditServices />} />
               <Route path="/admin/addNewDevice" element={<AddNewDevice />} />
-              <Route path="/admin/verifyMechanic" element={<VerifyMechanicByAdmin/>} />
-              <Route path="/admin/mechanic/details/:id" element={<MechanicVerify/>}/>
-              <Route path="/admin/complaints" element={<AdminComplaintListing/>}/>
-              <Route path="/admin/viewMoreComplaintDetails/:id" element={<AdminCompliantDetailsPage/>}/>
+              <Route
+                path="/admin/verifyMechanic"
+                element={<VerifyMechanicByAdmin />}
+              />
+              <Route
+                path="/admin/mechanic/details/:id"
+                element={<MechanicVerify />}
+              />
+              <Route
+                path="/admin/complaints"
+                element={<AdminComplaintListing />}
+              />
+              <Route
+                path="/admin/viewMoreComplaintDetails/:id"
+                element={<AdminCompliantDetailsPage />}
+              />
             </Route>
           </Route>
 
           {/*Mechanic Routes*/}
-          <Route path="" element={<MechLoggedOut/>}>
-            <Route path="/mech/login" element={<MechanicLoginPage/>}/>
-            <Route path="/mech/signuppage" element={<MechanicSignupPage/>}/>
+          <Route path="" element={<MechLoggedOut />}>
+            <Route path="/mech/login" element={<MechanicLoginPage />} />
+            <Route path="/mech/signuppage" element={<MechanicSignupPage />} />
             <Route path="/mech/veryfy-otp/:id" element={<MechOtpPage />} />
-            <Route
-              path="/mech/forgot-password"
-              element={<ForgetPasswordForMech/>}
-            />
+            <Route path="/mech/forgot-password" element={<ForgetPasswordForMech />}/>
           </Route>
 
-          <Route path="" element={<MechLoggedIn/>}>
-            <Route path="/mech" element={<MechLayOut/>}>
-              <Route path="/mech/homepage" element={<MechanicHomePage />}/>
-              <Route path="/mech/verifyMechanic" element={<VerifyMechanic />}/>
-              <Route path="/mech/allWorks" element={<AllWorksPage/>}/>
-              <Route path="/mech/complaintDetails/:id" element={<ComplaintDetailsPage/>}/>
-              <Route path="/mech/queue" element={<MechQueue/>}/>
-              <Route path="/mech/profile" element={<MechanicProfile/>}/>
-              <Route path="/mech/editProfile" element={<MechanicEditProfile/>}/>
-              <Route path="/mech/serviceHistory" element={<ServiceHistory/>}/>
+          <Route path="" element={<MechLoggedIn />}>
+            <Route path="/mech/homepage" element={<MechanicHomePage />} />
+
+            <Route path="/mech" element={<MechLayOut />}>
+              <Route path="/mech/verifyMechanic" element={<VerifyMechanic />} />
+              <Route path="/mech/allWorks" element={<AllWorksPage />} />
+              <Route path="/mech/complaintDetails/:id" element={<ComplaintDetailsPage />}/>
+              <Route path="/mech/queue" element={<MechQueue />} />
+              <Route path="/mech/profile" element={<MechanicProfile />} />
+              <Route path="/mech/editProfile" element={<MechanicEditProfile />}/>
+              <Route path="/mech/serviceHistory" element={<ServiceHistory />} />
             </Route>
           </Route>
 

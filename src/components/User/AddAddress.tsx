@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@mui/material";
 import { Formik } from "formik";
 // import { getProfile } from "../../Api/user";
 // import { useNavigate } from "react-router-dom";
 import { AddressValidation } from "../Common/Validations";
-import { AddUserAddress } from "../../Api/user";
+import { AddUserAddress, getProfile } from "../../Api/user";
 import { useState } from "react";
 // import { AddAddress as AddAddressInterface } from "../../interfaces/AddAddress";
 import { useSelector } from "react-redux";
@@ -20,25 +20,25 @@ const AddAddress: React.FC = () => {
   console.log("user id from the store is ", userData);
   setUserProfile(userData);
 
-  // useEffect(() => {
-  //   const fetchUserDetails = async () => {
-  //     try {
-  //       const userId = userData?._id;
-  //       if (userId) {
-  //         const response = await getProfile(userId);
-  //         const user = response?.data.data.data;
-  //         console.log("User details from the backend in the Account is ", user);
-  //         setUserProfile(user);
-  //       }
-  //     } catch (error) {
-  //       console.log(
-  //         "Failed to fetch the user Details from the Account section",
-  //         error
-  //       );
-  //     }
-  //   };
-  //   fetchUserDetails();
-  // }, []);
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const userId = userData?._id;
+        if (userId) {
+          const response = await getProfile(userId);
+          const user = response?.data.data.data;
+          console.log("User details from the backend in the Account is ", user);
+          setUserProfile(user);
+        }
+      } catch (error) {
+        console.log(
+          "Failed to fetch the user Details from the Account section",
+          error
+        );
+      }
+    };
+    fetchUserDetails();
+  }, []);
   return (
     <div className="h-full bg-white rounded-lg shadow-md flex flex-col">
       <div className="flex flex-col justify-center items-center my-6">

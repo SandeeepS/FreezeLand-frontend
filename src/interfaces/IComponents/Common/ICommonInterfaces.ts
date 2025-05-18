@@ -64,7 +64,8 @@ export interface ModalProps {
 
 //used in LocationModal.tsx
 export interface LocationModalProps {
-  onClose: () => void; // Callback function to close the modal
+  onClose: () => void; 
+  userId:string// Callback function to close the modal
 }
 
 //used in PageLeaveModal.tsx
@@ -76,7 +77,8 @@ export interface ConfirmationModalProps {
 
 //used in the PopulaCities.tsx
 export interface PopularCitiesProps {
-  onCityClick: () => void; // Callback function to handle city click
+  onCityClick: () => void; 
+  userId:string
 }
 
 export interface AddressDetails {

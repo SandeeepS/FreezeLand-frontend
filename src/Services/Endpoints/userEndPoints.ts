@@ -24,6 +24,7 @@ const userRoutes = {
   getMessages:"/user/getMessages",
   handlePayment:"/user/handlePayment",
   successPayment:"/user/successPayment",
+  updateUserLocation:"/user/updateUserLocation",
 };
 
 export default userRoutes;

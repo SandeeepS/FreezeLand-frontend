@@ -8,6 +8,7 @@ import {
   FormData,
 } from "../interfaces/IPages/User/IUserInterfaces";
 import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentButton";
+import { LocationData } from "../components/Common/PopularCities";
 
 const signup = async ({
   name,
@@ -349,6 +350,18 @@ const successPayment = async (sessionId: string) => {
   }
 };
 
+//function to  send userLocation and update in the backend.
+const updateUserLocation = async(userId:string,locationData:LocationData) => {
+  try{
+    console.log("location details in the updateUserLocation is",locationData);
+    const result = await Api.post(userRoutes.updateUserLocation,{userId,locationData});
+    return result;
+  }catch(error){
+    console.log(error as Error);
+    errorHandler(error as Error);
+  }
+}
+
 export {
   signup,
   login,
@@ -373,4 +386,5 @@ export {
   getAllServices,
   getAllUserRegisteredServices,
   getUserRegisteredServiceDetailsById,
+  updateUserLocation
 };
