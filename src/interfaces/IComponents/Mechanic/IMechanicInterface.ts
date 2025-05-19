@@ -35,6 +35,16 @@ export interface MechDetails {
   
 }
 
+export interface MechDetails2{
+    name: string;
+  email: string;
+  phone: number | string;
+  address?: string;
+  location?: string;
+  photo?:string;
+  defaultAddressDetails:AddressDetails;
+}
+
 export interface editMechDetails {
   name: string;
   phone: string;

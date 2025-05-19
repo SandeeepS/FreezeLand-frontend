@@ -64,7 +64,7 @@ const Header: React.FC = () => {
       useEffect(() => {
         const fetchData = async () => {
           try {
-            if (userProfileDetails?.profile_picture) {
+            if (userProfileDetails?.profile_picture){
               const result = await getImageUrl(
                 userProfileDetails.profile_picture,
                 "service"

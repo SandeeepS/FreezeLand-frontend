@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import { mLogout } from "../../Api/mech";
 import { useNavigate } from "react-router-dom";
 import { mechLogout } from "../../App/slices/AuthSlice";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
-import { MdContactless } from "react-icons/md";
 import { MdEventNote } from "react-icons/md";
-import { IoIosSettings } from "react-icons/io";
+import { useAppSelector } from "../../App/store";
+import { getImageUrl, getMechanicDetails, mLogout } from "../../Api/mech";
+import { MechDetails2 } from "../../interfaces/IComponents/Mechanic/IMechanicInterface";
 
 const MechHeader: React.FC = () => {
+  const mechData = useAppSelector((state) => state.auth.mechData);
+  const [mechProfileDetails, setMechProfileDetails] = useState<MechDetails2>();
+  const [image, setImage] = useState<string>("");
+  
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(false);
@@ -29,6 +33,40 @@ const MechHeader: React.FC = () => {
     },
     // Add more mechanic-specific navigation items
   ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const mechId = mechData?.id;
+        const result = await getMechanicDetails(mechId as string);
+        setMechProfileDetails(result?.data.result);
+      } catch (error) {
+        console.log("error occurred while accessing the mechDetails in the MechHeader.tsx");
+        throw error as Error;
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (mechProfileDetails?.photo) {
+          const result = await getImageUrl(
+            mechProfileDetails.photo,
+            "mechanic"
+          );
+          console.log("imageUrld",result)
+          if (result) {
+            setImage(result.data.url);
+          }
+        }
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  }, [mechProfileDetails]);
 
   const handleNav = () => {
     setNav(!nav);
@@ -76,7 +114,7 @@ const MechHeader: React.FC = () => {
               onClick={toggleCard}
             >
               <img
-                src="https://cdn-icons-png.flaticon.com/128/64/64572.png"
+                src={image || "https://cdn-icons-png.flaticon.com/128/64/64572.png"}
                 alt="Profile Avatar"
                 className="h-10 w-10 rounded-full object-cover"
               />
@@ -90,9 +128,9 @@ const MechHeader: React.FC = () => {
                 logout={mLogout}
                 authLogout={mechLogout}
                 navigateTo={navigateTo}
-                coverImage="https://example.com/mechanic-cover.jpg"
-                profileImage="https://example.com/mechanic-profile.jpg"
-                userName="John Doe"
+                coverImage={image || "https://example.com/mechanic-cover.jpg"}
+                profileImage={image || "https://example.com/mechanic-profile.jpg"}
+                userName={mechProfileDetails?.name || "Mechanic Name"}
                 userRole="Professional Mechanic"
                 navigationItems={mechNavigationItems}
               />
