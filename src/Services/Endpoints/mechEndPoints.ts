@@ -22,6 +22,8 @@ const mechRoutes = {
   editMechanic:"mech/editMechanic",
   createRoom:"mech/createRoom",
   updateWorkDetails:"mech/updateWorkDetails",
+  addMechAddress:"mech/addMechAddress",
+  editAddress:"/mech/editAddress",
   logout: "/mech/logout",
 };
 

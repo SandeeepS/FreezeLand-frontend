@@ -2,6 +2,7 @@ import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
 import errorHandler from "./errorHandler";
 import { EditMechanicFormData, FormData, MechanicForm } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { AddAddress } from "../interfaces/AddAddress";
 
 const mechSignup = async ({
   name,
@@ -310,6 +311,42 @@ const updateWorkDetails = async (complaintId:string,workDetails:object) => {
   }
 }
 
+//adding mechanic address
+const AddMechAddress = async (_id: string | undefined, values: AddAddress) => {
+  try {
+    console.log(
+      "Entered in the AddMechAddress fucntion in the mech.ts  and the id is",
+      _id
+    );
+    const result = await Api.post(mechRoutes.addMechAddress, { _id, values });
+    return result;
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
+//editing the existing address
+const EditExistingMechAddress = async (
+  _id: string | undefined,
+  addressId: string | undefined,
+  values: AddAddress
+) => {
+  try {
+    const result = await Api.put(mechRoutes.editAddress, {
+      _id,
+      addressId,
+      values,
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    errorHandler(error as Error);
+  }
+};
+
+
+
 export {
   mechLogin,
   createRoom,
@@ -334,4 +371,6 @@ export {
   getAllAcceptedServices,
   updateComplaintStatus,
   updateMechanicDetails,
+  AddMechAddress,
+  EditExistingMechAddress
 };
