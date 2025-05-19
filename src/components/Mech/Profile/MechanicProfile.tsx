@@ -9,7 +9,7 @@ const MechanicProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [profileImage, setProfileImage] = useState(""); // Add state for profile image URL
+  const [profileImage, setProfileImage] = useState("");
   const [adharImage, setAdharImage] = useState("");
   const [employeeLicense, setEmployeeLicence] = useState("");
 
@@ -56,7 +56,6 @@ const MechanicProfile = () => {
             isVerified: mechData.isVerified || false,
             adharProof: mechData.adharProof || "",
             employeeLicense: mechData.employeeLicense || "",
-            // If you have address details in the response, you would set them here
             defaultAddressDetails: {
               district: mechData.district || "",
               state: mechData.state || "",
@@ -76,49 +75,39 @@ const MechanicProfile = () => {
     fetchData();
   }, [mechData?.id]); // Only re-run when mechData.id changes
 
-  // useEffect to fetch profile image URL
+  // Improved useEffect to fetch image URLs
   useEffect(() => {
-    const fetchImageUrl = async () => {
+    const fetchImageUrl = async (imageKey, type, setImageState) => {
+      // Only make API call if imageKey is provided
+      if (!imageKey) {
+        console.log(`No ${type} image key provided, skipping fetch`);
+        return;
+      }
+      
       try {
-        const results = await Promise.allSettled([
-          getImageUrl(mechDetails.photo, "mechProfile"), // Fix folder name if needed
-          getImageUrl(mechDetails.adharProof, "service"),
-          getImageUrl(mechDetails.employeeLicense, "service"),
-        ]);
-  
-        const [profilePicResult, adharResult, licenseResult] = results;
-  
-        if (profilePicResult.status === "fulfilled") {
-          if (profilePicResult.status === "fulfilled" && profilePicResult.value) {
-            setProfileImage(profilePicResult.value.data.url);
-          }
-        }
-  
-        if (adharResult.status === "fulfilled") {
-          setAdharImage(adharResult.value?.data?.url || "");
-        }
-  
-        if (licenseResult.status === "fulfilled") {
-          setEmployeeLicence(licenseResult.value?.data?.url || "");
+        const response = await getImageUrl(imageKey, type);
+        if (response?.data?.url) {
+          setImageState(response.data.url);
         }
       } catch (error) {
-        console.error("Unexpected error fetching images:", error);
+        console.error(`Error fetching ${type} image:`, error);
       }
     };
-  
-    fetchImageUrl();
-  }, [mechDetails.photo]);
-  
-
-  // Additional useEffect to fetch document image URLs
-  useEffect(() => {
-    const fetchDocumentImages = async () => {
-      // You can add additional image fetching functionality here if needed
-      // For example, getting URLs for adharProof and employeeLicense images
-    };
-
-    fetchDocumentImages();
-  }, [mechDetails.adharProof, mechDetails.employeeLicense]);
+    
+    // Fetch images only if the keys exist
+    if (mechDetails.photo) {
+      fetchImageUrl(mechDetails.photo, "mechProfile", setProfileImage);
+    }
+    
+    if (mechDetails.adharProof) {
+      fetchImageUrl(mechDetails.adharProof, "service", setAdharImage);
+    }
+    
+    if (mechDetails.employeeLicense) {
+      fetchImageUrl(mechDetails.employeeLicense, "service", setEmployeeLicence);
+    }
+    
+  }, [mechDetails.photo, mechDetails.adharProof, mechDetails.employeeLicense]);
 
   if (loading) {
     return (
@@ -464,7 +453,7 @@ const MechanicProfile = () => {
                   {mechDetails.adharProof ? (
                     <div className="relative bg-gray-100 rounded-lg overflow-hidden h-36">
                       <img
-                        src={adharImage}
+                        src={adharImage || "/src/Images/document-placeholder.png"}
                         alt="Aadhar Card"
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -495,7 +484,7 @@ const MechanicProfile = () => {
                   {mechDetails.employeeLicense ? (
                     <div className="relative bg-gray-100 rounded-lg overflow-hidden h-36">
                       <img
-                        src={employeeLicense}
+                        src={employeeLicense || "/src/Images/document-placeholder.png"}
                         alt="Employee License"
                         className="w-full h-full object-cover"
                         onError={(e) => {

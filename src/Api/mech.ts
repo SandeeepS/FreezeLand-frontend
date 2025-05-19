@@ -273,14 +273,12 @@ const updateComplaintStatus = async (complaintId:string, nextStatus: string) => 
 };
 
 //editing mechanic Details 
-const updateMechanicDetails = async ( {_id, name, phone,photo }: EditMechanicFormData) => {
+const updateMechanicDetails = async (mechId:string, values: EditMechanicFormData) => {
   try{
-    console.log("Entered in the updateMechanicDetails in the mech.ts");
+    console.log("Entered in the updateMechanicDetails in the mech.ts",mechId,values);
     const result = await Api.put(mechRoutes.editMechanic, {
-      _id,
-      name,
-      phone,
-      photo
+       mechId,
+       values
     });
     console.log("result from the backend is ", result);
     return result;  }catch(error){

@@ -16,7 +16,7 @@ interface MechanicProfile {
   name?: string;
   phone?: string;
   email?: string;
-  imageKey?: string;
+  photo?: string;
   isVerified?: boolean;
 }
 
@@ -40,13 +40,18 @@ const MechanicProfileEdit: React.FC = () => {
   const [fileType, setFileType] = useState<string>("");
   const [profileImage, setProfileImage] = useState<string>("");
 
+  const mechId = mechData?.id;
+
   useEffect(() => {
     const fetchMechanicProfile = async () => {
       try {
-        const mechId = mechData?.id;
         if (!mechId) return;
 
         const response = await getMechanicDetails(mechId);
+        console.log(
+          "Mechanic details from the backend in the MechanicEditProfile page is",
+          response
+        );
         const profileData = response?.data?.result;
         setMechProfile(profileData);
         setPreviewImage(profileData?.photo || DEFAULT_PROFILE_IMAGE);
@@ -60,8 +65,9 @@ const MechanicProfileEdit: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (mechProfile && mechProfile.imageKey) {
-          const result = await getImageUrl(mechProfile.imageKey, "mechProfile");
+        if (mechProfile && mechProfile.photo) {
+          console.log("mechProfileDetails", mechProfile);
+          const result = await getImageUrl(mechProfile.photo, "mechProfile");
           if (result) {
             setProfileImage(result.data.url);
           }
@@ -123,10 +129,9 @@ const MechanicProfileEdit: React.FC = () => {
             <div className="h-24 bg-gradient-to-r from-black to-freeze-color"></div>
             <Formik
               initialValues={{
-                _id: mechProfile._id || "",
                 name: mechProfile.name || "",
                 phone: mechProfile.phone || "",
-                photo: mechProfile.imageKey || "",
+                photo: mechProfile.photo || "",
               }}
               validationSchema={validationSchema}
               enableReinitialize
@@ -151,9 +156,18 @@ const MechanicProfileEdit: React.FC = () => {
                       values.photo = response.data.key;
                     }
                   }
-                  const result = await updateMechanicDetails(values);
+                  console.log("Values for updasting the mechDetails", values);
+                  const result = await updateMechanicDetails(
+                    mechId as string,
+                    values
+                  );
+                  console.log(
+                    "result from the backend after updating the mechanic details",
+                    result
+                  );
+
                   if (result?.status) {
-                    navigate("/mech/account");
+                    navigate("/mech/profile");
                   }
                 } catch (error) {
                   console.error("Failed to update profile:", error);
