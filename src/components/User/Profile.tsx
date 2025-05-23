@@ -63,6 +63,7 @@ const Profile: React.FC = () => {
             userDetails.profile_picture,
             "service"
           );
+          console.log("profile poicture is",result);
           if (result) {
             setImage(result.data.url);
           }

@@ -92,7 +92,7 @@ function App() {
             <Route path="/user/homepage" element={<UserHomePage />} />
 
             <Route path="/user" element={<UserLayout />}>
-              <Route path="/user/account" element={<Profile />} />
+              <Route path="/user/account" element={<Profile />} /> 
               <Route path="/user/address" element={<Address />} />
               <Route path="/user/history" element={<History />} />
               <Route path="/user/editProfile" element={<ProfileEdit />} />

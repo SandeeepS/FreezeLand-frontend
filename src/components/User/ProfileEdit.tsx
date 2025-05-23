@@ -145,6 +145,7 @@ const ProfileEdit: React.FC = () => {
                   if (imageFile) {
                     const folderName = "UserProfile";
                     const response = await getS3SingUrl(fileName, fileType,folderName);
+                    console.log("response after uploadin image to s3",response)
                     if (response?.data.uploadURL) {
                       // Upload the image to S3
                       await fetch(response.data.uploadURL, {

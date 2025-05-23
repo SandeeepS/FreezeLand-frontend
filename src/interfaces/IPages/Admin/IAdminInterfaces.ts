@@ -1,3 +1,4 @@
+import { IUserData } from "../../IUserData";
 
 //used in AdminDeviceListing.tsx
 export interface DeviceData {
@@ -7,11 +8,10 @@ export interface DeviceData {
   isDeleted: boolean;
 }
 
-
 //used in AdminLoginpage.tsx
-export interface initialVal{
-    email: string;
-    password: string;
+export interface initialVal {
+  email: string;
+  password: string;
 }
 
 //used in AdminMechListing
@@ -50,42 +50,67 @@ export interface InewService {
   imageKey: string;
 }
 
-export interface ICompliantData{
-    _id: string;
+export interface ICompliantData {
+  _id: string;
   name: string;
   image: [];
   serviceId: string;
   userId: string;
   defaultAddress: string;
   discription: string;
-  locationName: object;
+  locationName: {
+    address: string;
+    latitude: number;
+    longitude: number;
+  };
   status: string;
-  currentMechanicId: string | null;
+  currentMechanicId: string;
   acceptedAt: Date | null;
   workHistory: [
     {
       mechanicId: string;
       status: string;
-      acceptedAt: Date;
-      canceledAt: Date | null;
       reason: string | null;
+      canceledAt: string | null;
+      _id: string;
     }
   ];
   workDetails: [
     {
-      description: string;
+      addedAt: string;
       amount: number;
-      addedAt: Date;
+      description: string;
+      _id: string;
     }
   ];
+  serviceDetails: [
+    {
+      name: string;
+      serviceCharge: number;
+      discription: string[];
+      imageKey?: string;
+      _id: string;
+    }
+  ];
+  userDetails: {
+    profile_picture?: string;
+    email: string;
+    phone: string;
+    role?: string;
+    isBlocked?: boolean;
+  };
   chatId?: string;
   isBlocked: boolean;
   isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  defaultAddressDetails: {
+    name: string;
+    email: string;
+    phone: number;
+    district: string;
+    state: string;
+    pin: number;
+    landMark: string;
+  };
 }
-
-
-
-
-
-
-  

@@ -23,7 +23,7 @@ const AdminComplaintDetailsPage = () => {
       try {
         setLoading(true);
         const result = await getComplaintById(id as string);
-        
+        console.log("result from the backend is ",result);
         if (result?.data?.data?.complaint && result.data.data.complaint.length > 0) {
           setComplaint(result.data.data.complaint[0]);
         } else {
@@ -63,6 +63,7 @@ const AdminComplaintDetailsPage = () => {
     <div className="bg-gray-50 min-h-screen p-6">
       <div className="max-w-6xl mx-auto">
         {/* Complaint Header */}
+        
         <ComplaintHeader 
           id={id as string}
           status={complaint.status}
@@ -93,12 +94,12 @@ const AdminComplaintDetailsPage = () => {
           <div className="space-y-6">
             <CustomerDetails 
               user={complaint.userDetails}
-              name={complaint.name || complaint.userDetails?.name}
+              name={complaint.name }
             />
             
             <LocationDetails 
               location={complaint.locationName}
-              defaultAddress={complaint.defaultAddressDetails?.[0]}
+              defaultAddress={complaint.defaultAddressDetails}
             />
             
             <WorkHistory 

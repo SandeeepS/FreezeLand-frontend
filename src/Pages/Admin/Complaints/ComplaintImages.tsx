@@ -12,9 +12,13 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getImageUrl(images[0], "complaint images");
-        console.log("result reached in the frontend", result);
-        setSelectedImage(result?.data?.data?.images);
+        if (images.length) {
+          const result = await getImageUrl(images[0], "complaint images");
+          console.log("result reached in the frontend", result);
+          setSelectedImage(result?.data?.data?.images);
+        } else {
+          return;
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
