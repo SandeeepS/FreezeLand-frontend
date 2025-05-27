@@ -5,7 +5,7 @@ import {
 import { InewService } from "../interfaces/IPages/Admin/IAdminInterfaces";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
-import errorHandler from "./errorHandler";
+import { adminErrorHandler } from "./errorHandler";
 
 const adminLogin = async (email: string, password: string) => {
   console.log("entered in the admin login ");
@@ -13,7 +13,7 @@ const adminLogin = async (email: string, password: string) => {
     const result = await Api.post(adminRoutes.login, { email, password });
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -33,7 +33,7 @@ const updateApprove = async (
     );
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -45,7 +45,7 @@ const getImageUrl = async (imageKey: string, type: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -56,7 +56,7 @@ const getAllUsers = async (search: string) => {
     });
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -67,7 +67,7 @@ const getAllMechanics = async (search: string) => {
     });
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -77,7 +77,7 @@ const getMechanicById = async (id: string) => {
     console.log("mechanic details from teh admin.ts", result);
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -222,7 +222,7 @@ const adminLogout = async () => {
       return result;
     }
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -243,7 +243,7 @@ const getS3SingUrl = async (
     });
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -256,7 +256,7 @@ const addService = async (values: InewService) => {
       return result;
     }
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -272,7 +272,7 @@ const addDevice = async (name: string) => {
       return result;
     }
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -287,7 +287,7 @@ const getAllServices = async (search: string) => {
     }
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -302,7 +302,7 @@ const getAllDevices = async (search: string) => {
     }
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -315,7 +315,7 @@ const getService = async (id: string | undefined) => {
     }
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -388,7 +388,7 @@ const getComplaintById = async (id: string) => {
     console.log("complaint details from teh admin.ts", result);
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 };
 
@@ -400,7 +400,7 @@ const cancelComplaint = async (complaintId:string, userRole : string,reason:stri
     return result;
   }catch(error) {
     console.log("error occured while cancel the comlaint in the admin ts ",error);
-    errorHandler(error as Error);
+    adminErrorHandler(error as Error);
   }
 }
 

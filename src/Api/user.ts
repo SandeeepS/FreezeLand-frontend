@@ -1,6 +1,5 @@
 import Api from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
-import errorHandler from "./errorHandler";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
 import {
@@ -9,6 +8,7 @@ import {
 } from "../interfaces/IPages/User/IUserInterfaces";
 import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentButton";
 import { LocationData } from "../components/Common/PopularCities";
+import userErrorHandler from "./errorHandler";
 
 const signup = async ({
   name,
@@ -42,7 +42,7 @@ const login = async (email: string, password: string) => {
     return result;
   } catch (error) {
     console.log("error from the login from the ueser.ts", error as Error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -54,7 +54,7 @@ const getImageUrl = async (imageKey: string, type: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -107,7 +107,7 @@ const forgotPassword = async (email: string) => {
     return await Api.post(userRoutes.forgotPassword, { email });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 const forgotVerifyOtp = async (otp: string) => {
@@ -115,7 +115,7 @@ const forgotVerifyOtp = async (otp: string) => {
     return await Api.post(userRoutes.forgotVerifyOtp, { otp });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 const updateNewPassword = async (password: string, userId: string) => {
@@ -123,7 +123,7 @@ const updateNewPassword = async (password: string, userId: string) => {
     return await Api.put(userRoutes.updateNewPassword, { password, userId });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 const resendOtp = async () => {
@@ -131,7 +131,7 @@ const resendOtp = async () => {
     await Api.get(userRoutes.resendOtp);
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -141,7 +141,7 @@ const logout = async () => {
     return await Api.get(userRoutes.logout);
   } catch (error) {
     console.log("error in the logout in the user.ts", error as Error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -156,7 +156,7 @@ const getProfile = async (userId: string) => {
     return result;
   } catch (error) {
     console.log("error while accessing the user details in the user.ts", error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -171,7 +171,7 @@ const getAllServices = async () => {
   } catch (error) {
     console.log("error in the user.ts");
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -187,7 +187,7 @@ const getAllUserRegisteredServices = async (userId: string) => {
     console.log(
       "error occured while fetching the user registerd services form the user.ts"
     );
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -209,7 +209,7 @@ const EditUserDetails = async ({
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -223,7 +223,7 @@ const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -241,7 +241,7 @@ const EditExistAddress = async (
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -257,7 +257,7 @@ const setDefaultAddress = async (
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -269,7 +269,7 @@ const registerComplaint = async (data: Iconcern) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -285,7 +285,7 @@ const getUserRegisteredServiceDetailsById = async (id: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -303,7 +303,7 @@ const getMechanicDetails = async (id: string) => {
     return response;
   } catch (error) {
     console.error("Error fetching mechanic details in the user.ts:", error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -318,7 +318,7 @@ const getService = async (id: string) => {
     }
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -331,7 +331,7 @@ const handlePayment = async (data: paymentData) => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
@@ -346,21 +346,27 @@ const successPayment = async (sessionId: string) => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
 };
 
 //function to  send userLocation and update in the backend.
-const updateUserLocation = async(userId:string,locationData:LocationData) => {
-  try{
-    console.log("location details in the updateUserLocation is",locationData);
-    const result = await Api.post(userRoutes.updateUserLocation,{userId,locationData});
+const updateUserLocation = async (
+  userId: string,
+  locationData: LocationData
+) => {
+  try {
+    console.log("location details in the updateUserLocation is", locationData);
+    const result = await Api.post(userRoutes.updateUserLocation, {
+      userId,
+      locationData,
+    });
     return result;
-  }catch(error){
+  } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    userErrorHandler(error as Error);
   }
-}
+};
 
 export {
   signup,
@@ -386,5 +392,5 @@ export {
   getAllServices,
   getAllUserRegisteredServices,
   getUserRegisteredServiceDetailsById,
-  updateUserLocation
+  updateUserLocation,
 };

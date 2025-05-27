@@ -1,8 +1,8 @@
 import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
-import errorHandler from "./errorHandler";
 import { EditMechanicFormData, FormData, MechanicForm } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
 import { AddAddress } from "../interfaces/AddAddress";
+import { mechErrorHandler } from "./errorHandler";
 
 const mechSignup = async ({
   name,
@@ -24,7 +24,7 @@ const mechSignup = async ({
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 const mechLogin = async (email: string, password: string) => {
@@ -34,7 +34,7 @@ const mechLogin = async (email: string, password: string) => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -45,7 +45,7 @@ const verifyMechOtp = async (id:string, otpnum: string) => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -54,7 +54,7 @@ const forgotPasswordMech = async (email: string) => {
     return await Api.post(mechRoutes.forgotPasswordMech, { email });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 const forgotVerifyOtpMech = async (otp: string) => {
@@ -62,7 +62,7 @@ const forgotVerifyOtpMech = async (otp: string) => {
     return await Api.post(mechRoutes.forgotVerifyOtpMech, { otp });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 const updateNewPasswordMech = async (password: string, userId: string) => {
@@ -73,7 +73,7 @@ const updateNewPasswordMech = async (password: string, userId: string) => {
     });
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -82,7 +82,7 @@ const resendMechOtp = async () => {
     await Api.get(mechRoutes.resendOtp);
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -95,7 +95,7 @@ const mLogout = async () => {
     }
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -105,7 +105,7 @@ const getAllMechanics = async () => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -127,7 +127,7 @@ const getS3SingUrlForMechCredinential = async (
     });
     return result;
   } catch (error) {
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -139,7 +139,7 @@ const getAllDevices = async () => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -151,7 +151,7 @@ const verifyMechanic = async (values: MechanicForm) => {
     return response;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -169,7 +169,7 @@ const getMechanicDetails = async (id: string) => {
     return response;
   } catch (error) {
     console.error("Error fetching mechanic details:", error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -183,7 +183,7 @@ const getAllUserRegisteredServices = async () => {
     console.log(
       "error occured while fetching the user registerd services form the mech.ts"
     );
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -197,7 +197,7 @@ const getComplaintDetails = async (id: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -209,7 +209,7 @@ const getImageUrl = async (imageKey: string, type: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -230,7 +230,7 @@ const updateWorkAssigned = async (
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -244,7 +244,7 @@ const getAllAcceptedServices = async (mechanicId: string) => {
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -255,7 +255,7 @@ const getAllCompletedServices = async(mechanicId:string) => {
     return result;
   }catch(error){
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 }
 
@@ -269,7 +269,7 @@ const updateComplaintStatus = async (complaintId:string, nextStatus: string) => 
     return result;
   } catch (error) {
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -284,7 +284,7 @@ const updateMechanicDetails = async (mechId:string, values: EditMechanicFormData
     console.log("result from the backend is ", result);
     return result;  }catch(error){
     console.log(error as Error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 }
 
@@ -295,7 +295,7 @@ const createRoom = async (userId:string,mechId:string) => {
     return result;
   }catch(error){
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 }
 
@@ -307,7 +307,7 @@ const updateWorkDetails = async (complaintId:string,workDetails:object) => {
     return result;
   }catch(error){
     console.log("Error while updating the workdetails in the mech.ts");
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 }
 
@@ -322,7 +322,7 @@ const AddMechAddress = async (_id: string | undefined, values: AddAddress) => {
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 
@@ -341,7 +341,7 @@ const EditExistingMechAddress = async (
     return result;
   } catch (error) {
     console.log(error);
-    errorHandler(error as Error);
+    mechErrorHandler(error as Error);
   }
 };
 

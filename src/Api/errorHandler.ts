@@ -1,8 +1,14 @@
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { logout } from "./user";
+import { adminLogout } from "./admin";
 import { store } from "../App/store";
-import { userLogout } from "../App/slices/AuthSlice";
+import {
+  userLogout,
+  mechLogout as mechSliceLogout,
+  adLogout as adminSliceLogout,
+  mechLogout,
+} from "../App/slices/AuthSlice";
 
 type ErrorResponse = {
   message: string;
@@ -10,12 +16,16 @@ type ErrorResponse = {
   errors?: Record<string, string>;
 };
 
-const errorHandler = async (error: Error | AxiosError) => {
+// Base error handler function with explicit return type
+const baseErrorHandler = async (
+  error: Error | AxiosError,
+  logoutFunction: () => Promise<void>,
+  logoutAction: () => { type: string }
+): Promise<void> => {
   try {
     const axiosError = error as AxiosError;
     console.log("Error details:", axiosError);
 
-    // Handle case when there's no response (network error)
     if (!axiosError.response) {
       if (axiosError.request) {
         toast.error(
@@ -27,12 +37,10 @@ const errorHandler = async (error: Error | AxiosError) => {
       return;
     }
 
-    // Get status and error data
     const status = axiosError.response.status;
     const errorResponse = axiosError.response.data as ErrorResponse;
     const errorMessage = errorResponse.message || "An error occurred";
 
-    // Handle different status codes
     switch (status) {
       case 400:
         if (errorResponse.errors && typeof errorResponse.errors === "object") {
@@ -46,8 +54,8 @@ const errorHandler = async (error: Error | AxiosError) => {
 
       case 401:
         console.log("Unauthorized error, logging out...");
-        await logout();
-        store.dispatch(userLogout());
+        await logoutFunction();
+        store.dispatch(logoutAction());
         toast.error(errorMessage || "Authentication failed");
         break;
 
@@ -72,4 +80,38 @@ const errorHandler = async (error: Error | AxiosError) => {
   }
 };
 
-export default errorHandler;
+// User error handler
+export const userErrorHandler = async (error: Error | AxiosError): Promise<void> => {
+  return baseErrorHandler(
+    error,
+    async () => {
+      await logout();
+    },
+    userLogout
+  );
+};
+
+// Mechanic error handler
+export const mechErrorHandler = async (error: Error | AxiosError): Promise<void> => {
+  return baseErrorHandler(
+    error,
+    async () => {
+      await mechLogout();
+    },
+    mechSliceLogout
+  );
+};
+
+// Admin error handler
+export const adminErrorHandler = async (error: Error | AxiosError): Promise<void> => {
+  return baseErrorHandler(
+    error,
+    async () => {
+      await adminLogout();
+    },
+    adminSliceLogout
+  );
+};
+
+// Default export (for backward compatibility)
+export default userErrorHandler;

@@ -152,8 +152,6 @@ function App() {
               <Route path="/mech/AddAddress" element={<MechAddAddress/>}/>
               <Route path="/mech/showAllAddress" element={<MechAllAddress />} />
               <Route path="/mech/editAddress/:id" element={<MechEditAddress />} />
-
-
             </Route> 
           </Route>
 
