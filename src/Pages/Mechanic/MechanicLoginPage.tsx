@@ -9,7 +9,7 @@ import { setMechCredential } from "../../App/slices/AuthSlice";
 import { useDispatch } from "react-redux";
 import { initialValues2 } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
-const initialValues:initialValues2 = {
+const initialValues: initialValues2 = {
   email: "",
   password: "",
 };
@@ -33,12 +33,16 @@ const MechanicLoginPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await mechLogin(values.email, values.password);
-          if (result) {
+          console.log("result fron the login form is ", result);
+
+          if (result?.status === 200 && result.data.data.success) {
             console.log("result reched in the login page  ", result);
             dispatch(setMechCredential(result.data.data.data));
             navigate("/mech/homepage");
+          } else {
+            console.log("loging failed due to Incorrect password or email");
+            toast.error(result?.data?.data.message || "Login failed");
           }
-          console.log("result fron the login form is ", result);
         } catch (error) {
           toast.error("Invalild email or password");
           console.log(error);
