@@ -28,12 +28,13 @@ const UserLoginPage: React.FC = () => {
         try {
           const result = await login(values.email, values.password);
           console.log("result is ",result);
-          if (result?.data.data.success) {
+          if (result?.status === 200 && result.data.data.success) {
             console.log("result fron the front end ", result);
             dispatch(setUserCredental(result?.data.data.data));
             navigate("/user/homepage");
-          } else {
-            navigate("/login")
+          }else {
+            console.log("loging failed due to Incorrect password or email");
+            toast.error(result?.data?.data.message || "Login failed");
           }
         } catch (error) {
           console.log(error);
