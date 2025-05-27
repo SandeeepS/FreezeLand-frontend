@@ -126,9 +126,10 @@ const updateNewPassword = async (password: string, userId: string) => {
     userErrorHandler(error as Error);
   }
 };
-const resendOtp = async () => {
+const resendOtp = async (tempUserId:string) => {
   try {
-    await Api.get(userRoutes.resendOtp);
+    const result =  await Api.post(userRoutes.resendOtp,{tempUserId});
+    return result;
   } catch (error) {
     console.log(error);
     userErrorHandler(error as Error);

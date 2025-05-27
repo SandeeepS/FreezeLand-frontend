@@ -4,32 +4,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { setUserCredental } from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
-import errorHandler from "../../Api/errorHandler.ts";
 import toast from "react-hot-toast";
 
 const UserOtpPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  //here id is the tempUserId 
+
   const [otp, setOTP] = useState<string>("");
   const [seconds, setSeconds] = useState(60);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { userData } = useAppSelector((state) => state.auth);
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     try {
-  //       const tempUserDetails = await getTempUserData(id);
-  //       console.log(
-  //         "tempUserData in the otp entering page is",
-  //         tempUserDetails
-  //       );
-  //     } catch (error) {
-  //       console.log(error as Error);
-  //       throw error;
-  //     }
-  //   };
-  //   fetch();
-  // }, []);
+ 
 
   useEffect(() => {
     if (userData) navigate("/user/home");
@@ -61,25 +48,37 @@ const UserOtpPage: React.FC = () => {
       
       const result = await verifyOtp(id as string, otp);
       console.log("result of verify otp in the userOtpPage", result);
-      
-      if (result.data.success) {
+
+      if ("data" in result && result.data.success) {
         console.log("userData from the backend to dispatch", result.data.data);
         dispatch(setUserCredental(result.data.data));
         toast.success("OTP verified successfully!");
         navigate("/login");
+      } else if ("data" in result) {
+        console.log("loging failed due to Incorrect password or email");
+        toast.error(result?.data?.message || "Signup Failed");
+      } else {
+        toast.error("An unexpected error occurred during verification.");
       }
     } catch (error) {
-      // Use the error handler to display appropriate toast messages
-      await errorHandler(error as Error);
+      console.log(error);
     } 
   };
+  
   const resendOTP = async () => {
     try {
-      await resendOtp();
+      const response = await resendOtp(id as string);
+      console.log("Response from the backend after resending the otp", response);
+      
+      // Reset timer to 60 seconds after successful resend
+      setSeconds(60);
+      toast.success("OTP resent successfully!");
     } catch (error) {
       console.log(error as Error);
+      toast.error("Failed to resend OTP");
     }
   };
+  
   return (
     <div className="bg-gray-100 flex flex-col items-center justify-center h-screen w-full">
       <div className="w-full max-w-md px-8 py-10 bg-white rounded-lg shadow-md  ">
@@ -100,17 +99,17 @@ const UserOtpPage: React.FC = () => {
           <div className="ps-1">
             {seconds <= 0 ? (
               <div>
-                Otp Expired{" "}
+                OTP Expired{" "}
                 <span
                   onClick={resendOTP}
-                  className="text-blue-500 cursor-pointer"
+                  className="text-blue-500 cursor-pointer hover:underline"
                 >
-                  Request another ?
+                  Request another?
                 </span>
               </div>
             ) : (
               <div>
-                Otp expires in {minutes} min {remainingSeconds} sec
+                OTP expires in {minutes} min {remainingSeconds} sec
               </div>
             )}
           </div>
