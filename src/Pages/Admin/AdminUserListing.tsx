@@ -85,16 +85,19 @@ const AdminUserListing: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="mb-5">
+      <div className=" mx-4">
         
         <TopBar
           pathName={pathName}
-          heading="Mechanics"
+          heading="All Users"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
       </div>
-      <div className="flex-grow mx-4">
+      <div className="flex items-center my-5">
+
+      </div>
+      <div className="flex justify-center items-center mx-5 h-screen">
         <TableCommon
           columns={columns}
           data={filteredUsers || []} // Ensure fallback to an empty array

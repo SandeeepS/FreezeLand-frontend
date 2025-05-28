@@ -8,13 +8,14 @@ import TableCommon from "../../components/Common/TableCommon";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { ServiceData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
 import { useSearchParams } from "react-router-dom";
+import CommonButtonSpace from "../../components/Admin/CommonSpaceForButton";
 
 const AdminServices: React.FC = () => {
   const location = useLocation();
   const pathName = location.pathname;
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
-  console.log("searldskfnldf",search);
+  console.log("searldskfnldf", search);
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
     {
@@ -30,7 +31,6 @@ const AdminServices: React.FC = () => {
   const [services, setServices] = useState<ServiceData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-
   const handleSearchChange = (query: string, results: any[] = []) => {
     setSearchQuery(query);
   };
@@ -38,7 +38,6 @@ const AdminServices: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-    
         console.log("enterd in the useEffrect in the AdminSerivce listing ");
         const result = await getAllServices(search);
         console.log("result reached in the frontend is ", result);
@@ -53,10 +52,19 @@ const AdminServices: React.FC = () => {
     fetchData();
   }, [search]);
   const navigate = useNavigate();
-  const handleClick = () => {
+  const handleAddNewService = () => {
     console.log("button clicked");
     navigate("/admin/addNewService");
   };
+
+  const buttonConfigs = [
+    {
+      label: "Add New Service",
+      onClick: handleAddNewService,
+      variant: "contained" as const,
+      color: "primary" as const,
+    },
+  ];
 
   const updateServiceStatus = (
     id: string,
@@ -79,7 +87,7 @@ const AdminServices: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="mb-5">
+      <div className=" mx-4">
         <TopBar
           pathName={pathName}
           heading="Services"
@@ -87,13 +95,16 @@ const AdminServices: React.FC = () => {
           onSearchChange={handleSearchChange}
         />{" "}
       </div>
-      <div className="flex justify-end mx-10 my-5 ">
-        <Button className="" onClick={handleClick} variant="contained">
-          Add new Service
-        </Button>
+
+      <div className="flex  justify-center my-5">
+        <CommonButtonSpace
+          buttons={buttonConfigs}
+          alignment="right"
+          className="mx-6"
+        />
       </div>
 
-      <div className="flex justify-center items-center mx-10  h-screen">
+      <div className="flex justify-center items-center mx-5 h-screen">
         <TableCommon
           columns={columns}
           data={filteredService}

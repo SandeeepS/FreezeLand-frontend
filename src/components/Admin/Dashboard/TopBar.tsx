@@ -35,10 +35,10 @@ const TopBar: React.FC<TopBarProps> = ({
   }, [inputDebounce]);
 
   return (
-    <div className="border-b mt-2 mb-3 bg-white">
+    <div className="border-b mt-2  bg-white">
       <div className="flex items-center justify-between p-0.5">
         <div>
-          <span className="text-2xl font-bold block">{heading}</span>
+          <span className="text-2xl font-bold block px-2">{heading}</span>
 
           {/* <span className="text-2xl font-bold block">🚀 {heading}</span>
           <span className="text-sm block text-stone-500">

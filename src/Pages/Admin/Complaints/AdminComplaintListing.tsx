@@ -82,7 +82,7 @@ const AdminComplaintListing = () => {
 
   return (
     <div className="admin-complaint-listing flex flex-col h-screen">
-      <div className="mb-5 mx-5">
+      <div className="mx-4">
         <TopBar
           pathName={pathName}
           heading="Registered Complaints"
@@ -90,8 +90,11 @@ const AdminComplaintListing = () => {
           onSearchChange={setSearchQuery}
         />
       </div>
+      <div className="flex  justify-center my-5">
 
-      <div className="tableDiv flex justify-center items-center mx-10 h-screen">
+      </div>
+
+      <div className="tableDiv flex justify-center items-center mx-5 h-screen">
         <TableCommon
           columns={columns}
           data={filteredComplaint}

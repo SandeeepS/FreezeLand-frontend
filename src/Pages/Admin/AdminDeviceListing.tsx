@@ -10,11 +10,12 @@ import {
 import TableCommon from "../../components/Common/TableCommon";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { DeviceData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
+import CommonButtonSpace from "../../components/Admin/CommonSpaceForButton";
 
 const AdminDeviceListing: React.FC = () => {
   const location = useLocation();
   const pathName = location.pathname;
-  console.log("pathname is",pathName);
+  console.log("pathname is", pathName);
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   console.log("search is ", search);
@@ -65,10 +66,19 @@ const AdminDeviceListing: React.FC = () => {
   };
 
   const navigate = useNavigate();
-  const handleClick = () => {
+  const handleAddNewDevice = () => {
     console.log("button clicked");
     navigate("/admin/addNewDevice");
   };
+
+  const buttonConfigs = [
+    {
+      label: "Add New Device",
+      onClick: handleAddNewDevice,
+      variant: "contained" as const,
+      color: "primary" as const,
+    },
+  ];
 
   const navigationLink = "/admin/editDevice/";
 
@@ -78,21 +88,23 @@ const AdminDeviceListing: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="mb-5 mx-4">
+      <div className="mx-4">
         <TopBar
           pathName={pathName}
-          heading="Mechanics"
+          heading="All Devices"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
       </div>
-      <div className="flex justify-end mx-10 my-5 ">
-        <Button className="" onClick={handleClick} variant="contained">
-          Add new Device
-        </Button>
+      <div className="flex  justify-center my-5">
+        <CommonButtonSpace
+          buttons={buttonConfigs}
+          alignment="right"
+          className="mx-6"
+        />
       </div>
 
-      <div className="flex justify-center items-center mx-4 h-screen">
+      <div className="flex justify-center items-center mx-5 h-screen">
         <TableCommon
           columns={columns}
           data={filteredDevices}

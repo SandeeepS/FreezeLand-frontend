@@ -6,7 +6,7 @@ import { deleteMech } from "../../Api/admin";
 import TopBar from "../../components/Admin/Dashboard/TopBar";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { MechData } from "../../interfaces/IPages/Admin/IAdminInterfaces";
-
+import CommonButtonSpace from "../../components/Admin/CommonSpaceForButton";
 
 const AdminMechListing: React.FC = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const AdminMechListing: React.FC = () => {
   ];
   const location = useLocation();
   const pathName = location.pathname;
-  console.log("pathname is",pathName);
+  console.log("pathname is", pathName);
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const [mechs, setMech] = useState<MechData[]>([]);
@@ -62,6 +62,15 @@ const AdminMechListing: React.FC = () => {
     navigate("/admin/verifyMechanic");
   };
 
+  const buttonConfigs = [
+    {
+      label: "Verify Mechanic",
+      onClick: handleVerifyMechanic,
+      variant: "contained" as const,
+      color: "primary" as const,
+    },
+  ];
+
   const filteredMechs = mechs.filter(
     (mech) =>
       mech.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -70,24 +79,23 @@ const AdminMechListing: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="mb-5">
+      <div className="mx-4">
         <TopBar
-        pathName={pathName}
-          heading="Mechanics"
+          pathName={pathName}
+          heading="All Mechanics"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
       </div>
-      <div className="flex justify-end p-4">
-        <button
-          type="button"
-          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-          onClick={handleVerifyMechanic}
-        >
-          Verify Mechanic
-        </button>
+      <div className="flex  justify-center my-5">
+        <CommonButtonSpace
+          buttons={buttonConfigs}
+          alignment="right"
+          className="mx-6"
+        />
       </div>
-      <div className="flex justify-center items-center mx-10 pt-7 h-screen">
+
+      <div className="flex justify-center items-center mx-5  h-screen">
         <TableCommon
           columns={columns}
           data={filteredMechs}
