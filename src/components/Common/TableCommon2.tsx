@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAllMechanics } from "../../Api/admin";
 import { MechData } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 
@@ -9,6 +9,8 @@ const TableCommon2 = () => {
   const [mechs, setMechs] = useState<MechData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsToShow, setRowsToShow] = useState<MechData[]>([]);
+    const [searchParams] = useSearchParams();
+    const search = searchParams.get("search") || "";
   const totalPage = Math.ceil(mechs.length / rowsLimit);
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ const TableCommon2 = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getAllMechanics();
+        const res = await getAllMechanics(search);
         const fetchedMechs = res?.data?.data?.mechs || [];
         // Filter mechanics to show only those with isVerified: false
         const unverifiedMechs = fetchedMechs.filter(

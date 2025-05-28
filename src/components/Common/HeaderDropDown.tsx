@@ -51,19 +51,19 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   };
 
   return (
-    <div className="absolute right-0 top-10 rounded-lg mt-16 mr-8 w-64 bg-stone-100 shadow-lg z-10">
+    <div className="absolute right-0 top-10 rounded-lg mt-16 mr-8 w-64  bg-stone-100 shadow-lg z-10">
       <div className="rounded-t-lg h-32 overflow-hidden">
         <img
           className="object-cover object-top w-full"
-          src={coverImage}
+          src="https://pngmagic.com/product_images/dusty-blue-background-images-free-download-pngmagic.jpg"
           alt="Cover"
         />
       </div>
 
-      <div className="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden">
+      <div className="mx-auto w-32 h-32 relative bg-white  -mt-16 border-4 border-white rounded-full overflow-hidden">
         <img
           className="object-cover object-center h-32"
-          src={profileImage}
+          src={profileImage} 
           alt="Profile"
         />
       </div>

@@ -92,33 +92,33 @@ const TableCommon: React.FC<TableCommonProps> = ({
     }
   };
 
-  const handleEdit = (_id: string | undefined) => {
-    navigate(`${navLink}${_id}`);
-  };
+  // const handleEdit = (_id: string | undefined) => {
+  //   navigate(`${navLink}${_id}`);
+  // };
 
-  const handleDelete = async (id: string, isCurrentlyDeleted: boolean) => {
-    try {
-      Swal.fire({
-        title: "Are you sure?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          deleteFunction(id).then((result) => {
-            if (result?.success) {
-              updateStatus(id, isCurrentlyDeleted, true);
-              Swal.fire({ title: "Deleted!", icon: "success" });
-            } else toast.error(result?.message);
-          });
-        }
-      });
-    } catch (error) {
-      console.log(error as Error);
-    }
-  };
+  // const handleDelete = async (id: string, isCurrentlyDeleted: boolean) => {
+  //   try {
+  //     Swal.fire({
+  //       title: "Are you sure?",
+  //       icon: "question",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#3085d6",
+  //       cancelButtonColor: "#d33",
+  //       confirmButtonText: "Yes!",
+  //     }).then((result) => {
+  //       if (result.isConfirmed) {
+  //         deleteFunction(id).then((result) => {
+  //           if (result?.success) {
+  //             updateStatus(id, isCurrentlyDeleted, true);
+  //             Swal.fire({ title: "Deleted!", icon: "success" });
+  //           } else toast.error(result?.message);
+  //         });
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.log(error as Error);
+  //   }
+  // };
 
 
 
@@ -230,21 +230,21 @@ const TableCommon: React.FC<TableCommonProps> = ({
                     >
                       {datas.isBlocked ? "Blocked" : "Unblocked"}
                     </ToggleButton>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       sx={{ marginLeft: "10px" }}
                       onClick={() => handleEdit(datas._id)}
                     >
                       Edit
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                       variant="contained"
                       sx={{ marginLeft: "10px" }}
                       color="error"
                       onClick={() => handleDelete(datas._id, datas.isDeleted)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
                     {role && handleViewMore && role === "admin" && (
                       <Button
                         variant="contained"

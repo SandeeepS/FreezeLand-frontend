@@ -43,6 +43,7 @@ import MechAddress from "./components/Mech/Profile/MechAddress";
 import MechAddAddress from "./components/Mech/Profile/MechAddAddress";
 import MechAllAddress from "./components/Mech/Profile/MechAllAddress";
 import MechEditAddress from "./components/Mech/Profile/MechEditAddress";
+import MechanicForVerificationList from "./Pages/Admin/Mechanic/MechanicForVerificationList";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -92,7 +93,7 @@ function App() {
             <Route path="/user/homepage" element={<UserHomePage />} />
 
             <Route path="/user" element={<UserLayout />}>
-              <Route path="/user/account" element={<Profile />} /> 
+              <Route path="/user/account" element={<Profile />} />
               <Route path="/user/address" element={<Address />} />
               <Route path="/user/history" element={<History />} />
               <Route path="/user/editProfile" element={<ProfileEdit />} />
@@ -102,7 +103,7 @@ function App() {
               <Route path="/user/showAllAddress" element={<AllAddress />} />
               <Route path="/user/editAddress/:id" element={<EditAddress />} />
               <Route path="/user/service/:id" element={<Service />} />
-              <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />} />
+              <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />}/>
               <Route path="/user/payment/success" element={<PaymentSuccessPage />}/>
             </Route>
           </Route>
@@ -122,10 +123,10 @@ function App() {
               <Route path="/admin/addNewService" element={<NewService />} />
               <Route path="/admin/editService/:id" element={<EditServices />} />
               <Route path="/admin/addNewDevice" element={<AddNewDevice />} />
-              <Route path="/admin/verifyMechanic" element={<VerifyMechanicByAdmin />}/>
+              <Route path="/admin/verifyMechanic" element={<MechanicForVerificationList />}/>
               <Route path="/admin/mechanic/details/:id" element={<MechanicVerify />}/>
-              <Route path="/admin/complaints" element={<AdminComplaintListing />}  />
-              <Route path="/admin/viewMoreComplaintDetails/:id" element={<AdminCompliantDetailsPage />} />
+              <Route path="/admin/complaints" element={<AdminComplaintListing />} />
+              <Route path="/admin/viewMoreComplaintDetails/:id" element={<AdminCompliantDetailsPage />}/>
             </Route>
           </Route>
 
@@ -139,7 +140,6 @@ function App() {
 
           <Route path="" element={<MechLoggedIn />}>
             <Route path="/mech/homepage" element={<MechanicHomePage />} />
-
             <Route path="/mech" element={<MechLayOut />}>
               <Route path="/mech/verifyMechanic" element={<VerifyMechanic />} />
               <Route path="/mech/allWorks" element={<AllWorksPage />} />
@@ -148,11 +148,11 @@ function App() {
               <Route path="/mech/profile" element={<MechanicProfile />} />
               <Route path="/mech/editProfile" element={<MechanicEditProfile />}/>
               <Route path="/mech/serviceHistory" element={<ServiceHistory />} />
-              <Route path="/mech/mechAddress" element={<MechAddress/>}/>
-              <Route path="/mech/AddAddress" element={<MechAddAddress/>}/>
+              <Route path="/mech/mechAddress" element={<MechAddress />} />
+              <Route path="/mech/AddAddress" element={<MechAddAddress />} />
               <Route path="/mech/showAllAddress" element={<MechAllAddress />} />
-              <Route path="/mech/editAddress/:id" element={<MechEditAddress />} />
-            </Route> 
+              <Route path="/mech/editAddress/:id" element={<MechEditAddress />}/>
+            </Route>
           </Route>
 
           <Route path={"*"} element={<NotFound />} />

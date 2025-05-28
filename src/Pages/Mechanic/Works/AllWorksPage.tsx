@@ -118,6 +118,7 @@ const AllWorksPage: React.FC = () => {
         setLoading(true);
         // Replace with your actual API call for mechanics
         const result = await getAllUserRegisteredServices();
+        
         console.log("Complaints data:", result);
 
         if (result?.allRegisteredUserServices) {

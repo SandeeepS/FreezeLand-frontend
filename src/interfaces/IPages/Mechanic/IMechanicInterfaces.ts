@@ -81,9 +81,9 @@ export interface AllAcceptedServices {
     name: string;
     id: string;
     mechanicType: string[];
-    photo: File | null;
+    photo: File | null | string  ;
     adharProof: File | string;
-    employeeLicense: File | null;
+    employeeLicense: File | null | string;
   }
 
 

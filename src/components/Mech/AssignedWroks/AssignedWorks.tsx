@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 import { getMechanicDetails } from "../../../Api/mech";
 import { MechanicData } from "../../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import AnimatedButton from "./AnimatedButton";
+import { useNavigate } from "react-router-dom";
 
 const AssignedWorks: React.FC = () => {
   const mechanicId = useSelector((state: RootState) => state.auth.mechData);
   console.log("mechainc frm the store is ",mechanicId);
   console.log("mechanic id ", mechanicId);
+  const navigate = useNavigate();
   const [mechanicDetails, setMechanicDetails] = useState<MechanicData | null>(
     null
   );
@@ -48,7 +50,7 @@ const AssignedWorks: React.FC = () => {
             <h1 className="text-4xl font-semibold text-center text-white ">
               Available Works
             </h1>
-            <div className="flex m-4 space-x-10 justify-center">
+            <div className="flex m-4 space-x-10 justify-center" onClick={() => navigate("/mech/allWorks")}>
               <AnimatedButton />
             </div>
           </div>
