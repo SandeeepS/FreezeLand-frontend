@@ -77,9 +77,10 @@ const updateNewPasswordMech = async (password: string, userId: string) => {
   }
 };
 
-const resendMechOtp = async () => {
+const resendMechOtp = async (tempMechId:string) => {
   try {
-    await Api.get(mechRoutes.resendOtp);
+    const result =  await Api.post(mechRoutes.resendOtp,{tempMechId});
+    return result;
   } catch (error) {
     console.log(error);
     mechErrorHandler(error as Error);

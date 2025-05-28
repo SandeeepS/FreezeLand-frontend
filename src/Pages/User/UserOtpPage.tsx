@@ -55,7 +55,7 @@ const UserOtpPage: React.FC = () => {
         toast.success("OTP verified successfully!");
         navigate("/login");
       } else if ("data" in result) {
-        console.log("loging failed due to Incorrect password or email");
+        console.log("loging failed due  to problem in otp verification");
         toast.error(result?.data?.message || "Signup Failed");
       } else {
         toast.error("An unexpected error occurred during verification.");

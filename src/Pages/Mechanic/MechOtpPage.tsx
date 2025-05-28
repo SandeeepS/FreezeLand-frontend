@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { resendMechOtp,verifyMechOtp } from "../../Api/mech.ts";
+import { resendMechOtp, verifyMechOtp } from "../../Api/mech.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { setMechCredential, saveMech } from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
+import toast from "react-hot-toast";
 
 const MechOtpPage: React.FC = () => {
-  const {id} = useParams<{id:string}>();
-  console.log("id from the signupPage is",id)
+  const { id } = useParams<{ id: string }>();
+  console.log("id from the signupPage is", id);
   const [otp, setOTP] = useState<string>("");
   const [seconds, setSeconds] = useState(60);
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const MechOtpPage: React.FC = () => {
   const { mechData } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (mechData) navigate("/user/home");
+    if (mechData) navigate("/mech/homepage");
   }, [mechData]);
 
   useEffect(() => {
@@ -34,22 +35,49 @@ const MechOtpPage: React.FC = () => {
   };
 
   const handleVerify = async () => {
-    console.log("OTP:", otp);
-    const result = await verifyMechOtp(id as string, otp);
-    console.log("result from the verifyMechOtp funciton ",result);
-    if (result?.data.success) {
-      console.log(`everything is fine your mechId is  ${result.data.mechId}`);
-      dispatch(setMechCredential(result.data.mechId));
-      navigate("/mech/homepage");
+    if (!otp.trim()) {
+      toast.error("Please enter the OTP");
+      return;
+    }
+
+    try {
+      console.log("OTP:", otp);
+      const result = await verifyMechOtp(id as string, otp);
+      console.log("result from the verifyMechOtp funciton ", result);
+      if (result && "data" in result && result.data.success) {
+        console.log(`everything is fine your mechId is  ${result.data.mechId}`);
+        dispatch(setMechCredential(result.data.data));
+        navigate("/mech/homepage");
+      } else if (result && "data" in result) {
+        console.log("Signup  failed due to problem in otp verification");
+        toast.error(result?.data?.message || "Signup Failed");
+      } else {
+        toast.error("An unexpected error occurred during verification.");
+      }
+    } catch (error) {
+      console.log(
+        "errror occured in the MechOtpPage while handling the opt verificaiton",
+        error
+      );
     }
   };
   const resendOTP = async () => {
     try {
-      await resendMechOtp();
+      const response = await resendMechOtp(id as string);
+      console.log(
+        "Response from the backend after resending the otp",
+        response
+      );
+
+      setSeconds(60);
+      toast.success("OTP resent successfully!");
     } catch (error) {
       console.log(error as Error);
+      toast.error("Failed to resend OTP");
     }
   };
+
+
   return (
     <div className="bg-gray-100 flex flex-col items-center justify-center h-screen w-full">
       <div className="w-full max-w-md px-8 py-10 bg-white rounded-lg shadow-md  ">
@@ -67,12 +95,16 @@ const MechOtpPage: React.FC = () => {
           />
         </div>
         <div className="flex items-center flex-col justify-between mb-6">
-     
           <div className="ps-1">
             {seconds <= 0 ? (
               <div>
                 Otp Expired{" "}
-                <span onClick={resendOTP} className="text-blue-500 cursor-pointer">Request another ?</span>
+                <span
+                  onClick={resendOTP}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  Request another ?
+                </span>
               </div>
             ) : (
               <div>

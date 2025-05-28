@@ -33,9 +33,9 @@ const MechanicSignupPage: React.FC = () => {
         try {
           const result = await mechSignup(formData);
           if (result) {
-            const mechId = result.data.result._id;
-            console.log("mech id in the mechacinSignupPage before going to otp page ",mechId);
-            navigate(`/mech/veryfy-otp/${mechId}`);
+            const TempMechId = result.data.result._id;
+            console.log("mech id in the mechacinSignupPage before going to otp page ",TempMechId);
+            navigate(`/mech/veryfy-otp/${TempMechId}`);
           }
           console.log("result fron the signup form is ", result);
         } catch (error) {
