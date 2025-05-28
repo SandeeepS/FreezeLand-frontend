@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import Footer from "./Footer";
+import { getProfile } from "../../Api/user";
+import { useAppSelector } from "../../App/store";
 
 const Address: React.FC = () => {
+    const userData = useAppSelector((state) => state.auth.userData);
+    const userId = userData?.id;
+    const [addressPresent,setAddresspresent] = useState<boolean>(true)
+  
   const navigate = useNavigate();
   const handleAddAddress = () => {
     console.log("clicked the add address");
@@ -16,6 +22,22 @@ const Address: React.FC = () => {
     console.log("Button clicked successfully");
     navigate("/user/showAllAddress");
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+       try{
+        const result = await getProfile(userId as string)
+        console.log("result from the backend is ",result);
+        const address = result?.data.data.data.address;
+        if(address.length === 0){
+          setAddresspresent(false);
+        }
+       }catch(error){
+        console.log("Error while getting userData in the address.tsx",error);
+       }
+    }
+    fetchData();
+  })
 
   return (
     <div className="bg-white h-screen rounded-lg shadow-md flex flex-col space-y-12 mt-24">
@@ -41,7 +63,7 @@ const Address: React.FC = () => {
             Add Address
           </Box>
         </div>
-        <div>
+        {/* <div>
           <Box
             component="section"
             sx={{ p: 2, width: 300, height: 300, border: 1, borderRadius: 2 }}
@@ -50,9 +72,9 @@ const Address: React.FC = () => {
             Default Address
             <hr className="border-t-2 border-gray-400" />
           </Box>
-        </div>
+        </div> */}
       </div>
-      <div className="flex justify-center">
+       { addressPresent && <div className="flex justify-center">
         <Button
           className="md:w-96 w-full "
           variant="contained"
@@ -60,7 +82,7 @@ const Address: React.FC = () => {
         >
           Show All Address
         </Button>
-      </div>
+      </div>}
       <div>
         <Footer/>
       </div>
