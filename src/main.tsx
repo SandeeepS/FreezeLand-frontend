@@ -32,7 +32,7 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
-    <StrictMode>
+    {/* <StrictMode> */}
       <Provider store={store}>
         <ErrorBoundary FallbackComponent={ErrorFallBack} onReset={() => {
           location.href='/'
@@ -42,6 +42,6 @@ createRoot(document.getElementById("root")!).render(
       </PersistGate>
         </ErrorBoundary>
       </Provider>
-    </StrictMode>
+    {/* </StrictMode> */}
   </BrowserRouter>
 );

@@ -30,7 +30,7 @@ const PaymentSuccess = () => {
           try {
             const response = await successPayment(sessionId);
             console.log(response, "response.data");
-            const exactData = response?.data.result.response;
+            const exactData = response?.data.result;
             console.log("exact data is ",exactData);
             const { message, status, data } = exactData;
             if (status == "SUCCESS"){
