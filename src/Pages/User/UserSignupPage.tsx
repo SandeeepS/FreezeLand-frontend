@@ -185,7 +185,7 @@ const UserSignupPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <div className="flex items-center"></div>
                 <a
                   href="javascript:void(0);"
@@ -193,7 +193,7 @@ const UserSignupPage: React.FC = () => {
                 >
                   Forgot Password?
                 </a>
-              </div>
+              </div> */}
 
               <div>
                 <button
