@@ -196,159 +196,200 @@ const Service: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col mt-36 overflow-hidden">
-        <div className="flex flex-col justify-center items-center my-4">
-          <h2 className="font-bold font-sans text-lg">{service?.name}</h2>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 mt-12">
+        {/* Header Section */}
+        <div className="pt-20 pb-8 bg-white shadow-sm border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {service?.name || "Service Registration"}
+              </h1>
+              <p className="text-lg text-gray-600">
+                Schedule your service with professional care
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Main Content */}
-        <div className="md:flex md:justify-between mt-10 md:pl-32 mx-6 md:w-full">
-          {/* Service Details */}
-          <div className={`transition-all duration-500 ease-in-out md:w-full`}>
-            <ServiceDetails serviceImage={serviceImage} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            {/* Service Details Card */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                <div className="p-8">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <div className="w-2 h-8 bg-blue-600 rounded-full mr-4"></div>
+                    Service Details
+                  </h2>
+                  <ServiceDetails serviceImage={serviceImage} />
+                </div>
+              </div>
+            </div>
+
+            {/* About Service Card */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 sticky top-8">
+                <div className="p-8">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <div className="w-2 h-6 bg-green-600 rounded-full mr-3"></div>
+                    What's Included
+                  </h3>
+                  <AboutTheService title="" points={services} />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="mr-24">
-            <AboutTheService title="About the service" points={services} />
-          </div>
+          {/* Registration Form Section */}
+          {hasAddresses && (
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                <h2 className="text-2xl font-semibold text-white">
+                  Service Registration Details
+                </h2>
+                <p className="text-blue-100 mt-1">
+                  Please provide the necessary information to schedule your service
+                </p>
+              </div>
+              
+              <div className="p-8">
+                <Formik
+                  initialValues={{
+                    name: "",
+                    discription: "",
+                    location: "",
+                    file: null as File | null,
+                    defaultAddress: defaultAddress,
+                  }}
+                  validationSchema={ServiceFormValidation}
+                  enableReinitialize={true}
+                  onSubmit={async (values) => {
+                    try {
+                      setIsSubmitting(true);
+
+                      // Validate location
+                      const locationValidation =
+                        validateLocationName(locationName);
+                      if (!locationValidation.ok) {
+                        setLocationError(locationValidation.message);
+                        setIsSubmitting(false);
+                        return;
+                      }
+
+                      // Validate defaultAddress
+                      if (!defaultAddress) {
+                        console.error("Default address is required");
+                        setIsSubmitting(false);
+                        return;
+                      }
+
+                      setLocationError("");
+                      let imageKey = "";
+
+                      // Process image upload if file exists
+                      if (values.file) {
+                        const folderName = "ServiceComplaints";
+                        try {
+                          const fileName = values.file.name || "";
+                          const fileType = values.file.type;
+
+                          const response = await getS3SingUrl(
+                            fileName,
+                            fileType,
+                            folderName
+                          );
+
+                          if (response?.data?.uploadURL) {
+                            // Upload the image to S3
+                            await fetch(response.data.uploadURL, {
+                              method: "PUT",
+                              headers: {
+                                "Content-Type": fileType,
+                              },
+                              body: values.file,
+                            });
+
+                            // Save the imageKey
+                            imageKey = response.data.key;
+                            console.log("Image key saved:", imageKey);
+                          }
+                        } catch (error) {
+                          console.error("Failed to upload image:", error);
+                        }
+                      }
+
+                      // Prepare data for submission
+                      const combinedData: Iconcern = {
+                        name: values.name,
+                        image: imageKey ? [imageKey] : [],
+                        defaultAddress: defaultAddress,
+                        discription: values.discription,
+                        locationName: locationName,
+                        userId: userId,
+                        serviceId: service?._id,
+                      };
+
+                      console.log("Submitting data:", combinedData);
+
+                      // Register complaint
+                      const result = await registerComplaint(combinedData);
+                      if (result) {
+                        console.log("Result from backend:", result);
+                        setShowModal(true);
+                      }
+                    } catch (error) {
+                      console.error("Error submitting form:", error);
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                  }}
+                >
+                  {(formik) => (
+                    <ServiceForm
+                      formik={formik}
+                      userProfile={userProfile}
+                      defaultAddress={defaultAddress}
+                      setDefaultAddress={setDefaultAddress}
+                      locationName={locationName}
+                      locationError={locationError}
+                      validateLocationName={validateLocationName}
+                      handleFetchLocation={handleFetchLocation}
+                      handleRemoveLocation={handleRemoveLocation}
+                      showLocationOptions={showLocationOptions}
+                      setShowLocationOptions={setShowLocationOptions}
+                      isSubmitting={isSubmitting}
+                    />
+                  )}
+                </Formik>
+              </div>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {!hasAddresses && !showAddressWarningModal && (
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
+                  <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Loading Your Profile
+                </h3>
+                <p className="text-gray-500">
+                  Please wait while we fetch your account information...
+                </p>
+                <div className="mt-6 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded-full w-3/4 mx-auto animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded-full w-1/2 mx-auto animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded-full w-2/3 mx-auto animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Only show form if user has addresses */}
-        {hasAddresses && (
-          <>
-            <div className="flex flex-col justify-center items-center my-4">
-              <h3 className="font-bold font-sans text-lg">
-                Enter More Details Here
-              </h3>
-            </div>
-
-            <div className="w-full md:w-1/2 transition-all duration-500 ease-in-out mr-12 md:pl-36 pl-6">
-              <Formik
-                initialValues={{
-                  name: "",
-                  discription: "",
-                  location: "",
-                  file: null as File | null,
-                  defaultAddress: defaultAddress,
-                }}
-                validationSchema={ServiceFormValidation}
-                enableReinitialize={true}
-                onSubmit={async (values) => {
-                  try {
-                    setIsSubmitting(true);
-
-                    // Validate location
-                    const locationValidation =
-                      validateLocationName(locationName);
-                    if (!locationValidation.ok) {
-                      setLocationError(locationValidation.message);
-                      setIsSubmitting(false);
-                      return;
-                    }
-
-                    // Validate defaultAddress
-                    if (!defaultAddress) {
-                      console.error("Default address is required");
-                      setIsSubmitting(false);
-                      return;
-                    }
-
-                    setLocationError("");
-                    let imageKey = "";
-
-                    // Process image upload if file exists
-                    if (values.file) {
-                      const folderName = "ServiceComplaints";
-                      try {
-                        const fileName = values.file.name || "";
-                        const fileType = values.file.type;
-
-                        const response = await getS3SingUrl(
-                          fileName,
-                          fileType,
-                          folderName
-                        );
-
-                        if (response?.data?.uploadURL) {
-                          // Upload the image to S3
-                          await fetch(response.data.uploadURL, {
-                            method: "PUT",
-                            headers: {
-                              "Content-Type": fileType,
-                            },
-                            body: values.file,
-                          });
-
-                          // Save the imageKey
-                          imageKey = response.data.key;
-                          console.log("Image key saved:", imageKey);
-                        }
-                      } catch (error) {
-                        console.error("Failed to upload image:", error);
-                      }
-                    }
-
-                    // Prepare data for submission
-                    const combinedData: Iconcern = {
-                      name: values.name,
-                      image: imageKey ? [imageKey] : [],
-                      defaultAddress: defaultAddress,
-                      discription: values.discription,
-                      locationName: locationName,
-                      userId: userId,
-                      serviceId: service?._id,
-                    };
-
-                    console.log("Submitting data:", combinedData);
-
-                    // Register complaint
-                    const result = await registerComplaint(combinedData);
-                    if (result) {
-                      console.log("Result from backend:", result);
-                      setShowModal(true);
-                    }
-                  } catch (error) {
-                    console.error("Error submitting form:", error);
-                  } finally {
-                    setIsSubmitting(false);
-                  }
-                }}
-              >
-                {(formik) => (
-                  <ServiceForm
-                    formik={formik}
-                    userProfile={userProfile}
-                    defaultAddress={defaultAddress}
-                    setDefaultAddress={setDefaultAddress}
-                    locationName={locationName}
-                    locationError={locationError}
-                    validateLocationName={validateLocationName}
-                    handleFetchLocation={handleFetchLocation}
-                    handleRemoveLocation={handleRemoveLocation}
-                    showLocationOptions={showLocationOptions}
-                    setShowLocationOptions={setShowLocationOptions}
-                    isSubmitting={isSubmitting}
-                  />
-                )}
-              </Formik>
-            </div>
-          </>
-        )}
-
-        {/* Show loading message if addresses are being fetched */}
-        {!hasAddresses && !showAddressWarningModal && (
-          <div className="flex flex-col justify-center items-center my-8">
-            <div className="text-center">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-300 rounded w-48 mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded w-32"></div>
-              </div>
-              <p className="text-gray-600 mt-4">Loading your profile...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Address Warning Modal */}
+        {/* Modals */}
         <AddressWarningModal
           show={showAddressWarningModal}
           onClose={handleCloseAddressWarningModal}
@@ -356,7 +397,6 @@ const Service: React.FC = () => {
           userName={userProfile?.name || userData?.name}
         />
 
-        {/* Confirmation Modal */}
         <ConformationModal show={showModal} onClose={handleCloseModal} />
       </div>
       <Footer />
