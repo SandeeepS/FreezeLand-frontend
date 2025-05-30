@@ -194,7 +194,7 @@ const MechanicSignupPage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="my-4 flex items-center">
+              {/* <div className="my-4 flex items-center">
                 <hr className="w-full border-gray-300" />
                 <p className="text-sm text-gray-600 text-center mx-4">or</p>
                 <hr className="w-full border-gray-300" />
@@ -209,7 +209,6 @@ const MechanicSignupPage: React.FC = () => {
                   width="20px"
                   viewBox="0 0 512 512"
                 >
-                  {/* Google Icon */}
                   <path
                     fill="#fbbd00"
                     d="M120 256c0-25.367 6.989-49.13 19.131-69.477v-86.308H52.823C18.568 144.703 0 198.922 0 256s18.568 111.297 52.823 155.785h86.308v-86.308C126.989 305.13 120 281.367 120 256z"
@@ -220,7 +219,7 @@ const MechanicSignupPage: React.FC = () => {
                   />
                 </svg>
                 Continue with Google
-              </button>
+              </button> */}
             </form>
           </div>
         </div>

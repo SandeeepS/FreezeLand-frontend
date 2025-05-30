@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getProfile, getService } from "../../Api/user";
+import { getProfile, getS3SingUrl, getService } from "../../Api/user";
 import { AddAddress } from "../../interfaces/AddAddress";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
@@ -10,7 +10,6 @@ import { registerComplaint } from "../../Api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../App/store";
 import { getImageUrl } from "../../Api/user";
-import { getS3SingUrl } from "../../Api/admin";
 import ConformationModal from "../../components/Common/ConformationModal";
 import UserData from "../../interfaces/UserData";
 import ServiceDetails from "../../components/User/UserServiceRegistration/ServiceDetails";
