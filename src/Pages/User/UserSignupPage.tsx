@@ -185,7 +185,7 @@ const UserSignupPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <div className="flex items-center"></div>
                 <a
                   href="javascript:void(0);"
@@ -193,7 +193,7 @@ const UserSignupPage: React.FC = () => {
                 >
                   Forgot Password?
                 </a>
-              </div>
+              </div> */}
 
               <div>
                 <button
@@ -204,13 +204,13 @@ const UserSignupPage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="my-4 flex items-center">
+              {/* <div className="my-4 flex items-center">
                 <hr className="w-full border-gray-300" />
                 <p className="text-sm text-gray-600 text-center mx-4">or</p>
                 <hr className="w-full border-gray-300" />
               </div>
 
-              <OAuth />
+              <OAuth /> */}
             </form>
           </div>
         </div>

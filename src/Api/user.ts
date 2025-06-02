@@ -192,14 +192,10 @@ const getAllUserRegisteredServices = async (userId: string) => {
   }
 };
 
-const EditUserDetails = async ({
-  _id,
-  name,
-  phone,
-  profile_picture,
-}: EditUserFormData) => {
+const EditUserDetails = async (values: EditUserFormData) => {
   try {
-    console.log("Entered in the EditUserDetails in the user.ts");
+    console.log("Entered in the EditUserDetails in the user.ts",values);
+    const {_id,name,phone,profile_picture} = values
     const result = await Api.put(userRoutes.editUser, {
       _id,
       name,
@@ -369,12 +365,35 @@ const updateUserLocation = async (
   }
 };
 
+
+const getS3SingUrl = async (
+  fileName: string,
+  fileType: string,
+  folderName: string
+) => {
+  try {
+    console.log(
+      "entered in the getS3SingUrl function in the user.ts file",
+      fileName,
+      fileType
+    );
+
+    const result = await Api.get(userRoutes.getPresignedUrl, {
+      params: { fileName, fileType, folderName },
+    });
+    return result;
+  } catch (error) {
+    userErrorHandler(error as Error);
+  }
+};
+
 export {
   signup,
   login,
   googleLogin,
   logout,
   getProfile,
+  getS3SingUrl,
   verifyOtp,
   resendOtp,
   getService,

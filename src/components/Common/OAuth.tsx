@@ -19,8 +19,16 @@ const OAuth = () => {
             console.log(resultsFromGoogle);
             if (resultsFromGoogle) {
                 const result = await googleLogin(resultsFromGoogle.user.displayName, resultsFromGoogle.user.email, resultsFromGoogle.user.photoURL);
+                console.log("result from the googleLoging in the OAuth",result)
                 if (result) {
-                    dispatch(setUserCredental(result.data.token));
+                    const data = result.data.data;
+                    const userData  = {
+                        id:data._id,
+                        name:data.name,
+                        email:data.email,
+                        role:data.role
+                    }
+                    dispatch(setUserCredental(userData));
                     dispatch(saveUser(result.data.data));
                     // navigate('/user/home');
                 }

@@ -98,7 +98,6 @@ const NewService: React.FC = () => {
       <div className="flex justify-center items-center py-10 h-screen">
         <Formik
           initialValues={{
-            _id: "", // Default value for _id
             name: "",
             discription: [],
             serviceCharge: 0,

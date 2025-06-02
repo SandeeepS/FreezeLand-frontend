@@ -1,6 +1,10 @@
 import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
-import { EditMechanicFormData, FormData, MechanicForm } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import {
+  EditMechanicFormData,
+  FormData,
+  MechanicForm,
+} from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
 import { AddAddress } from "../interfaces/AddAddress";
 import { mechErrorHandler } from "./errorHandler";
 
@@ -38,10 +42,10 @@ const mechLogin = async (email: string, password: string) => {
   }
 };
 
-const verifyMechOtp = async (id:string, otpnum: string) => {
+const verifyMechOtp = async (id: string, otpnum: string) => {
   try {
     const otp = parseInt(otpnum);
-    const result = await Api.post(mechRoutes.veryfyOtp, {id, otp });
+    const result = await Api.post(mechRoutes.veryfyOtp, { id, otp });
     return result;
   } catch (error) {
     console.log(error);
@@ -65,11 +69,11 @@ const forgotVerifyOtpMech = async (otp: string) => {
     mechErrorHandler(error as Error);
   }
 };
-const updateNewPasswordMech = async (password: string, userId: string) => {
+const updateNewPasswordMech = async (password: string, mechId: string) => {
   try {
-    return await Api.put(mechRoutes.updateNewPasswordMech, {
+    return await Api.put(mechRoutes.updateNewPasswordMech,{
       password,
-      userId,
+      mechId,
     });
   } catch (error) {
     console.log(error);
@@ -77,9 +81,9 @@ const updateNewPasswordMech = async (password: string, userId: string) => {
   }
 };
 
-const resendMechOtp = async (tempMechId:string) => {
+const resendMechOtp = async (tempMechId: string) => {
   try {
-    const result =  await Api.post(mechRoutes.resendOtp,{tempMechId});
+    const result = await Api.post(mechRoutes.resendOtp, { tempMechId });
     return result;
   } catch (error) {
     console.log(error);
@@ -218,7 +222,7 @@ const updateWorkAssigned = async (
   complaintId: string,
   mechanicId: string,
   status: string,
-  roomId:string,
+  roomId: string
 ) => {
   try {
     console.log("ehtered in the updateWorkAssigned");
@@ -226,7 +230,7 @@ const updateWorkAssigned = async (
       complaintId,
       mechanicId,
       status,
-      roomId
+      roomId,
     });
     return result;
   } catch (error) {
@@ -249,24 +253,10 @@ const getAllAcceptedServices = async (mechanicId: string) => {
   }
 };
 
-const getAllCompletedServices = async(mechanicId:string) => {
-  try{
-    console.log("Entered in the getAllCompleted in the mech.ts",mechanicId);
-    const result = await Api.get(mechRoutes.getAllCompletedServices);
-    return result;
-  }catch(error){
-    console.log(error as Error);
-    mechErrorHandler(error as Error);
-  }
-}
-
-//function to update the complaint status by mechanic
-const updateComplaintStatus = async (complaintId:string, nextStatus: string) => {
+const getAllCompletedServices = async (mechanicId: string) => {
   try {
-    console.log("Entered in the updateComplaintStatus",complaintId,nextStatus);
-    const result = await Api.put(mechRoutes.updateComplaintStatus,{}, {
-      params: {complaintId, nextStatus },
-    });
+    console.log("Entered in the getAllCompleted in the mech.ts", mechanicId);
+    const result = await Api.get(mechRoutes.getAllCompletedServices);
     return result;
   } catch (error) {
     console.log(error as Error);
@@ -274,43 +264,79 @@ const updateComplaintStatus = async (complaintId:string, nextStatus: string) => 
   }
 };
 
-//editing mechanic Details 
-const updateMechanicDetails = async (mechId:string, values: EditMechanicFormData) => {
-  try{
-    console.log("Entered in the updateMechanicDetails in the mech.ts",mechId,values);
-    const result = await Api.put(mechRoutes.editMechanic, {
-       mechId,
-       values
-    });
-    console.log("result from the backend is ", result);
-    return result;  }catch(error){
+//function to update the complaint status by mechanic
+const updateComplaintStatus = async (
+  complaintId: string,
+  nextStatus: string
+) => {
+  try {
+    console.log(
+      "Entered in the updateComplaintStatus",
+      complaintId,
+      nextStatus
+    );
+    const result = await Api.put(
+      mechRoutes.updateComplaintStatus,
+      {},
+      {
+        params: { complaintId, nextStatus },
+      }
+    );
+    return result;
+  } catch (error) {
     console.log(error as Error);
     mechErrorHandler(error as Error);
   }
-}
+};
 
-const createRoom = async (userId:string,mechId:string) => {
-  try{
-    console.log("Entered in the createRoom funciton in the mechts");
-    const result = await Api.post(mechRoutes.createRoom,{userId,mechId});
+//editing mechanic Details
+const updateMechanicDetails = async (
+  mechId: string,
+  values: EditMechanicFormData
+) => {
+  try {
+    console.log(
+      "Entered in the updateMechanicDetails in the mech.ts",
+      mechId,
+      values
+    );
+    const result = await Api.put(mechRoutes.editMechanic, {
+      mechId,
+      values,
+    });
+    console.log("result from the backend is ", result);
     return result;
-  }catch(error){
+  } catch (error) {
+    console.log(error as Error);
+    mechErrorHandler(error as Error);
+  }
+};
+
+const createRoom = async (userId: string, mechId: string) => {
+  try {
+    console.log("Entered in the createRoom funciton in the mechts");
+    const result = await Api.post(mechRoutes.createRoom, { userId, mechId });
+    return result;
+  } catch (error) {
     console.log(error);
     mechErrorHandler(error as Error);
   }
-}
+};
 
 //function to update the workDetails by mechanic
-const updateWorkDetails = async (complaintId:string,workDetails:object) => {
-  try{
-    console.log("reached in the updateWorkDetails ",complaintId ,workDetails);
-    const result = await Api.post(mechRoutes.updateWorkDetails,{complaintId,workDetails:workDetails});
+const updateWorkDetails = async (complaintId: string, workDetails: object) => {
+  try {
+    console.log("reached in the updateWorkDetails ", complaintId, workDetails);
+    const result = await Api.post(mechRoutes.updateWorkDetails, {
+      complaintId,
+      workDetails: workDetails,
+    });
     return result;
-  }catch(error){
+  } catch (error) {
     console.log("Error while updating the workdetails in the mech.ts");
     mechErrorHandler(error as Error);
   }
-}
+};
 
 //adding mechanic address
 const AddMechAddress = async (_id: string | undefined, values: AddAddress) => {
@@ -346,8 +372,6 @@ const EditExistingMechAddress = async (
   }
 };
 
-
-
 export {
   mechLogin,
   createRoom,
@@ -373,5 +397,5 @@ export {
   updateComplaintStatus,
   updateMechanicDetails,
   AddMechAddress,
-  EditExistingMechAddress
+  EditExistingMechAddress,
 };

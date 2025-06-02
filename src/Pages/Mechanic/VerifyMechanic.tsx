@@ -9,19 +9,19 @@ import {
   verifyMechanic,
 } from "../../Api/mech";
 import toast from "react-hot-toast";
-import { 
-  Device, 
-  MechanicForm 
+import {
+  Device,
+  MechanicForm,
 } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
-import { 
-  FiUpload, 
-  FiX, 
-  FiFileText, 
-  FiImage, 
-  FiUser, 
-  FiPhone, 
+import {
+  FiUpload,
+  FiX,
+  FiFileText,
+  FiImage,
+  FiUser,
+  FiPhone,
   FiCheckCircle,
-  FiAlertCircle 
+  FiAlertCircle,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
@@ -29,7 +29,7 @@ import { useNavigate } from "react-router-dom";
 interface FileWithPreview {
   file: File;
   preview: string;
-  type: 'image' | 'pdf';
+  type: "image" | "pdf";
 }
 
 interface FileUploadState {
@@ -50,7 +50,6 @@ interface MechanicData {
   name: string;
   phone: string;
   email?: string;
-
 }
 
 interface FileUploadItem {
@@ -61,7 +60,12 @@ interface FileUploadItem {
 }
 
 const VerifyMechanic: React.FC = () => {
-  const mechanic = useSelector((state: RootState) => state.auth.mechData) as MechanicData;
+  const mechanic = useSelector(
+    (state: RootState) => state.auth.mechData
+  ) as MechanicData;
+  console.log("mechData is ",mechanic);
+  const mechId = mechanic.id;
+  console.log("MechanicId is ", mechId);
   const [devices, setDevices] = useState<Device[]>([]);
   const [fileStates, setFileStates] = useState<FileUploadState>({
     photo: null,
@@ -70,7 +74,6 @@ const VerifyMechanic: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -88,7 +91,7 @@ const VerifyMechanic: React.FC = () => {
 
   const createFilePreview = (file: File): FileWithPreview => {
     const preview = URL.createObjectURL(file);
-    const type = file.type.startsWith('image/') ? 'image' : 'pdf';
+    const type = file.type.startsWith("image/") ? "image" : "pdf";
     return { file, preview, type };
   };
 
@@ -99,9 +102,9 @@ const VerifyMechanic: React.FC = () => {
   ) => {
     if (file) {
       const fileWithPreview = createFilePreview(file);
-      setFileStates(prev => ({
+      setFileStates((prev) => ({
         ...prev,
-        [fieldName]: fileWithPreview
+        [fieldName]: fileWithPreview,
       }));
       setFieldValue(fieldName, file);
     } else {
@@ -109,9 +112,9 @@ const VerifyMechanic: React.FC = () => {
       if (fileStates[fieldName]?.preview) {
         URL.revokeObjectURL(fileStates[fieldName]!.preview);
       }
-      setFileStates(prev => ({
+      setFileStates((prev) => ({
         ...prev,
-        [fieldName]: null
+        [fieldName]: null,
       }));
       setFieldValue(fieldName, null);
     }
@@ -124,9 +127,9 @@ const VerifyMechanic: React.FC = () => {
     if (fileStates[fieldName]?.preview) {
       URL.revokeObjectURL(fileStates[fieldName]!.preview);
     }
-    setFileStates(prev => ({
+    setFileStates((prev) => ({
       ...prev,
-      [fieldName]: null
+      [fieldName]: null,
     }));
     setFieldValue(fieldName, null);
   };
@@ -160,7 +163,9 @@ const VerifyMechanic: React.FC = () => {
         });
 
         if (!uploadResponse.ok) {
-          throw new Error(`Upload failed with status: ${uploadResponse.status}`);
+          throw new Error(
+            `Upload failed with status: ${uploadResponse.status}`
+          );
         }
 
         return uploadResponseData.data.key;
@@ -186,20 +191,28 @@ const VerifyMechanic: React.FC = () => {
       const filesToUpload: FileUploadItem[] = [
         {
           file: values.adharProof as File,
-          fileName: values.adharProof instanceof File ? values.adharProof.name : '',
-          fileType: values.adharProof instanceof File ? values.adharProof.type : '',
+          fileName:
+            values.adharProof instanceof File ? values.adharProof.name : "",
+          fileType:
+            values.adharProof instanceof File ? values.adharProof.type : "",
           name: mechanic.name,
         },
         {
           file: values.photo as File,
-          fileName: values.photo instanceof File ? values.photo.name : '',
-          fileType: values.photo instanceof File ? values.photo.type : '',
+          fileName: values.photo instanceof File ? values.photo.name : "",
+          fileType: values.photo instanceof File ? values.photo.type : "",
           name: mechanic.name,
         },
         {
           file: values.employeeLicense as File,
-          fileName: values.employeeLicense instanceof File ? values.employeeLicense.name : '',
-          fileType: values.employeeLicense instanceof File ? values.employeeLicense.type : '',
+          fileName:
+            values.employeeLicense instanceof File
+              ? values.employeeLicense.name
+              : "",
+          fileType:
+            values.employeeLicense instanceof File
+              ? values.employeeLicense.type
+              : "",
           name: mechanic.name,
         },
       ];
@@ -223,12 +236,12 @@ const VerifyMechanic: React.FC = () => {
 
       // Submit verification
       const response = await verifyMechanic(formData);
-      
+
       toast.dismiss("submit");
       toast.success("Verification submitted successfully!");
-      
+
       console.log("Verification response:", response);
-      navigate('/mech/homepage')
+      navigate("/mech/homepage");
     } catch (error) {
       toast.dismiss();
       console.error("Verification error:", error);
@@ -241,7 +254,7 @@ const VerifyMechanic: React.FC = () => {
   // Cleanup preview URLs on unmount
   useEffect(() => {
     return () => {
-      Object.values(fileStates).forEach(fileState => {
+      Object.values(fileStates).forEach((fileState) => {
         if (fileState?.preview) {
           URL.revokeObjectURL(fileState.preview);
         }
@@ -285,7 +298,8 @@ const VerifyMechanic: React.FC = () => {
                 Click to upload or drag and drop
               </p>
               <p className="text-xs text-gray-500">
-                {accept.includes('image') ? 'PNG, JPG, GIF' : 'PDF, PNG, JPG'} up to 10MB
+                {accept.includes("image") ? "PNG, JPG, GIF" : "PDF, PNG, JPG"}{" "}
+                up to 10MB
               </p>
             </div>
           </div>
@@ -293,7 +307,7 @@ const VerifyMechanic: React.FC = () => {
           <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                {fileState.type === 'image' ? (
+                {fileState.type === "image" ? (
                   <img
                     src={fileState.preview}
                     alt="Preview"
@@ -339,15 +353,20 @@ const VerifyMechanic: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Mechanic Verification</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Mechanic Verification
+          </h1>
           <p className="mt-2 text-gray-600">
-            Complete your profile verification to start receiving service requests
+            Complete your profile verification to start receiving service
+            requests
           </p>
         </div>
 
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
           <div className=" bg-freeze-color px-8 py-6">
-            <h2 className="text-xl font-semibold text-white">Verification Details</h2>
+            <h2 className="text-xl font-semibold text-white">
+              Verification Details
+            </h2>
             <p className="text-blue-100 text-sm mt-1">
               Please provide all required documents for verification
             </p>
@@ -366,7 +385,12 @@ const VerifyMechanic: React.FC = () => {
               validationSchema={MechanicVerificationValidationSchema}
               onSubmit={handleSubmit}
             >
-              {({ values, setFieldValue, errors, touched }: FormikProps<MechanicForm>) => (
+              {({
+                values,
+                setFieldValue,
+                errors,
+                touched,
+              }: FormikProps<MechanicForm>) => (
                 <Form className="space-y-8">
                   {/* Personal Information */}
                   <div className="bg-gray-50 rounded-lg p-6">
@@ -374,7 +398,7 @@ const VerifyMechanic: React.FC = () => {
                       <FiUser className="mr-2" />
                       Personal Information
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="flex items-center text-sm font-semibold text-gray-700 mb-2">
@@ -411,7 +435,7 @@ const VerifyMechanic: React.FC = () => {
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Areas of Specialization
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {devices.map((device) => (
                         <label
@@ -450,7 +474,11 @@ const VerifyMechanic: React.FC = () => {
                         accept="image/*"
                         icon={<FiImage />}
                         setFieldValue={setFieldValue}
-                        error={touched.photo && errors.photo ? String(errors.photo) : undefined}
+                        error={
+                          touched.photo && errors.photo
+                            ? String(errors.photo)
+                            : undefined
+                        }
                       />
 
                       <FileUploadField
@@ -459,7 +487,11 @@ const VerifyMechanic: React.FC = () => {
                         accept="image/*,.pdf"
                         icon={<FiFileText />}
                         setFieldValue={setFieldValue}
-                        error={touched.adharProof && errors.adharProof ? String(errors.adharProof) : undefined}
+                        error={
+                          touched.adharProof && errors.adharProof
+                            ? String(errors.adharProof)
+                            : undefined
+                        }
                       />
                     </div>
 
@@ -469,7 +501,11 @@ const VerifyMechanic: React.FC = () => {
                       accept="image/*,.pdf"
                       icon={<FiFileText />}
                       setFieldValue={setFieldValue}
-                      error={touched.employeeLicense && errors.employeeLicense ? String(errors.employeeLicense) : undefined}
+                      error={
+                        touched.employeeLicense && errors.employeeLicense
+                          ? String(errors.employeeLicense)
+                          : undefined
+                      }
                     />
                   </div>
 

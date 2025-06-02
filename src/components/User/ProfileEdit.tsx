@@ -3,8 +3,7 @@ import { FaCamera, FaTrash} from "react-icons/fa";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
-import { getProfile, EditUserDetails, getImageUrl } from "../../Api/user";
-import { getS3SingUrl } from "../../Api/admin"; // Import the getS3SingUrl function
+import { getProfile, EditUserDetails, getImageUrl, getS3SingUrl } from "../../Api/user";
 import { useAppSelector } from "../../App/store";
 
 interface UserProfile {

@@ -43,7 +43,7 @@ export interface UserData {
 
 //used in EditService.tsx and NewServices.tsx
 export interface InewService {
-  _id: string;
+  _id?: string;
   name: string;
   discription: string[];
   serviceCharge: number;
