@@ -24,6 +24,7 @@ const mechRoutes = {
   updateWorkDetails:"mech/updateWorkDetails",
   addMechAddress:"mech/addMechAddress",
   editAddress:"/mech/editAddress",
+  createRoute:"/mech/report",
   logout: "/mech/logout",
 };
 

@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Report as ReportIcon } from "@mui/icons-material";
+import { Button, Snackbar, Alert } from "@mui/material";
 import ServiceDetailsComponent from "./ServiceDetailsComponent";
 import CustomerDetailsComponent from "./CustomerDetailsComponent";
 import { getComplaintDetails } from "../../../Api/mech";
@@ -11,13 +13,23 @@ import UpdateStatusBtn from "./UpdateStatusBtn";
 import { ComplaintDetails } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 import StatusProgressBar from "../../../components/Common/StatusProgressBar";
 
-import { useSelector } from "react-redux"; // Import useSelector to access current user ID
-import { RootState } from "../../../App/store"; // Import RootState type
+import { useSelector } from "react-redux"; 
+import { RootState } from "../../../App/store"; 
 import FloatingChat from "../../../components/Common/Chat/FloatingChat";
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
 import ServiceCancelBtn from "../../../components/Common/ServiceCancelBtn";
+import ReportModal from "../../../components/Common/Report/ReportModal";
 
-// Move formatDate outside the component to prevent recreation on each render
+interface IReportData {
+  reason: string;
+  customDescription: string;
+  reporterRole: "user" | "mechanic";
+  targetId: string;
+  targetRole: "mechanic" | "user" | "service";
+  reporterId:string,
+  taragetName:string
+}
+
 const formatDate = (dateString: string) => {
   if (!dateString) return "N/A";
   const date = new Date(dateString);
@@ -32,6 +44,7 @@ const formatDate = (dateString: string) => {
 
 const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const mechid = id as string;
   const navigate = useNavigate();
   const [userComplaintDetails, setUserComplaintDetails] = useState<unknown>();
 
@@ -50,6 +63,10 @@ const ComplaintDetailsPage: React.FC = () => {
   });
 
   const [activeTab, setActiveTab] = useState<string>("details");
+
+  // Report modal states
+  const [showReportModal, setShowReportModal] = useState<boolean>(false);
+  const [reportSuccess, setReportSuccess] = useState<boolean>(false);
 
   const { data: complaint, loading, error } = complaintState;
 
@@ -109,6 +126,20 @@ const ComplaintDetailsPage: React.FC = () => {
     navigate(-1);
   }, [navigate]);
 
+  // Handle report submission
+  const handleReportSubmit = async (reportData: IReportData) => {
+    try {
+   
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log("Report submitted by mechanic:", reportData);
+      setReportSuccess(true);
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      throw error; // Re-throw to let the modal handle the error
+    }
+  };
+
   // Derive computed values with useMemo to prevent recalculation
   const isAccepted = useMemo(() => {
     return complaint?.status !== ComplaintStatus.PENDING;
@@ -118,6 +149,22 @@ const ComplaintDetailsPage: React.FC = () => {
   const showCancelButton = useMemo(() => {
     return complaint?.status === ComplaintStatus.ACCEPTED;
   }, [complaint?.status]);
+
+  // Check if we should show the report button (only when mechanic has accepted the job and customer exists)
+  const showReportButton = useMemo(() => {
+    return isAccepted && complaint?.userId && (
+      complaint.status === ComplaintStatus.ACCEPTED ||
+      complaint.status === ComplaintStatus.ON_PROCESS ||
+      complaint.status === ComplaintStatus.COMPLETED
+    );
+  }, [isAccepted, complaint?.userId, complaint?.status]);
+
+  // Get customer name for display
+  const customerName = useMemo(() => {
+    return complaint?.name || 
+           complaint?.userDetails?.[0]?.name || 
+           "Customer";
+  }, [complaint]);
 
   // Loading state
   if (loading) {
@@ -255,6 +302,57 @@ const ComplaintDetailsPage: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Report Customer Section */}
+      {showReportButton && (
+        <div className="mt-6 mb-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Issues with the customer?
+              </h3>
+              <p className="text-gray-600 mb-4">
+                If you experienced any problems with the customer or service conditions, you can report it to help us improve our platform.
+              </p>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<ReportIcon />}
+                onClick={() => setShowReportModal(true)}
+                className="min-w-32"
+              >
+                Report Customer
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Modal */}
+      <ReportModal
+        open={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSubmit={handleReportSubmit}
+        reporterRole="mechanic"
+        targetRole="user"
+        reporterId={mechid}
+        targetId={complaint?.userId || ""}
+        targetName={customerName}
+        complaintId={complaint._id}
+
+      />
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={reportSuccess}
+        autoHideDuration={6000}
+        onClose={() => setReportSuccess(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setReportSuccess(false)} severity="success" sx={{ width: '100%' }}>
+          Report submitted successfully. Our team will review it shortly.
+        </Alert>
+      </Snackbar>
 
       {/* Add Floating Chat component only if the complaint has been accepted */}
       {isAccepted &&
