@@ -7,6 +7,7 @@ import {
 } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
 import { AddAddress } from "../interfaces/AddAddress";
 import { mechErrorHandler } from "./errorHandler";
+import { IReportData } from "../components/Common/Report/ReportModal";
 
 const mechSignup = async ({
   name,
@@ -372,11 +373,24 @@ const EditExistingMechAddress = async (
   }
 };
 
+//function to create a report in mechanic side 
+const createReport = async (reportData : IReportData) =>  {
+  try{
+    console.log("reportdata in the mechts. CreateReport",reportData);
+    const result = await Api.post(mechRoutes.createRoute,{reportData});
+    return result;
+  }catch(error) {
+    console.log("Error while creating a report in the mech.ts",error);
+    mechErrorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
   createRoom,
   mLogout,
   mechSignup,
+  createReport,
   getImageUrl,
   verifyMechOtp,
   resendMechOtp,

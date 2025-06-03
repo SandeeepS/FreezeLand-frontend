@@ -9,6 +9,7 @@ import {
 import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentButton";
 import { LocationData } from "../components/Common/PopularCities";
 import userErrorHandler from "./errorHandler";
+import { IReportData } from "../components/Common/Report/ReportModal";
 
 const signup = async ({
   name,
@@ -387,12 +388,25 @@ const getS3SingUrl = async (
   }
 };
 
+//function to create a report in mechanic side 
+const createReport = async (reportData : IReportData) =>  {
+  try{
+    console.log("reportdata in the mechts. CreateReport",reportData);
+    const result = await Api.post(userRoutes.createRoute,{reportData});
+    return result;
+  }catch(error) {
+    console.log("Error while creating a report in the mech.ts",error);
+    userErrorHandler(error as Error);
+  }
+}
+
 export {
   signup,
   login,
   googleLogin,
   logout,
   getProfile,
+  createReport,
   getS3SingUrl,
   verifyOtp,
   resendOtp,

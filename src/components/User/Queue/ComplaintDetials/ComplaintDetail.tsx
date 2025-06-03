@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Warning } from "@mui/icons-material";
+import { Warning, Report as ReportIcon } from "@mui/icons-material";
+import { Button, Snackbar, Alert } from "@mui/material";
 import {
+  createReport,
   getMechanicDetails,
   getUserRegisteredServiceDetailsById,
 } from "../../../../Api/user";
@@ -18,10 +20,19 @@ import FloatingChat from "../../../Common/Chat/FloatingChat";
 import WorkDetailsBill from "./WorkDetailsBill";
 import PaymentButton from "./PaymentButton";
 import ServiceCancelBtn from "../../../Common/ServiceCancelBtn";
+import ReportModal from "../../../Common/Report/ReportModal";
 
 interface IServiceDetails {
   image?: string;
   name?: string;
+}
+
+interface IReportData {
+  reason: string;
+  customDescription: string;
+  reporterType: "user" | "mechanic";
+  targetId: string;
+  targetType: "mechanic" | "user" | "service";
 }
 
 /**
@@ -38,8 +49,13 @@ const ComplaintDetail: React.FC = () => {
   const [mechanicDetails, setMechanicDetails] =
     useState<IMechanicDetails | null>(null);
   const [totalAmount, setTotalAmount] = useState<number>(0);
+
+  // Report modal states
+  const [showReportModal, setShowReportModal] = useState<boolean>(false);
+  const [reportSuccess, setReportSuccess] = useState<boolean>(false);
+
   // Fetch complaint details and set up polling for real-time updates
-  useEffect(() =>{
+  useEffect(() => {
     let pollingInterval: NodeJS.Timeout;
 
     const fetchComplaintDetail = async () => {
@@ -106,6 +122,8 @@ const ComplaintDetail: React.FC = () => {
     fetchMechanicDetails();
   }, [complaint?.currentMechanicId, complaint?.acceptedAt]);
 
+
+
   // Render loading state
   if (isLoading) {
     return (
@@ -149,6 +167,9 @@ const ComplaintDetail: React.FC = () => {
   // Check if we should show the cancel button (only when status is exactly "accepted")
   const showCancelButton = status === "accepted" || status === "pending";
 
+  // Check if we should show the report button (only when mechanic is assigned)
+  const showReportButton = complaint.currentMechanicId && mechanicDetails;
+
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -164,7 +185,7 @@ const ComplaintDetail: React.FC = () => {
         {/*Service Cancel Button if status is "accepted" */}
         {showCancelButton && (
           <div className="mt-4 flex justify-center pb-4">
-            <ServiceCancelBtn complaintId={complaint._id} userRole="user"  />
+            <ServiceCancelBtn complaintId={complaint._id} userRole="user" />
           </div>
         )}
 
@@ -208,8 +229,9 @@ const ComplaintDetail: React.FC = () => {
           />
         )}
       </div>
+
       <div>
-        {status == "completed" && complaint.orderId == null  && (
+        {status == "completed" && complaint.orderId == null && (
           <PaymentButton
             complaintId={complaint._id}
             status={status}
@@ -219,6 +241,57 @@ const ComplaintDetail: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Report Button Section */}
+      {showReportButton && (
+        <div className="mt-6 bg-white rounded-lg shadow p-6">
+          <div className="text-center">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Having issues with the service?
+            </h3>
+            <p className="text-gray-600 mb-4">
+              If you experienced any problems with the mechanic or service
+              quality, you can report it to help us improve.
+            </p>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<ReportIcon />}
+              onClick={() => setShowReportModal(true)}
+              className="min-w-32"
+            >
+              Report Mechanic
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Report Modal */}
+      <ReportModal
+        open={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSubmit={createReport}
+        reporterRole="user"
+        targetRole="mechanic"
+        targetId={mechanicDetails?._id || ""}
+        targetName={mechanicDetails?.name}
+      />
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={reportSuccess}
+        autoHideDuration={6000}
+        onClose={() => setReportSuccess(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setReportSuccess(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Report submitted successfully. Our team will review it shortly.
+        </Alert>
+      </Snackbar>
 
       {/* Add Floating Chat component only if the complaint has been accepted */}
       {complaint._id && complaint.userId && complaint.currentMechanicId && (
