@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Warning, Report as ReportIcon } from "@mui/icons-material";
 import { Button, Snackbar, Alert } from "@mui/material";
 import {
+  createReport,
   getMechanicDetails,
   getUserRegisteredServiceDetailsById,
 } from "../../../../Api/user";
@@ -48,7 +49,7 @@ const ComplaintDetail: React.FC = () => {
   const [mechanicDetails, setMechanicDetails] =
     useState<IMechanicDetails | null>(null);
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  
+
   // Report modal states
   const [showReportModal, setShowReportModal] = useState<boolean>(false);
   const [reportSuccess, setReportSuccess] = useState<boolean>(false);
@@ -121,22 +122,7 @@ const ComplaintDetail: React.FC = () => {
     fetchMechanicDetails();
   }, [complaint?.currentMechanicId, complaint?.acceptedAt]);
 
-  // Handle report submission
-  const handleReportSubmit = async (reportData: IReportData) => {
-    try {
-      // TODO: Replace with your actual API call
-      // const response = await submitReport(reportData);
-      
-      // For now, just simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log("Report submitted:", reportData);
-      setReportSuccess(true);
-    } catch (error) {
-      console.error("Error submitting report:", error);
-      throw error; // Re-throw to let the modal handle the error
-    }
-  };
+
 
   // Render loading state
   if (isLoading) {
@@ -243,7 +229,7 @@ const ComplaintDetail: React.FC = () => {
           />
         )}
       </div>
-      
+
       <div>
         {status == "completed" && complaint.orderId == null && (
           <PaymentButton
@@ -264,7 +250,8 @@ const ComplaintDetail: React.FC = () => {
               Having issues with the service?
             </h3>
             <p className="text-gray-600 mb-4">
-              If you experienced any problems with the mechanic or service quality, you can report it to help us improve.
+              If you experienced any problems with the mechanic or service
+              quality, you can report it to help us improve.
             </p>
             <Button
               variant="outlined"
@@ -283,10 +270,10 @@ const ComplaintDetail: React.FC = () => {
       <ReportModal
         open={showReportModal}
         onClose={() => setShowReportModal(false)}
-        onSubmit={handleReportSubmit}
-        reporterType="user"
+        onSubmit={createReport}
+        reporterRole="user"
+        targetRole="mechanic"
         targetId={mechanicDetails?._id || ""}
-        targetType="mechanic"
         targetName={mechanicDetails?.name}
       />
 
@@ -295,9 +282,13 @@ const ComplaintDetail: React.FC = () => {
         open={reportSuccess}
         autoHideDuration={6000}
         onClose={() => setReportSuccess(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={() => setReportSuccess(false)} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setReportSuccess(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Report submitted successfully. Our team will review it shortly.
         </Alert>
       </Snackbar>

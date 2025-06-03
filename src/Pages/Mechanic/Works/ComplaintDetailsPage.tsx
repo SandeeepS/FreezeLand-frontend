@@ -5,7 +5,7 @@ import { Report as ReportIcon } from "@mui/icons-material";
 import { Button, Snackbar, Alert } from "@mui/material";
 import ServiceDetailsComponent from "./ServiceDetailsComponent";
 import CustomerDetailsComponent from "./CustomerDetailsComponent";
-import { getComplaintDetails } from "../../../Api/mech";
+import { createReport, getComplaintDetails } from "../../../Api/mech";
 import LocationDetail from "./LocationDetail";
 import GoogleMapLocation from "./GoogleMapLocation";
 import AccecptBtn from "./AccecptBtn";
@@ -126,19 +126,9 @@ const ComplaintDetailsPage: React.FC = () => {
     navigate(-1);
   }, [navigate]);
 
-  // Handle report submission
-  const handleReportSubmit = async (reportData: IReportData) => {
-    try {
-   
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log("Report submitted by mechanic:", reportData);
-      setReportSuccess(true);
-    } catch (error) {
-      console.error("Error submitting report:", error);
-      throw error; // Re-throw to let the modal handle the error
-    }
-  };
+
+
+
 
   // Derive computed values with useMemo to prevent recalculation
   const isAccepted = useMemo(() => {
@@ -332,7 +322,7 @@ const ComplaintDetailsPage: React.FC = () => {
       <ReportModal
         open={showReportModal}
         onClose={() => setShowReportModal(false)}
-        onSubmit={handleReportSubmit}
+        onSubmit={createReport}
         reporterRole="mechanic"
         targetRole="user"
         reporterId={mechid}

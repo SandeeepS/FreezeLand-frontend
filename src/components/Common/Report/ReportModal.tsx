@@ -125,7 +125,7 @@ const ReportModal: React.FC<IReportModalProps> = ({
         complaintId,
       };
       console.log("report details for submisstion is ", reportData);
-      const restult = await createReport(reportData);
+      const restult = await onSubmit(reportData);
       console.log("result after createing the from the backend is ",restult);
       if(restult?.data.success){
         toast.success("Report Submitted successfully");
