@@ -94,10 +94,11 @@ const ServiceHistory: React.FC = () => {
 
     for (const service of services) {
       // Fetch service logo image from serviceDetails
-      if (service.serviceDetails && service.serviceDetails[0]?.imageKey ) {
+      const serviceDetailsArr = Array.isArray(service.serviceDetails) ? service.serviceDetails : [];
+      if (serviceDetailsArr.length > 0 && serviceDetailsArr[0]?.imageKey) {
         try {
           const imageResult = await getImageUrl(
-            service.serviceDetails[0].imageKey,
+            serviceDetailsArr[0].imageKey,
             "service"
           );
 
@@ -174,7 +175,7 @@ const ServiceHistory: React.FC = () => {
     {
       key: "deviceImage",
       header: "Device Image",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex">
           {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
