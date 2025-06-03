@@ -5,7 +5,7 @@ import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { MdOutlineReportProblem } from "react-icons/md";
-
+import { TbReportSearch } from "react-icons/tb";
 import { BsFillDeviceSsdFill } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa6";
 import { GiMechaHead } from "react-icons/gi";
@@ -69,6 +69,12 @@ const AdminListing: React.FC = () => {
       icon: MdOutlineReportProblem,
       id: 6,
       path: "/admin/complaints",
+    },
+    {
+      name: "Reports",
+      icon: TbReportSearch ,
+      id: 6,
+      path: "/admin/reports",
     },
   ];
 

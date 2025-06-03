@@ -44,6 +44,8 @@ import MechAddAddress from "./components/Mech/Profile/MechAddAddress";
 import MechAllAddress from "./components/Mech/Profile/MechAllAddress";
 import MechEditAddress from "./components/Mech/Profile/MechEditAddress";
 import MechanicForVerificationList from "./Pages/Admin/Mechanic/MechanicForVerificationList";
+import SelectReportComponent from "./components/Admin/Reports/selectReportComponent";
+import AllReportComponent from "./components/Admin/Reports/AllReportComponent";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -126,6 +128,8 @@ function App() {
               <Route path="/admin/verifyMechanic" element={<MechanicForVerificationList />}/>
               <Route path="/admin/mechanic/details/:id" element={<MechanicVerify />}/>
               <Route path="/admin/complaints" element={<AdminComplaintListing />} />
+              <Route path="/admin/reports" element={<SelectReportComponent/>} />
+              <Route path="/admin/showAllreports/:reportRole" element={<AllReportComponent/>}/>
               <Route path="/admin/viewMoreComplaintDetails/:id" element={<AdminCompliantDetailsPage />}/>
             </Route>
           </Route>

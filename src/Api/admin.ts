@@ -404,12 +404,25 @@ const cancelComplaint = async (complaintId:string, userRole : string,reason:stri
   }
 }
 
+//getting all reports 
+const getAllReportsByReporterRole = async(reporterRole:string) => {
+  try{
+    console.log("Entered in the getAllReports in the admin.ts ",reporterRole);
+    const result = await Api.get(adminRoutes.getAllReports,{params:{reporterRole}});
+    return result;
+  }catch(error){
+    console.log("Error occured while fetching all reports in the admin.ts getAllReports",error);
+    adminErrorHandler(error as Error);
+  }
+}
+
 export {
   adminLogin,
   adminLogout,
   getS3SingUrl,
   addService,
   addDevice,
+  getAllReportsByReporterRole,
   getAllServices,
   getService,
   getAllDevices,
