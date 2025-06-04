@@ -283,7 +283,7 @@ const ComplaintDetailsPage: React.FC = () => {
 
       <div>
         {/* Service details component (only if accepted) */}
-        {isAccepted && (
+        {(
           <ServiceDetailsComponent
             complaint={complaint}
             activeTab={activeTab}

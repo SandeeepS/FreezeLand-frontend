@@ -9,10 +9,8 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ICompliantData } from "../../../interfaces/IPages/Admin/IAdminInterfaces";
 import TableCommon from "../../../components/Common/TableCommon";
 
-
-
 const AdminComplaintListing = () => {
-  const naviagte = useNavigate()
+  const naviagte = useNavigate();
   const location = useLocation();
   const pathName = location.pathname;
   console.log("pathname is", pathName);
@@ -22,18 +20,11 @@ const AdminComplaintListing = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   console.log("search is ", search);
 
-
   const columns = [
-  { id: "name", label: "Name", minWidth: 170 },
-  {
-    id: "isBlocked",
-    label: "Status",
-    minWidth: 170,
-    align: "right",
-    format: (value: boolean) => (value ? "Blocked" : "Active"),
-  },
-  { id: "actions", label: "Actions", minWidth: 150, align: "right" },
-];
+    { id: "name", label: "Name", minWidth: 170 },
+
+    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,8 +57,8 @@ const AdminComplaintListing = () => {
   };
 
   const handleViewMoreAboutComplaint = (id: string) => {
-    naviagte(`/admin/viewMoreComplaintDetails/${id}`);  
-  }
+    naviagte(`/admin/viewMoreComplaintDetails/${id}`);
+  };
 
   const navigationLink = "/admin/editDevice/";
 
@@ -90,16 +81,13 @@ const AdminComplaintListing = () => {
           onSearchChange={setSearchQuery}
         />
       </div>
-      <div className="flex  justify-center my-5">
-
-      </div>
+      <div className="flex  justify-center my-5"></div>
 
       <div className="tableDiv flex justify-center items-center mx-5 h-screen">
         <TableCommon
           columns={columns}
           data={filteredComplaint}
           updateStatus={updateComplaintStatus}
-          blockUnblockFunciton={listUnlistComplaints}
           deleteFunction={deleteComplaint}
           navLink={navigationLink}
           role={"admin"}

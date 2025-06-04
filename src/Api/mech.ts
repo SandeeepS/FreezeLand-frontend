@@ -257,7 +257,7 @@ const getAllAcceptedServices = async (mechanicId: string) => {
 const getAllCompletedServices = async (mechanicId: string) => {
   try {
     console.log("Entered in the getAllCompleted in the mech.ts", mechanicId);
-    const result = await Api.get(mechRoutes.getAllCompletedServices);
+    const result = await Api.get(mechRoutes.getAllCompletedServices,{params:{mechanicId}});
     return result;
   } catch (error) {
     console.log(error as Error);

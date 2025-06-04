@@ -14,23 +14,23 @@ import Menu from "@mui/material/Menu";
 import IconButton from "@mui/material/IconButton";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-
 import SortIcon from "@mui/icons-material/Sort";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TableCommonProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const TableCommon: React.FC<TableCommonProps> = ({
   columns,
   data,
   updateStatus,
   blockUnblockFunciton,
-  deleteFunction,
   navLink,
   role,
-  handleViewMore
+  handleViewMore,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [filter, setFilter] = useState<"all" | "blocked" | "unblocked">("all");
@@ -120,8 +120,6 @@ const TableCommon: React.FC<TableCommonProps> = ({
   //   }
   // };
 
-
-
   return (
     <Paper
       sx={{
@@ -203,33 +201,40 @@ const TableCommon: React.FC<TableCommonProps> = ({
                 <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
                   <TableCell>{datas.name}</TableCell>
                   {datas.email && <TableCell>{datas.email}</TableCell>}
+                  { currentPath !== "/admin/complaints" && 
+                    <TableCell align="right">
+                      {datas.isBlocked ? "Blocked" : "Active"}
+                    </TableCell>
+                  }
                   <TableCell align="right">
-                    {datas.isBlocked ? "Blocked" : "Active"}
-                  </TableCell>
-                  <TableCell align="right">
-                    <ToggleButton
-                      value="check"
-                      selected={!datas.isBlocked}
-                      onChange={() =>
-                        handleBlockUnblock(datas._id, datas.isBlocked)
-                      }
-                      sx={{
-                        backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                        height: "35px",
-                        color: "white",
-                        width: "120px",
-                        "&.Mui-selected": {
+                    {currentPath !== "/admin/complaints" && (
+                      <ToggleButton
+                        value="check"
+                        selected={!datas.isBlocked}
+                        onChange={() =>
+                          handleBlockUnblock(datas._id, datas.isBlocked)
+                        }
+                        sx={{
                           backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                        },
-                        "&:hover": {
-                          backgroundColor: datas.isBlocked
-                            ? "#ff4d4d"
-                            : "#81c784",
-                        },
-                      }}
-                    >
-                      {datas.isBlocked ? "Blocked" : "Unblocked"}
-                    </ToggleButton>
+                          height: "35px",
+                          color: "white",
+                          width: "120px",
+                          "&.Mui-selected": {
+                            backgroundColor: datas.isBlocked
+                              ? "red"
+                              : "#90ee90",
+                          },
+                          "&:hover": {
+                            backgroundColor: datas.isBlocked
+                              ? "#ff4d4d"
+                              : "#81c784",
+                          },
+                        }}
+                      >
+                        {datas.isBlocked ? "Blocked" : "Unblocked"}
+                      </ToggleButton>
+                    )}
+
                     {/* <Button
                       variant="outlined"
                       sx={{ marginLeft: "10px" }}
@@ -255,7 +260,6 @@ const TableCommon: React.FC<TableCommonProps> = ({
                         View More
                       </Button>
                     )}
-               
                   </TableCell>
                 </TableRow>
               ))}

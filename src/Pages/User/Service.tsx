@@ -218,7 +218,7 @@ const Service: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
                 <div className="p-8">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
-                    <div className="w-2 h-8 bg-blue-600 rounded-full mr-4"></div>
+                    <div className="w-2 h-8 bg-freeze-color rounded-full mr-4"></div>
                     Service Details
                   </h2>
                   <ServiceDetails serviceImage={serviceImage} />
@@ -243,22 +243,23 @@ const Service: React.FC = () => {
           {/* Registration Form Section */}
           {hasAddresses && (
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-500 px-8 py-6">
                 <h2 className="text-2xl font-semibold text-white">
                   Service Registration Details
                 </h2>
                 <p className="text-blue-100 mt-1">
-                  Please provide the necessary information to schedule your service
+                  Please provide the necessary information to schedule your
+                  service
                 </p>
               </div>
-              
+
               <div className="p-8">
                 <Formik
                   initialValues={{
                     name: "",
                     discription: "",
                     location: "",
-                    file: null as File | null,
+                    files: [] as File[],
                     defaultAddress: defaultAddress,
                   }}
                   validationSchema={ServiceFormValidation}
@@ -271,7 +272,7 @@ const Service: React.FC = () => {
                       const locationValidation =
                         validateLocationName(locationName);
                       if (!locationValidation.ok) {
-                        setLocationError(locationValidation.message);
+                        setLocationError(locationValidation.message || "");
                         setIsSubmitting(false);
                         return;
                       }
@@ -284,44 +285,59 @@ const Service: React.FC = () => {
                       }
 
                       setLocationError("");
-                      let imageKey = "";
+                      let imageKeys: string[] = [];
 
                       // Process image upload if file exists
-                      if (values.file) {
+                      if (values.files && values.files.length > 0) {
                         const folderName = "ServiceComplaints";
-                        try {
-                          const fileName = values.file.name || "";
-                          const fileType = values.file.type;
 
-                          const response = await getS3SingUrl(
-                            fileName,
-                            fileType,
-                            folderName
+                        try {
+                          // Upload all files concurrently
+                          const uploadPromises = values.files.map(
+                            async (file) => {
+                              const fileName = file.name || "";
+                              const fileType = file.type;
+
+                              const response = await getS3SingUrl(
+                                fileName,
+                                fileType,
+                                folderName
+                              );
+
+                              if (response?.data?.uploadURL) {
+                                // Upload the image to S3
+                                await fetch(response.data.uploadURL, {
+                                  method: "PUT",
+                                  headers: {
+                                    "Content-Type": fileType,
+                                  },
+                                  body: file,
+                                });
+
+                                return response.data.key;
+                              }
+                              return null;
+                            }
                           );
 
-                          if (response?.data?.uploadURL) {
-                            // Upload the image to S3
-                            await fetch(response.data.uploadURL, {
-                              method: "PUT",
-                              headers: {
-                                "Content-Type": fileType,
-                              },
-                              body: values.file,
-                            });
+                          // Wait for all uploads to complete
+                          const uploadResults = await Promise.all(
+                            uploadPromises
+                          );
+                          imageKeys = uploadResults.filter(
+                            (key): key is string => key !== null
+                          );
 
-                            // Save the imageKey
-                            imageKey = response.data.key;
-                            console.log("Image key saved:", imageKey);
-                          }
+                          console.log("Image keys saved:", imageKeys);
                         } catch (error) {
-                          console.error("Failed to upload image:", error);
+                          console.error("Failed to upload images:", error);
                         }
                       }
 
                       // Prepare data for submission
                       const combinedData: Iconcern = {
                         name: values.name,
-                        image: imageKey ? [imageKey] : [],
+                        image: imageKeys,
                         defaultAddress: defaultAddress,
                         discription: values.discription,
                         locationName: locationName,

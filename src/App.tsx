@@ -37,7 +37,7 @@ import MechanicVerify from "./components/Admin/Mechanic/VerifyMechanic/MechanicV
 import PaymentSuccessPage from "./Pages/User/Payment/PaymentSuccessPage";
 import AdminComplaintListing from "./Pages/Admin/Complaints/AdminComplaintListing";
 import AdminCompliantDetailsPage from "./Pages/Admin/Complaints/AdminCompliantDetailsPage";
-import ServiceHistory from "./Pages/Admin/ServiceHistory/ServiceHistory";
+import ServiceHistory from "./Pages/Mechanic/ServiceHistory/ServiceHistory";
 import InstallPWA from "./components/PWA/InstallPWA";
 import MechAddress from "./components/Mech/Profile/MechAddress";
 import MechAddAddress from "./components/Mech/Profile/MechAddAddress";
@@ -46,6 +46,7 @@ import MechEditAddress from "./components/Mech/Profile/MechEditAddress";
 import MechanicForVerificationList from "./Pages/Admin/Mechanic/MechanicForVerificationList";
 import SelectReportComponent from "./components/Admin/Reports/selectReportComponent";
 import AllReportComponent from "./components/Admin/Reports/AllReportComponent";
+import ServiceDetails from "./Pages/Mechanic/ServiceHistory/ServiceDetails";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -152,6 +153,7 @@ function App() {
               <Route path="/mech/profile" element={<MechanicProfile />} />
               <Route path="/mech/editProfile" element={<MechanicEditProfile />}/>
               <Route path="/mech/serviceHistory" element={<ServiceHistory />} />
+              <Route path="/mech/serviceDetails/:id" element={<ServiceDetails/>}/>
               <Route path="/mech/mechAddress" element={<MechAddress />} />
               <Route path="/mech/AddAddress" element={<MechAddAddress />} />
               <Route path="/mech/showAllAddress" element={<MechAllAddress />} />
