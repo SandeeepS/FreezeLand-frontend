@@ -77,7 +77,7 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
       }
     };
     fetchImages();
-  });
+  },[]);
   return (
     <div className="lg:col-span-2">
       <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
