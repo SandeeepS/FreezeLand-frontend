@@ -1,8 +1,6 @@
 // ServiceDetailsComponent.tsx
 import React, { useEffect, useState } from "react";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import BuildIcon from "@mui/icons-material/Build";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
 import { getImageUrl } from "../../../Api/mech";
 import TabsComponent from "./TabsComponent";
 
@@ -18,7 +16,7 @@ interface ServiceDetailsProps {
     }[];
     discription: string;
     notes?: string[];
-    deviceImages?: string[];
+    image: string[];
     createdAt: string;
     lastUpdated?: string;
     estimatedCompletionDate?: string;
@@ -42,8 +40,9 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
   setActiveTab,
   formatDate,
 }) => {
-  console.log("complaint details in the serviceDetailsComponnet ",complaint);
+  console.log("complaint details in the serviceDetailsComponnet ", complaint);
   const [serviceImage, setServiceImage] = useState<string>("");
+  const [deviceImageUrls, setDeviceImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -58,6 +57,27 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
 
     fetchImage();
   }, [complaint.serviceDetails]);
+
+  useEffect(() => {
+    console.log("Device images are ", complaint.image);
+    const fetchImages = async () => {
+      try {
+        if (complaint.image && complaint.image.length > 0) {
+          const urls: string[] = [];
+          for (const key of complaint.image) {
+            const imageRes = await getImageUrl(key, "complaintImage");
+            if (imageRes?.data.url) {
+              urls.push(imageRes.data.url);
+            }
+          }
+          setDeviceImageUrls(urls);
+        }
+      } catch (error) {
+        console.log("errror occured ", error);
+      }
+    };
+    fetchImages();
+  });
   return (
     <div className="lg:col-span-2">
       <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
@@ -96,19 +116,19 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
           </div>
         )}
 
-        {complaint.deviceImages && complaint.deviceImages.length > 0 && (
+        {deviceImageUrls.length > 0 && (
           <div className="border-t border-gray-200 pt-4 mt-4">
             <h3 className="font-semibold text-lg mb-3">Device Images</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {complaint.deviceImages.map((image, index) => (
+            <div className="md:flex md:space-x-3 space-y-3">
+              {deviceImageUrls.map((url, index) => (
                 <div
                   key={index}
-                  className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden"
+                  className="relative w-full max-w-[160px] aspect-video bg-gray-100 rounded-lg overflow-hidden"
                 >
                   <img
-                    src={image || "/api/placeholder/400/300"}
+                    src={url || "/api/placeholder/400/300"}
                     alt={`Device image ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded"
                   />
                 </div>
               ))}
