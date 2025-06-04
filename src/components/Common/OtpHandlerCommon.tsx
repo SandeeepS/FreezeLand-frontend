@@ -1,16 +1,16 @@
 import {
-  forgotPassword,
-  forgotVerifyOtp,
-  resendOtp,
-  updateNewPassword,
-} from "../../Api/user";
+  forgotPasswordMech,
+  forgotVerifyOtpMech,
+  updateNewPasswordMech,
+  resendMechOtp,
+} from "../../Api/mech";
+import { MechData } from "../../interfaces/MechData";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { newPasswordValidation } from "../../components/Common/Validations";
-import { initialVal } from "../../interfaces/IPages/User/IUserInterfaces";
-import UserData from "../../interfaces/UserData";
+import { initialVal } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
 // Type definitions for better error handling
 interface ApiError {
@@ -28,23 +28,24 @@ interface ApiResponse {
   data: {
     success: boolean;
     message: string;
-    data?: UserData;
+    data?: MechData;
   };
 }
 
 const initialValues: initialVal = {
   password: "",
   cpassword: "",
+  email: ""
 };
 
-const ForgetPassword: React.FC = () => {
+const ForgetPasswordForMech: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [otp, setOtp] = useState("");
   const [seconds, setSeconds] = useState<number>(300);
   const [showOtp, setShowOtp] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [user, setUser] = useState<UserData | null>(null);
+  const [mech, setMech] = useState<MechData | null>(null);
   const [otpLoading, setOtpLoading] = useState<boolean>(false);
   const [resendLoading, setResendLoading] = useState<boolean>(false);
 
@@ -66,11 +67,7 @@ const ForgetPassword: React.FC = () => {
   const getErrorMessage = (error: unknown): string => {
     if (error && typeof error === "object") {
       const apiError = error as ApiError;
-      return (
-        apiError.response?.data?.message ||
-        apiError.message ||
-        "Something went wrong!"
-      );
+      return apiError.response?.data?.message || apiError.message || "Something went wrong!";
     }
     return "Something went wrong!";
   };
@@ -78,7 +75,7 @@ const ForgetPassword: React.FC = () => {
   // Email submission handler
   const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    
     if (!email.trim()) {
       toast.error("Please enter your email address");
       return;
@@ -90,15 +87,16 @@ const ForgetPassword: React.FC = () => {
       toast.error("Please enter a valid email address");
       return;
     }
-
+    
     setLoading(true);
     try {
-      const res = (await forgotPassword(email)) as ApiResponse;
+      const res = await forgotPasswordMech(email) as ApiResponse;
+      
       if (res?.data?.success) {
-        setUser(res.data.data || null);
+        setMech(res.data.data || null);
         toast.success(res.data.message || "OTP sent successfully!");
         setShowOtp(true);
-        setSeconds(60);
+        setSeconds(300);
       } else {
         toast.error(res?.data?.message || "Failed to send OTP");
       }
@@ -116,7 +114,7 @@ const ForgetPassword: React.FC = () => {
       toast.error("Please enter the OTP!");
       return;
     }
-
+    
     if (otp.length !== 6) {
       toast.error("Please enter a valid 6-digit OTP!");
       return;
@@ -129,8 +127,8 @@ const ForgetPassword: React.FC = () => {
 
     setOtpLoading(true);
     try {
-      const res = (await forgotVerifyOtp(otp)) as ApiResponse;
-
+      const res = await forgotVerifyOtpMech(otp) as ApiResponse;
+      
       if (res?.data?.success) {
         setShowForm(true);
         toast.success("OTP verified successfully!");
@@ -146,47 +144,45 @@ const ForgetPassword: React.FC = () => {
   };
 
   // Password form handler
-  const { values, handleBlur, handleChange, handleSubmit, errors, resetForm } =
-    useFormik({
-      initialValues: initialValues,
-      validationSchema: newPasswordValidation,
-      onSubmit: async (formValues) => {
-        if (!user?._id) {
-          toast.error("User data not found. Please try again.");
-          return;
-        }
+  const { values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
+    initialValues: initialValues,
+    validationSchema: newPasswordValidation,
+    onSubmit: async (formValues) => {
+      if (!mech?._id) {
+        toast.error("Mechanic data not found. Please try again.");
+        return;
+      }
 
-        try {
-          const res = (await updateNewPassword(
-            formValues.password,
-            user._id
-          )) as ApiResponse;
-
-          if (res?.data?.success) {
-            toast.success("Password updated successfully!");
-            navigate("/login");
-          } else {
-            toast.error(res?.data?.message || "Failed to update password");
-          }
-        } catch (error) {
-          console.error("Password update error:", error);
-          toast.error(getErrorMessage(error));
+      try {
+        const res = await updateNewPasswordMech(formValues.password, mech._id) as ApiResponse;
+        
+        if (res?.data?.success) {
+          toast.success("Password updated successfully!");
+          navigate("/mech/login");
+        } else {
+          toast.error(res?.data?.message || "Failed to update password");
         }
-      },
-    });
+      } catch (error) {
+        console.error("Password update error:", error);
+        toast.error(getErrorMessage(error));
+      }
+    },
+  });
 
   // Resend OTP handler
   const handleResendOTP = async () => {
+    if (seconds > 0) {
+      toast.error(`Please wait ${minutes}:${remainingSeconds.toString().padStart(2, '0')} before requesting a new OTP`);
+      return;
+    }
+
     setResendLoading(true);
     try {
-      const result = (await forgotPassword(email)) as ApiResponse;
-
+      const result = await resendMechOtp() as ApiResponse;
+      
       if (result?.data?.success) {
-        if (result.data.data) {
-          setUser(result.data.data);
-        }
         toast.success("New OTP sent successfully!");
-        setSeconds(60);
+        setSeconds(300);
         setOtp("");
       } else {
         toast.error(result?.data?.message || "Failed to resend OTP");
@@ -199,43 +195,34 @@ const ForgetPassword: React.FC = () => {
     }
   };
 
+  // Clear password fields
   const handleClearPasswords = () => {
     resetForm();
   };
 
+  // Reset to email step
   const handleBackToEmail = () => {
     setShowOtp(false);
     setShowForm(false);
     setOtp("");
     setSeconds(300);
-    setUser(null);
+    setMech(null);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        
         {/* Email Step */}
         {!showOtp && !showForm && (
           <div className="bg-white rounded-xl shadow-xl p-8">
             <div className="text-center mb-8">
               <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <svg
-                  className="w-8 h-8 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Forgot Password?
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Forgot Password?</h1>
               <p className="text-gray-600">
                 Enter your email address and we'll send you a verification code
               </p>
@@ -243,10 +230,7 @@ const ForgetPassword: React.FC = () => {
 
             <form onSubmit={handleEmailSubmit} className="space-y-6">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
                 </label>
                 <input
@@ -265,7 +249,7 @@ const ForgetPassword: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-freeze-color text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -281,10 +265,7 @@ const ForgetPassword: React.FC = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Remember your password?{" "}
-                <Link
-                  to="/user/login"
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                >
+                <Link to="/mech/login" className="text-blue-600 hover:text-blue-500 font-medium">
                   Sign in here
                 </Link>
               </p>
@@ -297,35 +278,19 @@ const ForgetPassword: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-8">
               <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <svg
-                  className="w-8 h-8 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Enter Verification Code
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Enter Verification Code</h1>
               <p className="text-gray-600">
-                We've sent a 6-digit code to{" "}
-                <span className="font-medium">{email}</span>
+                We've sent a 6-digit code to <span className="font-medium">{email}</span>
               </p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label
-                  htmlFor="otp"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
                   Verification Code
                 </label>
                 <input
@@ -333,7 +298,7 @@ const ForgetPassword: React.FC = () => {
                   id="otp"
                   value={otp}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
                     setOtp(value);
                   }}
                   maxLength={6}
@@ -345,43 +310,28 @@ const ForgetPassword: React.FC = () => {
               <div className="text-center space-y-2">
                 {seconds > 0 ? (
                   <p className="text-sm text-gray-600">
-                    Code expires in {minutes}:
-                    {remainingSeconds.toString().padStart(2, "0")}
+                    Code expires in {minutes}:{remainingSeconds.toString().padStart(2, '0')}
                   </p>
                 ) : (
-                  <p className="text-sm text-red-600 font-medium">
-                    OTP Expired{" "}
-                    <button
-                      type="button"
-                      onClick={handleResendOTP}
-                      disabled={resendLoading}
-                      className="text-blue-500 cursor-pointer hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
-                    >
-                      {resendLoading ? "Sending..." : "Request another?"}
-                    </button>
-                  </p>
+                  <p className="text-sm text-red-600 font-medium">Code has expired</p>
                 )}
-
-                {seconds > 0 && (
-                  <p className="text-sm text-gray-600">
-                    Didn't receive the code?{" "}
-                    <button
-                      type="button"
-                      onClick={handleResendOTP}
-                      disabled={resendLoading}
-                      className="text-blue-600 hover:text-blue-500 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
-                    >
-                      {resendLoading ? "Sending..." : "Resend Code"}
-                    </button>
-                  </p>
-                )}
+                
+                <p className="text-sm text-gray-600">
+                  Didn't receive the code?{" "}
+                  <button
+                    type="button"
+                    onClick={handleResendOTP}
+                    disabled={seconds > 0 || resendLoading}
+                    className="text-blue-600 hover:text-blue-500 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {resendLoading ? "Sending..." : "Resend Code"}
+                  </button>
+                </p>
               </div>
 
               <button
                 onClick={handleOtpSubmit}
-                disabled={
-                  !otp || otp.length !== 6 || seconds <= 0 || otpLoading
-                }
+                disabled={!otp || otp.length !== 6 || seconds <= 0 || otpLoading}
                 className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {otpLoading ? (
@@ -408,30 +358,25 @@ const ForgetPassword: React.FC = () => {
         {showForm && (
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-8">
-              {user?.profile_picture && (
+              {mech?.profile_picture && (
                 <img
-                  src={user.profile_picture}
+                  src={mech.profile_picture}
                   alt="Profile"
                   className="mx-auto w-16 h-16 rounded-full object-cover mb-4"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
+                    (e.target as HTMLImageElement).style.display = 'none';
                   }}
                 />
               )}
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Reset Password
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h1>
               <p className="text-gray-600">
-                Create a new password for {user?.name || user?.email}
+                Create a new password for {mech?.name || mech?.email}
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   New Password *
                 </label>
                 <input
@@ -450,10 +395,7 @@ const ForgetPassword: React.FC = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="cpassword"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label htmlFor="cpassword" className="block text-sm font-medium text-gray-700 mb-2">
                   Confirm New Password *
                 </label>
                 <input
@@ -467,9 +409,7 @@ const ForgetPassword: React.FC = () => {
                   placeholder="Confirm new password"
                 />
                 {errors.cpassword && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.cpassword}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.cpassword}</p>
                 )}
               </div>
 
@@ -483,11 +423,7 @@ const ForgetPassword: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={
-                    !values.password ||
-                    !values.cpassword ||
-                    Object.keys(errors).length > 0
-                  }
+                  disabled={!values.password || !values.cpassword || Object.keys(errors).length > 0}
                   className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Update Password
@@ -501,4 +437,4 @@ const ForgetPassword: React.FC = () => {
   );
 };
 
-export default ForgetPassword;
+export default ForgetPasswordForMech;

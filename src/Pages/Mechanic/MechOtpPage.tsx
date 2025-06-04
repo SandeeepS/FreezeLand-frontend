@@ -9,8 +9,12 @@ import toast from "react-hot-toast";
 const MechOtpPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   console.log("id from the signupPage is", id);
+  
   const [otp, setOTP] = useState<string>("");
   const [seconds, setSeconds] = useState(60);
+  const [otpLoading, setOtpLoading] = useState<boolean>(false);
+  const [resendLoading, setResendLoading] = useState<boolean>(false);
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,7 +35,8 @@ const MechOtpPage: React.FC = () => {
   const remainingSeconds = seconds % 60;
 
   const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setOTP(e.target.value);
+    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setOTP(value);
   };
 
   const handleVerify = async () => {
@@ -39,29 +44,42 @@ const MechOtpPage: React.FC = () => {
       toast.error("Please enter the OTP");
       return;
     }
+    
+    if (otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP!");
+      return;
+    }
 
+    setOtpLoading(true);
     try {
       console.log("OTP:", otp);
       const result = await verifyMechOtp(id as string, otp);
-      console.log("result from the verifyMechOtp funciton ", result);
+      console.log("result from the verifyMechOtp function ", result);
+      
       if (result && "data" in result && result.data.success) {
         console.log(`everything is fine your mechId is  ${result.data.mechId}`);
         dispatch(setMechCredential(result.data.data));
+        toast.success("OTP verified successfully!");
         navigate("/mech/homepage");
       } else if (result && "data" in result) {
-        console.log("Signup  failed due to problem in otp verification");
+        console.log("Signup failed due to problem in otp verification");
         toast.error(result?.data?.message || "Signup Failed");
       } else {
         toast.error("An unexpected error occurred during verification.");
       }
     } catch (error) {
       console.log(
-        "errror occured in the MechOtpPage while handling the opt verificaiton",
+        "error occurred in the MechOtpPage while handling the otp verification",
         error
       );
+      toast.error("An error occurred during verification.");
+    } finally {
+      setOtpLoading(false);
     }
   };
+
   const resendOTP = async () => {
+    setResendLoading(true);
     try {
       const response = await resendMechOtp(id as string);
       console.log(
@@ -69,56 +87,101 @@ const MechOtpPage: React.FC = () => {
         response
       );
 
+      // Reset timer to 60 seconds after successful resend
       setSeconds(60);
+      setOTP(""); // Clear current OTP
       toast.success("OTP resent successfully!");
     } catch (error) {
       console.log(error as Error);
       toast.error("Failed to resend OTP");
+    } finally {
+      setResendLoading(false);
     }
   };
 
-
   return (
-    <div className="bg-gray-100 flex flex-col items-center justify-center h-screen w-full">
-      <div className="w-full max-w-md px-8 py-10 bg-white rounded-lg shadow-md  ">
-        <h1 className="text-2xl font-semibold text-center mb-6">Enter OTP</h1>
-        <p className="text-white-600 text-center mb-4">
-          Code sent to your Email
-        </p>
-        <div className="flex justify-center my-2 h-10">
-          <input
-            type="text"
-            value={otp}
-            onChange={handleOTPChange}
-            maxLength={6}
-            className="rounded-lg bg-freeze-color cursor-text   flex items-center justify-center text-white text-center outline-none"
-          />
-        </div>
-        <div className="flex items-center flex-col justify-between mb-6">
-          <div className="ps-1">
-            {seconds <= 0 ? (
-              <div>
-                Otp Expired{" "}
-                <span
-                  onClick={resendOTP}
-                  className="text-blue-500 cursor-pointer"
-                >
-                  Request another ?
-                </span>
-              </div>
-            ) : (
-              <div>
-                Otp expires in {minutes} min {remainingSeconds} sec
-              </div>
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Enter Verification Code</h1>
+            <p className="text-gray-600">
+              Code sent to your Email
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
+                Verification Code
+              </label>
+              <input
+                type="text"
+                id="otp"
+                value={otp}
+                onChange={handleOTPChange}
+                maxLength={6}
+                placeholder="Enter 6-digit code"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+            </div>
+
+            <div className="text-center space-y-2">
+              {seconds > 0 ? (
+                <p className="text-sm text-gray-600">
+                  OTP expires in {minutes} min {remainingSeconds} sec
+                </p>
+              ) : (
+                <p className="text-sm text-red-600 font-medium">
+                  OTP Expired{" "}
+                  <button
+                    type="button"
+                    onClick={resendOTP}
+                    disabled={resendLoading}
+                    className="text-blue-500 cursor-pointer hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {resendLoading ? "Sending..." : "Request another?"}
+                  </button>
+                </p>
+              )}
+              
+              {seconds > 0 && (
+                <p className="text-sm text-gray-600">
+                  Didn't receive the code?{" "}
+                  <button
+                    type="button"
+                    onClick={resendOTP}
+                    disabled={resendLoading}
+                    className="text-blue-600 hover:text-blue-500 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {resendLoading ? "Sending..." : "Resend Code"}
+                  </button>
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={handleVerify}
+              disabled={!otp || otp.length !== 6 || otpLoading}
+              className="w-full bg-freeze-color text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {otpLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Verifying...
+                </div>
+              ) : (
+                "Verify"
+              )}
+            </button>
           </div>
         </div>
-        <button
-          onClick={handleVerify}
-          className="w-full px-4 py-2 text-lg font-medium text-white bg-freeze-color rounded-md hover:bg-blue-700"
-        >
-          Verify
-        </button>
       </div>
     </div>
   );
