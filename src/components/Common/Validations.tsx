@@ -89,10 +89,10 @@ export const ServiceListingValidation = Yup.object({
   name: Yup.string().min(3).required("Service name is required"),
   discription: Yup.array()
     .of(Yup.string().min(3, "Each description must be at least 3 characters"))
-    .min(1, "At least one description is required"), 
+    .min(1, "At least one description is required"),
   serviceCharge: Yup.number()
     .required("Service charge is required")
-    .min(1, "Service charge must be greater than zero"), 
+    .min(1, "Service charge must be greater than zero"),
 });
 
 export const DeviceListingValidation = Yup.object({
@@ -104,51 +104,49 @@ export const ServiceFormValidation = Yup.object({
   discription: Yup.string()
     .min(5)
     .required("A description is required to help us understand your complaint"),
-  file: Yup.mixed()
-    .nullable()
-    .required("Please upload the image")
-    .optional()
-    .test(
-      "FILE-SIZE",
-      "uploaded file is too big",
-      (value) => !value || (value && value.size <= 1024 * 1024)
-    )
-    .test(
-      "FILE FORMAT",
-      "Uploaded file has unsupported format",
-      (value) => !value || (value && SUPPORTED_FORMATS.includes(value?.type))
-    ),
+  files: Yup.array()
+    .of(Yup.mixed().required("File is required"))
+    .min(1, "At least one image is required")
+    .max(5, "Maximum 5 images allowed"),
 
-    defaultAddress: Yup.string().required("Please Select the address")
+  defaultAddress: Yup.string().required("Please Select the address"),
 });
 
 export const MechanicVerificationValidationSchema = Yup.object({
-  
-      mechanicType: Yup.array()
-        .min(1, 'Select at least one mechanic type')
-        .required('Mechanic type is required'),
-      photo: Yup.mixed()
-        .required('Photo is required')
-        .test('fileSize', 'File too large', (value) => {
-          return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
-        })
-        .test('fileType', 'Unsupported file type', (value) => {
-          return value && ['image/jpeg', 'image/png', 'image/gif'].includes((value as File).type);
-        }),
-      adharProof: Yup.mixed()
-        .required('Adhar proof is required')
-        .test('fileSize', 'File too large', (value) => {
-          return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
-        })
-        .test('fileType', 'Unsupported file type', (value) => {
-          return value && ['image/jpeg', 'image/png', 'image/pdf'].includes((value as File).type);
-        }),
-      employeeLicense: Yup.mixed()
-        .required('Employee license is required')
-        .test('fileSize', 'File too large', (value) => {
-          return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
-        })
-        .test('fileType', 'Unsupported file type', (value) => {
-          return value && ['image/jpeg', 'image/png', 'image/pdf'].includes((value as File).type);
-        }),
-})
+  mechanicType: Yup.array()
+    .min(1, "Select at least one mechanic type")
+    .required("Mechanic type is required"),
+  photo: Yup.mixed()
+    .required("Photo is required")
+    .test("fileSize", "File too large", (value) => {
+      return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
+    })
+    .test("fileType", "Unsupported file type", (value) => {
+      return (
+        value &&
+        ["image/jpeg", "image/png", "image/gif"].includes((value as File).type)
+      );
+    }),
+  adharProof: Yup.mixed()
+    .required("Adhar proof is required")
+    .test("fileSize", "File too large", (value) => {
+      return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
+    })
+    .test("fileType", "Unsupported file type", (value) => {
+      return (
+        value &&
+        ["image/jpeg", "image/png", "image/pdf"].includes((value as File).type)
+      );
+    }),
+  employeeLicense: Yup.mixed()
+    .required("Employee license is required")
+    .test("fileSize", "File too large", (value) => {
+      return value && (value as File).size <= 10 * 1024 * 1024; // 5MB
+    })
+    .test("fileType", "Unsupported file type", (value) => {
+      return (
+        value &&
+        ["image/jpeg", "image/png", "image/pdf"].includes((value as File).type)
+      );
+    }),
+});
