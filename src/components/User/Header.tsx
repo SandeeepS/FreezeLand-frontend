@@ -126,8 +126,8 @@ const Header: React.FC = () => {
               onClick={toggleCard}
             >
               <img
-                src= { image ||"https://cdn-icons-png.flaticon.com/128/64/64572.png"}
-                alt="Profile Avatar"
+                src= { image }
+                alt="https://cdn-icons-png.flaticon.com/128/64/64572.png"
                 className="h-10 w-10 rounded-full object-cover"
               />
             </button>
