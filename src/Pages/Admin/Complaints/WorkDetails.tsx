@@ -2,7 +2,7 @@ import { format } from "date-fns";
 
 interface WorkDetailsProps {
   workDetails: Array<{
-    addedAt: string;
+    addedAt: Date;
     amount: number;
     description: string;
     _id: string;
