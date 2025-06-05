@@ -10,6 +10,7 @@ import {
   TableColumn,
 } from "../../../interfaces/IComponents/User/IUserInterfaces";
 import EmptyStateBox from "./EmptyStateBox";
+import { MdOutlineSpeakerNotesOff } from "react-icons/md";
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
@@ -285,10 +286,10 @@ const UserServiceHistory: React.FC = () => {
 
   // Custom empty state for service history
   const ServiceHistoryEmptyState = () => (
-    <div className="text-center py-16">
+    <div className="text-center py-16 mt-44">
       <div className="mx-auto max-w-md">
         <div className="mx-auto h-24 w-24 text-gray-400">
-          <Circle className="h-full w-full" />
+          <MdOutlineSpeakerNotesOff className="h-full w-full" />
         </div>
         <h3 className="mt-6 text-lg font-medium text-gray-900">
           No Service History
@@ -296,6 +297,7 @@ const UserServiceHistory: React.FC = () => {
         <p className="mt-2 text-sm text-gray-500">
           You haven't completed any services yet. Once you complete services, they'll appear here.
         </p>
+        
       </div>
     </div>
   );

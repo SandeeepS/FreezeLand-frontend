@@ -43,7 +43,7 @@ const AddAddress: React.FC = () => {
   }, [userData]);
   
   return (
-    <div className="h-full bg-white rounded-lg shadow-md flex flex-col">
+    <div className="h-full bg-white rounded-lg shadow-md flex flex-col mt-36">
       <div className="flex flex-col justify-center items-center my-6">
         <h1>
           Your Account {">"} Your Address {">"} Add Address

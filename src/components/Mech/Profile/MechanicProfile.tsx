@@ -12,6 +12,7 @@ const MechanicProfile = () => {
   const [profileImage, setProfileImage] = useState("");
   const [adharImage, setAdharImage] = useState("");
   const [employeeLicense, setEmployeeLicence] = useState("");
+  const [imageError, setImageError] = useState(false);
 
   const [mechDetails, setMechDetails] = useState({
     name: "",
@@ -83,7 +84,7 @@ const MechanicProfile = () => {
         console.log(`No ${type} image key provided, skipping fetch`);
         return;
       }
-      
+
       try {
         const response = await getImageUrl(imageKey, type);
         if (response?.data?.url) {
@@ -93,20 +94,19 @@ const MechanicProfile = () => {
         console.error(`Error fetching ${type} image:`, error);
       }
     };
-    
+
     // Fetch images only if the keys exist
     if (mechDetails.photo) {
       fetchImageUrl(mechDetails.photo, "mechProfile", setProfileImage);
     }
-    
+
     if (mechDetails.adharProof) {
       fetchImageUrl(mechDetails.adharProof, "service", setAdharImage);
     }
-    
+
     if (mechDetails.employeeLicense) {
       fetchImageUrl(mechDetails.employeeLicense, "service", setEmployeeLicence);
     }
-    
   }, [mechDetails.photo, mechDetails.adharProof, mechDetails.employeeLicense]);
 
   if (loading) {
@@ -162,14 +162,13 @@ const MechanicProfile = () => {
             <div className="absolute -top-16 md:relative md:-top-10 bg-white p-2 rounded-full shadow-lg border-4 border-white">
               <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden">
                 <img
-                  src={profileImage || "/src/Images/businessman.png"}
-                  alt="Mechanic Profile"
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).onerror = null;
-                    (e.target as HTMLImageElement).src =
-                      "/src/Images/businessman.png";
-                  }}
+                  src={
+                    imageError || !profileImage
+                      ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
+                      : profileImage
+                  }
+                  onError={() => setImageError(true)}
                 />
               </div>
             </div>
@@ -453,7 +452,9 @@ const MechanicProfile = () => {
                   {mechDetails.adharProof ? (
                     <div className="relative bg-gray-100 rounded-lg overflow-hidden h-36">
                       <img
-                        src={adharImage || "/src/Images/document-placeholder.png"}
+                        src={
+                          adharImage || "/src/Images/document-placeholder.png"
+                        }
                         alt="Aadhar Card"
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -484,7 +485,10 @@ const MechanicProfile = () => {
                   {mechDetails.employeeLicense ? (
                     <div className="relative bg-gray-100 rounded-lg overflow-hidden h-36">
                       <img
-                        src={employeeLicense || "/src/Images/document-placeholder.png"}
+                        src={
+                          employeeLicense ||
+                          "/src/Images/document-placeholder.png"
+                        }
                         alt="Employee License"
                         className="w-full h-full object-cover"
                         onError={(e) => {

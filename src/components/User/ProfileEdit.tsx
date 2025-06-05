@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { FaCamera, FaTrash} from "react-icons/fa";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
-import { getProfile, EditUserDetails, getImageUrl, getS3SingUrl } from "../../Api/user";
+import {
+  getProfile,
+  EditUserDetails,
+  getImageUrl,
+  getS3SingUrl,
+} from "../../Api/user";
 import { useAppSelector } from "../../App/store";
+import ImageUploadProfile from "../Common/ProfileImage/ImageUploadProfile";
 
 interface UserProfile {
   _id?: string;
@@ -13,7 +18,7 @@ interface UserProfile {
   email?: string;
   image?: string;
   location?: string;
-  profile_picture?: string; 
+  profile_picture?: string;
 }
 
 const validationSchema = object({
@@ -28,7 +33,7 @@ const DEFAULT_PROFILE_IMAGE = "/src/Images/businessman.png";
 
 const ProfileEdit: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
-  
+
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,18 +41,19 @@ const ProfileEdit: React.FC = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
-  const [profileImage,setProfileImage] = useState<string>("");
-
+  const [profileImage, setProfileImage] = useState<string>("");
+    const [hasNewImage, setHasNewImage] = useState(false); // Track if user uploaded new image
+  
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userId = userData?.id
+        const userId = userData?.id;
         const response = await getProfile(userId as string);
         const userProfileData = response?.data.data.data;
         setUserProfile(userProfileData);
         setPreviewImage(userProfileData.image || DEFAULT_PROFILE_IMAGE);
-        console.log(previewImage)
+        console.log(previewImage);
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
       }
@@ -58,7 +64,7 @@ const ProfileEdit: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if ( userProfile && userProfile.profile_picture) {
+        if (userProfile && userProfile.profile_picture) {
           const result = await getImageUrl(
             userProfile.profile_picture,
             "service"
@@ -67,37 +73,19 @@ const ProfileEdit: React.FC = () => {
             setProfileImage(result.data.url);
           }
         }
-      } catch (error){
+      } catch (error) {
         console.log(error as Error);
       }
-    }
-    fetchData();
-  },[userProfile])
-
-
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setImageFile(file);
-    setFileName(file.name);
-    setFileType(file.type);
-    
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result as string);
     };
-    reader.readAsDataURL(file);
-  };
+    fetchData();
+  }, [userProfile]);
 
-  const handleImageRemove = () => {
-    setPreviewImage(DEFAULT_PROFILE_IMAGE);
-    setImageFile(null);
-    setFileName("");
-    setFileType("");
-  };
-
+const handleImageUpload = (file: File | null, name: string, type: string) => {
+  setImageFile(file);
+  setFileName(name);
+  setFileType(type);
+  setHasNewImage(!!file); 
+};
   if (!userProfile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -112,7 +100,9 @@ const ProfileEdit: React.FC = () => {
               </div>
             </div>
           </div>
-          <p className="text-center mt-4 text-gray-600">Loading user profile...</p>
+          <p className="text-center mt-4 text-gray-600">
+            Loading user profile...
+          </p>
         </div>
       </div>
     );
@@ -122,10 +112,9 @@ const ProfileEdit: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-50 mt-4">
       <div className="container mx-auto   pt-24 pb-12">
         <div className=" mx-auto">
-   
           <div className="bg-white rounded-lg shadow-md overflow-hidden mx-4 h-screen">
             <div className="h-24 bg-gradient-to-r from-black to-freeze-color"></div>
-          
+
             <Formik
               initialValues={{
                 _id: userProfile._id || "",
@@ -139,12 +128,19 @@ const ProfileEdit: React.FC = () => {
               onSubmit={async (values) => {
                 try {
                   setIsSubmitting(true);
-                  
+
                   // Handle image upload to S3 if a new image is selected
                   if (imageFile) {
                     const folderName = "UserProfile";
-                    const response = await getS3SingUrl(fileName, fileType,folderName);
-                    console.log("response after uploadin image to s3",response)
+                    const response = await getS3SingUrl(
+                      fileName,
+                      fileType,
+                      folderName
+                    );
+                    console.log(
+                      "response after uploadin image to s3",
+                      response
+                    );
                     if (response?.data.uploadURL) {
                       // Upload the image to S3
                       await fetch(response.data.uploadURL, {
@@ -158,7 +154,7 @@ const ProfileEdit: React.FC = () => {
                       values.profile_picture = response.data.key;
                     }
                   }
-                  
+
                   console.log("Submitting values:", values);
                   const result = await EditUserDetails(values);
                   if (result?.status) {
@@ -175,41 +171,30 @@ const ProfileEdit: React.FC = () => {
                 <Form className="p-6">
                   <input type="hidden" name="_id" />
                   <input type="hidden" name="imageKey" />
-                  
+
                   <div className="flex flex-col items-center -mt-16 mb-6">
-                    <div className="relative">
-                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-white shadow-lg">
-                        <img
-                          className="w-full h-full object-cover"
-                          src={profileImage|| DEFAULT_PROFILE_IMAGE}
-                          alt="Profile"
+                    <div className="absolute -top-16 md:relative md:-top-10 bg-white  rounded-full shadow-lg  border-white">
+                      <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden">
+                        <ImageUploadProfile
+                          currentImage={profileImage}
+                          onImageChange={handleImageUpload}
+                          size="lg"
+                          className="mb-4"
                         />
                       </div>
-                      
-                      <div className="absolute bottom-0 right-0">
-                        <label className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full cursor-pointer shadow-md hover:bg-blue-700 transition-colors text-white">
-                          <FaCamera size={14} />
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
                     </div>
-                  
-                    {imageFile && (
-                      <button
-                        type="button"
-                        onClick={handleImageRemove}
-                        className="mt-2 text-red-600 text-sm flex items-center hover:underline"
-                      >
-                        <FaTrash className="mr-1" size={12} />
-                        Remove uploaded photo
-                      </button>
+                           {/* Image Upload Status */}
+                    {hasNewImage && (
+                      <div className="mt-3 px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                        New image selected
+                      </div>
                     )}
-                    
+
+                    {/* Upload Instructions */}
+                    <p className="mt-2 text-xs text-gray-500 text-center max-w-xs">
+                      Click the camera icon to upload a new profile picture
+                    </p>
+
                     <p className="mt-4 text-gray-600 font-medium">
                       {userProfile.email}
                     </p>
@@ -219,7 +204,7 @@ const ProfileEdit: React.FC = () => {
                     <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">
                       Edit Personal Information
                     </h2>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -232,7 +217,9 @@ const ProfileEdit: React.FC = () => {
                           placeholder="Enter your name"
                         />
                         {errors.name && touched.name && (
-                          <div className="text-red-500 text-sm mt-1">{errors.name}</div>
+                          <div className="text-red-500 text-sm mt-1">
+                            {errors.name}
+                          </div>
                         )}
                       </div>
 
@@ -257,7 +244,7 @@ const ProfileEdit: React.FC = () => {
                     <div className="flex justify-end space-x-4 pt-4">
                       <button
                         type="button"
-                        onClick={() => navigate('/user/account')}
+                        onClick={() => navigate("/user/account")}
                         className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                       >
                         Cancel

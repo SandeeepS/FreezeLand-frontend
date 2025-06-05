@@ -5,7 +5,7 @@ interface ComplaintImagesProps {
   images: string[];
 }
 
-interface ImageData {
+interface ImageData{
   original: string;
   url: string;
   loading: boolean;
@@ -18,7 +18,6 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   console.log("images are in the complaintImages component", images);
-
   useEffect(() => {
     const fetchAllImages = async () => {
       if (!images || images.length === 0) return;
@@ -30,9 +29,7 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
         loading: true,
         error: false
       }));
-      
       setImageData(initialImageData);
-
       // Fetch URLs for all images
       const promises = images.map(async (image, index) => {
         try {
