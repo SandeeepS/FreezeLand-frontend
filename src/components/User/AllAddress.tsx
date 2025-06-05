@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardActions, CardContent, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { AddAddress } from "../../interfaces/AddAddress";
-import { handleRemoveUserAddress, setDefaultAddress } from "../../Api/user";
+import { handleRemoveUserAddress } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getProfile } from "../../Api/user";
