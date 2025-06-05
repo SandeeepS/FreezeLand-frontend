@@ -16,6 +16,8 @@ interface LocationDetailsProps {
 }
 
 const LocationDetails = ({ location, defaultAddress }: LocationDetailsProps) => {
+  console.log("Location details is ",location);
+  console.log("default address",defaultAddress);
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-lg font-bold text-gray-800 border-b border-gray-200 pb-3 mb-4">

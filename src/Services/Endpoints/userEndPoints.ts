@@ -26,7 +26,8 @@ const userRoutes = {
   successPayment:"/user/successPayment",
   updateUserLocation:"/user/updateUserLocation",
   getPresignedUrl:"/user/getPresignedUrl",
-  createRoute:"/user/report"
+  createRoute:"/user/report",
+  handleRemoveUserAddress:"/user/handleRemoveUserAddress"
 };
 
 export default userRoutes;

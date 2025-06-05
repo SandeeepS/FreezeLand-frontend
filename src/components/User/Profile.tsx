@@ -8,6 +8,7 @@ const Profile: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
 
   const [image, setImage] = React.useState<string>("");
+  const [imageError, setImageError] = useState(false);
 
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: "",
@@ -16,7 +17,7 @@ const Profile: React.FC = () => {
     location: "",
     address: "",
     profile_picture: "",
-    defaultAddressDetails:{
+    defaultAddressDetails: {
       district: "",
       state: "",
       pin: "",
@@ -27,11 +28,11 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
 
   // useEffect to fetch the userDetails
-  useEffect(() =>{
+  useEffect(() => {
     const fetchData = async () => {
       try {
         console.log("triggered the fetch data function");
-        const userId = userData?.id
+        const userId = userData?.id;
         const result = await getProfile(userId as string);
         console.log("User profile details from the backend is ", result);
         if (result) {
@@ -63,7 +64,7 @@ const Profile: React.FC = () => {
             userDetails.profile_picture,
             "service"
           );
-          console.log("profile poicture is",result);
+          console.log("profile poicture is", result);
           if (result) {
             setImage(result.data.url);
           }
@@ -77,7 +78,6 @@ const Profile: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-
       <div className="container mx-auto px-4 pt-24 pb-12">
         {/* Profile Header Section */}
         <div className="relative bg-white rounded-lg shadow-md mb-8">
@@ -87,9 +87,14 @@ const Profile: React.FC = () => {
             <div className="absolute -top-16 md:relative md:-top-10 bg-white p-2 rounded-full shadow-lg border-4 border-white">
               <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden">
                 <img
-                  src={image}
-                  alt="/src/Images/businessman.png"
+                  src={
+                    imageError || !image
+                      ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
+                      : image
+                  }
+                  alt="User profile"
                   className="w-full h-full object-cover"
+                  onError={() => setImageError(true)}
                 />
               </div>
             </div>

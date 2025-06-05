@@ -6,7 +6,7 @@ import { IComplaintDetails, IMechanicDetails } from '../../interfaces/IComponent
 
 interface InvoiceData {
   complaint: IComplaintDetails;
-  mechanicDetails?: IMechanicDetails;
+  mechanicDetails: IMechanicDetails;
   totalAmount: number;
   paymentDate?: string;
   invoiceNumber?: string;

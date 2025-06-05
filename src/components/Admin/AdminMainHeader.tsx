@@ -51,7 +51,7 @@ const AdminMainHeader: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[110px] flex justify-between w-full bg-freeze-color">
+      <div className="text-white font-bold h-[110px] flex justify-between w-full z-10 bg-freeze-color">
         <h1 className="w-full text-3xl text-black font-exo p-10">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>

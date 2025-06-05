@@ -400,6 +400,17 @@ const createReport = async (reportData : IReportData) =>  {
   }
 }
 
+//funtion to remove the userAddress
+const handleRemoveUserAddress = async (userId:string,addressId:string) => {
+  try{
+    const result = await Api.put(userRoutes.handleRemoveUserAddress,{userId,addressId});
+    return result;
+  }catch(error){
+    console.log("Error occured in the user.ts while handleRemoveUserAddress",error);
+    userErrorHandler(error as Error);
+  }
+}
+
 export {
   signup,
   login,
@@ -426,5 +437,6 @@ export {
   getAllServices,
   getAllUserRegisteredServices,
   getUserRegisteredServiceDetailsById,
+  handleRemoveUserAddress,
   updateUserLocation,
 };

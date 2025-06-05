@@ -395,6 +395,17 @@ const createReport = async (reportData : IReportData) =>  {
   }
 }
 
+//funtion to remove the mechAddress
+const handleRemoveMechAddress = async (mechId:string,addressId:string) => {
+  try{
+    const result = await Api.put(mechRoutes.handleRemoveMechAddress,{mechId,addressId});
+    return result;
+  }catch(error){
+    console.log("Error occured in the mech.ts while handleRemoveMechAddress",error);
+    mechErrorHandler(error as Error);
+  }
+}
+
 export {
   mechLogin,
   createRoom,
@@ -423,4 +434,5 @@ export {
   updateMechanicDetails,
   AddMechAddress,
   EditExistingMechAddress,
+  handleRemoveMechAddress
 };

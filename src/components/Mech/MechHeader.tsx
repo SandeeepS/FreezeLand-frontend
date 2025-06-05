@@ -10,6 +10,7 @@ import { useAppSelector } from "../../App/store";
 import { getImageUrl, getMechanicDetails, mLogout } from "../../Api/mech";
 import { MechDetails2 } from "../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import toast from "react-hot-toast";
+import { FaRegAddressBook } from "react-icons/fa";
 
 const MechHeader: React.FC = () => {
   const mechData = useAppSelector((state) => state.auth.mechData);
@@ -33,6 +34,11 @@ const MechHeader: React.FC = () => {
       label: "Service History",
       path: "/mech/serviceHistory",
     },
+    {
+      icon: <FaRegAddressBook className="mr-2" />,
+      label: "Address",
+      path: "/mech/mechAddress",
+    },
     // Add more mechanic-specific navigation items
   ];
 
@@ -41,7 +47,7 @@ const MechHeader: React.FC = () => {
       try {
         const mechId = mechData?.id;
         const result = await getMechanicDetails(mechId as string);
-        console.log("mechDetails in the mechHeader",result)
+        console.log("mechDetails in the mechHeader", result);
         setMechProfileDetails(result?.data.result);
         setIsVerified(result?.data?.result.isVerified);
       } catch (error) {

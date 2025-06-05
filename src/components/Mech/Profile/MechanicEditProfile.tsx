@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FaCamera, FaTrash } from "react-icons/fa";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import {
   updateMechanicDetails,
 } from "../../../Api/mech";
 import { useAppSelector } from "../../../App/store";
+import ImageUploadProfile from "../../Common/ProfileImage/ImageUploadProfile";
 
 interface MechanicProfile {
   _id?: string;
@@ -27,15 +27,12 @@ const validationSchema = object({
     .matches(/^\d{10}$/, "Phone number must be 10 digits"),
 });
 
-const DEFAULT_PROFILE_IMAGE = "/src/Images/businessman.png";
-
 const MechanicProfileEdit: React.FC = () => {
   const mechData = useAppSelector((state) => state.auth.mechData);
   const navigate = useNavigate();
   const [mechProfile, setMechProfile] = useState<MechanicProfile | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
   const [profileImage, setProfileImage] = useState<string>("");
@@ -54,7 +51,7 @@ const MechanicProfileEdit: React.FC = () => {
         );
         const profileData = response?.data?.result;
         setMechProfile(profileData);
-        setPreviewImage(profileData?.photo || DEFAULT_PROFILE_IMAGE);
+        // Don't set previewImage here - let it be handled by profileImage
       } catch (error) {
         console.error("Failed to fetch mechanic profile:", error);
       }
@@ -79,24 +76,10 @@ const MechanicProfileEdit: React.FC = () => {
     fetchData();
   }, [mechProfile]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleImageUpload = (file: File | null, name: string, type: string) => {
     setImageFile(file);
-    setFileName(file.name);
-    setFileType(file.type);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleImageRemove = () => {
-    setPreviewImage(DEFAULT_PROFILE_IMAGE);
-    setImageFile(null);
-    setFileName("");
-    setFileType("");
+    setFileName(name);
+    setFileType(type);
   };
 
   if (!mechProfile) {
@@ -123,9 +106,9 @@ const MechanicProfileEdit: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 mt-8">
-      <div className="container mx-auto  pt-24 pb-12 w-full">
-        <div className=" mx-auto">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mx-5 h-screen ">
+      <div className="container mx-auto pt-24 pb-12 w-full">
+        <div className="mx-auto">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden mx-5 h-screen">
             <div className="h-24 bg-gradient-to-r from-black to-freeze-color"></div>
             <Formik
               initialValues={{
@@ -156,7 +139,7 @@ const MechanicProfileEdit: React.FC = () => {
                       values.photo = response.data.key;
                     }
                   }
-                  console.log("Values for updasting the mechDetails", values);
+                  console.log("Values for updating the mechDetails", values);
                   const result = await updateMechanicDetails(
                     mechId as string,
                     values
@@ -180,40 +163,23 @@ const MechanicProfileEdit: React.FC = () => {
                 <Form className="p-6">
                   <input type="hidden" name="_id" />
                   <div className="flex flex-col items-center -mt-16 mb-6">
-                    <div className="relative">
-                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-white shadow-lg">
-                        <img
-                          className="w-full h-full object-cover"
-                          src={profileImage || DEFAULT_PROFILE_IMAGE}
-                          alt="Profile"
+                    <div className="relative group">
+                      {/* Main Profile Image Container */}
+                      <div className="w-32 h-32 rounded-full border-4 border-white bg-white shadow-lg relative">
+                        <ImageUploadProfile
+                          currentImage={profileImage}
+                          onImageChange={handleImageUpload}
+                          size="lg"
+                          className="mb-4"
                         />
                       </div>
-                      <div className="absolute bottom-0 right-0">
-                        <label className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full cursor-pointer shadow-md hover:bg-blue-700 transition-colors text-white">
-                          <FaCamera size={14} />
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
                     </div>
-                    {imageFile && (
-                      <button
-                        type="button"
-                        onClick={handleImageRemove}
-                        className="mt-2 text-red-600 text-sm flex items-center hover:underline"
-                      >
-                        <FaTrash className="mr-1" size={12} />
-                        Remove uploaded photo
-                      </button>
-                    )}
-                    <p className="mt-4 text-gray-600 font-medium">
+
+                    <p className="pt-16 text-gray-600 font-medium">
                       {mechProfile.email}
                     </p>
                   </div>
+
                   <div className="space-y-6 mt-4">
                     <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">
                       Edit Personal Information
@@ -255,7 +221,7 @@ const MechanicProfileEdit: React.FC = () => {
                     <div className="flex justify-end space-x-4 pt-4">
                       <button
                         type="button"
-                        onClick={() => navigate("/mech/account")}
+                        onClick={() => navigate("/mech/profile")}
                         className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                       >
                         Cancel

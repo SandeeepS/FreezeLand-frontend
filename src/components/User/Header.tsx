@@ -3,17 +3,13 @@ import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { getImageUrl, getProfile, logout } from "../../Api/user";
 import { userLogout } from "../../App/slices/AuthSlice";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
-import { MdContactless } from "react-icons/md";
 import { MdEventNote } from "react-icons/md";
-import { IoIosSettings } from "react-icons/io";
 import { useAppSelector } from "../../App/store";
 import { UserDetailsInProfile } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { FaHistory } from "react-icons/fa";
-
-import { user } from "@nextui-org/react";
 
 const Header: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
@@ -21,8 +17,11 @@ const Header: React.FC = () => {
     useState<UserDetailsInProfile>();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [nav, setNav] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
   const navigateTo = "/login";
 
   const userNavigationItems = [
@@ -31,26 +30,26 @@ const Header: React.FC = () => {
       label: "Profile",
       path: "/user/account",
     },
-    {
-      icon: <MdContactless className="mr-2" />,
-      label: "Contact",
-      path: "/user/contact",
-    },
+    // {
+    //   icon: <MdContactless className="mr-2" />,
+    //   label: "Contact",
+    //   path: "/user/contact",
+    // },
     {
       icon: <MdEventNote className="mr-2" />,
       label: "Address",
       path: "/user/address",
     },
     {
-      icon: <FaHistory  className="mr-2" />,
+      icon: <FaHistory className="mr-2" />,
       label: "Service History",
       path: "/user/serviceHistory",
     },
-    {
-      icon: <IoIosSettings className="mr-2" />,
-      label: "Settings",
-      path: "/user/settings",
-    },
+    // {
+    //   icon: <IoIosSettings className="mr-2" />,
+    //   label: "Settings",
+    //   path: "/user/settings",
+    // },
   ];
 
   useEffect(() => {
@@ -89,12 +88,34 @@ const Header: React.FC = () => {
     };
     fetchData();
   }, [userProfileDetails]);
+
   const handleNav = () => {
     setNav(!nav);
   };
 
   const toggleCard = () => {
     setIsCardOpen(!isCardOpen);
+  };
+
+  const handleServicesClick = () => {
+    // Check if we're already on the homepage
+    if (location.pathname === "/user/homepage") {
+      // If on homepage, scroll to services section
+      const serviceElement = document.getElementById("serviceList");
+      if (serviceElement) {
+        serviceElement.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // If on a different page, navigate to homepage and then scroll to services
+      navigate("/user/homepage");
+      // Use setTimeout to ensure navigation completes before scrolling
+      setTimeout(() => {
+        const serviceElement = document.getElementById("serviceList");
+        if (serviceElement) {
+          serviceElement.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
   };
 
   return (
@@ -115,10 +136,8 @@ const Header: React.FC = () => {
             HOME
           </li>
 
-          <li className="p-4 cursor-pointer">
-            <a href="#serviceList" className="p-4 cursor-pointer uppercase  ">
-              Services
-            </a>
+          <li className="p-4 cursor-pointer" onClick={handleServicesClick}>
+            SERVICES
           </li>
 
           <li
@@ -134,9 +153,14 @@ const Header: React.FC = () => {
               onClick={toggleCard}
             >
               <img
-                src={image}
-                alt="https://cdn-icons-png.flaticon.com/128/64/64572.png"
+                src={
+                  imageError || !image
+                    ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
+                    : image
+                }
+                alt="User profile"
                 className="h-10 w-10 rounded-full object-cover"
+                onError={() => setImageError(true)}
               />
             </button>
 
@@ -177,7 +201,12 @@ const Header: React.FC = () => {
           <ul className="text-black pl-6">
             <li className="p-4 border-b cursor-pointer">HOME</li>
             <li className="p-4 border-b cursor-pointer">ACCOUNT</li>
-            <li className="p-4 border-b cursor-pointer">SERVICES</li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={handleServicesClick}
+            >
+              SERVICES
+            </li>
             <li className="p-4 border-b cursor-pointer">CONTACT</li>
             <li className="p-4 border-b cursor-pointer">QUEUE</li>
             {/* Logout Button */}

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { MdPowerSettingsNew } from "react-icons/md";
 import { HeaderDropDownProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { persistor } from "../../App/store";
+import { useState } from "react";
 
 const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   isOpen,
@@ -23,6 +24,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [imageError, setImageError] = useState(false);
 
   if (!isOpen) return null;
 
@@ -63,8 +65,13 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
       <div className="mx-auto w-32 h-32 relative bg-white  -mt-16 border-4 border-white rounded-full overflow-hidden">
         <img
           className="object-cover object-center h-32"
-          src={profileImage} 
-          alt="Profile"
+          src={
+            imageError || !profileImage
+              ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
+              : profileImage
+          }
+          alt="Profile Picture"
+          onError={() => setImageError(true)}
         />
       </div>
 

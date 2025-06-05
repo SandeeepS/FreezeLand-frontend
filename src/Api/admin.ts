@@ -5,7 +5,8 @@ import {
 import { InewService } from "../interfaces/IPages/Admin/IAdminInterfaces";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
-import { adminErrorHandler } from "./errorHandler";
+import mechRoutes from "../Services/Endpoints/mechEndPoints";
+import { adminErrorHandler, mechErrorHandler } from "./errorHandler";
 
 const adminLogin = async (email: string, password: string) => {
   console.log("entered in the admin login ");
@@ -416,6 +417,8 @@ const getAllReportsByReporterRole = async(reporterRole:string) => {
   }
 }
 
+
+
 export {
   adminLogin,
   adminLogout,
@@ -444,5 +447,5 @@ export {
   listUnlistComplaints,
   deleteComplaint,
   getComplaintById,
-  cancelComplaint
+  cancelComplaint,
 };
