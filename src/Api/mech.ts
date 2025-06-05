@@ -92,6 +92,16 @@ const resendMechOtp = async (tempMechId: string) => {
   }
 };
 
+const resendOtp_forgetPassword_mechanic = async() => {
+  try {
+    const result = await Api.post(mechRoutes.resendOtp_forgetPassword_mechanic);
+    return result;
+  } catch (error) {
+    console.log(error);
+    mechErrorHandler(error as Error);
+  }
+}
+
 const mLogout = async () => {
   try {
     const result = await Api.get(mechRoutes.logout);
@@ -402,6 +412,7 @@ export {
   getAllDevices,
   verifyMechanic,
   getComplaintDetails,
+  resendOtp_forgetPassword_mechanic,
   getMechanicDetails,
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,

@@ -63,7 +63,7 @@ const UserHomePage: React.FC = () => {
               setShowLocationModal(true);
             }, 4000);
 
-            return () => clearTimeout(timer); // Cleanup the timer on unmount  
+            return () => clearTimeout(timer); // Cleanup the timer on unmount
           }
         }
       } catch (error) {
@@ -116,7 +116,10 @@ const UserHomePage: React.FC = () => {
           {showLocationModal && (
             <div className="fixed inset-0  justify-center bg-black bg-opacity-50 z-50">
               <div ref={modalRef}>
-                <LocationModal onClose={handleCloseModal} userId={userId as string} />
+                <LocationModal
+                  onClose={handleCloseModal}
+                  userId={userId as string}
+                />
               </div>
             </div>
           )}

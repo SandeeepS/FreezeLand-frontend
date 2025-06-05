@@ -41,7 +41,7 @@ const initialValues: initialVal = {
 const ForgetPasswordForMech: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [otp, setOtp] = useState("");
-  const [seconds, setSeconds] = useState<number>(300);
+  const [seconds, setSeconds] = useState<number>(60); // Changed to 60 seconds like UserOtpPage
   const [showOtp, setShowOtp] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -51,13 +51,12 @@ const ForgetPasswordForMech: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Timer effect
+  // Timer effect - Fixed implementation like UserOtpPage
   useEffect(() => {
-    let timer: NodeJS.Timeout;
     if (seconds > 0 && showOtp) {
-      timer = setInterval(() => setSeconds(seconds - 1), 1000);
+      const timer = setInterval(() => setSeconds(seconds - 1), 1000);
+      return () => clearInterval(timer);
     }
-    return () => clearInterval(timer);
   }, [seconds, showOtp]);
 
   const minutes = Math.floor(seconds / 60);
@@ -91,12 +90,12 @@ const ForgetPasswordForMech: React.FC = () => {
     setLoading(true);
     try {
       const res = await forgotPasswordMech(email) as ApiResponse;
-      
+      console.log("res after verifying email is ",res);
       if (res?.data?.success) {
         setMech(res.data.data || null);
         toast.success(res.data.message || "OTP sent successfully!");
         setShowOtp(true);
-        setSeconds(300);
+        setSeconds(60); // Reset to 60 seconds
       } else {
         toast.error(res?.data?.message || "Failed to send OTP");
       }
@@ -117,11 +116,6 @@ const ForgetPasswordForMech: React.FC = () => {
     
     if (otp.length !== 6) {
       toast.error("Please enter a valid 6-digit OTP!");
-      return;
-    }
-
-    if (seconds <= 0) {
-      toast.error("OTP has expired. Please request a new one.");
       return;
     }
 
@@ -169,33 +163,32 @@ const ForgetPasswordForMech: React.FC = () => {
     },
   });
 
-  // Resend OTP handler
-  const handleResendOTP = async () => {
-    if (seconds > 0) {
-      toast.error(`Please wait ${minutes}:${remainingSeconds.toString().padStart(2, '0')} before requesting a new OTP`);
-      return;
-    }
 
-    setResendLoading(true);
-    try {
-      const result = await resendMechOtp() as ApiResponse;
-      
-      if (result?.data?.success) {
-        toast.success("New OTP sent successfully!");
-        setSeconds(300);
-        setOtp("");
-      } else {
-        toast.error(result?.data?.message || "Failed to resend OTP");
+  // Resend OTP handler 
+const handleResendOTP = async () => {
+  setResendLoading(true);
+  try {
+    const result = await forgotPasswordMech(email) as ApiResponse;
+    
+    if (result?.data?.success) {
+      if (result.data.data) {
+        setMech(result.data.data);
       }
-    } catch (error) {
-      console.error("Resend OTP error:", error);
-      toast.error(getErrorMessage(error));
-    } finally {
-      setResendLoading(false);
+      toast.success("New OTP sent successfully!");
+      setSeconds(60); 
+      setOtp(""); 
+    } else {
+      toast.error(result?.data?.message || "Failed to resend OTP");
     }
-  };
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    toast.error(getErrorMessage(error));
+  } finally {
+    setResendLoading(false);
+  }
+};
 
-  // Clear password fields
+
   const handleClearPasswords = () => {
     resetForm();
   };
@@ -205,7 +198,7 @@ const ForgetPasswordForMech: React.FC = () => {
     setShowOtp(false);
     setShowForm(false);
     setOtp("");
-    setSeconds(300);
+    setSeconds(60);
     setMech(null);
   };
 
@@ -249,7 +242,7 @@ const ForgetPasswordForMech: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-freeze-color text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -310,28 +303,40 @@ const ForgetPasswordForMech: React.FC = () => {
               <div className="text-center space-y-2">
                 {seconds > 0 ? (
                   <p className="text-sm text-gray-600">
-                    Code expires in {minutes}:{remainingSeconds.toString().padStart(2, '0')}
+                    Code expires in {minutes} min {remainingSeconds} sec
                   </p>
                 ) : (
-                  <p className="text-sm text-red-600 font-medium">Code has expired</p>
+                  <p className="text-sm text-red-600 font-medium">
+                    OTP Expired{" "}
+                    <button
+                      type="button"
+                      onClick={handleResendOTP}
+                      disabled={resendLoading}
+                      className="text-blue-500 cursor-pointer hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {resendLoading ? "Sending..." : "Request another?"}
+                    </button>
+                  </p>
                 )}
                 
-                <p className="text-sm text-gray-600">
-                  Didn't receive the code?{" "}
-                  <button
-                    type="button"
-                    onClick={handleResendOTP}
-                    disabled={seconds > 0 || resendLoading}
-                    className="text-blue-600 hover:text-blue-500 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
-                  >
-                    {resendLoading ? "Sending..." : "Resend Code"}
-                  </button>
-                </p>
+                {seconds > 0 && (
+                  <p className="text-sm text-gray-600">
+                    Didn't receive the code?{" "}
+                    <button
+                      type="button"
+                      onClick={handleResendOTP}
+                      disabled={resendLoading}
+                      className="text-blue-600 hover:text-blue-500 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {resendLoading ? "Sending..." : "Resend Code"}
+                    </button>
+                  </p>
+                )}
               </div>
 
               <button
                 onClick={handleOtpSubmit}
-                disabled={!otp || otp.length !== 6 || seconds <= 0 || otpLoading}
+                disabled={!otp || otp.length !== 6 || otpLoading}
                 className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {otpLoading ? (

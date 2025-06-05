@@ -11,11 +11,14 @@ import { MdEventNote } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
 import { useAppSelector } from "../../App/store";
 import { UserDetailsInProfile } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { FaHistory } from "react-icons/fa";
+
 import { user } from "@nextui-org/react";
 
 const Header: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
-  const [userProfileDetails,setUserProfileDetails] = useState<UserDetailsInProfile>();
+  const [userProfileDetails, setUserProfileDetails] =
+    useState<UserDetailsInProfile>();
 
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
@@ -39,6 +42,11 @@ const Header: React.FC = () => {
       path: "/user/address",
     },
     {
+      icon: <FaHistory  className="mr-2" />,
+      label: "Service History",
+      path: "/user/serviceHistory",
+    },
+    {
       icon: <IoIosSettings className="mr-2" />,
       label: "Settings",
       path: "/user/settings",
@@ -47,38 +55,40 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try{
-        const userId = userData?.id ;
-        const result = await getProfile(userId as string)
+      try {
+        const userId = userData?.id;
+        const result = await getProfile(userId as string);
         setUserProfileDetails(result?.data.data.data);
-      }catch(error){
-        console.log("error occured while accessing the userDeatils in the Header.tsx");
+      } catch (error) {
+        console.log(
+          "error occured while accessing the userDeatils in the Header.tsx"
+        );
         throw error as Error;
       }
-    }
+    };
     fetchData();
-  },[])
+  }, []);
 
-     const [image, setImage] = React.useState<string>("");
-  
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            if (userProfileDetails?.profile_picture){
-              const result = await getImageUrl(
-                userProfileDetails.profile_picture,
-                "service"
-              );
-              if (result) {
-                setImage(result.data.url);
-              }
-            }
-          } catch (error) {
-            console.log(error as Error);
+  const [image, setImage] = React.useState<string>("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (userProfileDetails?.profile_picture) {
+          const result = await getImageUrl(
+            userProfileDetails.profile_picture,
+            "service"
+          );
+          if (result) {
+            setImage(result.data.url);
           }
-        };
-        fetchData();
-      }, [userProfileDetails]);
+        }
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  }, [userProfileDetails]);
   const handleNav = () => {
     setNav(!nav);
   };
@@ -98,10 +108,9 @@ const Header: React.FC = () => {
           <li
             className="p-4 cursor-pointer"
             onClick={() => {
-              navigate("/user/homepage"); 
-              window.scrollTo({ top: 0, behavior: "smooth" }); 
-            }}            
-            
+              navigate("/user/homepage");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
           >
             HOME
           </li>
@@ -112,13 +121,12 @@ const Header: React.FC = () => {
             </a>
           </li>
 
-          
           <li
             className="p-4 cursor-pointer"
             onClick={() => navigate("/user/queue")}
           >
             QUEUE
-          </li> 
+          </li>
 
           <li className="p-2 cursor-pointer">
             <button
@@ -126,8 +134,8 @@ const Header: React.FC = () => {
               onClick={toggleCard}
             >
               <img
-                src= { image ||"https://cdn-icons-png.flaticon.com/128/64/64572.png"}
-                alt="Profile Avatar"
+                src={image}
+                alt="https://cdn-icons-png.flaticon.com/128/64/64572.png"
                 className="h-10 w-10 rounded-full object-cover"
               />
             </button>
@@ -140,8 +148,8 @@ const Header: React.FC = () => {
                 logout={logout}
                 authLogout={userLogout}
                 navigateTo={navigateTo}
-                coverImage={image ||  "https://example.com/user-cover.jpg"}
-                profileImage= {image || "https://example.com/user-profile.jpg"}
+                coverImage={image || "https://example.com/user-cover.jpg"}
+                profileImage={image || "https://example.com/user-profile.jpg"}
                 userName={userProfileDetails?.name || "Name"}
                 navigationItems={userNavigationItems}
                 userRole="user"
