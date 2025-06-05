@@ -41,7 +41,8 @@ const MechAddress: React.FC = () => {
             Add Address
           </Box>
         </div>
-        <div>
+        {/**default address option for future implimetation  */}
+        {/* <div>
           <Box
             component="section"
             sx={{ p: 2, width: 300, height: 300, border: 1, borderRadius: 2 }}
@@ -50,7 +51,7 @@ const MechAddress: React.FC = () => {
             Default Address
             <hr className="border-t-2 border-gray-400" />
           </Box>
-        </div>
+        </div> */}
       </div>
       <div className="flex justify-center">
         <Button

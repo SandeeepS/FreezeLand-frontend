@@ -42,8 +42,6 @@ const ProfileEdit: React.FC = () => {
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
   const [profileImage, setProfileImage] = useState<string>("");
-    const [hasNewImage, setHasNewImage] = useState(false); // Track if user uploaded new image
-  
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -80,12 +78,11 @@ const ProfileEdit: React.FC = () => {
     fetchData();
   }, [userProfile]);
 
-const handleImageUpload = (file: File | null, name: string, type: string) => {
-  setImageFile(file);
-  setFileName(name);
-  setFileType(type);
-  setHasNewImage(!!file); 
-};
+  const handleImageUpload = (file: File | null, name: string, type: string) => {
+    setImageFile(file);
+    setFileName(name);
+    setFileType(type);
+  };
   if (!userProfile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -173,27 +170,16 @@ const handleImageUpload = (file: File | null, name: string, type: string) => {
                   <input type="hidden" name="imageKey" />
 
                   <div className="flex flex-col items-center -mt-16 mb-6">
-                    <div className="absolute -top-16 md:relative md:-top-10 bg-white  rounded-full shadow-lg  border-white">
-                      <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden">
+                    <div className="absolute -top-16 md:relative md:-top-10 bg-white  rounded-full shadow-lg   border-white">
+                      <div className="w-28 h-28 md:w-32 md:h-32 rounded-full ">
                         <ImageUploadProfile
                           currentImage={profileImage}
                           onImageChange={handleImageUpload}
                           size="lg"
-                          className="mb-4"
+                          className="mb-4  "
                         />
                       </div>
                     </div>
-                           {/* Image Upload Status */}
-                    {hasNewImage && (
-                      <div className="mt-3 px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                        New image selected
-                      </div>
-                    )}
-
-                    {/* Upload Instructions */}
-                    <p className="mt-2 text-xs text-gray-500 text-center max-w-xs">
-                      Click the camera icon to upload a new profile picture
-                    </p>
 
                     <p className="mt-4 text-gray-600 font-medium">
                       {userProfile.email}

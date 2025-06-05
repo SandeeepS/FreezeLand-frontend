@@ -78,7 +78,7 @@ const ImageUploadProfile: React.FC<ImageUploadProfileProps> = ({
   };
 
   return (
-    <div className={`flex flex-col items-center ${className}`}>
+    <div className={`flex flex-col items-center ${className} `}>
       <div className="relative group">
         {/* Main Profile Image Container */}
         <div className={`${config.container} rounded-full overflow-hidden border-4 border-white bg-white shadow-lg relative`}>
@@ -128,12 +128,7 @@ const ImageUploadProfile: React.FC<ImageUploadProfileProps> = ({
         )}
       </div>
 
-      {/* Image Upload Status */}
-      {hasNewImage && (
-        <div className="mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-          New image selected
-        </div>
-      )}
+
 
       {/* Upload Instructions */}
       {showInstructions && !disabled && (

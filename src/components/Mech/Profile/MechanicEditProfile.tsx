@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FaCamera, FaTimes, FaPlus } from "react-icons/fa";
 import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +36,6 @@ const MechanicProfileEdit: React.FC = () => {
   const [fileName, setFileName] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
   const [profileImage, setProfileImage] = useState<string>("");
-  const [hasNewImage, setHasNewImage] = useState(false); // Track if user uploaded new image
 
   const mechId = mechData?.id;
 
@@ -69,10 +67,6 @@ const MechanicProfileEdit: React.FC = () => {
           const result = await getImageUrl(mechProfile.photo, "mechProfile");
           if (result) {
             setProfileImage(result.data.url);
-            // Only set preview if no new image is uploaded
-            if (!hasNewImage) {
-              setPreviewImage(result.data.url);
-            }
           }
         }
       } catch (error) {
@@ -80,14 +74,13 @@ const MechanicProfileEdit: React.FC = () => {
       }
     };
     fetchData();
-  }, [mechProfile, hasNewImage]);
+  }, [mechProfile]);
 
- const handleImageUpload = (file: File | null, name: string, type: string) => {
-  setImageFile(file);
-  setFileName(name);
-  setFileType(type);
-  setHasNewImage(!!file); // Set to true when file is uploaded
-};
+  const handleImageUpload = (file: File | null, name: string, type: string) => {
+    setImageFile(file);
+    setFileName(name);
+    setFileType(type);
+  };
 
   if (!mechProfile) {
     return (
@@ -172,31 +165,17 @@ const MechanicProfileEdit: React.FC = () => {
                   <div className="flex flex-col items-center -mt-16 mb-6">
                     <div className="relative group">
                       {/* Main Profile Image Container */}
-                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-white shadow-lg relative">
+                      <div className="w-32 h-32 rounded-full border-4 border-white bg-white shadow-lg relative">
                         <ImageUploadProfile
                           currentImage={profileImage}
                           onImageChange={handleImageUpload}
                           size="lg"
                           className="mb-4"
                         />
-
-                
                       </div>
                     </div>
 
-                    {/* Image Upload Status */}
-                    {hasNewImage && (
-                      <div className="mt-3 px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                        New image selected
-                      </div>
-                    )}
-
-                    {/* Upload Instructions */}
-                    <p className="mt-2 text-xs text-gray-500 text-center max-w-xs">
-                      Click the camera icon to upload a new profile picture
-                    </p>
-
-                    <p className="mt-4 text-gray-600 font-medium">
+                    <p className="pt-16 text-gray-600 font-medium">
                       {mechProfile.email}
                     </p>
                   </div>
