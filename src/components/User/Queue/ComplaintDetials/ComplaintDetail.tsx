@@ -21,6 +21,7 @@ import WorkDetailsBill from "./WorkDetailsBill";
 import PaymentButton from "./PaymentButton";
 import ServiceCancelBtn from "../../../Common/ServiceCancelBtn";
 import ReportModal from "../../../Common/Report/ReportModal";
+import InvoiceDownloadButton from "../../../Common/generateInvoicePDF";
 
 interface IServiceDetails {
   image?: string;
@@ -164,11 +165,14 @@ const ComplaintDetail: React.FC = () => {
       complaint.status === "completed" ||
       hasWorkDetails);
 
-  // Check if we should show the cancel button (only when status is exactly "accepted")
+  //  show the cancel button (only when status is exactly "accepted")
   const showCancelButton = status === "accepted" || status === "pending";
 
-  // Check if we should show the report button (only when mechanic is assigned)
+  // for  show the report button (only when mechanic is assigned)
   const showReportButton = complaint.currentMechanicId && mechanicDetails;
+
+   //  payment is completed and invoice can be downloaded after completed 
+  const isPaymentCompleted = status === "completed" && complaint.orderId !== null;
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
@@ -241,6 +245,15 @@ const ComplaintDetail: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Invoice Download , when payment is completed */}
+      {isPaymentCompleted && (
+        <InvoiceDownloadButton
+          complaint={complaint}
+          mechanicDetails={mechanicDetails}
+          totalAmount={totalAmount}
+        />
+      )}
 
       {/* Report Button Section */}
       {showReportButton && (

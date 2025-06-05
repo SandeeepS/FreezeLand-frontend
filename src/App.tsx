@@ -47,6 +47,7 @@ import MechanicForVerificationList from "./Pages/Admin/Mechanic/MechanicForVerif
 import SelectReportComponent from "./components/Admin/Reports/selectReportComponent";
 import AllReportComponent from "./components/Admin/Reports/AllReportComponent";
 import ServiceDetails from "./Pages/Mechanic/ServiceHistory/ServiceDetails";
+import UserServiceHistory from "./components/User/ServiceHistory/UserServiceHistory";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -99,13 +100,14 @@ function App() {
               <Route path="/user/account" element={<Profile />} />
               <Route path="/user/address" element={<Address />} />
               <Route path="/user/history" element={<History />} />
-              <Route path="/user/editProfile" element={<ProfileEdit />} />
-              <Route path="/user/payment" element={<Payments />} />
-              <Route path="/user/queue" element={<Queue />} />
-              <Route path="/user/AddAddress" element={<AddAddress />} />
-              <Route path="/user/showAllAddress" element={<AllAddress />} />
-              <Route path="/user/editAddress/:id" element={<EditAddress />} />
-              <Route path="/user/service/:id" element={<Service />} />
+              <Route path="/user/editProfile" element={<ProfileEdit />}/>
+              <Route path="/user/payment" element={<Payments />}/>
+              <Route path="/user/queue" element={<Queue />}/>
+              <Route path="/user/serviceHistory" element={<UserServiceHistory/>}/>
+              <Route path="/user/AddAddress" element={<AddAddress />}/>
+              <Route path="/user/showAllAddress" element={<AllAddress />}/>
+              <Route path="/user/editAddress/:id" element={<EditAddress />}/>
+              <Route path="/user/service/:id" element={<Service />}/>
               <Route path="/user/registeredComplaintByUser/:id" element={<ComplaintDetail />}/>
               <Route path="/user/payment/success" element={<PaymentSuccessPage />}/>
             </Route>
@@ -142,7 +144,7 @@ function App() {
             <Route path="/mech/veryfy-otp/:id" element={<MechOtpPage />} />
             <Route path="/mech/forgot-password" element={<ForgetPasswordForMech />}/>
           </Route>
-
+          
           <Route path="" element={<MechLoggedIn />}>
             <Route path="/mech/homepage" element={<MechanicHomePage />} />
             <Route path="/mech" element={<MechLayOut />}>

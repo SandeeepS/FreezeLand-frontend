@@ -10,23 +10,16 @@ import {
   TableColumn,
 } from "../../../interfaces/IComponents/User/IUserInterfaces";
 import EmptyStateBox from "./EmptyStateBox";
-import { MdOutlineSpeakerNotesOff } from "react-icons/md";
-
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
   switch (status) {
-    case "pending":
-      return "text-orange-500";
-    case "in-progress":
-    case "ongoing":
-      return "text-blue-500";
-    case "delayed":
+    case "completed":
+      return "text-emerald-500";
+    case "cancelled":
       return "text-red-500";
-    case "on schedule":
-      return "text-teal-500";
-    case "assigned":
-      return "text-purple-500";
+    case "rejected":
+      return "text-red-600";
     default:
       return "text-gray-500";
   }
@@ -35,27 +28,16 @@ const getStatusColor = (status: string): string => {
 // Helper function to get progress bar colors
 const getProgressColors = (status: string) => {
   switch (status) {
-    case "on schedule":
-    case "in-progress":
-    case "ongoing":
+    case "completed":
       return {
-        bg: "bg-blue-200",
-        bar: "bg-blue-500",
+        bg: "bg-emerald-200",
+        bar: "bg-emerald-500",
       };
-    case "delayed":
+    case "cancelled":
+    case "rejected":
       return {
         bg: "bg-red-200",
         bar: "bg-red-500",
-      };
-    case "pending":
-      return {
-        bg: "bg-orange-200",
-        bar: "bg-orange-500",
-      };
-    case "assigned":
-      return {
-        bg: "bg-purple-200",
-        bar: "bg-purple-500",
       };
     default:
       return {
@@ -65,7 +47,7 @@ const getProgressColors = (status: string) => {
   }
 };
 
-const Queue: React.FC = () => {
+const UserServiceHistory: React.FC = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
   const userId = userData?.id;
@@ -88,29 +70,28 @@ const Queue: React.FC = () => {
         const result = await getAllUserRegisteredServices(userId as string);
         console.log("data reached", result);
         if (result?.allRegisteredUserServices) {
-          // Filter only incomplete/running services (exclude completed ones)
-          const incompleteServices = result.allRegisteredUserServices.filter(
+          // Filter only completed services/complaints
+          const completedServices = result.allRegisteredUserServices.filter(
             (service: AllRegisteredServices) => 
-              service.status !== "completed" && 
-              service.status !== "cancelled" && 
-              service.status !== "rejected"
-             
+              service.status === "completed" || 
+              service.status === "cancelled" || 
+              service.status === "rejected"
           );
           
-          setAllRegisteredService(incompleteServices);
+          setAllRegisteredService(completedServices);
           console.log(
-            "Incomplete/Running services from the frontend:",
-            incompleteServices
+            "Completed services from the frontend:",
+            completedServices
           );
 
-          // Fetch images for each incomplete service
-          if (incompleteServices.length > 0) {
-            fetchServiceImages(incompleteServices);
+          // Fetch images for each completed service
+          if (completedServices.length > 0) {
+            fetchServiceImages(completedServices);
           }
         }
       } catch (error) {
         console.error(
-          "Error occurred while fetching the registered services:",
+          "Error occurred while fetching the service history:",
           error
         );
       } finally {
@@ -129,7 +110,8 @@ const Queue: React.FC = () => {
       // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
-        Array.isArray(service.serviceDetails) && service.serviceDetails.length > 0 &&
+        Array.isArray(service.serviceDetails) && 
+        service.serviceDetails.length > 0 &&
         service.serviceDetails[0].imageKey
       ) {
         try {
@@ -174,7 +156,7 @@ const Queue: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Define the columns for the service table
+  // Define the columns for the service history table
   const serviceColumns: TableColumn[] = [
     {
       key: "service",
@@ -253,6 +235,26 @@ const Queue: React.FC = () => {
         </div>
       ),
     },
+    {
+      key: "completedDate",
+      header: "Completed Date",
+      render: (value, item) => (
+        <span className="text-gray-600">
+          {item.originalData.updatedAt 
+            ? new Date(item.originalData.updatedAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })
+            : new Date(item.originalData.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })
+          }
+        </span>
+      ),
+    },
   ];
 
   // Transform your data to match the table structure
@@ -262,30 +264,37 @@ const Queue: React.FC = () => {
           id: service._id,
           name: service.serviceDetails[0]?.name || "Unknown Service",
           userName: service.name || "Unknown User",
-          status: service.status || "pending",
-          completion: service.completionPercentage || 0,
+          status: service.status || "completed",
+          completion: service.completionPercentage || 100,
           originalData: service,
         }))
       : [];
 
   // Handle row click - Navigate to detail page
-  const handleRowClick = (item: { id: string; name: string; userName: string; status: string; completion: number; originalData: AllRegisteredServices }) => {
-    console.log("Clicked on service:", item);
+  const handleRowClick = (item: { 
+    id: string; 
+    name: string; 
+    userName: string; 
+    status: string; 
+    completion: number; 
+    originalData: AllRegisteredServices 
+  }) => {
+    console.log("Clicked on service history:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
 
-  // Custom empty state for queue
-  const QueueEmptyState = () => (
+  // Custom empty state for service history
+  const ServiceHistoryEmptyState = () => (
     <div className="text-center py-16">
       <div className="mx-auto max-w-md">
-        <div className="mx-auto mt-32 h-24 w-24 text-gray-400">
-          <MdOutlineSpeakerNotesOff className="h-full w-full" />
+        <div className="mx-auto h-24 w-24 text-gray-400">
+          <Circle className="h-full w-full" />
         </div>
         <h3 className="mt-6 text-lg font-medium text-gray-900">
-          No Active Services
+          No Service History
         </h3>
         <p className="mt-2 text-sm text-gray-500">
-          You don't have any services currently in progress. All your services are either completed or you haven't registered any yet.
+          You haven't completed any services yet. Once you complete services, they'll appear here.
         </p>
       </div>
     </div>
@@ -295,23 +304,23 @@ const Queue: React.FC = () => {
   if (!loading && allRegisteredServices.length === 0) {
     return (
       <div className="mt-16">
-        <QueueEmptyState />
+        <ServiceHistoryEmptyState />
       </div>
     );
   }
 
-  // Otherwise show the table with real data
+  // Otherwise show the table with completed services data
   return (
     <DynamicTable
-      title="Active Services Queue"
+      title="Service History"
       columns={serviceColumns}
       data={loading ? [] : formattedData}
       loading={loading}
-      emptyMessage="No active services in queue"
+      emptyMessage="No completed services found"
       onRowClick={handleRowClick}
-      className="mt-16 cursor-pointer" // Added cursor-pointer to indicate clickable rows
+      className="mt-16 cursor-pointer"
     />
   );
 };
 
-export default Queue;
+export default UserServiceHistory;
