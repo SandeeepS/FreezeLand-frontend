@@ -5,7 +5,7 @@ interface ComplaintImagesProps {
   images: string[];
 }
 
-interface ImageData{
+interface ImageData {
   original: string;
   url: string;
   loading: boolean;
@@ -23,24 +23,24 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
       if (!images || images.length === 0) return;
 
       // Initialize image data with loading states
-      const initialImageData: ImageData[] = images.map(img => ({
+      const initialImageData: ImageData[] = images.map((img) => ({
         original: img,
-        url: '',
+        url: "",
         loading: true,
-        error: false
+        error: false,
       }));
       setImageData(initialImageData);
       // Fetch URLs for all images
       const promises = images.map(async (image, index) => {
         try {
-          const result = await getImageUrl(image, "complaint images");
-          const imageUrl = result?.data?.data?.images;
-          
+          const result = await getImageUrl(image, "admin");
+          const imageUrl = result?.data.url;
+
           return {
             original: image,
-            url: imageUrl || image, // fallback to original if URL fetch fails
+            url: imageUrl || image,
             loading: false,
-            error: !imageUrl
+            error: !imageUrl,
           };
         } catch (error) {
           console.error(`Error fetching image ${index}:`, error);
@@ -48,7 +48,7 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
             original: image,
             url: image, // fallback to original
             loading: false,
-            error: true
+            error: true,
           };
         }
       });
@@ -75,13 +75,15 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
     setSelectedImage(null);
   };
 
-  const navigateImage = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') {
-      const prevIndex = selectedIndex > 0 ? selectedIndex - 1 : imageData.length - 1;
+  const navigateImage = (direction: "prev" | "next") => {
+    if (direction === "prev") {
+      const prevIndex =
+        selectedIndex > 0 ? selectedIndex - 1 : imageData.length - 1;
       setSelectedIndex(prevIndex);
       setSelectedImage(imageData[prevIndex]?.url);
     } else {
-      const nextIndex = selectedIndex < imageData.length - 1 ? selectedIndex + 1 : 0;
+      const nextIndex =
+        selectedIndex < imageData.length - 1 ? selectedIndex + 1 : 0;
       setSelectedIndex(nextIndex);
       setSelectedImage(imageData[nextIndex]?.url);
     }
@@ -94,7 +96,7 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
           Complaint Images
         </h3>
         <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
-          {images.length} image{images.length > 1 ? 's' : ''}
+          {images.length} image{images.length > 1 ? "s" : ""}
         </span>
       </div>
 
@@ -103,7 +105,9 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
           <div
             key={index}
             className="relative cursor-pointer rounded-lg overflow-hidden bg-slate-100 aspect-square group"
-            onClick={() => !imageItem.loading && handleImageClick(imageItem.url, index)}
+            onClick={() =>
+              !imageItem.loading && handleImageClick(imageItem.url, index)
+            }
           >
             {imageItem.loading ? (
               <div className="w-full h-full flex items-center justify-center">
@@ -111,8 +115,18 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
               </div>
             ) : imageItem.error ? (
               <div className="w-full h-full flex flex-col items-center justify-center text-slate-400">
-                <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg
+                  className="w-8 h-8 mb-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
                 <span className="text-xs">Failed to load</span>
               </div>
@@ -147,7 +161,6 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
           onClick={closeModal}
         >
           <div className="relative max-w-5xl max-h-full flex items-center justify-center">
-            
             {/* Navigation Arrows */}
             {imageData.length > 1 && (
               <>
@@ -155,39 +168,56 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
                   className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-3 transition-all duration-200 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigateImage('prev');
+                    navigateImage("prev");
                   }}
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
                 </button>
-                
+
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-3 transition-all duration-200 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigateImage('next');
+                    navigateImage("next");
                   }}
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </button>
               </>
             )}
 
             {/* Main Image */}
-            <div
-              className="relative"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
               <img
                 src={selectedImage}
                 alt="Enlarged complaint image"
                 className="max-w-full max-h-[85vh] object-contain"
               />
-              
+
               {/* Image Counter */}
               {imageData.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-75 text-white px-3 py-1 rounded-full text-sm">
@@ -201,8 +231,18 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
               className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-2 transition-all duration-200"
               onClick={closeModal}
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
