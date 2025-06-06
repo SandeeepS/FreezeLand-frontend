@@ -23,26 +23,23 @@ const AdminUserListing: React.FC = () => {
   console.log("pathname is", pathName);
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
+  console.log('Search is ',search);
 
   const [data, setUsers] = useState<UserData[]>([]); 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true); 
   const [error, setError] = useState<string | null>(null); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // Set loading to true before fetching
-        setError(null); // Reset error state
+     
         const res = await getAllUsers(search);
         console.log("User details fetched:", res);
-        setUsers(res?.data?.data?.users || []); // Ensure fallback to an empty array
+        setUsers(res?.data?.data?.users || []);
       } catch (error) {
         console.error("Error fetching user details:", error);
         setError("Failed to fetch user data. Please try again later.");
-      } finally {
-        setLoading(false); // Set loading to false after fetching
-      }
+      } 
     };
     fetchData();
   }, [search]);
@@ -67,13 +64,7 @@ const AdminUserListing: React.FC = () => {
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+
 
   if (error) {
     return (

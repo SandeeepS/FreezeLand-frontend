@@ -17,26 +17,26 @@ const AdminMainHeader: React.FC = () => {
   const navigateTo = "/admin/login";
 
    const adminNavigationItems = [
-      {
-        icon: <CgProfile className="mr-2" />,
-        label: "Profile",
-        path: "/admin/account",
-      },
-      {
-        icon: <MdContactless className="mr-2" />,
-        label: "Contact",
-        path: "/admin/contact",
-      },
-      {
-        icon: <MdEventNote className="mr-2" />,
-        label: "Address",
-        path: "/admin/address",
-      },
-      {
-        icon: <IoIosSettings className="mr-2" />,
-        label: "Settings",
-        path: "/admin/settings",
-      },
+      // {
+      //   icon: <CgProfile className="mr-2" />,
+      //   label: "Profile",
+      //   path: "/admin/account",
+      // },
+      // {
+      //   icon: <MdContactless className="mr-2" />,
+      //   label: "Contact",
+      //   path: "/admin/contact",
+      // },
+      // {
+      //   icon: <MdEventNote className="mr-2" />,
+      //   label: "Address",
+      //   path: "/admin/address",
+      // },
+      // {
+      //   icon: <IoIosSettings className="mr-2" />,
+      //   label: "Settings",
+      //   path: "/admin/settings",
+      // },
     ];
 
   const handleNav = () => {
