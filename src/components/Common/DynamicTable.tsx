@@ -105,6 +105,7 @@ const DynamicTable = <T,>({
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  console.log("currentItems are ",currentItems);
 
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
@@ -202,13 +203,13 @@ const DynamicTable = <T,>({
                       className="border-b border-gray-300 cursor-pointer hover:bg-gray-200 transition duration-200"
                       onClick={() => onRowClick && onRowClick(item)}
                     >
-                      {columns.map((column) => (
+                      {columns.map((column) =>(
                         <td
                           key={`${index}-${column.key}`}
                           className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                         >
                           {column.render
-                            ? column.render(item[column.key], item)
+                            ? column.render(item[column.key],item)
                             : item[column.key]}
                         </td>
                       ))}

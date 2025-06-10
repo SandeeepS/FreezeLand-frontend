@@ -23,7 +23,7 @@ const ComplaintImages = ({ images }: ComplaintImagesProps) => {
       if (!images || images.length === 0) return;
 
       // Initialize image data with loading states
-      const initialImageData: ImageData[] = images.map((img) => ({
+      const initialImageData: ImageData[] = images.map((img) =>({
         original: img,
         url: "",
         loading: true,

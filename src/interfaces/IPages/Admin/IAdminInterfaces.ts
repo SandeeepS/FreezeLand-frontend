@@ -1,4 +1,3 @@
-import { IUserData } from "../../IUserData";
 
 //used in AdminDeviceListing.tsx
 export interface DeviceData {

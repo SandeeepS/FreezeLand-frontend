@@ -1,7 +1,6 @@
 import {
   forgotPassword,
   forgotVerifyOtp,
-  resendOtp,
   updateNewPassword,
 } from "../../Api/user";
 import React, { useEffect, useState } from "react";

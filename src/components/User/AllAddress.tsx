@@ -7,14 +7,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getProfile } from "../../Api/user";
 import Footer from "./Footer";
-import { userDetails } from "../../interfaces/IComponents/User/IUserInterfaces";
 import { useAppSelector } from "../../App/store";
 import { MdLocationOff } from "react-icons/md";
 import toast from "react-hot-toast";
 
 const AllAddress: React.FC = () => {
   const [allAddress, setAllAddress] = useState<AddAddress[]>([]);
-  const [user, setUser] = useState<userDetails>();
   const navigate = useNavigate();
   const userData = useAppSelector((state) => state.auth.userData);
   const userId = userData?.id;
@@ -29,7 +27,6 @@ const AllAddress: React.FC = () => {
           (address: AddAddress) => address.isDeleted === false
         );
         setAllAddress(filteredAddresses);
-        setUser(user);
       } catch (error) {
         console.log(
           "Failded to fetch the user Details from the Account section",

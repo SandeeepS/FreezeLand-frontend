@@ -9,7 +9,6 @@ const strongRegex = new RegExp(
 );
 
 const gmailRegex = new RegExp("^[a-zA-Z0-9._%+-]+@gmail\\.com$");
-const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
 
 export const SignupValidation = Yup.object({
   name: Yup.string().min(3).required("Please Enter name"),

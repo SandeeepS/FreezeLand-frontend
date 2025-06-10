@@ -3,6 +3,7 @@ import {
   forgotVerifyOtpMech,
   updateNewPasswordMech,
   resendMechOtp,
+  resendOtp_forgetPassword_mechanic,
 } from "../../Api/mech";
 import { MechData } from "../../interfaces/MechData";
 import React, { useEffect, useState } from "react";
@@ -178,7 +179,7 @@ const ForgetPasswordForMech: React.FC = () => {
 
     setResendLoading(true);
     try {
-      const result = await resendMechOtp() as ApiResponse;
+      const result = await resendOtp_forgetPassword_mechanic() as ApiResponse;
       
       if (result?.data?.success) {
         toast.success("New OTP sent successfully!");

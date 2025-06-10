@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { resendMechOtp, verifyMechOtp } from "../../Api/mech.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import { setMechCredential, saveMech } from "../../App/slices/AuthSlice.ts";
+import { setMechCredential} from "../../App/slices/AuthSlice.ts";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../App/store";
 import toast from "react-hot-toast";

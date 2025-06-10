@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import { Close, Report } from "@mui/icons-material";
-import { createReport } from "../../../Api/mech";
 import toast from "react-hot-toast";
 
 interface IReportModalProps {

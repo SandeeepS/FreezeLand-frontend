@@ -5,8 +5,7 @@ import {
 import { InewService } from "../interfaces/IPages/Admin/IAdminInterfaces";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
-import mechRoutes from "../Services/Endpoints/mechEndPoints";
-import { adminErrorHandler, mechErrorHandler } from "./errorHandler";
+import { adminErrorHandler} from "./errorHandler";
 
 const adminLogin = async (email: string, password: string) => {
   console.log("entered in the admin login ");

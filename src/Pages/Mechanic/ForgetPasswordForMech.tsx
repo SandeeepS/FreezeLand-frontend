@@ -2,7 +2,6 @@ import {
   forgotPasswordMech,
   forgotVerifyOtpMech,
   updateNewPasswordMech,
-  resendMechOtp,
 } from "../../Api/mech";
 import { MechData } from "../../interfaces/MechData";
 import React, { useEffect, useState } from "react";
