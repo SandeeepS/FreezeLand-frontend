@@ -44,7 +44,6 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
   setDefaultAddress,
   locationName,
   locationError,
-  validateLocationName,
   handleFetchLocation,
   handleRemoveLocation,
   showLocationOptions,
@@ -90,7 +89,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
     const validFiles: File[] = [];
     const errors: string[] = [];
 
-    selectedFiles.forEach((file, index) => {
+    selectedFiles.forEach((file) => {
       const error = validateImage(file);
       if (error) {
         errors.push(`File ${file.name}: ${error}`);

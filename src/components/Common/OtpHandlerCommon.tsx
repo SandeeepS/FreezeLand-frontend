@@ -2,7 +2,6 @@ import {
   forgotPasswordMech,
   forgotVerifyOtpMech,
   updateNewPasswordMech,
-  resendMechOtp,
   resendOtp_forgetPassword_mechanic,
 } from "../../Api/mech";
 import { MechData } from "../../interfaces/MechData";

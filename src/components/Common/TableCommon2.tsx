@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAllMechanics } from "../../Api/admin";
 import { MechData } from "../../interfaces/IComponents/Common/ICommonInterfaces";

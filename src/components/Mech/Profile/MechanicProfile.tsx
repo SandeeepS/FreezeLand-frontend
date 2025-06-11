@@ -78,7 +78,17 @@ const MechanicProfile = () => {
 
   // Improved useEffect to fetch image URLs
   useEffect(() => {
-    const fetchImageUrl = async (imageKey, type, setImageState) => {
+    interface FetchImageUrlParams {
+      imageKey: string;
+      type: string;
+      setImageState: (url: string) => void;
+    }
+
+    const fetchImageUrl = async (
+      imageKey: FetchImageUrlParams["imageKey"],
+      type: FetchImageUrlParams["type"],
+      setImageState: FetchImageUrlParams["setImageState"]
+    ): Promise<void> => {
       // Only make API call if imageKey is provided
       if (!imageKey) {
         console.log(`No ${type} image key provided, skipping fetch`);
@@ -87,7 +97,7 @@ const MechanicProfile = () => {
 
       try {
         const response = await getImageUrl(imageKey, type);
-        if (response?.data?.url) {
+        if (response && response.data && response.data.url) {
           setImageState(response.data.url);
         }
       } catch (error) {

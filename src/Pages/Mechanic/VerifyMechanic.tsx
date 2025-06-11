@@ -19,7 +19,6 @@ import {
   FiFileText,
   FiImage,
   FiUser,
-  FiPhone,
   FiCheckCircle,
   FiAlertCircle,
 } from "react-icons/fi";
@@ -48,7 +47,7 @@ interface UploadResponse {
 interface MechanicData {
   id: string;
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
 }
 
@@ -59,6 +58,14 @@ interface FileUploadItem {
   name: string;
 }
 
+export interface IinitalValues{
+  name :string ,
+  id: string,
+  mechanicType:string[],
+  photo:string | null,
+  adharProof: string | null,
+   employeeLicense : string | null,
+}
 const VerifyMechanic: React.FC = () => {
   const mechanic = useSelector(
     (state: RootState) => state.auth.mechData
@@ -267,7 +274,7 @@ const VerifyMechanic: React.FC = () => {
     label: string;
     accept: string;
     icon: React.ReactNode;
-    setFieldValue: (field: string, value: any) => void;
+    setFieldValue: (field: string, value: unknown) => void;
     error?: string;
   }> = ({ name, label, accept, icon, setFieldValue, error }) => {
     const fileState = fileStates[name];
@@ -374,9 +381,9 @@ const VerifyMechanic: React.FC = () => {
 
           <div className="p-8">
             <Formik
-              initialValues={{
+              initialValues ={{
                 name: mechanic.name || "",
-                id: mechanic._id || "",
+                id: mechanic._id,
                 mechanicType: [] as string[],
                 photo: null,
                 adharProof: null,
@@ -386,7 +393,7 @@ const VerifyMechanic: React.FC = () => {
               onSubmit={handleSubmit}
             >
               {({
-                values,
+                
                 setFieldValue,
                 errors,
                 touched,
@@ -395,7 +402,7 @@ const VerifyMechanic: React.FC = () => {
                   {/* Personal Information */}
                   <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                      <FiUser className="mr-2" />
+                      <FiUser className="mr-2"/>
                       Personal Information
                     </h3>
 

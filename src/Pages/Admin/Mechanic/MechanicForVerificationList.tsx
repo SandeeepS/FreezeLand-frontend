@@ -79,7 +79,12 @@ const MechanicForVerificationList: React.FC = () => {
       <div className="flex justify-center items-center mx-5 h-screen">
         <CommonTable3
           columns={columns}
-          data={filteredMechs}
+          data={filteredMechs.map(mech => ({
+            _id: mech._id,
+            name: mech.name,
+            email: mech.email,
+            // Add other fields if needed
+          }))}
           //   updateStatus={updateDeviceStatus}
           navLink={navigationLink}
           handleViewMore={handleViewMoreAboutMechanic}

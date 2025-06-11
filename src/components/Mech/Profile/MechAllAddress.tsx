@@ -17,6 +17,7 @@ const MechAllAddress: React.FC = () => {
   const navigate = useNavigate();
   const mechanicData = useAppSelector((state) => state.auth.mechData);
   const mechId = mechanicData?.id;
+  console.log("mechc is",mech);
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -36,7 +37,7 @@ const MechAllAddress: React.FC = () => {
       }
     };
     fetchUserDetails();
-  }, []);
+  }, [mechId]);
 
   const handleEditAddress = async (id: string | undefined) => {
     console.log("clicked the editbutton by ", id);

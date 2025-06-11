@@ -26,28 +26,7 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-// Helper function to get progress bar colors
-const getProgressColors = (status: string) => {
-  switch (status) {
-    case "completed":
-    case "on schedule":
-      return {
-        bg: "bg-emerald-200",
-        bar: "bg-emerald-500",
-      };
-    case "delayed":
-    case "pending":
-      return {
-        bg: "bg-red-200",
-        bar: "bg-red-500",
-      };
-    default:
-      return {
-        bg: "bg-gray-200",
-        bar: "bg-gray-500",
-      };
-  }
-};
+
 
 const ServiceHistory: React.FC = () => {
   const navigate = useNavigate();
@@ -201,7 +180,7 @@ const ServiceHistory: React.FC = () => {
       header: "Completion Date",
       render: (value) => (
         <div className="flex items-center">
-          {value ? new Date(value).toLocaleDateString() : "N/A"}
+          {value instanceof Date && !isNaN(value.getTime()) ? value.toLocaleDateString() : "N/A"}
         </div>
       ),
     },
@@ -210,18 +189,27 @@ const ServiceHistory: React.FC = () => {
   // Transforming the data to match the table structure
   const formattedData =
     completedServices.length > 0
-      ? completedServices.map((service: any) => ({
+      ? completedServices.map((service: AllAcceptedServices) => ({
           id: service._id,
-          name: service.serviceDetails?.[0]?.name || "Unknown Service",
+          name: (Array.isArray(service.serviceDetails) && service.serviceDetails[0]?.name) || "Unknown Service",
           userName:
-            service.userDetails?.[0]?.name || service.name || "Unknown User",
+            (Array.isArray(service.userDetails) && service.userDetails[0]?.name) || service.name || "Unknown User",
           status: service.status || "completed",
-          completionDate: service.completionDate || service.updatedAt,
+          completionDate: service.updatedAt ? new Date(service.updatedAt) : new Date(),
           originalData: service,
         }))
       : [];
 
-  const handleRowClick = (item: any) => {
+  interface FormattedService {
+    id: string;
+    name: string;
+    userName: string;
+    status: string;
+    completionDate: Date;
+    originalData: AllAcceptedServices;
+  }
+
+  const handleRowClick = (item: FormattedService) => {
     console.log("Clicked on service:", item);
     navigate(`/mech/serviceDetails/${item.id}`);
   };

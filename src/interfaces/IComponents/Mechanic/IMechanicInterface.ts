@@ -25,6 +25,7 @@ export interface AddressDetails {
 }
 
 export interface MechDetails {
+  id:string;
   name: string;
   email: string;
   phone: number | string;

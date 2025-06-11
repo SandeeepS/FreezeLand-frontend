@@ -111,13 +111,16 @@ export const MechEditAddress: React.FC = () => {
           enableReinitialize={true}
           onSubmit={async (values) => {
             console.log("Submitted address details:", values);
-            if (!mechProfile?._id || !address?._id) {
+            if (!mechProfile?.id || !address?._id) {
               console.error("Missing mech ID or address ID");
               return;
             }
 
             try {
-              const result = await EditExistingMechAddress(mechId, address._id, values);
+              const result = await EditExistingMechAddress(mechId, address._id, {
+                ...values,
+                isDeleted: address.isDeleted ?? false,
+              });
               if (result) {
                 console.log("Address successfully updated");
                 navigate("/mech/showAllAddress");

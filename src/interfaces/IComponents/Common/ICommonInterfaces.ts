@@ -21,13 +21,13 @@ export interface DynamicTableProps {
 }
 
 export interface TableDataItem {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface TableColumn {
   key: string;
   header: string;
-  render?: (value: any, item: TableDataItem) => React.ReactNode;
+  render?: (value: unknown, item: TableDataItem) => React.ReactNode;
 }
 
 export interface ErrorFallbackProps {
@@ -151,7 +151,7 @@ export interface TableCommonProps {
   columns: Column[];
   data: Data[];
   updateStatus: (id: string, isBlocked: boolean, isDeleted: boolean) => void;
-  blockUnblockFunciton: (id: string) => Promise<BlockingResponse>;
+  blockUnblockFunciton?: (id: string) => Promise<BlockingResponse>;
   deleteFunction: (id: string) => Promise<DeletingResponse>;
   handleViewMore?:(id:string)=>void;
   navLink: string;

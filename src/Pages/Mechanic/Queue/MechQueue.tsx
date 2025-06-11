@@ -26,29 +26,6 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-// Helper function to get progress bar colors
-const getProgressColors = (status: string) => {
-  switch (status) {
-    case "completed":
-    case "on schedule":
-      return {
-        bg: "bg-emerald-200",
-        bar: "bg-emerald-500",
-      };
-    case "delayed":
-    case "pending":
-      return {
-        bg: "bg-red-200",
-        bar: "bg-red-500",
-      };
-    default:
-      return {
-        bg: "bg-gray-200",
-        bar: "bg-gray-500",
-      };
-  }
-};
-
 const MechQueue: React.FC = () => {
   const navigate = useNavigate();
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
@@ -57,10 +34,14 @@ const MechQueue: React.FC = () => {
     AllAcceptedServices[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   // Add state for storing image URLs
-  const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
-  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>({});
+  const [serviceImages, setServiceImages] = useState<Record<string, string>>(
+    {}
+  );
+  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
+    {}
+  );
 
   // Fetch data
   useEffect(() => {
@@ -86,7 +67,7 @@ const MechQueue: React.FC = () => {
     };
     fetchData();
   }, [mechanicId]);
-  
+
   // Fetch image URLs for all services and devices
   const fetchAllImages = async (services: AllAcceptedServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
@@ -94,9 +75,11 @@ const MechQueue: React.FC = () => {
 
     for (const service of services) {
       // Fetch service logo image from serviceDetails
-      if (service.serviceDetails && service.serviceDetails[0]?.imageKey ) {
+      if (
+        Array.isArray(service.serviceDetails) &&
+        service.serviceDetails[0]?.imageKey
+      ) {
         try {
-
           const imageResult = await getImageUrl(
             service.serviceDetails[0].imageKey,
             "service"
@@ -105,7 +88,6 @@ const MechQueue: React.FC = () => {
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[service._id] = imageResult.data.url;
           }
-          
         } catch (error) {
           console.error("Error fetching service image:", error);
         }
@@ -152,7 +134,7 @@ const MechQueue: React.FC = () => {
     {
       key: "service",
       header: "Service",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex items-center">
           <img
             src={serviceImages[item.id] || "/api/placeholder/48/48"}
@@ -182,7 +164,7 @@ const MechQueue: React.FC = () => {
     {
       key: "deviceImage",
       header: "Device Image",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex">
           {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
@@ -203,46 +185,36 @@ const MechQueue: React.FC = () => {
         </div>
       ),
     },
-    {
-      key: "completion",
-      header: "Completion Status",
-      render: (value, item) => (
-        <div className="flex items-center">
-          <span className="mr-2">{value}%</span>
-          <div className="relative w-full">
-            <div
-              className={`overflow-hidden h-2 text-xs flex rounded ${
-                getProgressColors(item.status).bg
-              }`}
-            >
-              <div
-                style={{ width: `${value}%` }}
-                className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                  getProgressColors(item.status).bar
-                }`}
-              />
-            </div>
-          </div>
-        </div>
-      ),
-    },
   ];
 
   // Transforming the data to match the table structure
   const formattedData =
     allAcceptedServices.length > 0
-      ? allAcceptedServices.map((service: any) => ({
+      ? allAcceptedServices.map((service: AllAcceptedServices) => ({
           id: service._id,
-          name: service.serviceDetails?.[0]?.name || "Unknown Service",
+          name:
+            Array.isArray(service.serviceDetails) &&
+            service.serviceDetails[0]?.name
+              ? service.serviceDetails[0].name
+              : "Unknown Service",
           userName:
-            service.userDetails?.[0]?.name || service.name || "Unknown User",
+            Array.isArray(service.userDetails) && service.userDetails[0]?.name
+              ? service.userDetails[0].name
+              : service.name || "Unknown User",
           status: service.status || "pending",
-          completion: service.completionPercentage || 0,
           originalData: service,
         }))
       : [];
 
-  const handleRowClick = (item: any) => {
+  interface FormattedService {
+    id: string;
+    name: string;
+    userName: string;
+    status: string;
+    originalData: AllAcceptedServices;
+  }
+
+  const handleRowClick = (item: FormattedService) => {
     console.log("Clicked on service:", item);
     navigate(`/mech/complaintDetails/${item.id}`);
   };

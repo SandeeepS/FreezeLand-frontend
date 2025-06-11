@@ -20,15 +20,7 @@ import { ComplaintStatus } from "../../../Enums/StatusEnums";
 import ServiceCancelBtn from "../../../components/Common/ServiceCancelBtn";
 import ReportModal from "../../../components/Common/Report/ReportModal";
 
-interface IReportData {
-  reason: string;
-  customDescription: string;
-  reporterRole: "user" | "mechanic";
-  targetId: string;
-  targetRole: "mechanic" | "user" | "service";
-  reporterId:string,
-  taragetName:string
-}
+
 
 const formatDate = (dateString: string) => {
   if (!dateString) return "N/A";
@@ -46,7 +38,7 @@ const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const mechid = id as string;
   const navigate = useNavigate();
-  const [userComplaintDetails, setUserComplaintDetails] = useState<unknown>();
+  const [userComplaintDetails, setUserComplaintDetails] = useState<ComplaintDetails | null>(null);
 
   // Get current user from Redux store
   const mechDetails = useSelector((state: RootState) => state.auth.mechData);
@@ -151,8 +143,8 @@ const ComplaintDetailsPage: React.FC = () => {
 
   // Get customer name for display
   const customerName = useMemo(() => {
-    return complaint?.name || 
-           complaint?.userDetails?.[0]?.name || 
+    return complaint?.name ||
+           complaint?.userDetails?.name ||
            "Customer";
   }, [complaint]);
 
@@ -212,7 +204,7 @@ const ComplaintDetailsPage: React.FC = () => {
             <div>
               <AccecptBtn
                 complaintId={complaint._id}
-                userId={userComplaintDetails?.userId}
+                userId={userComplaintDetails?.userId || ""}
                 mechId={currentMechId}
                 onStatusChange={handleStatusChange}
               />

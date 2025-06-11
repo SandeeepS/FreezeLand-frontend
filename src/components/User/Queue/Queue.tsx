@@ -9,7 +9,6 @@ import {
   AllRegisteredServices,
   TableColumn,
 } from "../../../interfaces/IComponents/User/IUserInterfaces";
-import EmptyStateBox from "./EmptyStateBox";
 import { MdOutlineSpeakerNotesOff } from "react-icons/md";
 
 
@@ -179,7 +178,7 @@ const Queue: React.FC = () => {
     {
       key: "service",
       header: "Service",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex items-center">
           <img
             src={serviceImages[item.id] || "/api/placeholder/48/48"}
@@ -260,7 +259,9 @@ const Queue: React.FC = () => {
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: AllRegisteredServices) => ({
           id: service._id,
-          name: service.serviceDetails[0]?.name || "Unknown Service",
+          name: Array.isArray(service.serviceDetails) && service.serviceDetails.length > 0
+            ? service.serviceDetails[0].name || "Unknown Service"
+            : "Unknown Service",
           userName: service.name || "Unknown User",
           status: service.status || "pending",
           completion: service.completionPercentage || 0,

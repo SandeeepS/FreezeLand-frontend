@@ -57,7 +57,7 @@ const AdminComplaintDetailsPage = () => {
       setOrderDetails(complaint.orderDetails[0]);
       console.log("orderdEtaisl is ", orderdetails);
     }
-  }, [complaint]);
+  }, [complaint, orderdetails]);
 
   // Fetch mechanic details when complaint is loaded
   useEffect(() => {

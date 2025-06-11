@@ -1,14 +1,8 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { TopBarProps } from "../../../interfaces/IComponents/Admin/IAdminInterfaces";
 import { useNavigate } from "react-router-dom";
-// import { FiCalendar } from "react-icons/fi";
 
-const TopBar: React.FC<TopBarProps> = ({
-  pathName,
-  heading,
-  searchQuery,
-  onSearchChange,
-}) => {
+const TopBar: React.FC<TopBarProps> = ({ pathName, heading, searchQuery }) => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(searchQuery);
   const [inputDebounce, setinputDebounce] = useState(" ");
@@ -32,7 +26,7 @@ const TopBar: React.FC<TopBarProps> = ({
         navigate(`${pathName}`);
       }
     }
-  }, [inputDebounce]);
+  }, [inputDebounce, navigate, pathName]);
 
   return (
     <div className="border-b mt-2  bg-white">

@@ -192,7 +192,7 @@ const Service: React.FC = () => {
 
   // Check if user has addresses before rendering the form
   const hasAddresses = userProfile?.address && userProfile.address.length > 0;
-
+  console.log("DefaultAddress is",defaultAddress);
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 mt-12">
@@ -221,7 +221,7 @@ const Service: React.FC = () => {
                     <div className="w-2 h-8 bg-freeze-color rounded-full mr-4"></div>
                     Service Details
                   </h2>
-                  <ServiceDetails serviceImage={serviceImage} />
+                  <ServiceDetails serviceImage={serviceImage || ""} discription={service?.discription || ""} />
                 </div>
               </div>
             </div>

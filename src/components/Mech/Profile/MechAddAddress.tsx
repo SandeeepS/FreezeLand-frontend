@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "@mui/material";
 import { Formik } from "formik";
 // import { AddMechanicAddress, getMechanicProfile } from "../../Api/mechanic";
@@ -6,12 +6,10 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AddressValidation } from "../../Common/Validations";
 import { RootState } from "../../../App/store";
-import { AddMechAddress, getMechanicDetails } from "../../../Api/mech";
+import { AddMechAddress } from "../../../Api/mech";
 
 const MechAddAddress: React.FC = () => {
-  const [mechanicProfile, setMechanicProfile] = useState<IMechanicData | null>(
-    null
-  );
+
   const mechanicData = useSelector((state: RootState) => state.auth.mechData);
   const mechId = mechanicData?.id;
 
@@ -61,7 +59,7 @@ const MechAddAddress: React.FC = () => {
           enableReinitialize={true}
           onSubmit={async (values) => {
             console.log("vales for updation is ", values);
-            const result = await AddMechAddress(mechId, values);
+            const result = await AddMechAddress(mechId, { ...values, isDeleted: false });
             console.log("result after addin the address");
             if (result) {
               navigate("/mech/profile");

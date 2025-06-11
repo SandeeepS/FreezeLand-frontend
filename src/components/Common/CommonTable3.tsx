@@ -23,7 +23,7 @@ interface CommonTable3Props {
     _id: string;
     name: string;
     email?: string;
-    [key: string]: any; 
+    [key: string]: string | number | boolean | undefined;
   }>;
   handleViewMore: (id: string) => void;
   title?: string;
@@ -45,7 +45,7 @@ const CommonTable3: React.FC<CommonTable3Props> = ({
     return b.name.localeCompare(a.name);
   });
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -95,7 +95,6 @@ const CommonTable3: React.FC<CommonTable3Props> = ({
                   {column.label}
                 </TableCell>
               ))}
-     
             </TableRow>
           </TableHead>
           <TableBody>
