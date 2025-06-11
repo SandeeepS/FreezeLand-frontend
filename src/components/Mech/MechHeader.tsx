@@ -56,7 +56,7 @@ const MechHeader: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [mechData?.id]);
 
   useEffect(() => {
     const fetchData = async () => {

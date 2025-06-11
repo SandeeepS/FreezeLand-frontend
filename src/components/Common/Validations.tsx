@@ -51,7 +51,7 @@ export const LoginValidation = Yup.object({
   password: Yup.string().required("please Enter your password!"),
 });
 
-export const newPasswordValidation = Yup.object({
+export const NewPasswordValidation = Yup.object({
   password: Yup.string()
     .min(8)
     .matches(strongRegex, "Enter a Strong password")
@@ -62,7 +62,7 @@ export const newPasswordValidation = Yup.object({
     .required("Please confirm the password!"),
 });
 
-export const newServiceValidation = Yup.object({
+export const NewServiceValidation = Yup.object({
   name: Yup.string().min(3).required("Please enter the Service name!!"),
   discription: Yup.string().min(5).required("Please enter the Discription"),
 });

@@ -66,7 +66,7 @@ const Header: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [userData?.id]);
 
   const [image, setImage] = React.useState<string>("");
 

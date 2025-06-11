@@ -10,7 +10,9 @@ export interface IComplaintDetails {
   userId: string;
   defaultAddress: string;
   discription: string;
-  locationName: object;
+  locationName?: {
+    address?: string;
+  };
   status: string;
   currentMechanicId: string | null;
   acceptedAt: Date | null;
@@ -46,9 +48,10 @@ export interface IComplaintDetails {
 
   isBlocked: boolean;
   isDeleted: boolean;
-  deviceImages?: any[];
+  deviceImages?: string[];
   orderId: string;
   chatId: string;
+  createdAt: Date;
 }
 
 export interface IMechanicDetails {
@@ -60,7 +63,7 @@ export interface IMechanicDetails {
   isVerified: boolean;
   isBlocked: boolean;
   isDeleted: boolean;
-  acceptedAt?: Date;
+  acceptedAt?: string;
 }
 
 //used in the ComplaintHeader.tsx
@@ -71,16 +74,27 @@ export interface Props {
   status: string;
 }
 
+export interface IServiceDetails {
+  _id?: string;
+  name: string;
+  imageKey?: string;
+  discription?: string[];
+  serviceCharge?: number;
+  createdAt?: Date;
+  isBlocked?: boolean;
+  isDeleted?: boolean;
+}
+
 //used in the ComplaintInfo.tsx
 export interface Props2 {
-  serviceDetails: any;
-  complaint: any;
+  serviceDetails: IServiceDetails;
+  complaint: IComplaintDetails;
   deviceImages: string[];
 }
 
 //used in the CustomerInfor.tsx
 export interface Props3 {
-  userDetails: any;
+  userDetails: userDetails;
   fallbackName: string;
 }
 
@@ -110,14 +124,14 @@ export interface AllRegisteredServices {
 
 // Define the base data item type with optional fields
 export interface TableDataItem {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Define the column configuration
 export interface TableColumn {
   key: string;
   header: string;
-  render?: (value: any, item: TableDataItem) => React.ReactNode;
+  render?: (value: unknown, item: TableDataItem) => React.ReactNode;
 }
 
 //used in the AboutTheService.tsx
@@ -144,7 +158,7 @@ export interface ServiceFormProps {
     longitude: number | null;
   };
   locationError: string | undefined;
-  validateLocationName: (value: any) => { ok: boolean; message?: string };
+  validateLocationName: (value: unknown) => { ok: boolean; message?: string };
   handleFetchLocation: () => void;
   handleRemoveLocation: () => void;
   showLocationOptions: boolean;
@@ -154,9 +168,9 @@ export interface ServiceFormProps {
 //used in AllAddress.tsx
 export interface userDetails {
   _id?: string;
-  name: string;
-  email: string;
-  phone: number;
+  name?: string;
+  email?: string;
+  phone?: number;
   address?: string;
   location?: string;
 }

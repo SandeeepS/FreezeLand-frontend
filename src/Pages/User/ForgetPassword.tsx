@@ -7,9 +7,9 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import { newPasswordValidation } from "../../components/Common/Validations";
 import { initialVal } from "../../interfaces/IPages/User/IUserInterfaces";
 import UserData from "../../interfaces/UserData";
+import { NewPasswordValidation } from "../../components/Common/Validations";
 
 // Type definitions for better error handling
 interface ApiError {
@@ -148,7 +148,7 @@ const ForgetPassword: React.FC = () => {
   const { values, handleBlur, handleChange, handleSubmit, errors, resetForm } =
     useFormik({
       initialValues: initialValues,
-      validationSchema: newPasswordValidation,
+      validationSchema: NewPasswordValidation,
       onSubmit: async (formValues) => {
         if (!user?._id) {
           toast.error("User data not found. Please try again.");

@@ -17,7 +17,6 @@ const ServiceList: React.FC = () => {
         if (result) {
           console.log(result.data);
           setServices(result?.data.data.services);
-          console.log("all services are ", services);
         }
       } catch (error) {
         console.log(error as Error);

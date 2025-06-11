@@ -1,54 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-interface StatusColorMap {
-  [key: string]: string;
-}
-
-export const getStatusColor = (status: string): string => {
-  const colorMap: StatusColorMap = {
-    pending: "text-orange-500",
-    completed: "text-emerald-500",
-    delayed: "text-orange-500",
-    "on schedule": "text-teal-500",
-  };
-
-  return colorMap[status.toLowerCase()] || "text-gray-500";
-};
-
-interface ProgressColors {
-  bg: string;
-  bar: string;
-}
-
-export const getProgressColors = (status: string): ProgressColors => {
-  switch (status.toLowerCase()) {
-    case "completed":
-    case "on schedule":
-      return {
-        bg: "bg-emerald-200",
-        bar: "bg-emerald-500",
-      };
-    case "delayed":
-    case "pending":
-      return {
-        bg: "bg-red-200",
-        bar: "bg-red-500",
-      };
-    default:
-      return {
-        bg: "bg-gray-200",
-        bar: "bg-gray-500",
-      };
-  }
-};
-
-type ColumnType<T = unknown> = {
-  key: string;
+type ColumnType<T> = {
+  key: keyof T;
   header: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
 };
 
-type DynamicTableProps<T = unknown> = {
+type DynamicTableProps<T> = {
   columns: ColumnType<T>[];
   data: T[];
   title?: string;
@@ -60,7 +18,7 @@ type DynamicTableProps<T = unknown> = {
   defaultItemsPerPage?: number;
 };
 
-const DynamicTable = <T,>({
+const DynamicTable = <T extends Record<string, unknown>>({
   columns,
   data,
   title = "Data Table",
@@ -73,7 +31,7 @@ const DynamicTable = <T,>({
 }: DynamicTableProps<T>) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(data);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage);
@@ -84,19 +42,21 @@ const DynamicTable = <T,>({
       setFilteredData(data);
     } else {
       const lowercaseQuery = searchQuery.toLowerCase();
-      const filtered = data.filter(item => {
+      const filtered = data.filter((item) => {
         // Search through all columns of the item
-        return columns.some(column => {
-          const value = (item as Record<string, unknown>)[column.key];
+        return columns.some((column) => {
+          const value = item[column.key];
           // Check if the value exists and includes the search query
-          return value !== undefined && 
-                 value !== null && 
-                 String(value).toLowerCase().includes(lowercaseQuery);
+          return (
+            value !== undefined &&
+            value !== null &&
+            String(value).toLowerCase().includes(lowercaseQuery)
+          );
         });
       });
       setFilteredData(filtered);
     }
-    
+
     setCurrentPage(1);
   }, [searchQuery, data, columns]);
 
@@ -105,16 +65,18 @@ const DynamicTable = <T,>({
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("currentItems are ",currentItems);
+  console.log("currentItems are ", currentItems);
 
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
   };
 
-  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleItemsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +103,26 @@ const DynamicTable = <T,>({
     return pageNumbers;
   };
 
+  // Helper function to safely render cell value
+  const renderCellValue = (item: T, column: ColumnType<T>) => {
+    const value = item[column.key];
+
+    if (column.render) {
+      return column.render(value, item);
+    }
+
+    // Handle different value types safely
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    if (typeof value === "object") {
+      return JSON.stringify(value);
+    }
+
+    return String(value);
+  };
+
   return (
     <div className={`relative py-4 bg-blueGray-50 ${className}`}>
       <div className="w-full mb-6 px-4">
@@ -153,13 +135,25 @@ const DynamicTable = <T,>({
                 </h3>
               </div>
             </div>
-            
+
             {/* Search Input with increased border radius */}
             <div className="my-4">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                  <svg
+                    className="w-4 h-4 text-gray-500"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                    />
                   </svg>
                 </div>
                 <input
@@ -187,7 +181,7 @@ const DynamicTable = <T,>({
                   <tr>
                     {columns.map((column) => (
                       <th
-                        key={column.key}
+                        key={String(column.key)}
                         className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-700 text-white"
                       >
                         {column.header}
@@ -203,14 +197,12 @@ const DynamicTable = <T,>({
                       className="border-b border-gray-300 cursor-pointer hover:bg-gray-200 transition duration-200"
                       onClick={() => onRowClick && onRowClick(item)}
                     >
-                      {columns.map((column) =>(
+                      {columns.map((column) => (
                         <td
-                          key={`${index}-${column.key}`}
+                          key={`${index}-${String(column.key)}`}
                           className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                         >
-                          {column.render
-                            ? column.render(item[column.key],item)
-                            : item[column.key]}
+                          {renderCellValue(item, column)}
                         </td>
                       ))}
                     </tr>

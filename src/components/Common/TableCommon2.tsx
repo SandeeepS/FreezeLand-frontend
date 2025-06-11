@@ -20,7 +20,7 @@ const TableCommon2 = () => {
       try {
         const res = await getAllMechanics(search);
         const fetchedMechs = res?.data?.data?.mechs || [];
-        // Filter mechanics to show only those with isVerified: false
+        // Filtering mechanics to show only those with isVerified: false
         const unverifiedMechs = fetchedMechs.filter(
           (mech: MechData) => !mech.isVerified
         );
@@ -32,7 +32,7 @@ const TableCommon2 = () => {
     };
 
     fetchData();
-  }, []);
+  }, [search]);
 
   // Update rowsToShow whenever currentPage changes
   useEffect(() => {

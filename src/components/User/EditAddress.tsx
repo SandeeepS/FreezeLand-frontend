@@ -12,7 +12,13 @@ export const EditAddress: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
   const userId = userData?.id;
   const { id } = useParams();
-  const [userProfile, setUserProfile] = useState<any>(null);
+  interface UserProfile {
+    _id: string;
+    address: AddAddress[];
+    // Add other user fields as needed
+  }
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [address, setAddress] = useState<AddAddress | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -116,7 +122,7 @@ export const EditAddress: React.FC = () => {
             }
 
             try {
-              const result = await EditExistAddress(userProfile._id, address._id, values);
+              const result = await EditExistAddress(userProfile._id, address._id, { ...values, isDeleted: address.isDeleted });
               if (result) {
                 console.log("Address successfully updated");
                 navigate("/user/address");

@@ -34,7 +34,7 @@ const ComplaintInfo: React.FC<Props2> = ({ serviceDetails, complaint, deviceImag
         <Warning className="w-5 h-5 mr-3 mt-1 text-gray-500" />
         <div>
           <h3 className="font-medium">Description</h3>
-          <p>{complaint.description || "No description provided"}</p>
+          <p>{complaint.discription || "No description provided"}</p>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ const AllAddress: React.FC = () => {
       }
     };
     fetchUserDetails();
-  }, []);
+  }, [userId]);
 
   // const handleSetDefault = async (id: string | undefined) => {
   //   console.log("clicked for setDefault", id);
