@@ -41,10 +41,9 @@ interface TabsComponentProps {
   complaintId: string;
 }
 
-// Interface for work details item
 interface WorkDetailItem {
   description: string;
-  amount: number;
+  amount?: number;
 }
 
 const TabsComponent: React.FC<TabsComponentProps> = ({
@@ -52,22 +51,23 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   setActiveTab,
   complaint,
   formatDate,
-  updateComplaint,
-  complaintId,
 }) => {
   console.log("complaint in the TabsComponent", complaint);
   const [complaintItems, setComplaintItems] = useState<WorkDetailItem[]>([]);
   const [newDescription, setNewDescription] = useState("");
   const [newAmount, setNewAmount] = useState<number>(0);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [serviceDetails, setServiceDetails] = useState({});
+  const [serviceDetails, setServiceDetails] = useState<{
+    serviceName?: string;
+    serviceCharge?: number;
+    [key: string]: string | number | undefined;
+  }>({});
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    setServiceDetails(complaint.serviceDetails[0] || {});
+    setServiceDetails(complaint.serviceDetails || {});
 
     if (complaint.workDetails && Array.isArray(complaint.workDetails)) {
-      // Skip the first item which is the service charge
       const workItems = complaint.workDetails || [];
       setComplaintItems(workItems);
     }
@@ -81,7 +81,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   const calculateTotal = () => {
     const serviceCharge = serviceDetails?.serviceCharge || 0;
     const otherCharges = complaintItems.reduce(
-      (sum, item) => sum + item.amount,
+      (sum, item) => sum + (item.amount ?? 0),
       0
     );
     return serviceCharge + otherCharges;
@@ -89,7 +89,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
   // Function to update the database with the current workDetails
   const updateWorkDetailsInDatabase = async () => {
-    console.log("entered in the updateWorkDeatils");
     if (!complaintItems.length) return;
     setIsUpdating(true);
     try {
@@ -112,9 +111,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
 
   const handleAddComplaint = () => {
     if (newDescription.trim() === "" || isNaN(newAmount)) return;
-
     let updatedItems: WorkDetailItem[];
-
     if (editIndex !== null) {
       updatedItems = [...complaintItems];
       updatedItems[editIndex] = {
@@ -138,7 +135,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
   const handleEditComplaint = (index: number) => {
     const item = complaintItems[index];
     setNewDescription(item.description);
-    setNewAmount(item.amount);
+    setNewAmount(item.amount ?? 0);
     setEditIndex(index);
   };
 
@@ -236,7 +233,6 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
               Complaint Descriptions
             </h3>
 
-            {/* Inputs and Add/Update Button */}
             <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700">
@@ -325,7 +321,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({
                       <p className="text-sm">{item.description}</p>
                     </div>
                     <div className="col-span-3 px-3 text-right">
-                      <p className="text-sm">₹{item.amount.toFixed(2)}</p>
+                      <p className="text-sm">₹{(item.amount ?? 0).toFixed(2)}</p>
                     </div>
                     <div className="col-span-3 px-3 flex justify-center space-x-2">
                       <button

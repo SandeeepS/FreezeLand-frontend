@@ -1,5 +1,5 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const InitialLoader = () => {
   const [progress, setProgress] = useState(0);

@@ -2,15 +2,14 @@ import {
   forgotPasswordMech,
   forgotVerifyOtpMech,
   updateNewPasswordMech,
-  resendMechOtp,
 } from "../../Api/mech";
 import { MechData } from "../../interfaces/MechData";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import { newPasswordValidation } from "../../components/Common/Validations";
 import { initialVal } from "../../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { NewPasswordValidation } from "../../components/Common/Validations";
 
 // Type definitions for better error handling
 interface ApiError {
@@ -140,7 +139,7 @@ const ForgetPasswordForMech: React.FC = () => {
   // Password form handler
   const { values, handleBlur, handleChange, handleSubmit, errors, resetForm } = useFormik({
     initialValues: initialValues,
-    validationSchema: newPasswordValidation,
+    validationSchema: NewPasswordValidation,
     onSubmit: async (formValues) => {
       if (!mech?._id) {
         toast.error("Mechanic data not found. Please try again.");

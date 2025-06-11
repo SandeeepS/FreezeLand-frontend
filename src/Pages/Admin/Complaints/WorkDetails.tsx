@@ -12,9 +12,9 @@ interface WorkDetailsProps {
 const WorkDetails = ({ workDetails }: WorkDetailsProps) => {
   if (!workDetails || workDetails.length === 0) return null;
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (date: Date) => {
     try {
-      return format(new Date(dateString), "PPP 'at' p");
+      return format(date, "PPP 'at' p");
     } catch (error) {
       console.error("Error formatting date:", error);
       return "Invalid Date";

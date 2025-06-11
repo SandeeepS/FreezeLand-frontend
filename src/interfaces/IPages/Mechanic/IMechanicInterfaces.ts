@@ -25,6 +25,7 @@ export interface AllAcceptedServices {
     isDeleted: boolean;
     serviceDetails: object;
     userDetails: object;
+    updatedAt:Date
   }
   
   // Define the base data item type with optional fields

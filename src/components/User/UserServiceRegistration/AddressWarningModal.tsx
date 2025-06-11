@@ -1,5 +1,5 @@
 import React from "react";
-import { X, MapPin, Plus } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
 
 interface AddressWarningModalProps {
   show: boolean;

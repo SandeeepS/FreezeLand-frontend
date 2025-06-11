@@ -6,12 +6,12 @@ import React, {
   useMemo,
 } from "react";
 import {
-  Map as GoogleMap,
+  Map,
   GoogleApiWrapper,
   IProvidedProps,
   Marker,
   InfoWindow,
-  IMarkerProps,
+
 } from "google-maps-react"; // Added IMarkerProps import
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -58,7 +58,7 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
     } as NavigationStatus,
     showInfoWindow: false,
     activeMarker: null as google.maps.Marker | null,
-    selectedPlace: null as any,
+    selectedPlace: null as google.maps.MarkerOptions | null,
   });
 
   // Refs for map and directionsRenderer
@@ -66,7 +66,6 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(
     null
   );
-  const isInitialMount = useRef(true);
 
   const mapStyles = {
     width: "100%",
@@ -187,7 +186,7 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
     if (mapState.directions && directionsRendererRef.current) {
       directionsRendererRef.current.setDirections(mapState.directions);
     }
-  }, [mapState.directions, directionsRendererRef.current]);
+  }, [mapState.directions]);
 
   // Set up directions renderer when the map is loaded - memoize to prevent unnecessary re-creation
 
@@ -197,17 +196,16 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
   }
 
   const onMapLoaded = useCallback(
-    (mapProps: IMapProps, map: google.maps.Map) => {
+    (_: IMapProps, map: google.maps.Map) => {
       mapRef.current = map;
 
       if (google && map) {
         directionsRendererRef.current = new google.maps.DirectionsRenderer({
           map: map,
-          suppressMarkers: true, // We'll handle markers ourselves
+          suppressMarkers: true,
         });
       }
 
-      // Apply directions if they already exist
       if (mapState.directions && directionsRendererRef.current) {
         directionsRendererRef.current.setDirections(mapState.directions);
       }
@@ -216,15 +214,27 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
   );
 
   // Memoize handlers to prevent unnecessary re-creation
-  // Fix: Updated the handleMarkerClick function to match the expected types
-  const handleMarkerClick = useCallback((props: any, marker: any, e: any) => {
-    setMapState((prev) => ({
-      ...prev,
-      activeMarker: marker,
-      showInfoWindow: true,
-      selectedPlace: props,
-    }));
-  }, []);
+  interface IMarkerProps {
+    position: { lat: number; lng: number };
+    title?: string;
+    name?: string;
+    icon?: { url: string };
+  }
+
+  const handleMarkerClick = useCallback(
+    (
+      props: IMarkerProps,
+      marker: google.maps.Marker,
+    ) => {
+      setMapState((prev) => ({
+        ...prev,
+        activeMarker: marker,
+        showInfoWindow: true,
+        selectedPlace: props,
+      }));
+    },
+    []
+  );
 
   const handleInfoWindowClose = useCallback(() => {
     setMapState((prev) => ({
@@ -326,7 +336,7 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
       <div className="bg-gray-50">
         <div style={containerStyles}>
           <div style={containerStyles}>
-            <GoogleMap
+            <Map
               google={props.google}
               style={mapStyles}
               zoom={13}
@@ -349,18 +359,21 @@ const MapContainer: React.FC<MapContainerProps> = (props) => {
                 />
               )}
 
-              <InfoWindow
-                marker={mapState.activeMarker}
-                visible={mapState.showInfoWindow}
-                onClose={handleInfoWindowClose}
-              >
-                <div className="p-2">
-                  <h4 className="font-semibold">
-                    {mapState.selectedPlace?.name || ""}
-                  </h4>
-                </div>
-              </InfoWindow>
-            </GoogleMap>
+              {mapState.activeMarker && (
+                <InfoWindow
+                  marker={mapState.activeMarker}
+                  visible={mapState.showInfoWindow}
+                  onCloseClick={handleInfoWindowClose}
+                  content={`
+                    <div class="p-2">
+                      <h4 class="font-semibold">
+                        ${mapState.selectedPlace?.title || ""}
+                      </h4>
+                    </div>
+                  `}
+                />
+              )}
+            </Map>
           </div>
         </div>
       </div>

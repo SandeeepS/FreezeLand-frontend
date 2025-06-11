@@ -17,13 +17,12 @@ import {
 } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import { Close, Report } from "@mui/icons-material";
-import { createReport } from "../../../Api/mech";
 import toast from "react-hot-toast";
 
 interface IReportModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (reportData: IReportData) => Promise<void>;
+  onSubmit: (reportData: IReportData) => Promise<{ data: { success: boolean } } | void>;
   reporterRole: "user" | "mechanic";
   targetRole: "mechanic" | "user" | "service";
   targetId: string;
@@ -126,10 +125,10 @@ const ReportModal: React.FC<IReportModalProps> = ({
       };
       console.log("report details for submisstion is ", reportData);
       const restult = await onSubmit(reportData);
-      console.log("result after createing the from the backend is ",restult);
-      if(restult?.data.success){
+      console.log("result after createing the from the backend is ", restult);
+      if (restult && "data" in restult && restult.data.success) {
         toast.success("Report Submitted successfully");
-      }else{
+      } else {
         toast.error("Report submission failed");
       }
       onClose();

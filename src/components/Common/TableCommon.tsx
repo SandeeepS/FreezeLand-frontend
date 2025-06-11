@@ -17,18 +17,16 @@ import toast from "react-hot-toast";
 import SortIcon from "@mui/icons-material/Sort";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TableCommonProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const TableCommon: React.FC<TableCommonProps> = ({
   columns,
   data,
   updateStatus,
   blockUnblockFunciton,
-  navLink,
   role,
   handleViewMore,
 }) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
   const [page, setPage] = useState(0);
@@ -52,7 +50,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
     return b.name.localeCompare(a.name);
   });
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -77,14 +75,18 @@ const TableCommon: React.FC<TableCommonProps> = ({
         confirmButtonText: "Yes!",
       }).then((result) => {
         if (result.isConfirmed) {
-          blockUnblockFunciton(id).then((result) => {
-            if (result?.success) {
-              updateStatus(id, !isCurrentlyBlocked, false);
-              Swal.fire({ title: "Success!", icon: "success" });
-            } else {
-              toast.error(result?.message);
-            }
-          });
+          if (blockUnblockFunciton) {
+            blockUnblockFunciton(id).then((result) => {
+              if (result?.success) {
+                updateStatus(id, !isCurrentlyBlocked, false);
+                Swal.fire({ title: "Success!", icon: "success" });
+              } else {
+                toast.error(result?.message);
+              }
+            });
+          } else {
+            toast.error("Block/Unblock function is not defined.");
+          }
         }
       });
     } catch (error) {
@@ -186,7 +188,15 @@ const TableCommon: React.FC<TableCommonProps> = ({
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align}
+                  align={
+                    column.align as
+                      | "center"
+                      | "left"
+                      | "right"
+                      | "inherit"
+                      | "justify"
+                      | undefined
+                  }
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -201,18 +211,21 @@ const TableCommon: React.FC<TableCommonProps> = ({
                 <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
                   <TableCell>{datas.name}</TableCell>
                   {datas.email && <TableCell>{datas.email}</TableCell>}
-                  { currentPath !== "/admin/complaints" && 
+                  {currentPath !== "/admin/complaints" && (
                     <TableCell align="right">
                       {datas.isBlocked ? "Blocked" : "Active"}
                     </TableCell>
-                  }
+                  )}
                   <TableCell align="right">
                     {currentPath !== "/admin/complaints" && (
                       <ToggleButton
                         value="check"
                         selected={!datas.isBlocked}
                         onChange={() =>
-                          handleBlockUnblock(datas._id, datas.isBlocked)
+                          handleBlockUnblock(
+                            datas._id,
+                            datas.isBlocked ?? false
+                          )
                         }
                         sx={{
                           backgroundColor: datas.isBlocked ? "red" : "#90ee90",

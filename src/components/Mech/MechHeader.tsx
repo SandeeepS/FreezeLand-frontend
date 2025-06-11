@@ -11,13 +11,11 @@ import { getImageUrl, getMechanicDetails, mLogout } from "../../Api/mech";
 import { MechDetails2 } from "../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import toast from "react-hot-toast";
 import { FaRegAddressBook } from "react-icons/fa";
-
 const MechHeader: React.FC = () => {
   const mechData = useAppSelector((state) => state.auth.mechData);
   const [mechProfileDetails, setMechProfileDetails] = useState<MechDetails2>();
   const [image, setImage] = useState<string>("");
   const [isVerified, setIsVerified] = useState<boolean>(false);
-
   const navigate = useNavigate();
   const [nav, setNav] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(false);
@@ -58,7 +56,7 @@ const MechHeader: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [mechData?.id]);
 
   useEffect(() => {
     const fetchData = async () => {

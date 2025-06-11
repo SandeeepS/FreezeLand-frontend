@@ -57,7 +57,7 @@ const MechanicProfileEdit: React.FC = () => {
       }
     };
     fetchMechanicProfile();
-  }, [mechData]);
+  }, [mechData, mechId]);
 
   useEffect(() => {
     const fetchData = async () => {

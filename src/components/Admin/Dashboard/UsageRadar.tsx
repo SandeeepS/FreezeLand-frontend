@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { FiEye } from "react-icons/fi";
 import {
   Radar,

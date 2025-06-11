@@ -6,7 +6,8 @@ export interface AddAddress{
     state:string,
     pin:number,
     district:string,
-    landMark:string
+    landMark:string;
+    isDeleted:boolean;
 }
 
 

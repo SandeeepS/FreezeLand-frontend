@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import TopBar from "../../../components/Admin/Dashboard/TopBar";
-import TableCommon from "../../../components/Common/TableCommon";
 import { getAllMechanics } from "../../../Api/admin";
 import { MechData } from "../../../interfaces/IComponents/Admin/IAdminInterfaces";
+import CommonTable3 from "../../../components/Common/CommonTable3";
 
 const MechanicForVerificationList: React.FC = () => {
   const location = useLocation();
@@ -18,13 +18,14 @@ const MechanicForVerificationList: React.FC = () => {
 
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
-    {
-      id: "isBlocked",
-      label: "Status",
-      minWidth: 170,
-      align: "right",
-      format: (value: boolean) => (value ? "Blocked" : "Active"),
-    },
+    { id: "email", label: "Email", minWidth: 170 },
+    // {
+    //   id: "isBlocked",
+    //   label: "Status",
+    //   minWidth: 170,
+    //   align: "right",
+    //   format: (value: boolean) => (value ? "Blocked" : "Active"),
+    // },
     { id: "actions", label: "Actions", minWidth: 150, align: "right" },
   ];
   const navigationLink = "/admin/VerfiyMechanic/";
@@ -43,13 +44,13 @@ const MechanicForVerificationList: React.FC = () => {
     fetchData();
   }, []);
 
-const filteredMechs = mechs
-  .filter((mech) => !mech.isVerified) 
-  .filter(
-    (mech) =>
-      mech.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      mech.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredMechs = mechs
+    .filter((mech) => !mech.isVerified)
+    .filter(
+      (mech) =>
+        mech.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        mech.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   const handleViewMoreAboutMechanic = (id: string) => {
     navigate(`/admin/mechanic/details/${id}`);
@@ -60,7 +61,7 @@ const filteredMechs = mechs
       <div className="mx-4">
         <TopBar
           pathName={pathName}
-          heading="All Unverified Mechanics"
+          heading="Verify Mechanics"
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
@@ -76,9 +77,14 @@ const filteredMechs = mechs
       </div>
 
       <div className="flex justify-center items-center mx-5 h-screen">
-        <TableCommon
+        <CommonTable3
           columns={columns}
-          data={filteredMechs}
+          data={filteredMechs.map(mech => ({
+            _id: mech._id,
+            name: mech.name,
+            email: mech.email,
+            // Add other fields if needed
+          }))}
           //   updateStatus={updateDeviceStatus}
           navLink={navigationLink}
           handleViewMore={handleViewMoreAboutMechanic}

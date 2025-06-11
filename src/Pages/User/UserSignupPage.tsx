@@ -2,7 +2,6 @@ import { useFormik } from "formik";
 import { SignupValidation } from "../../components/Common/Validations";
 import { signup } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
-import OAuth from "../../components/Common/OAuth";
 import {
   FormData,
   initialVal3,
@@ -38,8 +37,8 @@ const UserSignupPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await signup(formData);
-          if(result.error){
-            errorHandler(result.error);
+          if ('error' in result) {
+            errorHandler(new Error(result.error as string));
             return;
           }
           console.log("resutl is", result);

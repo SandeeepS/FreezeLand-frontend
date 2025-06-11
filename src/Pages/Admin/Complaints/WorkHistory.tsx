@@ -5,23 +5,24 @@ interface WorkHistoryProps {
     mechanicId: string;
     status: string;
     reason: string | null;
-    canceledAt: string | null;
+    canceledAt: Date | null;
     _id: string;
   }>;
-  currentMechanicId: string;
+  currentMechanicId: string | null;
 }
 
 const WorkHistory = ({ workHistory, currentMechanicId }: WorkHistoryProps) => {
   if (!workHistory || workHistory.length === 0) return null;
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "N/A";
-    try {
-      return format(new Date(dateString), "PPP 'at' p");
-    } catch {
-      return "Invalid Date";
-    }
-  };
+  const formatDate = (date: string | Date | null) => {
+      if (!date) return "N/A";
+      try {
+        const d = typeof date === "string" ? new Date(date) : date;
+        return format(d, "PPP 'at' p");
+      } catch {
+        return "Invalid Date";
+      }
+    };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -45,7 +46,7 @@ const WorkHistory = ({ workHistory, currentMechanicId }: WorkHistoryProps) => {
       </h2>
       
       <div className="space-y-4">
-        {workHistory.map((item, index) => (
+        {workHistory.map((item) => (
           <div 
             key={item._id} 
             className={`p-4 rounded-lg ${

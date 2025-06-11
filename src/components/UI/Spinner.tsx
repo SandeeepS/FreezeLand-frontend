@@ -1,19 +1,34 @@
-// Spinner.jsx
+// Spinner.tsx
 
-const Spinner = ({ size = "md", color = "primary", className = "" }) => {
-  const sizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
-    xl: "w-12 h-12"
-  };
+import React from "react";
 
-  const colorClasses = {
-    primary: "text-blue-600",
-    secondary: "text-gray-600",
-    white: "text-white"
-  };
+type SpinnerSize = "sm" | "md" | "lg" | "xl";
+type SpinnerColor = "primary" | "secondary" | "white";
 
+interface SpinnerProps {
+  size?: SpinnerSize;
+  color?: SpinnerColor;
+  className?: string;
+}
+
+const sizeClasses: Record<SpinnerSize, string> = {
+  sm: "w-4 h-4",
+  md: "w-6 h-6",
+  lg: "w-8 h-8",
+  xl: "w-12 h-12",
+};
+
+const colorClasses: Record<SpinnerColor, string> = {
+  primary: "text-blue-600",
+  secondary: "text-gray-600",
+  white: "text-white",
+};
+
+const Spinner: React.FC<SpinnerProps> = ({
+  size = "md",
+  color = "primary",
+  className = "",
+}) => {
   return (
     <div role="status">
       <svg
@@ -44,4 +59,4 @@ const Spinner = ({ size = "md", color = "primary", className = "" }) => {
   );
 };
 
-export default Spinner
+export default Spinner;

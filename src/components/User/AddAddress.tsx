@@ -71,7 +71,7 @@ const AddAddress: React.FC = () => {
               if (userProfile) {
                 _id = userProfile._id;
               }
-              const result = await AddUserAddress(_id, values);
+              const result = await AddUserAddress(_id, { ...values, isDeleted: false });
               if (result) {
                 console.log("result reached the frontend",result);
                 navigate('/user/account');

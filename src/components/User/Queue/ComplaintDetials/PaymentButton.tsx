@@ -3,7 +3,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { handlePayment } from "../../../../Api/user";
 import toast from "react-hot-toast";
 import { useAppSelector } from "../../../../App/store";
-import { useNavigate } from "react-router-dom";
 
 export interface paymentData {
   complaintId: string;
@@ -93,9 +92,10 @@ const PaymentButton: React.FC<paymentData> = ({
     <div className="mt-6 flex justify-center">
       <button
         onClick={handlePayement}
-        className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition duration-150 ease-in-out"
+        disabled={isLoading}
+        className={`inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition duration-150 ease-in-out ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        Pay Now
+        {isLoading ? "Processing..." : "Pay Now"}
       </button>
     </div>
   );

@@ -22,19 +22,14 @@ import PaymentButton from "./PaymentButton";
 import ServiceCancelBtn from "../../../Common/ServiceCancelBtn";
 import ReportModal from "../../../Common/Report/ReportModal";
 import InvoiceDownloadButton from "../../../Common/generateInvoicePDF";
+import { IUserData } from "../../../../interfaces/IUserData";
 
 interface IServiceDetails {
   image?: string;
-  name?: string;
+  name: string;
 }
 
-interface IReportData {
-  reason: string;
-  customDescription: string;
-  reporterType: "user" | "mechanic";
-  targetId: string;
-  targetType: "mechanic" | "user" | "service";
-}
+
 
 /**
  * ComplaintDetail component displays detailed information about a service complaint
@@ -151,7 +146,9 @@ const ComplaintDetail: React.FC = () => {
 
   // Extract data from complaint
   const serviceDetails: IServiceDetails = complaint.serviceDetails?.[0] || {};
-  const userDetails = complaint.userDetails?.[0] || {};
+  const userDetails : IUserData = complaint.userDetails?.[0]
+    ? complaint.userDetails[0]
+    : { name: "", email: "", phone: "" };
   const deviceImages = complaint.deviceImages || [];
   const status = complaint.status || "pending";
 
@@ -250,7 +247,7 @@ const ComplaintDetail: React.FC = () => {
       {isPaymentCompleted && (
         <InvoiceDownloadButton
           complaint={complaint}
-          mechanicDetails={mechanicDetails}
+          mechanicDetails={mechanicDetails ?? undefined}
           totalAmount={totalAmount}
         />
       )}
@@ -287,7 +284,9 @@ const ComplaintDetail: React.FC = () => {
         reporterRole="user"
         targetRole="mechanic"
         targetId={mechanicDetails?._id || ""}
-        targetName={mechanicDetails?.name}
+        targetName={mechanicDetails?.name || ""}
+        reporterId={userDetails._id || ""}
+        complaintId={complaint._id}
       />
 
       {/* Success Snackbar */}

@@ -71,7 +71,6 @@ const AllReportComponent: React.FC = () => {
   const [personDetails, setPersonDetails] = useState<
     Map<string, PersonDetails>
   >(new Map());
-  const [loadingDetails, setLoadingDetails] = useState<Set<string>>(new Set());
   const { reportRole } = useParams();
   const navigate = useNavigate();
 
@@ -117,7 +116,6 @@ const AllReportComponent: React.FC = () => {
 
   // Function to load person details when expanding a row
   const loadPersonDetails = async (
-    reportId: string,
     reporterId: string,
     targetId: string,
     reporterRole: "user" | "mechanic",
@@ -135,7 +133,6 @@ const AllReportComponent: React.FC = () => {
 
     if (detailsToLoad.length === 0) return;
 
-    setLoadingDetails((prev) => new Set([...prev, reportId]));
 
     try {
       const promises = detailsToLoad.map(({ id, role }) =>
@@ -153,12 +150,6 @@ const AllReportComponent: React.FC = () => {
       });
     } catch (error) {
       console.error("Error loading person details:", error);
-    } finally {
-      setLoadingDetails((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(reportId);
-        return newSet;
-      });
     }
   };
 
@@ -199,7 +190,6 @@ const AllReportComponent: React.FC = () => {
       // Load person details when expanding
       if (report) {
         loadPersonDetails(
-          reportId,
           report.reporterId,
           report.targetId,
           report.type,

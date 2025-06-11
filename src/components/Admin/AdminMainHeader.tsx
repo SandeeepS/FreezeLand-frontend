@@ -5,10 +5,7 @@ import { adminLogout } from "../../Api/admin";
 import { adLogout } from "../../App/slices/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
-import { CgProfile } from "react-icons/cg";
-import { MdContactless } from "react-icons/md";
-import { MdEventNote } from "react-icons/md";
-import { IoIosSettings } from "react-icons/io";
+
 
 const AdminMainHeader: React.FC = () => {
   const navigate = useNavigate();
@@ -16,28 +13,34 @@ const AdminMainHeader: React.FC = () => {
   const [isCardOpen, setIsCardOpen] = useState(false);
   const navigateTo = "/admin/login";
 
-   const adminNavigationItems = [
-      {
-        icon: <CgProfile className="mr-2" />,
-        label: "Profile",
-        path: "/admin/account",
-      },
-      {
-        icon: <MdContactless className="mr-2" />,
-        label: "Contact",
-        path: "/admin/contact",
-      },
-      {
-        icon: <MdEventNote className="mr-2" />,
-        label: "Address",
-        path: "/admin/address",
-      },
-      {
-        icon: <IoIosSettings className="mr-2" />,
-        label: "Settings",
-        path: "/admin/settings",
-      },
-    ];
+  interface AdminNavigationItem {
+    icon?: React.ReactNode;
+    label: string;
+    path: string;
+  }
+
+  const adminNavigationItems: AdminNavigationItem[] = [
+    // {
+    //   icon: <CgProfile className="mr-2" />,
+    //   label: "Profile",
+    //   path: "/admin/account",
+    // },
+    // {
+    //   icon: <MdContactless className="mr-2" />,
+    //   label: "Contact",
+    //   path: "/admin/contact",
+    // },
+    // {
+    //   icon: <MdEventNote className="mr-2" />,
+    //   label: "Address",
+    //   path: "/admin/address",
+    // },
+    // {
+    //   icon: <IoIosSettings className="mr-2" />,
+    //   label: "Settings",
+    //   path: "/admin/settings",
+    // },
+  ];
 
   const handleNav = () => {
     setNav(!nav);

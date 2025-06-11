@@ -2,22 +2,18 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-// import { CgProfile } from "react-icons/cg";
-// import { MdContactless } from "react-icons/md";
-// import { MdEventNote } from "react-icons/md";
-// import { IoIosSettings } from "react-icons/io";
 import { MdPowerSettingsNew } from "react-icons/md";
 import { HeaderDropDownProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { persistor } from "../../App/store";
 import { useState } from "react";
 
+
+
 const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   isOpen,
-  onClose,
   logout,
   authLogout,
   navigateTo,
-  coverImage,
   profileImage,
   userName,
   navigationItems,

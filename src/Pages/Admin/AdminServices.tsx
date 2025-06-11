@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAllServices } from "../../Api/admin";
 import { listUnlistService } from "../../Api/admin";
@@ -31,7 +30,7 @@ const AdminServices: React.FC = () => {
   const [services, setServices] = useState<ServiceData[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearchChange = (query: string, results: any[] = []) => {
+  const handleSearchChange = (query: string) => {
     setSearchQuery(query);
   };
 

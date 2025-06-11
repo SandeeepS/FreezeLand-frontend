@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   getAllComplaints,
   deleteComplaint,
-  listUnlistComplaints,
 } from "../../../Api/admin";
 import TopBar from "../../../components/Admin/Dashboard/TopBar";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";

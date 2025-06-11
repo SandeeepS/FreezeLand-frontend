@@ -31,7 +31,6 @@ const ENDPOINT = "http://localhost:5000"; // Your server URL
 
 const ChatBox: React.FC<ChatBoxProps> = ({
   complaintId,
-  userId,
   mechanicId,
   isMinimized = false,
   onClose,
@@ -62,7 +61,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       }
     };
     fetchData();
-  }, []);
+  }, [complaintId]);
 
   useEffect(() => {
     const newSocket = io(ENDPOINT, { withCredentials: true });

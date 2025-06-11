@@ -9,7 +9,6 @@ import {
   AllRegisteredServices,
   TableColumn,
 } from "../../../interfaces/IComponents/User/IUserInterfaces";
-import EmptyStateBox from "./EmptyStateBox";
 import { MdOutlineSpeakerNotesOff } from "react-icons/md";
 
 // Helper function to get status color
@@ -73,12 +72,12 @@ const UserServiceHistory: React.FC = () => {
         if (result?.allRegisteredUserServices) {
           // Filter only completed services/complaints
           const completedServices = result.allRegisteredUserServices.filter(
-            (service: AllRegisteredServices) => 
-              service.status === "completed" || 
-              service.status === "cancelled" || 
+            (service: AllRegisteredServices) =>
+              service.status === "completed" ||
+              service.status === "cancelled" ||
               service.status === "rejected"
           );
-          
+
           setAllRegisteredService(completedServices);
           console.log(
             "Completed services from the frontend:",
@@ -111,7 +110,7 @@ const UserServiceHistory: React.FC = () => {
       // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
-        Array.isArray(service.serviceDetails) && 
+        Array.isArray(service.serviceDetails) &&
         service.serviceDetails.length > 0 &&
         service.serviceDetails[0].imageKey
       ) {
@@ -162,7 +161,7 @@ const UserServiceHistory: React.FC = () => {
     {
       key: "service",
       header: "Service",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex items-center">
           <img
             src={serviceImages[item.id] || "/api/placeholder/48/48"}
@@ -192,7 +191,7 @@ const UserServiceHistory: React.FC = () => {
     {
       key: "deviceImage",
       header: "Device Image",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex">
           {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
@@ -239,20 +238,25 @@ const UserServiceHistory: React.FC = () => {
     {
       key: "completedDate",
       header: "Completed Date",
-      render: (value, item) => (
+      render: (_, item) => (
         <span className="text-gray-600">
-          {item.originalData.updatedAt 
-            ? new Date(item.originalData.updatedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              })
-            : new Date(item.originalData.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              })
-          }
+          {item.originalData.updatedAt
+            ? new Date(item.originalData.updatedAt).toLocaleDateString(
+                "en-US",
+                {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                }
+              )
+            : new Date(item.originalData.createdAt).toLocaleDateString(
+                "en-US",
+                {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                }
+              )}
         </span>
       ),
     },
@@ -263,7 +267,11 @@ const UserServiceHistory: React.FC = () => {
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: AllRegisteredServices) => ({
           id: service._id,
-          name: service.serviceDetails[0]?.name || "Unknown Service",
+          name:
+            Array.isArray(service.serviceDetails) &&
+            service.serviceDetails[0]?.name
+              ? service.serviceDetails[0].name
+              : "Unknown Service",
           userName: service.name || "Unknown User",
           status: service.status || "completed",
           completion: service.completionPercentage || 100,
@@ -272,13 +280,13 @@ const UserServiceHistory: React.FC = () => {
       : [];
 
   // Handle row click - Navigate to detail page
-  const handleRowClick = (item: { 
-    id: string; 
-    name: string; 
-    userName: string; 
-    status: string; 
-    completion: number; 
-    originalData: AllRegisteredServices 
+  const handleRowClick = (item: {
+    id: string;
+    name: string;
+    userName: string;
+    status: string;
+    completion: number;
+    originalData: AllRegisteredServices;
   }) => {
     console.log("Clicked on service history:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
@@ -295,9 +303,9 @@ const UserServiceHistory: React.FC = () => {
           No Service History
         </h3>
         <p className="mt-2 text-sm text-gray-500">
-          You haven't completed any services yet. Once you complete services, they'll appear here.
+          You haven't completed any services yet. Once you complete services,
+          they'll appear here.
         </p>
-        
       </div>
     </div>
   );

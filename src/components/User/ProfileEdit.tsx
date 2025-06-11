@@ -57,7 +57,7 @@ const ProfileEdit: React.FC = () => {
       }
     };
     fetchUserProfile();
-  }, [userData]);
+  }, [userData, previewImage]);
 
   useEffect(() => {
     const fetchData = async () => {

@@ -15,7 +15,7 @@ const LargeModal: React.FC<ModalProps> = ({
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+  const onCropComplete = () => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
@@ -109,7 +109,7 @@ const LargeModal: React.FC<ModalProps> = ({
                   max={3}
                   step={0.1}
                   aria-labelledby="Zoom"
-                  onChange={(e, zoom) => setZoom(Number(zoom))}
+                  onChange={(_event, value) => setZoom(Number(value))}
                   classes={{ root: "slider" }}
                 />
               </div>

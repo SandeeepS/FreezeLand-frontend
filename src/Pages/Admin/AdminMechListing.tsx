@@ -27,6 +27,7 @@ const AdminMechListing: React.FC = () => {
   console.log("pathname is", pathName);
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
+  console.log('Search is ',search);
   const [mechs, setMech] = useState<MechData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
