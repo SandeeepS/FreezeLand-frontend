@@ -1,14 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import DynamicTable from "../../../components/Common/DynamicTable";
+import DynamicTable, {
+  ColumnType,
+} from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
-import {  getAllCompletedServices, getImageUrl } from "../../../Api/mech";
-import {
-  AllAcceptedServices,
-  TableColumn,
-} from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { getAllCompletedServices, getImageUrl } from "../../../Api/mech";
+import { AllAcceptedServices } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
+
+// Define the exact shape of your table data (similar to FormattedComplaintData)
+export interface FormattedServiceData {
+  id: string;
+  name: string;
+  userName: string;
+  status: string;
+  completionDate: Date;
+  originalData: AllAcceptedServices;
+  service: string; // Add this for the service column
+  deviceImage: string; // Add this for the device image column
+  [key: string]: unknown;
+}
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
@@ -26,8 +38,6 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-
-
 const ServiceHistory: React.FC = () => {
   const navigate = useNavigate();
   const mechanic = useSelector((state: RootState) => state.auth.mechData);
@@ -36,10 +46,14 @@ const ServiceHistory: React.FC = () => {
     AllAcceptedServices[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   // Add state for storing image URLs
-  const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
-  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>({});
+  const [serviceImages, setServiceImages] = useState<Record<string, string>>(
+    {}
+  );
+  const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
+    {}
+  );
 
   // Fetch data
   useEffect(() => {
@@ -65,7 +79,7 @@ const ServiceHistory: React.FC = () => {
     };
     fetchData();
   }, [mechanicId]);
-  
+
   // Fetch image URLs for all services and devices
   const fetchAllImages = async (services: AllAcceptedServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
@@ -73,7 +87,9 @@ const ServiceHistory: React.FC = () => {
 
     for (const service of services) {
       // Fetch service logo image from serviceDetails
-      const serviceDetailsArr = Array.isArray(service.serviceDetails) ? service.serviceDetails : [];
+      const serviceDetailsArr = Array.isArray(service.serviceDetails)
+        ? service.serviceDetails
+        : [];
       if (serviceDetailsArr.length > 0 && serviceDetailsArr[0]?.imageKey) {
         try {
           const imageResult = await getImageUrl(
@@ -84,7 +100,6 @@ const ServiceHistory: React.FC = () => {
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[service._id] = imageResult.data.url;
           }
-          
         } catch (error) {
           console.error("Error fetching service image:", error);
         }
@@ -119,35 +134,42 @@ const ServiceHistory: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Define the columns for the service table
-  const serviceColumns: TableColumn[] = [
+  // Define the columns using ColumnType from DynamicTable (like in AllWorksPage)
+  const serviceColumns: ColumnType<FormattedServiceData>[] = [
     {
       key: "service",
       header: "Service",
-      render: (value, item) => (
-        <div className="flex items-center">
-          <img
-            src={serviceImages[item.id] || "/api/placeholder/48/48"}
-            className="h-12 w-12 bg-white rounded-full border"
-            alt={item.name}
-          />
-          <span className="ml-3 font-bold text-black">
-            {item.name || "Unknown Service"}
-          </span>
-        </div>
-      ),
+      render: (_, item) => {
+        const id = item.id;
+        const name = item.name;
+        return (
+          <div className="flex items-center">
+            <img
+              src={serviceImages[id] || "/api/placeholder/48/48"}
+              className="h-12 w-12 bg-white rounded-full border"
+              alt={name}
+            />
+            <span className="ml-3 font-bold text-black">
+              {name || "Unknown Service"}
+            </span>
+          </div>
+        );
+      },
     },
     {
       key: "userName",
       header: "User Name",
+      render: (value) => <div className="font-medium">{String(value)}</div>,
     },
     {
       key: "status",
       header: "Status",
       render: (value) => (
         <div className="flex items-center">
-          <Circle className={`${getStatusColor(value)} mr-2 h-4 w-4`} />
-          {value}
+          <Circle
+            className={`${getStatusColor(value as string)} mr-2 h-4 w-4`}
+          />
+          {String(value)}
         </div>
       ),
     },
@@ -180,50 +202,65 @@ const ServiceHistory: React.FC = () => {
       header: "Completion Date",
       render: (value) => (
         <div className="flex items-center">
-          {value instanceof Date && !isNaN(value.getTime()) ? value.toLocaleDateString() : "N/A"}
+          {value instanceof Date && !isNaN((value as Date).getTime())
+            ? (value as Date).toLocaleDateString()
+            : "N/A"}
         </div>
       ),
     },
   ];
 
-  // Transforming the data to match the table structure
-  const formattedData =
+  // Transform data for the table with proper typing (like in AllWorksPage)
+  const formattedData: FormattedServiceData[] =
     completedServices.length > 0
       ? completedServices.map((service: AllAcceptedServices) => ({
           id: service._id,
-          name: (Array.isArray(service.serviceDetails) && service.serviceDetails[0]?.name) || "Unknown Service",
+          name:
+            (Array.isArray(service.serviceDetails) &&
+              service.serviceDetails[0]?.name) ||
+            "Unknown Service",
           userName:
-            (Array.isArray(service.userDetails) && service.userDetails[0]?.name) || service.name || "Unknown User",
+            (Array.isArray(service.userDetails) &&
+              service.userDetails[0]?.name) ||
+            service.name ||
+            "Unknown User",
           status: service.status || "completed",
-          completionDate: service.updatedAt ? new Date(service.updatedAt) : new Date(),
+          completionDate: service.updatedAt
+            ? new Date(service.updatedAt)
+            : new Date(),
           originalData: service,
+          service:
+            (Array.isArray(service.serviceDetails) &&
+              service.serviceDetails[0]?.name) ||
+            "Unknown Service", // Add this
+          deviceImage:
+            Array.isArray(service.image) &&
+            service.image.length > 0 &&
+            service.image &&
+            typeof service.image === "string"
+              ? service.image[0]
+              : "", // Always a string
         }))
       : [];
 
-  interface FormattedService {
-    id: string;
-    name: string;
-    userName: string;
-    status: string;
-    completionDate: Date;
-    originalData: AllAcceptedServices;
-  }
-
-  const handleRowClick = (item: FormattedService) => {
+  const handleRowClick = (item: FormattedServiceData) => {
     console.log("Clicked on service:", item);
     navigate(`/mech/serviceDetails/${item.id}`);
   };
 
   return (
-    <DynamicTable
-      title="Service History"
-      columns={serviceColumns}
-      data={formattedData}
-      loading={loading}
-      emptyMessage="No completed services found"
-      onRowClick={handleRowClick}
-      className="mt-16 cursor-pointer"
-    />
+    <div className="px-4 py-6">
+      <h1 className="text-2xl font-bold mb-6">Service History</h1>
+      <DynamicTable<FormattedServiceData>
+        title="Completed Services"
+        columns={serviceColumns}
+        data={formattedData}
+        loading={loading}
+        emptyMessage="No completed services found"
+        onRowClick={handleRowClick}
+        className="cursor-pointer"
+      />
+    </div>
   );
 };
 

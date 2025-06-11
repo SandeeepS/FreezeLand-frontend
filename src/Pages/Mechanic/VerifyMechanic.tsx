@@ -267,7 +267,7 @@ const VerifyMechanic: React.FC = () => {
         }
       });
     };
-  }, []);
+  }, [fileStates]);
 
   const FileUploadField: React.FC<{
     name: keyof FileUploadState;
@@ -383,12 +383,12 @@ const VerifyMechanic: React.FC = () => {
             <Formik
               initialValues ={{
                 name: mechanic.name || "",
-                id: mechanic._id,
+                id: mechanic.id,
                 mechanicType: [] as string[],
-                photo: null,
-                adharProof: null,
-                employeeLicense: null,
-              }}
+                photo: "",
+                adharProof: "",
+                employeeLicense: "",
+              } as MechanicForm}
               validationSchema={MechanicVerificationValidationSchema}
               onSubmit={handleSubmit}
             >

@@ -30,14 +30,14 @@ export interface AllAcceptedServices {
   
   // Define the base data item type with optional fields
   export interface TableDataItem {
-    [key: string]: any;
+    [key: string]: unknown;
   }
   
   // Define the column configuration
   export interface TableColumn {
     key: string;
     header: string;
-    render?: (value: any, item: TableDataItem) => React.ReactNode;
+    render?: (value: unknown, item: TableDataItem) => React.ReactNode;
   }
 
   //used in ForgetPasswordForMech.tsx

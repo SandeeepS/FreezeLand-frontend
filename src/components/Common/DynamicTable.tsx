@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-type ColumnType<T> = {
+export  type ColumnType<T> = {
   key: keyof T;
   header: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;

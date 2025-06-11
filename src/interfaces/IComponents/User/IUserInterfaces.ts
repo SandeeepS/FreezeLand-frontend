@@ -120,11 +120,25 @@ export interface AllRegisteredServices {
   status?: string;
   deviceImages?: string[];
   completionPercentage?: number;
+  updatedAt:string;
+  createdAt:string;
 }
 
 // Define the base data item type with optional fields
 export interface TableDataItem {
+  name: string;
+  _id: string;
+  image: string;
+  serviceId: string;
+  userId: string;
+  defaultAddress: string;
   [key: string]: unknown;
+  description: string;
+  locationName: string;
+  isBlocked: boolean;
+  isDeleted: boolean;
+  userDetails:object;
+  serviceDetails:object;
 }
 
 // Define the column configuration
