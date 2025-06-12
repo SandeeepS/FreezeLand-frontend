@@ -277,7 +277,17 @@ const ComplaintDetailsPage: React.FC = () => {
         {/* Service details component (only if accepted) */}
         {(
           <ServiceDetailsComponent
-            complaint={complaint}
+            complaint={{
+              ...complaint,
+              image: complaint.image ?? [],
+              workDetails: complaint.workDetails && complaint.workDetails.length > 0
+                ? [complaint.workDetails[0]]
+                : [{
+                    description: "",
+                    cost: 0,
+                    addedAt: new Date(),
+                  }],
+            }}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             formatDate={formatDate}

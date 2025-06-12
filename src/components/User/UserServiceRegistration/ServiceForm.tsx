@@ -10,7 +10,7 @@ interface ServiceFormValues {
   discription: string;
   files: File[];
   defaultAddress: string;
-  location?:string;
+  location:string;
 }
 
 // Define ServiceFormProps interface properly

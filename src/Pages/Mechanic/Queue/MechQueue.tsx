@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import DynamicTable from "../../../components/Common/DynamicTable";
+import DynamicTable, { ColumnType } from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import { getAllAcceptedServices, getImageUrl } from "../../../Api/mech";
 import {
   AllAcceptedServices,
-  TableColumn,
 } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
+
+// Define the formatted service interface with index signature
+interface FormattedService {
+  id: string;
+  name: string;
+  userName: string;
+  status: string;
+  originalData: AllAcceptedServices;
+  [key: string]: unknown;
+}
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
@@ -68,7 +77,6 @@ const MechQueue: React.FC = () => {
     fetchData();
   }, [mechanicId]);
 
-  // Fetch image URLs for all services and devices
   const fetchAllImages = async (services: AllAcceptedServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
     const deviceImagesMap: Record<string, string[]> = {};
@@ -93,7 +101,6 @@ const MechQueue: React.FC = () => {
         }
       }
 
-      // Fetch device images if available
       if (service.image && service.image.length) {
         const deviceImageUrls: string[] = [];
 
@@ -122,15 +129,13 @@ const MechQueue: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // You can use another useEffect to log the state after it's updated
   useEffect(() => {
     console.log("Accepted services from the frontend:", allAcceptedServices);
     console.log("Service images:", serviceImages);
     console.log("Device images:", deviceImages);
   }, [allAcceptedServices, serviceImages, deviceImages]);
 
-  // Define the columns for the service table
-  const serviceColumns: TableColumn[] = [
+  const serviceColumns: ColumnType<FormattedService>[] = [
     {
       key: "service",
       header: "Service",
@@ -150,14 +155,15 @@ const MechQueue: React.FC = () => {
     {
       key: "userName",
       header: "User Name",
+      render: (value) => <div className="font-medium">{String(value)}</div>,
     },
     {
       key: "status",
       header: "Status",
       render: (value) => (
         <div className="flex items-center">
-          <Circle className={`${getStatusColor(value)} mr-2 h-4 w-4`} />
-          {value}
+          <Circle className={`${getStatusColor(String(value))} mr-2 h-4 w-4`} />
+          <span className="capitalize">{String(value)}</span>
         </div>
       ),
     },
@@ -187,8 +193,7 @@ const MechQueue: React.FC = () => {
     },
   ];
 
-  // Transforming the data to match the table structure
-  const formattedData =
+  const formattedData: FormattedService[] =
     allAcceptedServices.length > 0
       ? allAcceptedServices.map((service: AllAcceptedServices) => ({
           id: service._id,
@@ -206,24 +211,16 @@ const MechQueue: React.FC = () => {
         }))
       : [];
 
-  interface FormattedService {
-    id: string;
-    name: string;
-    userName: string;
-    status: string;
-    originalData: AllAcceptedServices;
-  }
-
   const handleRowClick = (item: FormattedService) => {
     console.log("Clicked on service:", item);
     navigate(`/mech/complaintDetails/${item.id}`);
   };
 
   return (
-    <DynamicTable
+    <DynamicTable<FormattedService>
       title="Accepted Services"
       columns={serviceColumns}
-      data={formattedData}
+      data={loading ? [] : formattedData}
       loading={loading}
       emptyMessage="No services Accepted yet"
       onRowClick={handleRowClick}

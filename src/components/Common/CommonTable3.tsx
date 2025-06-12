@@ -17,7 +17,7 @@ interface CommonTable3Props {
     id: string;
     label: string;
     minWidth?: number;
-    align?: "left" | "right" | "center";
+    align?: string ;
   }>;
   data: Array<{
     _id: string;
@@ -27,6 +27,8 @@ interface CommonTable3Props {
   }>;
   handleViewMore: (id: string) => void;
   title?: string;
+  navLink:string;
+  role:string;
 }
 
 const CommonTable3: React.FC<CommonTable3Props> = ({

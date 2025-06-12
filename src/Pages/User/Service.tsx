@@ -40,9 +40,7 @@ const Service: React.FC = () => {
   });
   const [userProfile, setUserProfile] = useState<UserData | undefined>();
   const [defaultAddress, setDefaultAddress] = useState<string>("");
-  const [defaultAddressDetails, setDefaultAddressDetails] = useState<
-    AddAddress | undefined
-  >();
+
   const [locationError, setLocationError] = useState<string>("");
   const [serviceImage, setServiceImage] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -101,11 +99,9 @@ const Service: React.FC = () => {
 
               if (defaultAdd) {
                 setDefaultAddress(defaultAdd._id);
-                setDefaultAddressDetails(defaultAdd);
               } else {
                 // If no default address is set, use the first address
                 setDefaultAddress(profileData.address[0]._id);
-                setDefaultAddressDetails(profileData.address[0]);
               }
             } else {
               // No addresses found - show warning modal

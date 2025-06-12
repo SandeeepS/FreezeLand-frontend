@@ -5,13 +5,13 @@ import UserData from "../../UserData";
 export interface IComplaintDetails {
   _id: string;
   name: string;
-  image: [];
+  image: string[];
   serviceId: string;
   userId: string;
   defaultAddress: string;
   discription: string;
-  locationName?: {
-    address?: string;
+  locationName: {
+    address: string;
   };
   status: string;
   currentMechanicId: string | null;
@@ -28,30 +28,55 @@ export interface IComplaintDetails {
       isDeleted: boolean;
     }
   ];
-  userDetails: object[];
-  workHistory: [
-    {
-      mechanicId: string;
-      status: string;
-      acceptedAt: Date;
-      canceledAt: Date | null;
-      reason: string | null;
-    }
-  ];
-  workDetails: [
-    {
-      description: string;
-      amount: number;
-      addedAt: Date;
-    }
-  ];
+  userDetails: {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    profile_picture: string;
+    isBlocked: boolean;
+    isDeleted: boolean;
+    wallet: number;
+    locationData: {
+      coordinates: number[];
+      city: string;
+      state: string;
+      _id: string;
+    };
+    address: {
+      name: string;
+      email: string;
+      phone: number | string;
+      district: string;
+      state: string;
+      pin: number;
+      landMark: string;
+    }[];
+  };
+
+  workHistory: Array<{
+    _id: string;
+    mechanicId: string;
+    status: string;
+    acceptedAt?: Date;
+    canceledAt: Date | null;
+    reason: string | null;
+    canceledBy: string | null;
+  }>;
+  workDetails: Array<{
+    _id: string;
+    description: string;
+    amount: number;
+    addedAt: Date;
+  }>;
 
   isBlocked: boolean;
   isDeleted: boolean;
   deviceImages?: string[];
   orderId: string;
   chatId: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface IMechanicDetails {
@@ -120,8 +145,8 @@ export interface AllRegisteredServices {
   status?: string;
   deviceImages?: string[];
   completionPercentage?: number;
-  updatedAt:string;
-  createdAt:string;
+  updatedAt: string;
+  createdAt: string;
 }
 
 // Define the base data item type with optional fields
@@ -137,8 +162,8 @@ export interface TableDataItem {
   locationName: string;
   isBlocked: boolean;
   isDeleted: boolean;
-  userDetails:object;
-  serviceDetails:object;
+  userDetails: object;
+  serviceDetails: object;
 }
 
 // Define the column configuration

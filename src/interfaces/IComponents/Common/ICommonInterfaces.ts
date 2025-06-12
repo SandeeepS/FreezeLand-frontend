@@ -65,8 +65,8 @@ export interface ModalProps {
 
 //used in LocationModal.tsx
 export interface LocationModalProps {
-  onClose: () => void; 
-  userId:string// Callback function to close the modal
+  onClose: () => void;
+  userId: string; // Callback function to close the modal
 }
 
 //used in PageLeaveModal.tsx
@@ -78,8 +78,8 @@ export interface ConfirmationModalProps {
 
 //used in the PopulaCities.tsx
 export interface PopularCitiesProps {
-  onCityClick: () => void; 
-  userId:string
+  onCityClick: () => void;
+  userId: string;
 }
 
 export interface AddressDetails {
@@ -89,7 +89,6 @@ export interface AddressDetails {
   landMark: string;
 }
 
-
 //used in the Profile.tsx
 export interface UserDetails {
   name: string;
@@ -97,15 +96,13 @@ export interface UserDetails {
   phone: number | string;
   address?: string;
   location?: string;
-  profile_picture?:string;
-  defaultAddressDetails:AddressDetails;
-  
+  profile_picture?: string;
+  defaultAddressDetails: AddressDetails;
 }
 
-export interface UserDetailsInProfile{
-  name:string;
-  profile_picture?:string;
-
+export interface UserDetailsInProfile {
+  name: string;
+  profile_picture?: string;
 }
 
 //used in ServiceListingCards.tsx
@@ -125,7 +122,7 @@ export interface Column {
   label: string;
   minWidth?: number;
   align?: string;
-  format?: "Active" | "Blocked";
+  format?: (value: boolean) => "Blocked" | "Active";
 }
 
 export interface Data {
@@ -153,9 +150,9 @@ export interface TableCommonProps {
   updateStatus: (id: string, isBlocked: boolean, isDeleted: boolean) => void;
   blockUnblockFunciton?: (id: string) => Promise<BlockingResponse>;
   deleteFunction: (id: string) => Promise<DeletingResponse>;
-  handleViewMore?:(id:string)=>void;
-  navLink: string;
-  role?:string;
+  handleViewMore?: (id: string) => void;
+  navLink?: string;
+  role?: string;
 }
 
 //used in TableCommon2
@@ -167,6 +164,3 @@ export interface MechData {
   isBlocked: boolean;
   isDeleted: boolean;
 }
-
-
-

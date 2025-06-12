@@ -6,6 +6,7 @@ import TabsComponent from "./TabsComponent";
 
 interface ServiceDetailsProps {
   complaint: {
+    _id: string;
     name: string;
     serviceDetails?: {
       name: string;
@@ -21,6 +22,7 @@ interface ServiceDetailsProps {
     lastUpdated?: string;
     estimatedCompletionDate?: string;
     completionPercentage: number;
+    currentMechanicId?: string;
     status: string;
     workHistory?: {
       date: string;
@@ -28,6 +30,14 @@ interface ServiceDetailsProps {
       notes: string;
       completionPercentage: number;
     }[];
+    workDetails: [
+      {
+        description: string;
+        cost: number;
+        addedAt: Date;
+      }
+    ];
+    
   };
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -77,7 +87,7 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
       }
     };
     fetchImages();
-  },[]);
+  }, [complaint.image]);
   return (
     <div className="lg:col-span-2">
       <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
@@ -141,7 +151,24 @@ const ServiceDetailsComponent: React.FC<ServiceDetailsProps> = ({
       <TabsComponent
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        complaint={complaint}
+        complaintId={complaint._id}
+        complaint={{
+          ...complaint,
+          serviceDetails:
+            complaint.serviceDetails && complaint.serviceDetails[0]
+              ? {
+                  serviceName: complaint.serviceDetails[0].name,
+                  serviceCharge: complaint.serviceDetails[0].serviceCharge,
+                  imageKey: complaint.serviceDetails[0].imageKey,
+                  discription: Array.isArray(complaint.serviceDetails[0].discription)
+                    ? complaint.serviceDetails[0].discription.join(", ")
+                    : complaint.serviceDetails[0].discription,
+                  createdAt: complaint.serviceDetails[0].createdAt instanceof Date
+                    ? complaint.serviceDetails[0].createdAt.toISOString()
+                    : complaint.serviceDetails[0].createdAt,
+                }
+              : {},
+        }}
         formatDate={formatDate}
       />
     </div>
