@@ -146,8 +146,8 @@ const ComplaintDetail: React.FC = () => {
 
   // Extract data from complaint
   const serviceDetails: IServiceDetails = complaint.serviceDetails?.[0] || {};
-  const userDetails : IUserData = complaint.userDetails?.[0]
-    ? complaint.userDetails[0]
+  const userDetails: IUserData = complaint.userDetails
+    ? complaint.userDetails
     : { name: "", email: "", phone: "" };
   const deviceImages = complaint.deviceImages || [];
   const status = complaint.status || "pending";

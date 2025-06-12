@@ -265,9 +265,9 @@ export const generateInvoicePDF = async (data: InvoiceData): Promise<void> => {
           <div class="bill-to">
             <h3>Bill To</h3>
             <p><strong>${complaint.name || 'N/A'}</strong></p>
-            <p>${(complaint.userDetails?.[0] as { email?: string })?.email || 'N/A'}</p>
-            <p>${(complaint.userDetails?.[0] as { phone?: string })?.phone || 'N/A'}</p>
-            <p>${(complaint.userDetails?.[0] as { address?: string })?.address || 'N/A'}</p>
+            <p>${complaint.userDetails?.email || 'N/A'}</p>
+            <p>${complaint.userDetails?.phone || 'N/A'}</p>
+            <p>${complaint.userDetails?.address || 'N/A'}</p>
           </div>
         </div>
 

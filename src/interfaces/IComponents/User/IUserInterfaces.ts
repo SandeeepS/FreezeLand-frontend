@@ -209,7 +209,7 @@ export interface userDetails {
   _id?: string;
   name?: string;
   email?: string;
-  phone?: number;
+  phone?: string;
   address?: string;
   location?: string;
 }
