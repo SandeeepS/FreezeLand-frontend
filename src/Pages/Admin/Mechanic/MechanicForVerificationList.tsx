@@ -26,7 +26,7 @@ const MechanicForVerificationList: React.FC = () => {
     //   align: "right",
     //   format: (value: boolean) => (value ? "Blocked" : "Active"),
     // },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150, align: "right" as const },
   ];
   const navigationLink = "/admin/VerfiyMechanic/";
 

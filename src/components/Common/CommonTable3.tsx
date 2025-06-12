@@ -17,7 +17,7 @@ interface CommonTable3Props {
     id: string;
     label: string;
     minWidth?: number;
-    align?: "inherit" | "center" | "left" | "right" | "justify";
+    align?: "inherit" | "center" | "left" | "right" | "justify"  ;
   }>;
   data: Array<{
     _id: string;
