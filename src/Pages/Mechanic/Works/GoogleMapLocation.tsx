@@ -9,7 +9,8 @@ import {
   Map,
   GoogleApiWrapper,
   Marker,
-  InfoWindow,
+  IMarkerProps,
+  IMapProps,
 } from "google-maps-react";
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
@@ -21,7 +22,7 @@ interface LocationProps {
 }
 
 interface MapContainerProps {
-  google: any; // Use `any` for google-maps-react due to limited TypeScript support
+  google: typeof google;
   location: LocationProps;
 }
 
@@ -70,9 +71,9 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     selectedPlace: null,
   });
 
-  // Refs for map and directionsRenderer
   const mapRef = useRef<google.maps.Map | null>(null);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
   const mapStyles = {
     width: "100%",
@@ -86,7 +87,6 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     height: "300px",
   };
 
-  // Get current position - only run once on component mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -123,7 +123,6 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     }
   }, []);
 
-  // Calculate route when currentPosition changes
   useEffect(() => {
     if (!mapState.currentPosition || !google || !location.latitude || !location.longitude) {
       return;
@@ -135,11 +134,11 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
       directionsService.route(
         {
           origin: mapState.currentPosition
-        ? new google.maps.LatLng(
-            mapState.currentPosition.lat,
-            mapState.currentPosition.lng
-          )
-        : undefined,
+            ? new google.maps.LatLng(
+                mapState.currentPosition.lat,
+                mapState.currentPosition.lng
+              )
+            : undefined,
           destination: new google.maps.LatLng(location.latitude, location.longitude),
           travelMode: google.maps.TravelMode.DRIVING,
         },
@@ -148,35 +147,35 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
           status: google.maps.DirectionsStatus
         ): void => {
           if (status === google.maps.DirectionsStatus.OK && result) {
-        const route: google.maps.DirectionsRoute | undefined = result.routes[0];
-        const leg: google.maps.DirectionsLeg | null =
-          route && route.legs.length > 0 ? route.legs[0] : null;
+            const route: google.maps.DirectionsRoute | undefined = result.routes[0];
+            const leg: google.maps.DirectionsLeg | null =
+              route && route.legs.length > 0 ? route.legs[0] : null;
 
-        setMapState((prev) => ({
-          ...prev,
-          directions: result,
-          distanceInfo: {
-            distance: leg?.distance?.text || "",
-            duration: leg?.duration?.text || "",
-            loading: false,
-            error: null,
-          },
-          navigation: {
-            ...prev.navigation,
-            totalSteps: leg?.steps?.length || 0,
-            nextDirection: leg?.steps?.[0]?.instructions || "",
-          },
-        }));
+            setMapState((prev) => ({
+              ...prev,
+              directions: result,
+              distanceInfo: {
+                distance: leg?.distance?.text || "",
+                duration: leg?.duration?.text || "",
+                loading: false,
+                error: null,
+              },
+              navigation: {
+                ...prev.navigation,
+                totalSteps: leg?.steps?.length || 0,
+                nextDirection: leg?.steps?.[0]?.instructions || "",
+              },
+            }));
           } else {
-        setMapState((prev) => ({
-          ...prev,
-          distanceInfo: {
-            distance: "",
-            duration: "",
-            loading: false,
-            error: "Unable to calculate distance and duration.",
-          },
-        }));
+            setMapState((prev) => ({
+              ...prev,
+              distanceInfo: {
+                distance: "",
+                duration: "",
+                loading: false,
+                error: "Unable to calculate distance and duration.",
+              },
+            }));
           }
         }
       );
@@ -185,16 +184,17 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     calculateRoute();
   }, [mapState.currentPosition, google, location.latitude, location.longitude]);
 
-  // Update directions renderer when directions change
   useEffect(() => {
     if (mapState.directions && directionsRendererRef.current) {
       directionsRendererRef.current.setDirections(mapState.directions);
     }
   }, [mapState.directions]);
 
-  // Set up directions renderer when the map is loaded
   const onMapLoaded = useCallback(
-    (_mapProps: unknown, map: google.maps.Map) => {
+    (mapProps: IMapProps | undefined, map: google.maps.Map | undefined) => {
+      console.log(mapProps)
+      if (!map) return;
+
       mapRef.current = map;
 
       if (google && map) {
@@ -211,29 +211,43 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     [google, mapState.directions]
   );
 
-  // Memoize marker click handler
   const handleMarkerClick = useCallback(
-    (props: { title?: string; name?: string }, marker: google.maps.Marker) => {
+    (props: IMarkerProps | undefined, marker?: google.maps.Marker) => {
+      if (!props || !marker) return;
+      
       setMapState((prev) => ({
         ...prev,
         activeMarker: marker,
         showInfoWindow: true,
-        selectedPlace: { title: props.title, name: props.name },
+        selectedPlace: { 
+          title: props.title
+        },
       }));
+
+      if (infoWindowRef.current) {
+        infoWindowRef.current.close();
+      }
+
+      infoWindowRef.current = new google.maps.InfoWindow({
+        content: `<div><h4 style="font-weight: bold;">${props.title || ""}</h4></div>`,
+      });
+
+      if (mapRef.current) {
+        infoWindowRef.current.open(mapRef.current, marker);
+      }
+
+      google.maps.event.addListener(infoWindowRef.current, 'closeclick', () => {
+        setMapState((prev) => ({
+          ...prev,
+          showInfoWindow: false,
+          activeMarker: null,
+          selectedPlace: null,
+        }));
+      });
     },
-    []
+    [google]
   );
 
-  const handleInfoWindowClose = useCallback(() => {
-    setMapState((prev) => ({
-      ...prev,
-      showInfoWindow: false,
-      activeMarker: null,
-      selectedPlace: null,
-    }));
-  }, []);
-
-  // Navigation functions
   const startNavigation = useCallback(() => {
     if (!mapState.directions) return;
 
@@ -283,7 +297,6 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     });
   }, []);
 
-  // Memoize marker props
   const destinationMarkerProps = useMemo(
     () => ({
       position: {
@@ -314,6 +327,17 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
     [mapState.currentPosition]
   );
 
+  const mapProps = {
+    google,
+    style: mapStyles,
+    zoom: 13,
+    initialCenter: {
+      lat: location.latitude,
+      lng: location.longitude,
+    },
+    onReady: onMapLoaded,
+  };
+
   return (
     <div className="bg-gray-200 rounded-lg shadow p-3 mb-6">
       <div className="flex flex-col items-center">
@@ -321,32 +345,10 @@ const MapContainer: React.FC<MapContainerProps> = ({ google, location }) => {
       </div>
       <div className="bg-gray-50">
         <div style={containerStyles}>
-          <Map
-            google={google}
-            style={mapStyles}
-            zoom={13}
-            initialCenter={{
-              lat: location.latitude,
-              lng: location.longitude,
-            }}
-            onReady={onMapLoaded}
-          >
+          <Map {...mapProps}>
             <Marker {...destinationMarkerProps} onClick={handleMarkerClick} />
             {currentPositionMarkerProps && (
               <Marker {...currentPositionMarkerProps} onClick={handleMarkerClick} />
-            )}
-            {mapState.activeMarker && (
-              <InfoWindow
-                marker={mapState.activeMarker}
-                visible={mapState.showInfoWindow}
-                onClose={handleInfoWindowClose}
-              >
-                <div>
-                  <h4 className="font-semibold">
-                    {mapState.selectedPlace?.title || ""}
-                  </h4>
-                </div>
-              </InfoWindow>
             )}
           </Map>
         </div>
