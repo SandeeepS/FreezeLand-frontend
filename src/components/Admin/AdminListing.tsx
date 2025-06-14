@@ -93,7 +93,7 @@ const AdminListing: React.FC = () => {
         {/* <div className="flex justify-center items-center mt-4 md:mt-8">
           <div className="rounded-full overflow-hidden w-10 h-10 md:w-16 md:h-16">
             <img
-              src="/src/Images/businessman.png"
+              src="/Images/businessman.png"
               alt="User profile picture"
               className="object-cover w-full h-full"
             />

@@ -15,21 +15,21 @@ const MechanicHomePage: React.FC = () => {
 
   const slides = [
     {
-      image: "/src/Images/technicianWork.jpg",
+      image: "/Images/technicianWork.jpg",
       text1: "Our vision   ",
       text2: "is to provide the",
       text3: "best service to",
       text4: "our customers.",
     },
     {
-      image: "/src/Images/Mechcarousal-1.jpg",
+      image: "/Images/Mechcarousal-1.jpg",
       text1: "We strive ",
       text2: "for excellence",
       text3: " in everything ",
       text4: "we do.",
     },
     {
-      image: "/src/Images/spanner.jpg",
+      image: "/Images/spanner.jpg",
       text1: "Our vision   ",
       text2: "is to provide the",
       text3: "best service to",

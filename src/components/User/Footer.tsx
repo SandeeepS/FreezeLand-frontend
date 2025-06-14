@@ -16,11 +16,11 @@ function Footer() {
               201305
             </p>
             <div className="flex space-x-3 mt-2">
-              <img src="/src/Images/facebookicon.png" alt="Facebook" className="w-6 h-6" />
-              <img src="/src/Images/twitterIcon.png" alt="Twitter" className="w-6 h-6" />
-              <img src="/src/Images/instagramIcon.png" alt="Instagram" className="w-6 h-6" />
-              <img src="/src/Images/contact icon.png" alt="Contact" className="w-6 h-6" />
-              <img src="/src/Images/youtube icon.png" alt="YouTube" className="w-6 h-6" />
+              <img src="/Images/facebookicon.png" alt="Facebook" className="w-6 h-6" />
+              <img src="/Images/twitterIcon.png" alt="Twitter" className="w-6 h-6" />
+              <img src="/Images/instagramIcon.png" alt="Instagram" className="w-6 h-6" />
+              <img src="/Images/contact icon.png" alt="Contact" className="w-6 h-6" />
+              <img src="/Images/youtube icon.png" alt="YouTube" className="w-6 h-6" />
             </div>
           </div>
 

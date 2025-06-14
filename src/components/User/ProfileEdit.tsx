@@ -29,7 +29,7 @@ const validationSchema = object({
   location: string(),
 });
 
-const DEFAULT_PROFILE_IMAGE = "/src/Images/businessman.png";
+const DEFAULT_PROFILE_IMAGE = "/Images/businessman.png";
 
 const ProfileEdit: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
