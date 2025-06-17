@@ -44,12 +44,10 @@ const GoogleMapLocation: React.FC<GoogleMapLocationProps> = ({ location }) => {
     navigation: { isActive: false, currentStep: 0, totalSteps: 0, nextDirection: "" },
   });
 
-  // 🎯 Get current position
   useEffect(() => {
     // ...geolocation effect (same as before)...
   }, []);
 
-  // 🛣️ Calculate route when position/location available
   useEffect(() => {
     if (!mapState.currentPosition) return;
 
