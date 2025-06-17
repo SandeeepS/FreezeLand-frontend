@@ -1,37 +1,19 @@
-
-interface FadeInHidden {
-    y: number;
-    x: number;
-}
-
-interface FadeInShow extends FadeInHidden {
-    opactiy: number;
-    transition: {
-        type: string;
-        duration: number;
-        delay: number;
-        ease: [number, number, number, number];
-    };
-}
-
-interface FadeInVariants {
-    hidden: FadeInHidden;
-    show: FadeInShow;
-}
+import { Variants } from 'framer-motion';
 
 export const fadeIn = (
     direction: 'up' | 'down' | 'left' | 'right',
     delay: number
-): FadeInVariants => {
+): Variants => {
     return {
         hidden: {
             y: direction === 'up' ? 40 : direction === 'down' ? -40 : 0,
             x: direction === 'left' ? 40 : direction === 'right' ? -40 : 0,
+            opacity: 0,
         },
         show: {
             y: 0,
             x: 0,
-            opactiy: 1,
+            opacity: 1,
             transition: {
                 type: 'tween',
                 duration: 1.2,
