@@ -21,10 +21,21 @@ interface MechanicProfile {
 }
 
 const validationSchema = object({
-  name: string().required("Name is required"),
+  name: string()
+    .required("Name is required")
+    .trim()
+    .strict(true)
+    .min(3, "Name must be at least 3 characters long")
+    .max(50, "Name must not exceed 50 characters")
+    .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
+    .notOneOf([""], "Name cannot be empty or only spaces")
+    .required("Name is required"),
   phone: string()
     .required("Phone number is required")
-    .matches(/^\d{10}$/, "Phone number must be 10 digits"),
+    .matches(
+      /^[6-9]\d{9}$/,
+      "Phone number must be 10 digits and start with 6-9"
+    ),
 });
 
 const MechanicProfileEdit: React.FC = () => {
