@@ -67,23 +67,6 @@ export const NewServiceValidation = Yup.object({
   discription: Yup.string().min(5).required("Please enter the Discription"),
 });
 
-export const AddressValidation = Yup.object({
-  name: Yup.string().min(3).required("Please enter name"),
-  phone: Yup.string()
-    .matches(MOBILE_NUM_REGEX, "Enter a valid phone number")
-    .min(10)
-    .max(10)
-    .required("Please enter phone number"),
-  email: Yup.string()
-    .matches(gmailRegex, "Please enter a valid Email")
-    .email("Please Enter Valid Email")
-    .required("please Enter Email"),
-  state: Yup.string().min(3).required("Please enter you state"),
-  pin: Yup.string().matches(PIN_CODE_REGEX, "Enter a valid pin"),
-  district: Yup.string().min(3).required("Enter you district name"),
-  landMark: Yup.string().required("please enter your landmark"),
-});
-
 export const ServiceListingValidation = Yup.object({
   name: Yup.string()
     .trim()
@@ -175,5 +158,48 @@ export const MechanicVerificationValidationSchema = Yup.object({
     }),
 });
 
+export const AddressValidation = Yup.object({
+  name: Yup.string()
+    .trim()
+    .strict(true)
+    .min(3, "Name must be at least 3 characters")
+    .max(50, "Name must not exceed 50 characters")
+    .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
+    .required("Please enter your name"),
 
+  phone: Yup.string()
+    .matches(
+      MOBILE_NUM_REGEX,
+      "Enter a valid 10-digit phone number starting with 6-9"
+    )
+    .required("Please enter your phone number"),
 
+  email: Yup.string()
+    .matches(gmailRegex, "Only Gmail addresses are allowed")
+    .email("Please enter a valid email format")
+    .required("Please enter your email"),
+
+  state: Yup.string()
+    .trim()
+    .min(3, "State must be at least 3 characters")
+    .max(30, "State name must not exceed 30 characters")
+    .matches(/^[A-Za-z\s]+$/, "State can only contain letters")
+    .required("Please enter your state"),
+
+  pin: Yup.string()
+    .matches(PIN_CODE_REGEX, "PIN code must be exactly 6 digits")
+    .required("Please enter your PIN code"),
+
+  district: Yup.string()
+    .trim()
+    .min(3, "District must be at least 3 characters")
+    .max(30, "District name must not exceed 30 characters")
+    .matches(/^[A-Za-z\s]+$/, "District can only contain letters")
+    .required("Please enter your district name"),
+
+  landMark: Yup.string()
+    .trim()
+    .min(3, "Landmark must be at least 3 characters")
+    .max(100, "Landmark must not exceed 100 characters")
+    .required("Please enter your landmark"),
+});
