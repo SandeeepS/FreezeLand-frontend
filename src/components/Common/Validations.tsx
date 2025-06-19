@@ -85,17 +85,34 @@ export const AddressValidation = Yup.object({
 });
 
 export const ServiceListingValidation = Yup.object({
-  name: Yup.string().min(3).required("Service name is required"),
+  name: Yup.string()
+    .trim()
+    .strict(true)
+    .min(3, "Service name must be at least 3 characters long")
+    .max(50, "Service name must not exceed 50 characters")
+    .matches(/^[A-Za-z0-9 ]+$/, "Only letters, numbers, and spaces are allowed")
+    .notOneOf([""], "Service name cannot be empty or only spaces")
+    .required("Service name is required"),
   discription: Yup.array()
     .of(Yup.string().min(3, "Each description must be at least 3 characters"))
     .min(1, "At least one description is required"),
   serviceCharge: Yup.number()
     .required("Service charge is required")
     .min(1, "Service charge must be greater than zero"),
+  imageKey: Yup.string()
+    .required("Please select an image")
+    .min(1, "Image is required"),
 });
 
 export const DeviceListingValidation = Yup.object({
-  name: Yup.string().min(3).required("Device name is required"),
+  name: Yup.string()
+    .trim()
+    .strict(true)
+    .min(3, "Device name must be at least 3 characters long")
+    .max(50, "Device name must not exceed 50 characters")
+    .matches(/^[A-Za-z0-9 ]+$/, "Only letters, numbers, and spaces are allowed")
+    .notOneOf([""], "Device name cannot be empty or only spaces")
+    .required("Device name is required"),
 });
 
 export const ServiceFormValidation = Yup.object({
