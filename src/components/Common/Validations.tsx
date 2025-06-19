@@ -116,9 +116,17 @@ export const DeviceListingValidation = Yup.object({
 });
 
 export const ServiceFormValidation = Yup.object({
-  name: Yup.string().min(3).required("Please Enter Your Name"),
+  name: Yup.string()
+    .trim()
+    .strict(true)
+    .min(3, "User name must be at least 3 characters long")
+    .max(50, "User name must not exceed 50 characters")
+    .matches(/^[A-Za-z0-9 ]+$/, "Only letters, numbers, and spaces are allowed")
+    .notOneOf([""], "User name cannot be empty or only spaces")
+    .required("User name is required"),
   discription: Yup.string()
     .min(5)
+    .max(250, "discription must not exceed 50 characters")
     .required("A description is required to help us understand your complaint"),
   files: Yup.array()
     .of(Yup.mixed().required("File is required"))
@@ -166,3 +174,6 @@ export const MechanicVerificationValidationSchema = Yup.object({
       );
     }),
 });
+
+
+
