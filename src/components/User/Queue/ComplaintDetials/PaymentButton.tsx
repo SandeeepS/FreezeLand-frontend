@@ -25,17 +25,12 @@ const PaymentButton: React.FC<paymentData> = ({
   console.log("mechanicId", mechanicId);
   console.log("amount", amount);
   console.log("serviceId", serviceId);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const handlePayement = async () => {
     console.log("triggered enrol button");
-
     try {
       setIsLoading(true);
-
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
       if (!stripe) {
         setIsLoading(false);
         toast.error("Stripe could not be loaded.");
@@ -61,7 +56,7 @@ const PaymentButton: React.FC<paymentData> = ({
         console.log("user blocked");
       }
 
-      const sessionId = response?.data?.session.sessionId;
+      const sessionId = response?.data?.session.result.sessionId;
       console.log("sessionId", sessionId);
       if (stripe && sessionId) {
         const result = await stripe.redirectToCheckout({ sessionId });
