@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
@@ -27,22 +27,20 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
   currentStatus = ComplaintStatus.PENDING,
   onStatusChange,
 }) => {
-  const [status, setStatus] = useState<ComplaintStatus>(currentStatus as ComplaintStatus);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
   const [nextStatus, setNextStatus] = useState<ComplaintStatus>(ComplaintStatus.PENDING);
   const [updateError, setUpdateError] = useState<string | null>(null);
 
-  // Update internal state when prop changes
-  useEffect(() => {
-    if (currentStatus) {
-      setStatus(currentStatus as ComplaintStatus);
-    }
-  }, [currentStatus]);
+  const status = currentStatus as ComplaintStatus;
+  const statusConfig = getStatusConfig(status);
+  const updateAllowed = isStatusUpdateAllowed(status);
 
   const handleOpenConfirmDialog = () => {
-    // Don't open dialog if status update not allowed
+    setUpdateError(null);
+    
     if (!isStatusUpdateAllowed(status)) {
+      console.log("Status update not allowed for:", status);
       return;
     }
 
@@ -60,67 +58,57 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
     setIsUpdating(true);
     setUpdateError(null);
 
+    // Optimistic update
+    if (onStatusChange) {
+      onStatusChange(nextStatus);
+    }
+
     try {
       const response = await updateComplaintStatus(complaintId, nextStatus);
       
-      if (!response || !response.data || !response.data.result) {
-        throw new Error("Failed to update status");
+      if (!response?.data?.result) {
+        throw new Error("Failed to update status - no valid response");
       }
 
       const updatedStatus = response.data.result.status as ComplaintStatus;
-      setStatus(updatedStatus);
-
-      if (onStatusChange) {
-        onStatusChange(updatedStatus);
-      }
+      console.log("Status updated successfully to:", updatedStatus);
     } catch (error) {
       console.error("Error updating status:", error);
       setUpdateError("Failed to update status. Please try again.");
+      // Roll back optimistic update on error
+      if (onStatusChange) {
+        onStatusChange(status);
+      }
     } finally {
       setIsUpdating(false);
     }
   };
 
-  // Get status configuration
-  const statusConfig = getStatusConfig(status);
-
-  // Helper function to render the correct icon
   const renderIcon = () => {
     switch (statusConfig.icon) {
-      case "CheckCircle":
-        return <CheckCircleIcon className="mr-1" />;
-      case "Settings":
-        return <SettingsIcon className="mr-1" />;
-      case "HourglassEmpty":
-        return <HourglassEmptyIcon className="mr-1" />;
-      case "Cancel":
-        return <CancelIcon className="mr-1" />;
-      case "Block":
-        return <BlockIcon className="mr-1" />;
-      case "ThumbUp":
-        return <ThumbUpIcon className="mr-1" />;
-      default:
-        return <HelpIcon className="mr-1" />;
+      case "CheckCircle": return <CheckCircleIcon className="mr-1" />;
+      case "Settings": return <SettingsIcon className="mr-1" />;
+      case "HourglassEmpty": return <HourglassEmptyIcon className="mr-1" />;
+      case "Cancel": return <CancelIcon className="mr-1" />;
+      case "Block": return <BlockIcon className="mr-1" />;
+      case "ThumbUp": return <ThumbUpIcon className="mr-1" />;
+      default: return <HelpIcon className="mr-1" />;
     }
   };
-
-  const updateAllowed = isStatusUpdateAllowed(status);
 
   return (
     <div>
       {!updateAllowed ? (
-        // For completed/canceled/blocked status - just a static display with no click handler
         <div className={`${statusConfig.color} text-white font-bold py-2 px-4 rounded flex items-center`}>
           {renderIcon()}
           {statusConfig.text}
         </div>
       ) : (
-        // For other statuses - clickable button
         <button
           onClick={handleOpenConfirmDialog}
           disabled={isUpdating}
           className={`${statusConfig.color} text-white font-bold py-2 px-4 rounded flex items-center ${
-            isUpdating ? "opacity-75 cursor-not-allowed" : ""
+            isUpdating ? "opacity-75 cursor-not-allowed" : "hover:opacity-90"
           }`}
         >
           {isUpdating ? <CircularProgress size={20} color="inherit" className="mr-2" /> : renderIcon()}
@@ -128,17 +116,17 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
         </button>
       )}
 
-      {/* Error message */}
       {updateError && (
         <div className="mt-2 text-red-500 text-sm">{updateError}</div>
       )}
 
-      {/* Confirmation Dialog */}
       <Dialog
         open={openConfirmDialog}
         onClose={handleCloseConfirmDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        maxWidth="sm"
+        fullWidth
       >
         <DialogTitle id="alert-dialog-title">
           {"Update Complaint Status"}
@@ -150,7 +138,7 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
             <strong>{getStatusConfig(nextStatus).text}</strong>?
             {nextStatus === ComplaintStatus.COMPLETED && (
               <p className="mt-2 text-red-500">
-                Note: Once marked as Completed, the status cannot be changed again.
+                <strong>Note:</strong> Once marked as Completed, the status cannot be changed again.
               </p>
             )}
           </DialogContentText>
@@ -164,8 +152,9 @@ const UpdateStatusBtn: React.FC<UpdateStatusBtnProps> = ({
             color="primary"
             variant="contained"
             autoFocus
+            disabled={isUpdating}
           >
-            Confirm Update
+            {isUpdating ? "Updating..." : "Confirm Update"}
           </Button>
         </DialogActions>
       </Dialog>
