@@ -7,6 +7,7 @@ export interface Iconcern {
   locationName: object;
   userId?:string;
   serviceId?:string;
+  serviceCharge?:number;
  
 
 }

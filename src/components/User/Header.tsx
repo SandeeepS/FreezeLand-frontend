@@ -30,11 +30,6 @@ const Header: React.FC = () => {
       label: "Profile",
       path: "/user/account",
     },
-    // {
-    //   icon: <MdContactless className="mr-2" />,
-    //   label: "Contact",
-    //   path: "/user/contact",
-    // },
     {
       icon: <MdEventNote className="mr-2" />,
       label: "Address",
@@ -45,11 +40,6 @@ const Header: React.FC = () => {
       label: "Service History",
       path: "/user/serviceHistory",
     },
-    // {
-    //   icon: <IoIosSettings className="mr-2" />,
-    //   label: "Settings",
-    //   path: "/user/settings",
-    // },
   ];
 
   useEffect(() => {
@@ -98,23 +88,38 @@ const Header: React.FC = () => {
   };
 
   const handleServicesClick = () => {
-    // Check if we're already on the homepage
+    // Close mobile menu when an item is clicked
+    setNav(true);
+
     if (location.pathname === "/user/homepage") {
-      // If on homepage, scroll to services section
       const serviceElement = document.getElementById("serviceList");
       if (serviceElement) {
         serviceElement.scrollIntoView({ behavior: "smooth" });
       }
     } else {
-      // If on a different page, navigate to homepage and then scroll to services
       navigate("/user/homepage");
-      // Use setTimeout to ensure navigation completes before scrolling
       setTimeout(() => {
         const serviceElement = document.getElementById("serviceList");
         if (serviceElement) {
           serviceElement.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
+    }
+  };
+
+  const handleMobileNavigation = (path: string) => {
+    setNav(true); // Close the mobile menu
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleMobileLogout = async () => {
+    try {
+      await logout();
+      userLogout();
+      navigate(navigateTo);
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
   };
 
@@ -191,7 +196,7 @@ const Header: React.FC = () => {
         <div
           className={
             !nav
-              ? "fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#078FDC] ease-in-out duration-500"
+              ? "fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#078FDC] ease-in-out duration-500 z-50"
               : "fixed left-[-100%]"
           }
         >
@@ -199,19 +204,36 @@ const Header: React.FC = () => {
             FREEZE <span className="text-white font-exo">LAND</span>
           </h1>
           <ul className="text-black pl-6">
-            <li className="p-4 border-b cursor-pointer">HOME</li>
-            <li className="p-4 border-b cursor-pointer">ACCOUNT</li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/homepage")}
+            >
+              HOME
+            </li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/account")}
+            >
+              ACCOUNT
+            </li>
             <li
               className="p-4 border-b cursor-pointer"
               onClick={handleServicesClick}
             >
               SERVICES
             </li>
-            <li className="p-4 border-b cursor-pointer">CONTACT</li>
-            <li className="p-4 border-b cursor-pointer">QUEUE</li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/queue")}
+            >
+              QUEUE
+            </li>
             {/* Logout Button */}
             <li className="p-4 border-b">
-              <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                onClick={handleMobileLogout}
+              >
                 Logout
               </button>
             </li>
