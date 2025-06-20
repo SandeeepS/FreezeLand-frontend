@@ -54,15 +54,15 @@ const AdminLoginPage: React.FC = () => {
   });
 
   return (
-    <div className="bg-[url('/Images/AdminLogin.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
+    <div className=" bg-center h-screen w-screen flex items-center justify-center">
       <div className="w-full lg:w-1/3 pt-8">
         <div className="pl-14 ">
           <h1 className="w-full text-5xl  text-black font-exo  p-10">
-            FREEZE <span className="text-white font-exo">LAND</span>{" "}
+            FREEZE <span className="text-freeze-color font-exo">LAND</span>{" "}
           </h1>
         </div>
-        <div className="pl-6">
-          <div className="font-[sans-serif] bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
+        <div className="pl-6 ">
+          <div className="font-[sans-serif] bg-white p-8 shadow-lg rounded-lg w-full max-w-md border">
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
                 <h3 className="text-gray-800 text-3xl font-extrabold">
