@@ -108,8 +108,10 @@ export const ServiceFormValidation = Yup.object({
     .notOneOf([""], "User name cannot be empty or only spaces")
     .required("User name is required"),
   discription: Yup.string()
-    .min(5)
-    .max(250, "discription must not exceed 50 characters")
+    .trim()
+    .strict(true)
+    .min(3, "User name must be at least 3 characters long")
+    .max(250, "discription must not exceed 250 characters")
     .required("A description is required to help us understand your complaint"),
   files: Yup.array()
     .of(Yup.mixed().required("File is required"))

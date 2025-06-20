@@ -32,6 +32,7 @@ const Service: React.FC = () => {
   const userData = useSelector((state: RootState) => state.auth.userData);
   const userId = userData?.id;
   const [service, setServices] = useState<Iconcern | undefined>();
+  const [serviceDiscription , setServiceDiscription] = useState<string[]>([]);
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState<LocationData>({
     address: "",
@@ -48,13 +49,6 @@ const Service: React.FC = () => {
     useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // These services should probably come from the backend/API
-  const services = [
-    "Applicable for both window & Split ACs",
-    "Advanced Foam-jet cleaning of indoor unit",
-    "Jet-spray cleaning of outer unit",
-    "Final checks & post-service cleaning",
-  ];
 
   useEffect(() => {
     // Fetching data
@@ -120,6 +114,18 @@ const Service: React.FC = () => {
 
     fetchData();
   }, [id, userId]);
+
+useEffect(() => {
+  console.log("Service Details from the backend is ", service);
+  if (service?.discription) {
+    console.log("service description ", service.discription);
+    if (Array.isArray(service.discription)) {
+      setServiceDiscription(service.discription);
+    } else {
+      setServiceDiscription([service.discription]);
+    }
+  }
+}, [service]);
 
   const handleFetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -223,17 +229,18 @@ const Service: React.FC = () => {
             </div>
 
             {/* About Service Card */}
-            <div className="lg:col-span-1">
+            {   service  && (  <div className="lg:col-span-1">
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 sticky top-8">
                 <div className="p-8">
                   <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                     <div className="w-2 h-6 bg-green-600 rounded-full mr-3"></div>
                     What's Included
                   </h3>
-                  <AboutTheService title="" points={services} />
+                  <AboutTheService title="" points={serviceDiscription}/>
                 </div>
               </div>
-            </div>
+            </div>) }
+      
           </div>
 
           {/* Registration Form Section */}
