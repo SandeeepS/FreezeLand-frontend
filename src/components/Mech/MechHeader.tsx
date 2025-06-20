@@ -5,13 +5,17 @@ import { useNavigate } from "react-router-dom";
 import { mechLogout } from "../../App/slices/AuthSlice";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
-import { MdEventNote } from "react-icons/md";
-import { useAppSelector } from "../../App/store";
+import { MdEventNote, MdPowerSettingsNew } from "react-icons/md";
+import { persistor, useAppSelector } from "../../App/store";
 import { getImageUrl, getMechanicDetails, mLogout } from "../../Api/mech";
 import { MechDetails2 } from "../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import toast from "react-hot-toast";
 import { FaRegAddressBook } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
 const MechHeader: React.FC = () => {
+  const dispatch = useDispatch();
+
   const mechData = useAppSelector((state) => state.auth.mechData);
   const [mechProfileDetails, setMechProfileDetails] = useState<MechDetails2>();
   const [image, setImage] = useState<string>("");
@@ -102,6 +106,30 @@ const MechHeader: React.FC = () => {
 
   const toggleCard = () => {
     setIsCardOpen(!isCardOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          mLogout().then(() => console.log(""));
+          dispatch(mechLogout());
+          persistor.purge();
+          toast.success("You are logged out!");
+          navigate(navigateTo);
+        }
+      });
+    } catch (error) {
+      console.log(error as Error);
+    }
   };
 
   return (
@@ -227,16 +255,7 @@ const MechHeader: React.FC = () => {
             >
               SERVICES
             </li>
-            <li
-              className={`p-4 border-b cursor-pointer transition-opacity ${
-                !isVerified ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={() =>
-                handleMobileNavClick(() => navigate("/mech/contact"))
-              }
-            >
-              CONTACT
-            </li>
+
             <li
               className={`p-4 border-b cursor-pointer transition-opacity ${
                 !isVerified ? "opacity-50 cursor-not-allowed" : ""
@@ -250,14 +269,10 @@ const MechHeader: React.FC = () => {
             {/* Logout Button - Always accessible */}
             <li className="p-4 border-b">
               <button
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
-                onClick={() => {
-                  // Logout functionality - always allow logout
-                  mLogout();
-                  mechLogout();
-                  navigate(navigateTo);
-                }}
+                className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded w-full"
+                onClick={handleLogout}
               >
+                <MdPowerSettingsNew className="mr-2" />
                 Logout
               </button>
             </li>

@@ -6,12 +6,16 @@ import { userLogout } from "../../App/slices/AuthSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
-import { MdEventNote } from "react-icons/md";
-import { useAppSelector } from "../../App/store";
+import { MdEventNote, MdPowerSettingsNew } from "react-icons/md";
+import { persistor, useAppSelector } from "../../App/store";
 import { UserDetailsInProfile } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { FaHistory } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch();
   const userData = useAppSelector((state) => state.auth.userData);
   const [userProfileDetails, setUserProfileDetails] =
     useState<UserDetailsInProfile>();
@@ -113,13 +117,29 @@ const Header: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleMobileLogout = async () => {
+
+
+  const handleLogout = async () => {
     try {
-      await logout();
-      userLogout();
-      navigate(navigateTo);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          logout().then(() => console.log(""));
+          dispatch(userLogout());
+          persistor.purge();
+          toast.success("You are logged out!");
+          navigate(navigateTo);
+        }
+      });
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.log(error as Error);
     }
   };
 
@@ -231,9 +251,10 @@ const Header: React.FC = () => {
             {/* Logout Button */}
             <li className="p-4 border-b">
               <button
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
-                onClick={handleMobileLogout}
+                className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded w-full"
+                onClick={handleLogout}
               >
+                <MdPowerSettingsNew className="mr-2" />
                 Logout
               </button>
             </li>
