@@ -6,8 +6,7 @@ import { addService, getS3SingUrl } from "../../Api/admin";
 import { useNavigate } from "react-router-dom";
 import LargeModal from "../../components/Common/LargeModal";
 import { InewService } from "../../interfaces/IPages/Admin/IAdminInterfaces";
-
-
+import toast from "react-hot-toast";
 
 const NewService: React.FC = () => {
   const navigate = useNavigate();
@@ -41,7 +40,7 @@ const NewService: React.FC = () => {
   const handleSubmit = async (values: InewService) => {
     console.log("handlesubmit triggered");
     const folderName = "ServiceImages";
-    const response = await getS3SingUrl(fileName, fileType,folderName);
+    const response = await getS3SingUrl(fileName, fileType, folderName);
     if (response?.data.uploadURL) {
       const uploadResponse = await fetch(response.data.uploadURL, {
         method: "PUT",
@@ -65,16 +64,44 @@ const NewService: React.FC = () => {
 
   const onImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: any) => void
+    setFieldValue: (field: string, value: unknown) => void
   ) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/svg+xml",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        setFieldValue("imageKey", "");
+        toast.error("Please select a valid image file (JPG, PNG, GIF, or SVG)");
+        return;
+      }
+
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        setFieldValue("imageKey", "");
+        toast.error("File size must be less than 5MB");
+        return;
+      }
+
       const fileLink = URL.createObjectURL(file);
-      setFieldValue("image", file.name);
+      setFieldValue("imageKey", file.name);
       setImageFile(file);
       setImage(fileLink);
       setFileName(file.name);
       setFileType(file.type);
+      setIsFormDirty(true);
+    } else {
+      setFieldValue("imageKey", "");
+      setImageFile(null);
+      setImage("");
+      setFileName("");
+      setFileType("");
     }
   };
 
@@ -91,6 +118,9 @@ const NewService: React.FC = () => {
     setIsModalOpen(false);
     setModalImage(undefined);
   };
+
+  // Move newDescription state to the top level of the component
+  const [newDescription, setNewDescription] = useState<string>("");
 
   return (
     <div>
@@ -115,8 +145,6 @@ const NewService: React.FC = () => {
             touched,
             setFieldValue,
           }) => {
-            const [newDescription, setNewDescription] = useState<string>("");
-
             const addDescription = () => {
               if (newDescription.trim()) {
                 setFieldValue("discription", [
@@ -263,7 +291,11 @@ const NewService: React.FC = () => {
                 <div className="flex items-center justify-center w-full">
                   <label
                     htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                    className={`flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 ${
+                      errors.imageKey && touched.imageKey
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg

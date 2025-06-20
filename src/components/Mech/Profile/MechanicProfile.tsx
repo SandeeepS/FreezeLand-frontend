@@ -422,7 +422,7 @@ const MechanicProfile = () => {
                     No address information available
                   </p>
                   <button
-                    onClick={() => navigate("/mechanic/addresses/add")}
+                    onClick={() => navigate("/mech/AddAddress")}
                     className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
                   >
                     <svg

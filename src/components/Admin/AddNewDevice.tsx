@@ -18,7 +18,7 @@ const AddNewDevice: React.FC = () => {
   };
   return (
     <div>
-      <AdminHeader heading="Adding New Service" />
+      <AdminHeader heading="Adding New Device" />
       <div className="flex justify-center items-center py-10 h-screen">
         <Formik
           initialValues={{
@@ -42,7 +42,7 @@ const AddNewDevice: React.FC = () => {
               }}
             >
               <h2 className="text-2xl font-bold text-center mb-6">
-                New Service
+                New Device
               </h2>
 
               <div className="mb-4">

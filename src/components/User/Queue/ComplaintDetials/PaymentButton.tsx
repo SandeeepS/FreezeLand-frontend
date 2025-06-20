@@ -51,12 +51,8 @@ const PaymentButton: React.FC<paymentData> = ({
       console.log("calling");
       const response = await handlePayment(data);
       console.log("hayyyy stripe", response?.data);
-      if (response?.data?.message === "user blocked") {
-        // window.location.href = `${ROUTES.user.signin}?message:blocked`;
-        console.log("user blocked");
-      }
 
-      const sessionId = response?.data?.session.result.sessionId;
+      const sessionId = response?.data?.session.sessionId;
       console.log("sessionId", sessionId);
       if (stripe && sessionId) {
         const result = await stripe.redirectToCheckout({ sessionId });
@@ -88,7 +84,9 @@ const PaymentButton: React.FC<paymentData> = ({
       <button
         onClick={handlePayement}
         disabled={isLoading}
-        className={`inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition duration-150 ease-in-out ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition duration-150 ease-in-out ${
+          isLoading ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
         {isLoading ? "Processing..." : "Pay Now"}
       </button>
