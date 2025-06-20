@@ -26,7 +26,7 @@ const InitialLoader = () => {
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center bg-white fixed top-0 left-0 z-50">
       {/* Lottie Animation Container - responsive sizing */}
-      <div className="w-40 h-40 sm:w-52 sm:h-52 md:w-60 md:h-60 lg:w-72 lg:h-72 mb-2 sm:mb-4">
+      <div className="w-36 h-36 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-60 lg:h-60 mb-2 sm:mb-4">
         <DotLottieReact
           src="https://lottie.host/fd543e94-57b6-41ff-92b9-bf3774e0c7b6/nZZvgbvNOi.lottie"
           loop
