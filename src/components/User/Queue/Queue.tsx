@@ -38,39 +38,6 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-// Helper function to get progress bar colors
-const getProgressColors = (status: string) => {
-  switch (status) {
-    case "on schedule":
-    case "in-progress":
-    case "ongoing":
-      return {
-        bg: "bg-blue-200",
-        bar: "bg-blue-500",
-      };
-    case "delayed":
-      return {
-        bg: "bg-red-200",
-        bar: "bg-red-500",
-      };
-    case "pending":
-      return {
-        bg: "bg-orange-200",
-        bar: "bg-orange-500",
-      };
-    case "assigned":
-      return {
-        bg: "bg-purple-200",
-        bar: "bg-purple-500",
-      };
-    default:
-      return {
-        bg: "bg-gray-200",
-        bar: "bg-gray-500",
-      };
-  }
-};
-
 const Queue: React.FC = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
@@ -96,12 +63,12 @@ const Queue: React.FC = () => {
         if (result?.allRegisteredUserServices) {
           // Filter only incomplete/running services (exclude completed ones)
           const incompleteServices = result.allRegisteredUserServices.filter(
-            (service: AllRegisteredServices) => 
-              service.status !== "completed" && 
-              service.status !== "cancelled" && 
+            (service: AllRegisteredServices) =>
+              service.status !== "completed" &&
+              service.status !== "cancelled" &&
               service.status !== "rejected"
           );
-          
+
           setAllRegisteredService(incompleteServices);
           console.log(
             "Incomplete/Running services from the frontend:",
@@ -134,7 +101,7 @@ const Queue: React.FC = () => {
       // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
-        Array.isArray(service.serviceDetails) && 
+        Array.isArray(service.serviceDetails) &&
         service.serviceDetails.length > 0 &&
         service.serviceDetails[0].imageKey
       ) {
@@ -237,29 +204,6 @@ const Queue: React.FC = () => {
         </div>
       ),
     },
-    {
-      key: "completion",
-      header: "Completion Status",
-      render: (value, item) => (
-        <div className="flex items-center">
-          <span className="mr-2">{String(value)}%</span>
-          <div className="relative w-full">
-            <div
-              className={`overflow-hidden h-2 text-xs flex rounded ${
-                getProgressColors(item.status as string).bg
-              }`}
-            >
-              <div
-                style={{ width: `${value}%` }}
-                className={`shadow-none flex flex-col text-center whitespace-nowrap text-black justify-center ${
-                  getProgressColors(item.status as string).bar
-                }`}
-              />
-            </div>
-          </div>
-        </div>
-      ),
-    },
   ];
 
   // Transform your data to match the table structure with proper typing
@@ -267,9 +211,11 @@ const Queue: React.FC = () => {
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: AllRegisteredServices) => ({
           id: service._id,
-          name: Array.isArray(service.serviceDetails) && service.serviceDetails.length > 0
-            ? service.serviceDetails[0].name || "Unknown Service"
-            : "Unknown Service",
+          name:
+            Array.isArray(service.serviceDetails) &&
+            service.serviceDetails.length > 0
+              ? service.serviceDetails[0].name || "Unknown Service"
+              : "Unknown Service",
           userName: service.name || "Unknown User",
           status: service.status || "pending",
           completion: service.completionPercentage || 0,
@@ -294,7 +240,8 @@ const Queue: React.FC = () => {
           No Active Services
         </h3>
         <p className="mt-2 text-sm text-gray-500">
-          You don't have any services currently in progress. All your services are either completed or you haven't registered any yet.
+          You don't have any services currently in progress. All your services
+          are either completed or you haven't registered any yet.
         </p>
       </div>
     </div>
