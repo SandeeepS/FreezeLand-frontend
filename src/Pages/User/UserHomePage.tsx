@@ -101,7 +101,7 @@ const UserHomePage: React.FC = () => {
             <section id="promo1">
               <Promo1 />
             </section>
-            <section id="serviceList">
+            <section id="serviceList" >
               <ServiceList />
             </section>
             <section id="promo2">
