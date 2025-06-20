@@ -58,19 +58,19 @@ interface FileUploadItem {
   name: string;
 }
 
-export interface IinitalValues{
-  name :string ,
-  id: string,
-  mechanicType:string[],
-  photo:string | null,
-  adharProof: string | null,
-   employeeLicense : string | null,
+export interface IinitalValues {
+  name: string;
+  id: string;
+  mechanicType: string[];
+  photo: string | null;
+  adharProof: string | null;
+  employeeLicense: string | null;
 }
 const VerifyMechanic: React.FC = () => {
   const mechanic = useSelector(
     (state: RootState) => state.auth.mechData
   ) as MechanicData;
-  console.log("mechData is ",mechanic);
+  console.log("mechData is ", mechanic);
   const mechId = mechanic.id;
   console.log("MechanicId is ", mechId);
   const [devices, setDevices] = useState<Device[]>([]);
@@ -191,7 +191,7 @@ const VerifyMechanic: React.FC = () => {
       const formData: MechanicForm = {
         ...values,
         name: mechanic.name,
-        id: mechanic.id,
+        id: mechanic.id as string,
       };
 
       // Prepare files for upload
@@ -243,6 +243,7 @@ const VerifyMechanic: React.FC = () => {
 
       // Submit verification
       const response = await verifyMechanic(formData);
+      console.log("Verification response:", response);
 
       toast.dismiss("submit");
       toast.success("Verification submitted successfully!");
@@ -305,8 +306,8 @@ const VerifyMechanic: React.FC = () => {
                 Click to upload or drag and drop
               </p>
               <p className="text-xs text-gray-500">
-                {accept.includes("image") ? "PNG, JPG" : "PDF, PNG, JPG"}{" "}
-                up to 10MB
+                {accept.includes("image") ? "PNG, JPG" : "PDF, PNG, JPG"} up to
+                10MB
               </p>
             </div>
           </div>
@@ -381,19 +382,20 @@ const VerifyMechanic: React.FC = () => {
 
           <div className="p-8">
             <Formik
-              initialValues ={{
-                name: mechanic.name || "",
-                id: mechanic.id,
-                mechanicType: [] as string[],
-                photo: "",
-                adharProof: "",
-                employeeLicense: "",
-              } as MechanicForm}
+              initialValues={
+                {
+                  name: mechanic.name || "",
+                  id: mechanic.id,
+                  mechanicType: [] as string[],
+                  photo: "",
+                  adharProof: "",
+                  employeeLicense: "",
+                } as MechanicForm
+              }
               validationSchema={MechanicVerificationValidationSchema}
               onSubmit={handleSubmit}
             >
               {({
-                
                 setFieldValue,
                 errors,
                 touched,
@@ -402,7 +404,7 @@ const VerifyMechanic: React.FC = () => {
                   {/* Personal Information */}
                   <div className="bg-gray-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                      <FiUser className="mr-2"/>
+                      <FiUser className="mr-2" />
                       Personal Information
                     </h3>
 
