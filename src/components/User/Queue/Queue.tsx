@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/user";
-import DynamicTable from "../../Common/DynamicTable";
+import DynamicTable, { ColumnType } from "../../Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
-import {
-  AllRegisteredServices,
-  TableColumn,
-} from "../../../interfaces/IComponents/User/IUserInterfaces";
+import { AllRegisteredServices } from "../../../interfaces/IComponents/User/IUserInterfaces";
 import { MdOutlineSpeakerNotesOff } from "react-icons/md";
 
+// Define the formatted data interface with index signature
+interface FormattedQueueData {
+  id: string;
+  name: string;
+  userName: string;
+  status: string;
+  completion: number;
+  originalData: AllRegisteredServices;
+  [key: string]: unknown;
+}
 
 // Helper function to get status color
 const getStatusColor = (status: string): string => {
@@ -93,7 +100,6 @@ const Queue: React.FC = () => {
               service.status !== "completed" && 
               service.status !== "cancelled" && 
               service.status !== "rejected"
-             
           );
           
           setAllRegisteredService(incompleteServices);
@@ -128,7 +134,8 @@ const Queue: React.FC = () => {
       // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
-        Array.isArray(service.serviceDetails) && service.serviceDetails.length > 0 &&
+        Array.isArray(service.serviceDetails) && 
+        service.serviceDetails.length > 0 &&
         service.serviceDetails[0].imageKey
       ) {
         try {
@@ -173,8 +180,8 @@ const Queue: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Define the columns for the service table
-  const serviceColumns: TableColumn[] = [
+  // Define the columns for the service table with proper typing
+  const serviceColumns: ColumnType<FormattedQueueData>[] = [
     {
       key: "service",
       header: "Service",
@@ -194,21 +201,22 @@ const Queue: React.FC = () => {
     {
       key: "userName",
       header: "User Name",
+      render: (value) => <div className="font-medium">{String(value)}</div>,
     },
     {
       key: "status",
       header: "Status",
       render: (value) => (
         <div className="flex items-center">
-          <Circle className={`${getStatusColor(value)} mr-2 h-4 w-4`} />
-          <span className="capitalize">{value}</span>
+          <Circle className={`${getStatusColor(String(value))} mr-2 h-4 w-4`} />
+          <span className="capitalize">{String(value)}</span>
         </div>
       ),
     },
     {
       key: "deviceImage",
       header: "Device Image",
-      render: (value, item) => (
+      render: (_, item) => (
         <div className="flex">
           {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
             <img
@@ -234,17 +242,17 @@ const Queue: React.FC = () => {
       header: "Completion Status",
       render: (value, item) => (
         <div className="flex items-center">
-          <span className="mr-2">{value}%</span>
+          <span className="mr-2">{String(value)}%</span>
           <div className="relative w-full">
             <div
               className={`overflow-hidden h-2 text-xs flex rounded ${
-                getProgressColors(item.status).bg
+                getProgressColors(item.status as string).bg
               }`}
             >
               <div
                 style={{ width: `${value}%` }}
                 className={`shadow-none flex flex-col text-center whitespace-nowrap text-black justify-center ${
-                  getProgressColors(item.status).bar
+                  getProgressColors(item.status as string).bar
                 }`}
               />
             </div>
@@ -254,8 +262,8 @@ const Queue: React.FC = () => {
     },
   ];
 
-  // Transform your data to match the table structure
-  const formattedData =
+  // Transform your data to match the table structure with proper typing
+  const formattedData: FormattedQueueData[] =
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: AllRegisteredServices) => ({
           id: service._id,
@@ -270,7 +278,7 @@ const Queue: React.FC = () => {
       : [];
 
   // Handle row click - Navigate to detail page
-  const handleRowClick = (item: { id: string; name: string; userName: string; status: string; completion: number; originalData: AllRegisteredServices }) => {
+  const handleRowClick = (item: FormattedQueueData) => {
     console.log("Clicked on service:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
@@ -303,14 +311,14 @@ const Queue: React.FC = () => {
 
   // Otherwise show the table with real data
   return (
-    <DynamicTable
+    <DynamicTable<FormattedQueueData>
       title="Active Services Queue"
       columns={serviceColumns}
       data={loading ? [] : formattedData}
       loading={loading}
       emptyMessage="No active services in queue"
       onRowClick={handleRowClick}
-      className="mt-16 cursor-pointer" // Added cursor-pointer to indicate clickable rows
+      className="mt-16 cursor-pointer"
     />
   );
 };

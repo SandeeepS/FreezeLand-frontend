@@ -422,7 +422,7 @@ const MechanicProfile = () => {
                     No address information available
                   </p>
                   <button
-                    onClick={() => navigate("/mechanic/addresses/add")}
+                    onClick={() => navigate("/mech/AddAddress")}
                     className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
                   >
                     <svg
@@ -463,14 +463,14 @@ const MechanicProfile = () => {
                     <div className="relative bg-gray-100 rounded-lg overflow-hidden h-36">
                       <img
                         src={
-                          adharImage || "/src/Images/document-placeholder.png"
+                          adharImage || "/Images/document-placeholder.png"
                         }
                         alt="Aadhar Card"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).onerror = null;
                           (e.target as HTMLImageElement).src =
-                            "/src/Images/document-placeholder.png";
+                            "/Images/document-placeholder.png";
                         }}
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
@@ -497,14 +497,14 @@ const MechanicProfile = () => {
                       <img
                         src={
                           employeeLicense ||
-                          "/src/Images/document-placeholder.png"
+                          "/Images/document-placeholder.png"
                         }
                         alt="Employee License"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).onerror = null;
                           (e.target as HTMLImageElement).src =
-                            "/src/Images/document-placeholder.png";
+                            "/Images/document-placeholder.png";
                         }}
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">

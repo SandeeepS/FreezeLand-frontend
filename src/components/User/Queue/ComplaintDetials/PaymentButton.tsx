@@ -25,17 +25,12 @@ const PaymentButton: React.FC<paymentData> = ({
   console.log("mechanicId", mechanicId);
   console.log("amount", amount);
   console.log("serviceId", serviceId);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const handlePayement = async () => {
     console.log("triggered enrol button");
-
     try {
       setIsLoading(true);
-
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
       if (!stripe) {
         setIsLoading(false);
         toast.error("Stripe could not be loaded.");
@@ -56,10 +51,6 @@ const PaymentButton: React.FC<paymentData> = ({
       console.log("calling");
       const response = await handlePayment(data);
       console.log("hayyyy stripe", response?.data);
-      if (response?.data?.message === "user blocked") {
-        // window.location.href = `${ROUTES.user.signin}?message:blocked`;
-        console.log("user blocked");
-      }
 
       const sessionId = response?.data?.session.sessionId;
       console.log("sessionId", sessionId);
@@ -93,7 +84,9 @@ const PaymentButton: React.FC<paymentData> = ({
       <button
         onClick={handlePayement}
         disabled={isLoading}
-        className={`inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition duration-150 ease-in-out ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow transition duration-150 ease-in-out ${
+          isLoading ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
         {isLoading ? "Processing..." : "Pay Now"}
       </button>

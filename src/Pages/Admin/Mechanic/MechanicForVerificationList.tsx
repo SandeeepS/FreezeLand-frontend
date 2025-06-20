@@ -26,7 +26,7 @@ const MechanicForVerificationList: React.FC = () => {
     //   align: "right",
     //   format: (value: boolean) => (value ? "Blocked" : "Active"),
     // },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150, align: "right" as const },
   ];
   const navigationLink = "/admin/VerfiyMechanic/";
 
@@ -42,7 +42,7 @@ const MechanicForVerificationList: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [search]);
 
   const filteredMechs = mechs
     .filter((mech) => !mech.isVerified)
@@ -85,7 +85,6 @@ const MechanicForVerificationList: React.FC = () => {
             email: mech.email,
             // Add other fields if needed
           }))}
-          //   updateStatus={updateDeviceStatus}
           navLink={navigationLink}
           handleViewMore={handleViewMoreAboutMechanic}
           role="admin"

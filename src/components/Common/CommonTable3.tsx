@@ -17,7 +17,7 @@ interface CommonTable3Props {
     id: string;
     label: string;
     minWidth?: number;
-    align?: "left" | "right" | "center";
+    align?: "inherit" | "center" | "left" | "right" | "justify"  ;
   }>;
   data: Array<{
     _id: string;
@@ -27,6 +27,8 @@ interface CommonTable3Props {
   }>;
   handleViewMore: (id: string) => void;
   title?: string;
+  navLink: string;
+  role: string;
 }
 
 const CommonTable3: React.FC<CommonTable3Props> = ({
@@ -106,7 +108,7 @@ const CommonTable3: React.FC<CommonTable3Props> = ({
                   {item.email && <TableCell>{item.email}</TableCell>}
                   {/* Render additional columns based on the columns prop */}
                   {columns.slice(2).map((column) => (
-                    <TableCell key={column.id} align={column.align || "left"}>
+                    <TableCell key={column.id} align={column.align ?? "left"}>
                       {item[column.id] || "-"}
                     </TableCell>
                   ))}

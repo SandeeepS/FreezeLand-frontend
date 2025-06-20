@@ -57,7 +57,7 @@ export interface ICompliantData {
   userId: string;
   defaultAddress: string;
   discription: string;
-  locationName: {
+  locationName:{
     address: string;
     latitude: number;
     longitude: number;
@@ -65,17 +65,18 @@ export interface ICompliantData {
   status: string;
   currentMechanicId: string | null;
   acceptedAt: Date | null;
-
-  serviceDetails: Array<{
-    _id: string;
-    name: string;
-    imageKey: string;
-    discription: string[];
-    serviceCharge: number;
-    createdAt?: Date; // optional since not in response
-    isBlocked: boolean;
-    isDeleted: boolean;
-  }>;
+  serviceDetails: [
+    {
+      _id: string;
+      name: string;
+      imageKey: string;
+      discription: string[];
+      serviceCharge: number;
+      createdAt: Date;
+      isBlocked: boolean;
+      isDeleted: boolean;
+    }
+  ];
 
   userDetails: {
     _id: string;
@@ -88,13 +89,21 @@ export interface ICompliantData {
     isDeleted: boolean;
     wallet: number;
     locationData: {
-      type: any;
+     
       coordinates: number[];
       city: string;
       state: string;
       _id: string;
     };
-    address: any[]; // adjust if address object shape is known
+    address: {
+      name: string;
+      email: string;
+      phone: number | string;
+      district: string;
+      state: string;
+      pin: number;
+      landMark: string;
+    }[];
   };
 
   workHistory: Array<{
@@ -104,7 +113,7 @@ export interface ICompliantData {
     acceptedAt?: Date;
     canceledAt: Date | null;
     reason: string | null;
-    canceledBy?: string | null;
+    canceledBy: string | null;
   }>;
 
   workDetails: Array<{
@@ -137,7 +146,7 @@ export interface ICompliantData {
     reason: string | null;
   };
   needsReassignment?: boolean;
-  deviceImages?: any[];
+  deviceImages?: string[];
 }
 
 export interface IMechanicDetails {
@@ -149,7 +158,7 @@ export interface IMechanicDetails {
   isVerified: boolean;
   isBlocked: boolean;
   isDeleted: boolean;
-  acceptedAt?: Date;
+  acceptedAt?: string;
 }
 
 export interface IOrderDetails {

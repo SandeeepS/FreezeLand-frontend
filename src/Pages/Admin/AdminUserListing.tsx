@@ -91,7 +91,7 @@ const AdminUserListing: React.FC = () => {
       <div className="flex justify-center items-center mx-5 h-screen">
         <TableCommon
           columns={columns}
-          data={filteredUsers || []} // Ensure fallback to an empty array
+          data={filteredUsers || []} 
           updateStatus={updateUserStatus}
           blockUnblockFunciton={blockUser}
           deleteFunction={deleteUser}

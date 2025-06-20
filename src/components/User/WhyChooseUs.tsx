@@ -37,7 +37,7 @@ const WhyChooseUs: React.FC = () => {
           >
             <div className="w-40 h-40 flex items-center justify-center mx-auto">
               <img
-                src="/src/Images/certified tech.png"
+                src="/Images/certified tech.png"
                 alt="Example image"
                 className="w-full h-auto"
               />
@@ -62,7 +62,7 @@ const WhyChooseUs: React.FC = () => {
           >
             <div className="w-40 h-40 flex items-center justify-center mx-auto">
               <img
-                src="/src/Images/certified tech.png"
+                src="/Images/certified tech.png"
                 alt="Example image"
                 className="w-full h-auto"
               />
@@ -87,7 +87,7 @@ const WhyChooseUs: React.FC = () => {
           >
             <div className="w-40 h-40 flex items-center justify-center mx-auto">
               <img
-                src="/src/Images/certified tech.png"
+                src="/Images/certified tech.png"
                 alt="Example image"
                 className="w-full h-auto"
               />

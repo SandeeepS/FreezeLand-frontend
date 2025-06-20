@@ -44,7 +44,7 @@ function SubContentHomepage() {
           className="smallPictureBox justify-end items-center  "
         >
           <div className="p-8  h-50 w-[800px]  mr-20 ">
-            <img src="/src/Images/acWall3.jpg" alt="" />
+            <img src="/Images/acWall3.jpg" alt="" />
           </div>
         </motion.div>
       </div>

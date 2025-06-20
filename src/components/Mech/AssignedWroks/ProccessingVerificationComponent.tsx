@@ -4,7 +4,7 @@ const ProccessingVerificationComponent: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px]">
       <img
-        src="/src/Images/verificationOnProgress.png"
+        src="/Images/verificationOnProgress.png"
         alt="Verification Required"
         className="w-32 h-32 mb-4"
       />

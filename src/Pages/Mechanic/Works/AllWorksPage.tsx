@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useNavigate } from "react-router-dom";
-import DynamicTable from "../../../components/Common/DynamicTable";
+import DynamicTable, { ColumnType } from "../../../components/Common/DynamicTable";
 import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/mech";
 
 interface ServiceDetail {
@@ -35,14 +35,19 @@ interface ComplaintService {
   createdAt?: string;
 }
 
-export interface TableDataItem {
-  [key: string]: unknown;
-}
-
-export interface TableColumn {
-  key: string;
-  header: string;
-  render?: (value: unknown, item: TableDataItem) => React.ReactNode;
+// Define the exact shape of your table data
+export interface FormattedComplaintData {
+  id: string;
+  name: string;
+  userName: string;
+  status: string;
+  dateCreated: string;
+  completion: number;
+  description: string;
+  originalData: ComplaintService;
+  service: string; // Add this for the service column
+  deviceImage: string; // Add this for the device image column
+   [key: string]: unknown;
 }
 
 const getStatusColor = (status: string): string => {
@@ -61,38 +66,6 @@ const getStatusColor = (status: string): string => {
       return "text-gray-500";
   }
 };
-
-//progreess bar commented for future implimentation
-// const getProgressColors = (status: string) => {
-//   switch (status) {
-//     case "completed":
-//     case "on schedule":
-//       return {
-//         bg: "bg-emerald-200",
-//         bar: "bg-emerald-500",
-//       };
-//     case "delayed":
-//       return {
-//         bg: "bg-red-200",
-//         bar: "bg-red-500",
-//       };
-//     case "in progress":
-//       return {
-//         bg: "bg-blue-200",
-//         bar: "bg-blue-500",
-//       };
-//     case "pending":
-//       return {
-//         bg: "bg-orange-200",
-//         bar: "bg-orange-500",
-//       };
-//     default:
-//       return {
-//         bg: "bg-gray-200",
-//         bar: "bg-gray-500",
-//       };
-//   }
-// };
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -186,14 +159,14 @@ const AllWorksPage: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  //Defining columns for the complaints table
-  const complaintColumns: TableColumn[] = [
+  // Import the ColumnType from DynamicTable and use it properly
+  const complaintColumns: ColumnType<FormattedComplaintData>[] = [
     {
       key: "service",
       header: "Service",
-      render: (_: unknown, item: TableDataItem) => {
-        const id = item.id as string;
-        const name = item.name as string | undefined;
+      render: (_, item) => {
+        const id = item.id;
+        const name = item.name;
         return (
           <div className="flex items-center">
             <img
@@ -233,9 +206,9 @@ const AllWorksPage: React.FC = () => {
     {
       key: "deviceImage",
       header: "Device Images",
-      render: (_: unknown, item: TableDataItem) => (
+      render: (_, item) => (
         <div className="flex">
-          {deviceImages[item.id as string]?.map(
+          {deviceImages[item.id]?.map(
             (imgUrl: string, idx: number) => (
               <img
                 key={idx}
@@ -256,49 +229,10 @@ const AllWorksPage: React.FC = () => {
         </div>
       ),
     },
-    // {
-    //   key: "completion",
-    //   header: "Progress",
-    //   render: (value, item) => (
-    //     <div className="flex items-center">
-    //       <span className="mr-2">{value}%</span>
-    //       <div className="relative w-full">
-    //         <div
-    //           className={`overflow-hidden h-2 text-xs flex rounded ${
-    //             getProgressColors(item.status).bg
-    //           }`}
-    //         >
-    //           <div
-    //             style={{ width: `${value}%` }}
-    //             className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-    //               getProgressColors(item.status).bar
-    //             }`}
-    //           />
-    //         </div>
-    //       </div>
-    //     </div>
-    //   ),
-    // },
-    // {
-    //   key: "action",
-    //   header: "Action",
-    //   render: (value, item) => (
-    //     <button
-    //       className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md flex items-center"
-    //       onClick={(e) => {
-    //         e.stopPropagation();
-    //         handleTakeAction(item.id);
-    //       }}
-    //     >
-    //       <BuildIcon sx={{ fontSize: 16 }} className="mr-1" />
-    //       {item.status === "pending" ? "Take Up" : "Update"}
-    //     </button>
-    //   ),
-    // },
   ];
 
-  // Transform data for the table
-  const formattedData =
+  // Transform data for the table with proper typing
+  const formattedData: FormattedComplaintData[] =
     allComplaints.length > 0
       ? allComplaints.map((complaint: ComplaintService) => ({
           id: complaint._id,
@@ -311,24 +245,20 @@ const AllWorksPage: React.FC = () => {
           completion: complaint.completionPercentage || 0,
           description: complaint.description || "No description provided",
           originalData: complaint,
+          service: complaint.serviceDetails[0]?.name || "Unknown Service", // Add this
+          deviceImage: complaint.image?.[0] || "", // Add this
         }))
       : [];
 
-  const handleRowClick = (item: TableDataItem) => {
+  const handleRowClick = (item: FormattedComplaintData) => {
     console.log("Clicked on complaint:", item);
     navigate(`/mech/complaintDetails/${item.id}`);
   };
 
-  // // Handle action button click keeped for future updated
-  // const handleTakeAction = (id: string) => {
-  //   console.log("Taking action on complaint:", id);
-  //   navigate(`/mechanic/update-complaint/${id}`);
-  // };
-
   return (
     <div className="px-4 py-6">
       <h1 className="text-2xl font-bold mb-6">Customer Service Requests</h1>
-      <DynamicTable
+      <DynamicTable<FormattedComplaintData>
         title="All Complaints"
         columns={complaintColumns}
         data={formattedData}

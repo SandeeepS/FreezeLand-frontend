@@ -47,7 +47,7 @@ const MechanicSignupPage: React.FC = () => {
   });
 
   return (
-    <div className="bg-[url('/src/Images/penguineBlack.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
+    <div className="bg-[url('/Images/penguineBlack.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
       <div className="w-full lg:w-1/3 pt-8">
         <div className="pl-14 ">
           <h1 className="w-full text-5xl  text-black font-exo  p-10">

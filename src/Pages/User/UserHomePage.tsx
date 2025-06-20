@@ -12,14 +12,14 @@ import { getProfile } from "../../Api/user";
 
 const slides = [
   {
-    image: "/src/Images/acWall1.jpg",
+    image: "/Images/acWall1.jpg",
     text1: "Our vision   ",
     text2: "is to provide the",
     text3: "best service to",
     text4: "our customers.",
   },
   {
-    image: "/src/Images/acWall2.jpg",
+    image: "/Images/acWall2.jpg",
     text1: "We strive ",
     text2: "for excellence",
     text3: " in everything ",

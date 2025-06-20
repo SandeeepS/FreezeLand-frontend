@@ -267,7 +267,7 @@ const VerifyMechanic: React.FC = () => {
         }
       });
     };
-  }, []);
+  }, [fileStates]);
 
   const FileUploadField: React.FC<{
     name: keyof FileUploadState;
@@ -305,7 +305,7 @@ const VerifyMechanic: React.FC = () => {
                 Click to upload or drag and drop
               </p>
               <p className="text-xs text-gray-500">
-                {accept.includes("image") ? "PNG, JPG, GIF" : "PDF, PNG, JPG"}{" "}
+                {accept.includes("image") ? "PNG, JPG" : "PDF, PNG, JPG"}{" "}
                 up to 10MB
               </p>
             </div>
@@ -383,12 +383,12 @@ const VerifyMechanic: React.FC = () => {
             <Formik
               initialValues ={{
                 name: mechanic.name || "",
-                id: mechanic._id,
+                id: mechanic.id,
                 mechanicType: [] as string[],
-                photo: null,
-                adharProof: null,
-                employeeLicense: null,
-              }}
+                photo: "",
+                adharProof: "",
+                employeeLicense: "",
+              } as MechanicForm}
               validationSchema={MechanicVerificationValidationSchema}
               onSubmit={handleSubmit}
             >
