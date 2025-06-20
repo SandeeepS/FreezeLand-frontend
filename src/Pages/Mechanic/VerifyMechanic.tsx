@@ -305,7 +305,7 @@ const VerifyMechanic: React.FC = () => {
                 Click to upload or drag and drop
               </p>
               <p className="text-xs text-gray-500">
-                {accept.includes("image") ? "PNG, JPG, GIF" : "PDF, PNG, JPG"}{" "}
+                {accept.includes("image") ? "PNG, JPG" : "PDF, PNG, JPG"}{" "}
                 up to 10MB
               </p>
             </div>
