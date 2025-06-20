@@ -92,8 +92,7 @@ const UserHomePage: React.FC = () => {
             <Header />
           </div>
           <div
-            className="flex-1 overflow-y-auto snap-y snap-mandatory "
-            style={{ scrollBehavior: "smooth" }}
+         
           >
             <div className="carosal-compment mt-[90px]">
               <CarousalComponent slides={slides} />
@@ -101,7 +100,7 @@ const UserHomePage: React.FC = () => {
             <section id="promo1">
               <Promo1 />
             </section>
-            <section id="serviceList">
+            <section id="serviceList" >
               <ServiceList />
             </section>
             <section id="promo2">

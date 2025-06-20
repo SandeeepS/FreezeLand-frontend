@@ -9,8 +9,6 @@ import OAuth from "../../components/Common/OAuth";
 import toast from "react-hot-toast";
 import { initialVal2 } from "../../interfaces/IPages/User/IUserInterfaces";
 
-
-
 const initialValues: initialVal2 = {
   email: "",
   password: "",
@@ -27,12 +25,12 @@ const UserLoginPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await login(values.email, values.password);
-          console.log("result is ",result);
+          console.log("result is ", result);
           if (result?.status === 200 && result.data.data.success) {
             console.log("result fron the front end ", result);
             dispatch(setUserCredental(result?.data.data.data));
             navigate("/user/homepage");
-          }else {
+          } else {
             console.log("loging failed due to Incorrect password or email");
             toast.error(result?.data?.data.message || "Login failed");
           }
@@ -45,11 +43,11 @@ const UserLoginPage: React.FC = () => {
   });
 
   return (
-    <div className="bg-[url('/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
+    <div className="bg-center h-screen w-screen flex items-center justify-center">
       <div className="w-full lg:w-1/3 pt-8">
         <div className="pl-14 ">
           <h1 className="w-full text-5xl  text-black font-exo  p-10">
-            FREEZE <span className="text-white font-exo">LAND</span>{" "}
+            FREEZE <span className="text-freeze-color font-exo">LAND</span>{" "}
           </h1>
         </div>
         <div className="pl-6">

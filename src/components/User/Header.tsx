@@ -6,12 +6,16 @@ import { userLogout } from "../../App/slices/AuthSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
-import { MdEventNote } from "react-icons/md";
-import { useAppSelector } from "../../App/store";
+import { MdEventNote, MdPowerSettingsNew } from "react-icons/md";
+import { persistor, useAppSelector } from "../../App/store";
 import { UserDetailsInProfile } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { FaHistory } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch();
   const userData = useAppSelector((state) => state.auth.userData);
   const [userProfileDetails, setUserProfileDetails] =
     useState<UserDetailsInProfile>();
@@ -30,11 +34,6 @@ const Header: React.FC = () => {
       label: "Profile",
       path: "/user/account",
     },
-    // {
-    //   icon: <MdContactless className="mr-2" />,
-    //   label: "Contact",
-    //   path: "/user/contact",
-    // },
     {
       icon: <MdEventNote className="mr-2" />,
       label: "Address",
@@ -45,11 +44,6 @@ const Header: React.FC = () => {
       label: "Service History",
       path: "/user/serviceHistory",
     },
-    // {
-    //   icon: <IoIosSettings className="mr-2" />,
-    //   label: "Settings",
-    //   path: "/user/settings",
-    // },
   ];
 
   useEffect(() => {
@@ -98,23 +92,54 @@ const Header: React.FC = () => {
   };
 
   const handleServicesClick = () => {
-    // Check if we're already on the homepage
+    // Close mobile menu when an item is clicked
+    setNav(true);
+
     if (location.pathname === "/user/homepage") {
-      // If on homepage, scroll to services section
       const serviceElement = document.getElementById("serviceList");
       if (serviceElement) {
         serviceElement.scrollIntoView({ behavior: "smooth" });
       }
     } else {
-      // If on a different page, navigate to homepage and then scroll to services
       navigate("/user/homepage");
-      // Use setTimeout to ensure navigation completes before scrolling
       setTimeout(() => {
         const serviceElement = document.getElementById("serviceList");
         if (serviceElement) {
           serviceElement.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
+    }
+  };
+
+  const handleMobileNavigation = (path: string) => {
+    setNav(true); // Close the mobile menu
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+
+
+  const handleLogout = async () => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          logout().then(() => console.log(""));
+          dispatch(userLogout());
+          persistor.purge();
+          toast.success("You are logged out!");
+          navigate(navigateTo);
+        }
+      });
+    } catch (error) {
+      console.log(error as Error);
     }
   };
 
@@ -191,7 +216,7 @@ const Header: React.FC = () => {
         <div
           className={
             !nav
-              ? "fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#078FDC] ease-in-out duration-500"
+              ? "fixed left-0 top-0 w-[60%] border-r h-full border-r-gray-900 bg-[#078FDC] ease-in-out duration-500 z-50"
               : "fixed left-[-100%]"
           }
         >
@@ -199,19 +224,37 @@ const Header: React.FC = () => {
             FREEZE <span className="text-white font-exo">LAND</span>
           </h1>
           <ul className="text-black pl-6">
-            <li className="p-4 border-b cursor-pointer">HOME</li>
-            <li className="p-4 border-b cursor-pointer">ACCOUNT</li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/homepage")}
+            >
+              HOME
+            </li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/account")}
+            >
+              ACCOUNT
+            </li>
             <li
               className="p-4 border-b cursor-pointer"
               onClick={handleServicesClick}
             >
               SERVICES
             </li>
-            <li className="p-4 border-b cursor-pointer">CONTACT</li>
-            <li className="p-4 border-b cursor-pointer">QUEUE</li>
+            <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/queue")}
+            >
+              QUEUE
+            </li>
             {/* Logout Button */}
             <li className="p-4 border-b">
-              <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
+              <button
+                className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded w-full"
+                onClick={handleLogout}
+              >
+                <MdPowerSettingsNew className="mr-2" />
                 Logout
               </button>
             </li>

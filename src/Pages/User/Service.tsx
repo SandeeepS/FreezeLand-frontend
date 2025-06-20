@@ -14,9 +14,8 @@ import ConformationModal from "../../components/Common/ConformationModal";
 import UserData from "../../interfaces/UserData";
 import ServiceDetails from "../../components/User/UserServiceRegistration/ServiceDetails";
 import ServiceForm from "../../components/User/UserServiceRegistration/ServiceForm";
-import AboutTheService from "../../components/User/UserServiceRegistration/AboutTheService";
+// import AboutTheService from "../../components/User/UserServiceRegistration/AboutTheService";
 import AddressWarningModal from "../../components/User/UserServiceRegistration/AddressWarningModal";
-
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 // Define LocationData interface
@@ -32,7 +31,7 @@ const Service: React.FC = () => {
   const userData = useSelector((state: RootState) => state.auth.userData);
   const userId = userData?.id;
   const [service, setServices] = useState<Iconcern | undefined>();
-  const [serviceDiscription , setServiceDiscription] = useState<string[]>([]);
+  const [serviceAmount, setServiceAmount] = useState<number>();
   const [showLocationOptions, setShowLocationOptions] = useState(false);
   const [locationName, setLocationName] = useState<LocationData>({
     address: "",
@@ -41,7 +40,6 @@ const Service: React.FC = () => {
   });
   const [userProfile, setUserProfile] = useState<UserData | undefined>();
   const [defaultAddress, setDefaultAddress] = useState<string>("");
-
   const [locationError, setLocationError] = useState<string>("");
   const [serviceImage, setServiceImage] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -49,13 +47,10 @@ const Service: React.FC = () => {
     useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
   useEffect(() => {
-    // Fetching data
     const fetchData = async () => {
       try {
         if (!id || !userId) {
-          console.error("Missing id or userId");
           return;
         }
 
@@ -78,14 +73,13 @@ const Service: React.FC = () => {
           }
         }
 
+        console.log("serivce issssss", service);
         if (profileResult && profileResult.data && profileResult.data.data) {
           const profileData = profileResult.data.data.data;
-          console.log("Profile data fetched:", profileData);
 
           if (profileData) {
             setUserProfile(profileData);
 
-            // Check if address array exists and has addresses
             if (profileData.address && profileData.address.length > 0) {
               const defaultAdd = profileData.address.find(
                 (addr: AddAddress) => addr._id === profileData.defaultAddress
@@ -94,12 +88,9 @@ const Service: React.FC = () => {
               if (defaultAdd) {
                 setDefaultAddress(defaultAdd._id);
               } else {
-                // If no default address is set, use the first address
                 setDefaultAddress(profileData.address[0]._id);
               }
             } else {
-              // No addresses found - show warning modal
-              console.log("No addresses found for user");
               setShowAddressWarningModal(true);
             }
           } else {
@@ -115,17 +106,11 @@ const Service: React.FC = () => {
     fetchData();
   }, [id, userId]);
 
-useEffect(() => {
-  console.log("Service Details from the backend is ", service);
-  if (service?.discription) {
-    console.log("service description ", service.discription);
-    if (Array.isArray(service.discription)) {
-      setServiceDiscription(service.discription);
-    } else {
-      setServiceDiscription([service.discription]);
+  useEffect(() => {
+    if (service?.serviceCharge) {
+      setServiceAmount(service.serviceCharge);
     }
-  }
-}, [service]);
+  }, [service]);
 
   const handleFetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -194,7 +179,7 @@ useEffect(() => {
 
   // Check if user has addresses before rendering the form
   const hasAddresses = userProfile?.address && userProfile.address.length > 0;
-  console.log("DefaultAddress is",defaultAddress);
+  console.log("DefaultAddress is", defaultAddress);
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 mt-12">
@@ -214,33 +199,14 @@ useEffect(() => {
 
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            {/* Service Details Card */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="p-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
-                    <div className="w-2 h-8 bg-freeze-color rounded-full mr-4"></div>
-                    Service Details
-                  </h2>
-                  <ServiceDetails serviceImage={serviceImage || ""} discription={service?.discription || ""} />
-                </div>
-              </div>
+          <div className="flex ">
+            <div className="lg:col-span-3 mb-4">
+              <ServiceDetails
+                serviceImage={serviceImage}
+                discription={service?.discription}
+                serviceAmount={serviceAmount}
+              />
             </div>
-
-            {/* About Service Card */}
-            {   service  && (  <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 sticky top-8">
-                <div className="p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                    <div className="w-2 h-6 bg-green-600 rounded-full mr-3"></div>
-                    What's Included
-                  </h3>
-                  <AboutTheService title="" points={serviceDiscription}/>
-                </div>
-              </div>
-            </div>) }
-      
           </div>
 
           {/* Registration Form Section */}
@@ -346,6 +312,7 @@ useEffect(() => {
                         locationName: locationName,
                         userId: userId,
                         serviceId: service?._id,
+                        serviceCharge: service?.serviceCharge,
                       };
 
                       console.log("Submitting data:", combinedData);

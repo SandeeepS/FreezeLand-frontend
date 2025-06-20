@@ -97,7 +97,7 @@ const StatusProgressBar: React.FC<StatusProgressBarProps> = ({
   const isBlocked = currentStatus === ComplaintStatus.BLOCKED;
 
   return (
-    <div className={`${className} py-2`}>
+    <div className={`${className} py-2 relative z-0`}>
       {isBlocked ? (
         <div className="flex items-center justify-center p-3 bg-red-50 border border-red-200 rounded-lg">
           <BlockIcon className="text-red-500 mr-2" />

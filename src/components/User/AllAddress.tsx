@@ -74,7 +74,7 @@ const AllAddress: React.FC = () => {
           </div>
         )}
 
-        <div className="h-screen">
+        <div className="h-screen ">
           {allAddress.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-96 text-gray-500">
               <MdLocationOff className="text-7xl mb-4" />

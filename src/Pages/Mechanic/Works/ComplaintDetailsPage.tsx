@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Report as ReportIcon } from "@mui/icons-material";
@@ -12,15 +12,12 @@ import AccecptBtn from "./AccecptBtn";
 import UpdateStatusBtn from "./UpdateStatusBtn";
 import { ComplaintDetails } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 import StatusProgressBar from "../../../components/Common/StatusProgressBar";
-
 import { useSelector } from "react-redux"; 
 import { RootState } from "../../../App/store"; 
 import FloatingChat from "../../../components/Common/Chat/FloatingChat";
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
 import ServiceCancelBtn from "../../../components/Common/ServiceCancelBtn";
 import ReportModal from "../../../components/Common/Report/ReportModal";
-
-
 
 const formatDate = (dateString: string) => {
   if (!dateString) return "N/A";
@@ -40,115 +37,76 @@ const ComplaintDetailsPage: React.FC = () => {
   const navigate = useNavigate();
   const [userComplaintDetails, setUserComplaintDetails] = useState<ComplaintDetails | null>(null);
 
-  // Get current user from Redux store
   const mechDetails = useSelector((state: RootState) => state.auth.mechData);
   const currentMechId = mechDetails?.id || "";
 
-  const [complaintState, setComplaintState] = useState<{
-    data: ComplaintDetails | null;
-    loading: boolean;
-    error: string | null;
-  }>({
-    data: null,
-    loading: true,
-    error: null,
-  });
-
+  const [complaint, setComplaint] = useState<ComplaintDetails | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("details");
-
-  // Report modal states
   const [showReportModal, setShowReportModal] = useState<boolean>(false);
   const [reportSuccess, setReportSuccess] = useState<boolean>(false);
 
-  const { data: complaint, loading, error } = complaintState;
-
-  // Fetch complaint details - use useCallback with proper dependencies
   const fetchComplaintDetails = useCallback(async () => {
     if (!id) return;
 
-    setComplaintState((prev) => ({ ...prev, loading: true, error: null }));
+    setLoading(true);
+    setError(null);
 
     try {
       const result = await getComplaintDetails(id);
-      console.log("complaint details in the complaintDetailPage is ", result);
       if (result && result.data.result && result.data.result.length > 0) {
         const complaintData = result.data.result[0];
-        setUserComplaintDetails(result.data.result[0]);
-        setComplaintState({
-          data: complaintData,
-          loading: false,
-          error: null,
-        });
+        setUserComplaintDetails(complaintData);
+        setComplaint(complaintData);
       } else {
-        setComplaintState({
-          data: null,
-          loading: false,
-          error: "No data found for this service request.",
-        });
+        setError("No data found for this service request.");
+        setComplaint(null);
       }
     } catch (error) {
       console.error("Error fetching complaint details:", error);
-      setComplaintState({
-        data: null,
-        loading: false,
-        error: "Failed to load service request data. Please try again later.",
-      });
+      setError("Failed to load service request data. Please try again later.");
+      setComplaint(null);
+    } finally {
+      setLoading(false);
     }
-  }, [id]); // Only depends on id
+  }, [id]);
 
   useEffect(() => {
     fetchComplaintDetails();
   }, [fetchComplaintDetails]);
 
   const handleStatusChange = useCallback((newStatus: ComplaintStatus) => {
-    setComplaintState((prev) => {
-      if (!prev.data) return prev;
-
+    setComplaint(prevComplaint => {
+      if (!prevComplaint) return prevComplaint;
       return {
-        ...prev,
-        data: {
-          ...prev.data,
-          status: newStatus,
-        },
+        ...prevComplaint,
+        status: newStatus,
+      };
+    });
+
+    setUserComplaintDetails(prevDetails => {
+      if (!prevDetails) return prevDetails;
+      return {
+        ...prevDetails,
+        status: newStatus,
       };
     });
   }, []);
 
-  const handleBack = useCallback(() => {
+  const handleBack = () => {
     navigate(-1);
-  }, [navigate]);
+  };
 
+  const isAccepted = complaint?.status !== ComplaintStatus.PENDING;
+  const showCancelButton = complaint?.status === ComplaintStatus.ACCEPTED;
+  const showReportButton = isAccepted && complaint?.userId && (
+    complaint.status === ComplaintStatus.ACCEPTED ||
+    complaint.status === ComplaintStatus.ON_PROCESS ||
+    complaint.status === ComplaintStatus.COMPLETED
+  );
+  const customerName = complaint?.name || complaint?.userDetails?.name || "Customer";
 
-
-
-
-  // Derive computed values with useMemo to prevent recalculation
-  const isAccepted = useMemo(() => {
-    return complaint?.status !== ComplaintStatus.PENDING;
-  }, [complaint?.status]);
-
-  // Check if complaint status is specifically "ACCEPTED" for cancel button
-  const showCancelButton = useMemo(() => {
-    return complaint?.status === ComplaintStatus.ACCEPTED;
-  }, [complaint?.status]);
-
-  // Check if we should show the report button (only when mechanic has accepted the job and customer exists)
-  const showReportButton = useMemo(() => {
-    return isAccepted && complaint?.userId && (
-      complaint.status === ComplaintStatus.ACCEPTED ||
-      complaint.status === ComplaintStatus.ON_PROCESS ||
-      complaint.status === ComplaintStatus.COMPLETED
-    );
-  }, [isAccepted, complaint?.userId, complaint?.status]);
-
-  // Get customer name for display
-  const customerName = useMemo(() => {
-    return complaint?.name ||
-           complaint?.userDetails?.name ||
-           "Customer";
-  }, [complaint]);
-
-  // Loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -157,7 +115,6 @@ const ComplaintDetailsPage: React.FC = () => {
     );
   }
 
-  // Error state
   if (error || !complaint) {
     return (
       <div className="px-4 py-6 mt-32">
@@ -176,14 +133,11 @@ const ComplaintDetailsPage: React.FC = () => {
 
   return (
     <div className="px-4 py-2 bg-gray-50 min-h-screen mt-32">
-      {/* Heading */}
       <div className="flex justify-center items-center mb-8 font-exo text-xl font-bold">
         <h1>Registered Complaint Details</h1>
       </div>
 
-      {/* Header section with status progress bar and accept/update button */}
       <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
-        {/* Status Progress Bar */}
         <div className="px-6 py-4 bg-gray-100">
           <StatusProgressBar
             currentStatus={complaint.status}
@@ -193,27 +147,22 @@ const ComplaintDetailsPage: React.FC = () => {
 
         <div className="flex items-center p-4 border-b border-gray-100 justify-center">
           {complaint.currentMechanicId ? (
-            <div>
-              <UpdateStatusBtn
-                complaintId={complaint._id}
-                currentStatus={complaint.status}
-                onStatusChange={handleStatusChange}
-              />
-            </div>
+            <UpdateStatusBtn
+              complaintId={complaint._id}
+              currentStatus={complaint.status}
+              onStatusChange={handleStatusChange}
+            />
           ) : (
-            <div>
-              <AccecptBtn
-                complaintId={complaint._id}
-                userId={userComplaintDetails?.userId || ""}
-                mechId={currentMechId}
-                onStatusChange={handleStatusChange}
-              />
-            </div>
+            <AccecptBtn
+              complaintId={complaint._id}
+              userId={userComplaintDetails?.userId || ""}
+              mechId={currentMechId}
+              onStatusChange={handleStatusChange}
+            />
           )}
         </div>
       </div>
 
-      {/* Only show cancel button if status is ACCEPTED */}
       {showCancelButton && (
         <div className="mt-4 flex justify-center pb-4">
           <ServiceCancelBtn
@@ -223,7 +172,6 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
       )}
       
-      {/* Main content with conditional layout */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-1/2">
           {complaint.locationName &&
@@ -246,13 +194,11 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
 
         <div className="w-full lg:w-1/2 flex flex-col space-y-6">
-          {/* Customer info card */}
           <CustomerDetailsComponent
             complaint={complaint}
             formatDate={formatDate}
           />
 
-          {/* Location details */}
           {complaint.locationName &&
           typeof complaint.locationName === "object" &&
           "address" in complaint.locationName &&
@@ -274,28 +220,24 @@ const ComplaintDetailsPage: React.FC = () => {
       </div>
 
       <div>
-        {/* Service details component (only if accepted) */}
-        {(
-          <ServiceDetailsComponent
-            complaint={{
-              ...complaint,
-              image: complaint.image ?? [],
-              workDetails: complaint.workDetails && complaint.workDetails.length > 0
-                ? [complaint.workDetails[0]]
-                : [{
-                    description: "",
-                    cost: 0,
-                    addedAt: new Date(),
-                  }],
-            }}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            formatDate={formatDate}
-          />
-        )}
+        <ServiceDetailsComponent
+          complaint={{
+            ...complaint,
+            image: complaint.image ?? [],
+            workDetails: complaint.workDetails && complaint.workDetails.length > 0
+              ? [complaint.workDetails[0]]
+              : [{
+                  description: "",
+                  cost: 0,
+                  addedAt: new Date(),
+                }],
+          }}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          formatDate={formatDate}
+        />
       </div>
 
-      {/* Report Customer Section */}
       {showReportButton && (
         <div className="mt-6 mb-6">
           <div className="bg-white rounded-lg shadow p-6">
@@ -320,7 +262,6 @@ const ComplaintDetailsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Report Modal */}
       <ReportModal
         open={showReportModal}
         onClose={() => setShowReportModal(false)}
@@ -331,10 +272,8 @@ const ComplaintDetailsPage: React.FC = () => {
         targetId={complaint?.userId || ""}
         targetName={customerName}
         complaintId={complaint._id}
-
       />
 
-      {/* Success Snackbar */}
       <Snackbar
         open={reportSuccess}
         autoHideDuration={6000}
@@ -346,7 +285,6 @@ const ComplaintDetailsPage: React.FC = () => {
         </Alert>
       </Snackbar>
 
-      {/* Add Floating Chat component only if the complaint has been accepted */}
       {isAccepted &&
         complaint._id &&
         complaint.userId &&
@@ -363,4 +301,4 @@ const ComplaintDetailsPage: React.FC = () => {
   );
 };
 
-export default React.memo(ComplaintDetailsPage);
+export default ComplaintDetailsPage;

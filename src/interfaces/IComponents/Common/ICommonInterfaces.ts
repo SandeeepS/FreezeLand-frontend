@@ -113,6 +113,7 @@ export interface ServiceListingCardProps {
     title?: string;
     name?: string;
     discription?: string;
+    serviceCharge?:number
   };
 }
 

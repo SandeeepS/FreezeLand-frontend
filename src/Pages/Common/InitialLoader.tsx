@@ -24,8 +24,9 @@ const InitialLoader = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-white">
-      <div className="w-60 h-60 mb-1">
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-white fixed top-0 left-0 z-50">
+      {/* Lottie Animation Container - responsive sizing */}
+      <div className="w-36 h-36 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-60 lg:h-60 mb-2 sm:mb-4">
         <DotLottieReact
           src="https://lottie.host/fd543e94-57b6-41ff-92b9-bf3774e0c7b6/nZZvgbvNOi.lottie"
           loop
@@ -33,13 +34,14 @@ const InitialLoader = () => {
         />
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-52 bg-white rounded-full h-1.5">
+      {/* Progress Bar - responsive sizing */}
+      <div className="w-40 sm:w-48 md:w-52 lg:w-64 bg-gray-200 rounded-full h-1.5 sm:h-2 mx-4">
         <div
-          className="bg-freeze-color h-1.5 rounded-full transition-all duration-75"
+          className="bg-blue-500 h-full rounded-full transition-all duration-75"
           style={{ width: `${progress}%` }}
         ></div>
       </div>
+
     </div>
   );
 };
