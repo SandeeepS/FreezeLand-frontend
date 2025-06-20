@@ -33,28 +33,6 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-// Helper function to get progress bar colors
-const getProgressColors = (status: string) => {
-  switch (status) {
-    case "completed":
-      return {
-        bg: "bg-emerald-200",
-        bar: "bg-emerald-500",
-      };
-    case "cancelled":
-    case "rejected":
-      return {
-        bg: "bg-red-200",
-        bar: "bg-red-500",
-      };
-    default:
-      return {
-        bg: "bg-gray-200",
-        bar: "bg-gray-500",
-      };
-  }
-};
-
 const UserServiceHistory: React.FC = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
@@ -221,29 +199,7 @@ const UserServiceHistory: React.FC = () => {
         </div>
       ),
     },
-    {
-      key: "completion",
-      header: "Completion Status",
-      render: (value, item) => (
-        <div className="flex items-center">
-          <span className="mr-2">{String(value)}%</span>
-          <div className="relative w-full">
-            <div
-              className={`overflow-hidden h-2 text-xs flex rounded ${
-                getProgressColors(item.status as string).bg
-              }`}
-            >
-              <div
-                style={{ width: `${value}%` }}
-                className={`shadow-none flex flex-col text-center whitespace-nowrap text-black justify-center ${
-                  getProgressColors(item.status as string).bar
-                }`}
-              />
-            </div>
-          </div>
-        </div>
-      ),
-    },
+
     {
       key: "completedDate",
       header: "Completed Date",
