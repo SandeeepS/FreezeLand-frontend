@@ -36,7 +36,6 @@ const UserLoginPage: React.FC = () => {
           }
         } catch (error) {
           console.log(error);
-          
         }
       };
       hanSub();

@@ -3,25 +3,30 @@ import { LocationModalProps } from "../../interfaces/IComponents/Common/ICommonI
 // import SearchBar from "./SearchBar";
 import PopularCities from "./PopularCities";
 
-
-
-const LocationModal:React.FC<LocationModalProps> = ({onClose,userId}) => {
+const LocationModal: React.FC<LocationModalProps> = ({ onClose, userId }) => {
   return (
-    <div className="outerDiv flex flex-col items-center  shadow-2xl  bg-opacity-50 h-screen">
-      <div className="innerDiv bg-white w-[90%] sm:w-[75%] md:w-[60%] lg:w-[50%] xl:w-[45%] h-[80%] mt-14 backdrop-blur-xs rounded-lg p-4">
-        <div>
-          <h1 className=" text-center text-lg md:text-xl lg:text-xl font-semibold uppercase">
-            Select you location to continue 
+    <div className="outerDiv flex flex-col items-center justify-center shadow-2xl bg-opacity-50 min-h-screen p-4">
+      <div className="innerDiv bg-white w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl min-h-[70vh] max-h-[90vh] backdrop-blur-xs rounded-lg overflow-hidden">
+        
+        <div className="p-4 sm:p-6 md:p-8">
+          <h1 className="text-center text-base sm:text-lg md:text-xl lg:text-2xl font-semibold uppercase leading-tight">
+            Select your location to continue
           </h1>
         </div>
-        {/* <div className="SearchBar mt-10">
-            <SearchBar/>
+        
+        {/* <div className="SearchBar px-4 sm:px-6 md:px-8">
+          <SearchBar/>
         </div> */}
-        <div className="SubHeading flex flex-col items-center mt-10 font-exo font-bold">
-            <h1 className="uppercase">popular cities</h1>
+        
+        {/* Sub Heading Section */}
+        <div className="SubHeading flex flex-col items-center mt-6 sm:mt-8 md:mt-10 font-exo font-bold px-4">
+          <h1 className="uppercase text-sm sm:text-base md:text-lg">
+            Popular Cities
+          </h1>
         </div>
-        <div className="PopularCities mt-12">
-                <PopularCities onCityClick={onClose} userId={userId}/>
+        
+        <div className="PopularCities mt-6 sm:mt-8 md:mt-12 px-4 sm:px-6 md:px-8 pb-6 sm:pb-8 overflow-y-auto flex-1">
+          <PopularCities onCityClick={onClose} userId={userId} />
         </div>
       </div>
     </div>
