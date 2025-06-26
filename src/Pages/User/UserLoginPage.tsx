@@ -26,16 +26,17 @@ const UserLoginPage: React.FC = () => {
         try {
           const result = await login(values.email, values.password);
           console.log("result is ", result);
-          if (result?.status === 200 && result.data.data.success) {
+          if (result?.status === 200 && result.data.data.success){
             console.log("result fron the front end ", result);
             dispatch(setUserCredental(result?.data.data.data));
             navigate("/user/homepage");
-          } else {
+          } else if(result?.status === 200 && result.data.data.success == false) {
             console.log("loging failed due to Incorrect password or email");
             toast.error(result?.data?.data.message || "Login failed");
           }
         } catch (error) {
           console.log(error);
+          
         }
       };
       hanSub();
@@ -52,7 +53,7 @@ const UserLoginPage: React.FC = () => {
         </div>
         <div className="pl-6">
           <div className="font-[sans-serif] bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
-            <form className="space-y-5" onSubmit={handleSubmit}>
+            <form className="space-y-5 flex-col " onSubmit={handleSubmit}>
               <div>
                 <h3 className="text-gray-800 text-3xl font-extrabold">
                   Sign in

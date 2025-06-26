@@ -27,7 +27,11 @@ const baseErrorHandler = async (
     console.log("Error details:", axiosError);
 
     if (!axiosError.response) {
-      if (axiosError.request) {
+      if (axiosError.code == "ERR_NETWORK") {
+        toast.error(
+          "Unable to connect to server. Please check your connection or try again later."
+        );
+      } else if (axiosError.request) {
         toast.error(
           "No response from server. Please check your internet connection."
         );
@@ -81,7 +85,9 @@ const baseErrorHandler = async (
 };
 
 // User error handler
-export const userErrorHandler = async (error: Error | AxiosError): Promise<void> => {
+export const userErrorHandler = async (
+  error: Error | AxiosError
+): Promise<void> => {
   return baseErrorHandler(
     error,
     async () => {
@@ -92,7 +98,9 @@ export const userErrorHandler = async (error: Error | AxiosError): Promise<void>
 };
 
 // Mechanic error handler
-export const mechErrorHandler = async (error: Error | AxiosError): Promise<void> => {
+export const mechErrorHandler = async (
+  error: Error | AxiosError
+): Promise<void> => {
   return baseErrorHandler(
     error,
     async () => {
@@ -103,7 +111,9 @@ export const mechErrorHandler = async (error: Error | AxiosError): Promise<void>
 };
 
 // Admin error handler
-export const adminErrorHandler = async (error: Error | AxiosError): Promise<void> => {
+export const adminErrorHandler = async (
+  error: Error | AxiosError
+): Promise<void> => {
   return baseErrorHandler(
     error,
     async () => {
