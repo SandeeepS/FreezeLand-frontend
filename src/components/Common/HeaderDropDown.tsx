@@ -21,9 +21,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [imageError, setImageError] = useState(false);
-
   if (!isOpen) return null;
-
   const handleLogout = async () => {
     try {
       Swal.fire({
