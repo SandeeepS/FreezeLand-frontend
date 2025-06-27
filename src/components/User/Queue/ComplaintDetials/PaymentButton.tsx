@@ -52,7 +52,7 @@ const PaymentButton: React.FC<paymentData> = ({
       const response = await handlePayment(data);
       console.log("hayyyy stripe", response?.data);
 
-      const sessionId = response?.data?.session.sessionId;
+      const sessionId = response?.data?.session.result.sessionId;
       console.log("sessionId", sessionId);
       if (stripe && sessionId) {
         const result = await stripe.redirectToCheckout({ sessionId });
