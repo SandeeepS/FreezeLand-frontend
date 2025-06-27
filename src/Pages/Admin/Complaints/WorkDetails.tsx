@@ -10,6 +10,8 @@ interface WorkDetailsProps {
 }
 
 const WorkDetails = ({ workDetails }: WorkDetailsProps) => {
+
+  console.log("workDetails",workDetails);
   if (!workDetails || workDetails.length === 0) return null;
 
   const formatDate = (date: Date) => {

@@ -11,7 +11,7 @@ const RecentTransactions = () => {
         </button>
       </div>
       <table className="w-full table-auto">
-        <TableHead />
+        <TableHead/>
 
         <tbody>
           <TableRow

@@ -5,7 +5,7 @@ import ComplaintHeader from "./ComplaintHeader";
 import ComplaintDescription from "./ComplaintDescription";
 import ComplaintImages from "./ComplaintImages";
 import ServiceDetails from "./ServiceDetails";
-import WorkDetails from "./WorkDetails";
+// import WorkDetails from "./WorkDetails";
 import CustomerDetails from "./CustomerDetails";
 import LocationDetails from "./LocationDetails";
 import WorkHistory from "./WorkHistory";
@@ -174,11 +174,11 @@ const AdminComplaintDetailsPage = () => {
               </div>
             )}
 
-            {complaint.workDetails && complaint.workDetails.length > 0 && (
+            {/* {complaint.workDetails && complaint.workDetails.length > 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 lg:p-5">
                 <WorkDetails workDetails={complaint.workDetails} />
               </div>
-            )}
+            )} */}
           </div>
 
           <div className="flex-1 xl:flex-[1] xl:max-w-sm space-y-4">
