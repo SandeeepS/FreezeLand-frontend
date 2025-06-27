@@ -46,9 +46,24 @@ const CarousalComponent: React.FC<CarouselProps> = ({ slides }) => {
             opacity: 1;
           }
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .carousel-content {
+            padding: 1rem !important;
+            padding-top: 2rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .carousel-content {
+            padding: 0.75rem !important;
+            padding-top: 1.5rem !important;
+          }
+        }
       `}</style>
 
-      <div className="carousalDiv overflow-hidden object-contain relative w-full h-[650px] z-0">
+      <div className="carousalDiv overflow-hidden object-contain relative bg-freeze-color w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[650px] z-0">
         <div
           className="flex transition-transform ease-out duration-400 w-full"
           style={{ transform: `translateX(-${current * 100}%)` }}
@@ -60,34 +75,41 @@ const CarousalComponent: React.FC<CarouselProps> = ({ slides }) => {
                 alt=""
                 className="w-full h-full object-cover"
               />
-              <div className="absolute top-0 left-0 bg-black bg-opacity-50 text-white p-4 w-full h-full z-10 pt-60 pl-36">
+              <div
+                className="carousel-content absolute top-0 left-0 bg-black bg-opacity-50 text-white w-full h-full z-10 
+                            p-2 pt-8 
+                            sm:p-4 sm:pt-12 
+                            md:p-6 md:pt-20 
+                            lg:p-8 lg:pt-36 lg:pl-36
+                            flex flex-col justify-center lg:justify-start"
+              >
                 <p
-                  className={`text-lg md:text-2xl lg:text-6xl font-serif ${
-                    current === index ? "fade-in move-in-left" : ""
-                  }`}
+                  className={`font-serif 
+                            text-sm sm:text-base md:text-lg lg:text-2xl xl:text-6xl
+                            ${current === index ? "fade-in move-in-left" : ""}`}
                 >
                   {slide.text1}
                 </p>
                 <p
-                  className={`text-lg md:text-2xl lg:text-5xl font-serif ${
-                    current === index ? "fade-in move-in-left" : ""
-                  }`}
+                  className={`font-serif 
+                            text-sm sm:text-base md:text-lg lg:text-xl xl:text-5xl
+                            ${current === index ? "fade-in move-in-left" : ""}`}
                   style={{ animationDelay: "0.2s" }}
                 >
                   {slide.text2}
                 </p>
                 <p
-                  className={`text-lg md:text-2xl lg:text-4xl font-serif ${
-                    current === index ? "fade-in move-in-left" : ""
-                  }`}
+                  className={`font-serif 
+                            text-xs sm:text-sm md:text-base lg:text-lg xl:text-4xl
+                            ${current === index ? "fade-in move-in-left" : ""}`}
                   style={{ animationDelay: "0.4s" }}
                 >
                   {slide.text3}
                 </p>
                 <p
-                  className={`text-lg md:text-2xl lg:text-5xl font-serif ${
-                    current === index ? "fade-in move-in-left" : ""
-                  }`}
+                  className={`font-serif
+                            text-sm sm:text-base md:text-lg lg:text-xl xl:text-5xl
+                            ${current === index ? "fade-in move-in-left" : ""}`}
                   style={{ animationDelay: "0.6s" }}
                 >
                   {slide.text4}

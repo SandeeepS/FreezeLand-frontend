@@ -21,9 +21,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [imageError, setImageError] = useState(false);
-
   if (!isOpen) return null;
-
   const handleLogout = async () => {
     try {
       Swal.fire({
@@ -53,7 +51,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
       <div className="rounded-t-lg h-32 overflow-hidden">
         <img
           className="object-cover object-top w-full"
-          src="https://pngmagic.com/product_images/dusty-blue-background-images-free-download-pngmagic.jpg"
+          src="/public/Images/Antartica.jpg"
           alt="Cover"
         />
       </div>

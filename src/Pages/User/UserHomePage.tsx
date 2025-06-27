@@ -94,6 +94,7 @@ const UserHomePage: React.FC = () => {
           <div
          
           >
+            
             <div className="carosal-compment mt-[90px]">
               <CarousalComponent slides={slides} />
             </div>
