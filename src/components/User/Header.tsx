@@ -248,6 +248,24 @@ const Header: React.FC = () => {
             >
               QUEUE
             </li>
+                 <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/account")}
+            >
+              ACCOUNT
+            </li>
+                 <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/address")}
+            >
+              ADDRESS
+            </li>
+                 <li
+              className="p-4 border-b cursor-pointer"
+              onClick={() => handleMobileNavigation("/user/serviceHistory")}
+            >
+              SERVICE HISTORY
+            </li>
             {/* Logout Button */}
             <li className="p-4 border-b">
               <button
