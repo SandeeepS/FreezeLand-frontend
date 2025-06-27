@@ -13,8 +13,12 @@ import {
   FileX,
   ExternalLink,
 } from "lucide-react";
-import { getAllReportsByReporterRole } from "../../../Api/admin";
+import {
+  getAllReportsByReporterRole,
+  updateReportStatus,
+} from "../../../Api/admin";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Updated interface to match API response
 interface ApiReport {
@@ -25,24 +29,11 @@ interface ApiReport {
   targetId: string;
   targetRole: "user" | "mechanic";
   reason: string;
+  status?: "pending" | "in-progress" | "resolved"; // Added status field
   createdAt: string;
   updatedAt: string;
   isDeleted: boolean;
   __v: number;
-}
-
-// Interface for user/mechanic details
-interface PersonDetails {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  location?: string;
-  rating?: number;
-  profileImage?: string;
-  specialization?: string; // For mechanics
-  experienceYears?: number; // For mechanics
-  isVerified?: boolean;
 }
 
 // Transformed interface for UI display
@@ -53,7 +44,6 @@ interface Report {
   submittedBy: string;
   date: string;
   status: "pending" | "in-progress" | "resolved";
-  priority: "low" | "medium" | "high";
   category: string;
   shortDescription: string;
   fullDescription: string;
@@ -68,90 +58,11 @@ const AllReportComponent: React.FC = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [personDetails, setPersonDetails] = useState<
-    Map<string, PersonDetails>
-  >(new Map());
+  const [updatingStatus, setUpdatingStatus] = useState<Set<string>>(new Set());
   const { reportRole } = useParams();
   const navigate = useNavigate();
 
   console.log("ReporterType is ", reportRole);
-
-  // Mock function to fetch person details - replace with actual API call
-  const fetchPersonDetails = async (
-    personId: string,
-    role: "user" | "mechanic"
-  ): Promise<PersonDetails> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Mock data - replace with actual API call
-    if (role === "mechanic") {
-      return {
-        id: personId,
-        name: `Mechanic ${personId.slice(-4)}`,
-        email: `mechanic${personId.slice(-4)}@example.com`,
-        phone: `+1-555-${Math.floor(Math.random() * 9000) + 1000}`,
-        location: "New York, NY",
-        rating: Math.floor(Math.random() * 2) + 4, // 4-5 stars
-        specialization: ["Engine", "Brakes", "Transmission"][
-          Math.floor(Math.random() * 3)
-        ],
-        experienceYears: Math.floor(Math.random() * 15) + 2,
-        isVerified: Math.random() > 0.3,
-        profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${personId}`,
-      };
-    } else {
-      return {
-        id: personId,
-        name: `User ${personId.slice(-4)}`,
-        email: `user${personId.slice(-4)}@example.com`,
-        phone: `+1-555-${Math.floor(Math.random() * 9000) + 1000}`,
-        location: "Boston, MA",
-        rating: Math.floor(Math.random() * 3) + 3, // 3-5 stars
-        isVerified: Math.random() > 0.5,
-        profileImage: `https://api.dicebear.com/7.x/personas/svg?seed=${personId}`,
-      };
-    }
-  };
-
-  // Function to load person details when expanding a row
-  const loadPersonDetails = async (
-    reporterId: string,
-    targetId: string,
-    reporterRole: "user" | "mechanic",
-    targetRole: "user" | "mechanic"
-  ) => {
-    const detailsToLoad = [];
-
-    if (!personDetails.has(reporterId)) {
-      detailsToLoad.push({ id: reporterId, role: reporterRole });
-    }
-
-    if (!personDetails.has(targetId)) {
-      detailsToLoad.push({ id: targetId, role: targetRole });
-    }
-
-    if (detailsToLoad.length === 0) return;
-
-
-    try {
-      const promises = detailsToLoad.map(({ id, role }) =>
-        fetchPersonDetails(id, role).then((details) => ({ id, details }))
-      );
-
-      const results = await Promise.all(promises);
-
-      setPersonDetails((prev) => {
-        const newMap = new Map(prev);
-        results.forEach(({ id, details }) => {
-          newMap.set(id, details);
-        });
-        return newMap;
-      });
-    } catch (error) {
-      console.error("Error loading person details:", error);
-    }
-  };
 
   // Transform API data to UI format
   const transformApiDataToReport = (apiReport: ApiReport): Report => {
@@ -161,8 +72,7 @@ const AllReportComponent: React.FC = () => {
       type: apiReport.reporterRole,
       submittedBy: `Reporter ID: ${apiReport.reporterId}`,
       date: apiReport.createdAt,
-      status: "pending", // Default status since API doesn't provide this
-      priority: "medium", // Default priority since API doesn't provide this
+      status: apiReport.status || "pending", // Use API status or default to pending
       category: "General Report",
       shortDescription: apiReport.reason,
       fullDescription: `Report Details:\n\nReason: ${
@@ -181,36 +91,51 @@ const AllReportComponent: React.FC = () => {
 
   const toggleRowExpansion = (reportId: string) => {
     const newExpandedRows = new Set(expandedRows);
-    const report = reports.find((r) => r.id === reportId);
 
     if (newExpandedRows.has(reportId)) {
       newExpandedRows.delete(reportId);
     } else {
       newExpandedRows.add(reportId);
-      // Load person details when expanding
-      if (report) {
-        loadPersonDetails(
-          report.reporterId,
-          report.targetId,
-          report.type,
-          report.targetRole
-        );
-      }
     }
     setExpandedRows(newExpandedRows);
   };
 
-  const handleStatusUpdate = (reportId: string, newStatus: string) => {
-    console.log(`Updating report ${reportId} status to ${newStatus}`);
-    // Update local state
-    setReports((prevReports) =>
-      prevReports.map((report) =>
-        report.id === reportId
-          ? { ...report, status: newStatus as Report["status"] }
-          : report
-      )
-    );
-    // TODO: Implement API call to update status on backend
+  const handleStatusUpdate = async (reportId: string, newStatus: string) => {
+    try {
+      // Add report to updating set
+      setUpdatingStatus((prev) => new Set(prev).add(reportId));
+      const result = await updateReportStatus(reportId, newStatus);
+      console.log("result from the backend after updation is ", result);
+      if (result?.data.success) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Update local state only after successful API call
+        setReports((prevReports) =>
+          prevReports.map((report) =>
+            report.id === reportId
+              ? { ...report, status: newStatus as Report["status"] }
+              : report
+          )
+        );
+
+        console.log(
+          `Successfully updated report ${reportId} status to ${newStatus}`
+        );
+      }else{
+        console.log("updating failed ");
+        toast.error("Updation of Status is failed");
+      }
+    } catch (error) {
+      console.error(`Failed to update report ${reportId} status:`, error);
+      toast.error(`Failed to update report status. Please try again.`);
+    } finally {
+      // Remove report from updating set
+      setUpdatingStatus((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(reportId);
+        return newSet;
+      });
+    }
   };
 
   const handleViewComplaint = (complaintId: string) => {
@@ -226,7 +151,6 @@ const AllReportComponent: React.FC = () => {
         return "bg-blue-100 text-blue-800";
       case "resolved":
         return "bg-green-100 text-green-800";
-
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -426,7 +350,6 @@ const AllReportComponent: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Report Details
                       </th>
-
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
@@ -472,7 +395,6 @@ const AllReportComponent: React.FC = () => {
                               </div>
                             </div>
                           </td>
-
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
@@ -509,7 +431,7 @@ const AllReportComponent: React.FC = () => {
                         {/* Expanded Row */}
                         {expandedRows.has(report.id) && (
                           <tr>
-                            <td colSpan={6} className="px-6 py-4 bg-gray-50">
+                            <td colSpan={4} className="px-6 py-4 bg-gray-50">
                               <div className="space-y-6 m-6">
                                 {/* Report Description */}
                                 <div>
@@ -547,7 +469,8 @@ const AllReportComponent: React.FC = () => {
                                           e.target.value
                                         )
                                       }
-                                      className="text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                      disabled={updatingStatus.has(report.id)}
+                                      className="text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                       <option value="pending">Pending</option>
                                       <option value="in-progress">
@@ -555,9 +478,12 @@ const AllReportComponent: React.FC = () => {
                                       </option>
                                       <option value="resolved">Resolved</option>
                                     </select>
-                                    <button className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                      Update
-                                    </button>
+                                    {updatingStatus.has(report.id) && (
+                                      <div className="inline-flex items-center px-3 py-1 text-sm text-gray-600">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600 mr-2"></div>
+                                        Updating...
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>

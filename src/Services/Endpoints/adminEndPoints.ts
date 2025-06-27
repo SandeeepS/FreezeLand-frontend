@@ -26,6 +26,7 @@ const adminRoutes = {
   getComplaintById:"/admin/getComplaintById",
   cancelComplaint:"/admin/cancelComplaint",
   getAllReports:"/admin/report",
+  updateReportStatus:"/admin/updateReportStatus",
   logout: "/admin/logout",
 };
 
