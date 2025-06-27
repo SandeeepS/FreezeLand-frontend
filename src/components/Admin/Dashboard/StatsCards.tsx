@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { FiTrendingDown, FiTrendingUp } from "react-icons/fi";
+// import { FiTrendingDown, FiTrendingUp } from "react-icons/fi";
 import { getAllMechanics, getAllServices, getAllUsers } from "../../../Api/admin";
 const StatsCards = () => {
 
@@ -65,8 +65,6 @@ export default StatsCards;
 const Card = ({
   title,
   value,
-  pillText,
-  trend,
   period,
 }: {
   title: string;
