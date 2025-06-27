@@ -51,7 +51,7 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
       <div className="rounded-t-lg h-32 overflow-hidden">
         <img
           className="object-cover object-top w-full"
-          src="/public/Images/Antartica.jpg"
+          src="/Images/Antartica.jpg"
           alt="Cover"
         />
       </div>
