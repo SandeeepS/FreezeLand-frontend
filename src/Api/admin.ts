@@ -416,6 +416,17 @@ const getAllReportsByReporterRole = async(reporterRole:string) => {
   }
 }
 
+//updating report status
+const updateReportStatus = async(reportId:string, status: string) => {
+  try{
+    const response = await Api.put(adminRoutes.updateReportStatus,{reportId,status});
+    return response;
+  }catch(error){
+    console.log("Error occured during updating the reportsstatus from the updateReportStatus in the admin.ts");
+    adminErrorHandler(error as Error);
+  }
+}
+
 
 
 export {
@@ -447,4 +458,5 @@ export {
   deleteComplaint,
   getComplaintById,
   cancelComplaint,
+  updateReportStatus
 };
