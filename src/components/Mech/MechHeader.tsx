@@ -266,6 +266,39 @@ const MechHeader: React.FC = () => {
             >
               QUEUE
             </li>
+
+            <li
+              className={`p-4 border-b cursor-pointer transition-opacity ${
+                !isVerified ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() =>
+                handleMobileNavClick(() => navigate("/mech/profile"))
+              }
+            >
+              PROFILE
+            </li>
+
+            <li
+              className={`p-4 border-b cursor-pointer transition-opacity ${
+                !isVerified ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() =>
+                handleMobileNavClick(() => navigate("/mech/serviceHistory"))
+              }
+            >
+              SERVICE HISTORY
+            </li>
+            <li
+              className={`p-4 border-b cursor-pointer transition-opacity ${
+                !isVerified ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() =>
+                handleMobileNavClick(() => navigate("/mech/mechAddress"))
+              }
+            >
+              MECHADDRESS
+            </li>
+
             {/* Logout Button - Always accessible */}
             <li className="p-4 border-b">
               <button
