@@ -71,7 +71,7 @@ const MechanicLoginPage: React.FC = () => {
                   Don't have an account?{" "}
                   <a
                     href="/mech/signuppage"
-                    className="text-blue-600 font-semibold hover:underline"
+                    className="text-freeze-color font-semibold hover:underline"
                   >
                     Sign up here
                   </a>
@@ -124,7 +124,7 @@ const MechanicLoginPage: React.FC = () => {
                 <div className="flex items-center"></div>
                 <a
                   href="/mech/forgot-password"
-                  className="text-blue-600 text-sm font-semibold hover:underline"
+                  className="text-freeze-color text-sm font-semibold hover:underline"
                 >
                   Forgot Password?
                 </a>
@@ -133,7 +133,7 @@ const MechanicLoginPage: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none"
+                  className="w-full py-3 px-4 bg-freeze-color text-white text-sm font-semibold rounded-md hover:bg-blue-600 focus:outline-none"
                 >
                   Sign in
                 </button>
