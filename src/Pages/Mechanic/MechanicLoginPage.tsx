@@ -24,7 +24,7 @@ const MechanicLoginPage: React.FC = () => {
     if (mechData) {
       navigate("/mech/homepage");
     }
-  }, [mechData]);
+  }, [mechData, navigate]);
 
   const { values, handleBlur, handleChange, handleSubmit, errors } = useFormik({
     initialValues: initialValues,
