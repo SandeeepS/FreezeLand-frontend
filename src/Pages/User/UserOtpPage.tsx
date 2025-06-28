@@ -8,28 +8,59 @@ import toast from "react-hot-toast";
 
 const UserOtpPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  //here id is the tempUserId 
 
   const [otp, setOTP] = useState<string>("");
-  const [seconds, setSeconds] = useState(60);
+  const [seconds, setSeconds] = useState(0); // Start with 0, will be set from sessionStorage or API
   const [otpLoading, setOtpLoading] = useState<boolean>(false);
   const [resendLoading, setResendLoading] = useState<boolean>(false);
+  const [isTimerInitialized, setIsTimerInitialized] = useState<boolean>(false);
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { userData } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (userData) navigate("/user/home");
-  }, [userData]);
+  // Key for storing timer in sessionStorage
+  const timerKey = `otp_timer_${id}`;
 
   useEffect(() => {
-    if (seconds > 0) {
-      const timer = setInterval(() => setSeconds(seconds - 1), 1000);
-      return () => clearInterval(timer);
+    if (userData) navigate("/user/home");
+  }, [userData, navigate]);
+
+  useEffect(() => {
+    const storedEndTime = sessionStorage.getItem(timerKey);
+    if (storedEndTime) {
+      const endTime = parseInt(storedEndTime);
+      const currentTime = Date.now();
+      const remainingTime = Math.max(0, Math.floor((endTime - currentTime) / 1000));
+      setSeconds(remainingTime);
+    } else {
+      const endTime = Date.now() + 60000; // 60 seconds from now
+      sessionStorage.setItem(timerKey, endTime.toString());
+      setSeconds(60);
     }
-  }, [seconds]);
+    setIsTimerInitialized(true);
+  }, [id, timerKey]);
+
+  useEffect(() => {
+    if (!isTimerInitialized) return;
+
+    if (seconds > 0) {
+      const timer = setInterval(() => {
+        setSeconds(prevSeconds => {
+          const newSeconds = prevSeconds - 1;
+          if (newSeconds <= 0) {
+            sessionStorage.removeItem(timerKey);
+            return 0;
+          }
+          return newSeconds;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    } else {
+      sessionStorage.removeItem(timerKey);
+    }
+  }, [seconds, isTimerInitialized, timerKey]);
 
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -39,8 +70,12 @@ const UserOtpPage: React.FC = () => {
     setOTP(value);
   };
 
-  //function to handle otp verification 
   const handleVerify = async () => {
+    if (seconds <= 0) {
+      toast.error("OTP has expired. Please request a new one.");
+      return;
+    }
+
     if (!otp.trim()) {
       toast.error("Please enter the OTP");
       return;
@@ -62,6 +97,7 @@ const UserOtpPage: React.FC = () => {
         console.log("userData from the backend to dispatch", result.data.data);
         dispatch(setUserCredental(result.data.data));
         toast.success("OTP verified successfully!");
+        sessionStorage.removeItem(timerKey);
         navigate("/login");
       } else if ("data" in result) {
         console.log("login failed due to problem in otp verification");
@@ -84,8 +120,10 @@ const UserOtpPage: React.FC = () => {
       console.log("Response from the backend after resending the otp", response);
       
       // Reset timer to 60 seconds after successful resend
+      const endTime = Date.now() + 60000; // 60 seconds from now
+      sessionStorage.setItem(timerKey, endTime.toString());
       setSeconds(60);
-      setOTP(""); // Clear current OTP
+      setOTP(""); 
       toast.success("OTP resent successfully!");
     } catch (error) {
       console.log(error as Error);
@@ -94,6 +132,17 @@ const UserOtpPage: React.FC = () => {
       setResendLoading(false);
     }
   };
+
+  // Don't render anything until timer is initialized
+  if (!isTimerInitialized) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -123,7 +172,10 @@ const UserOtpPage: React.FC = () => {
                 onChange={handleOTPChange}
                 maxLength={6}
                 placeholder="Enter 6-digit code"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={seconds <= 0} 
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-2xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                  seconds <= 0 ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
 
@@ -163,7 +215,7 @@ const UserOtpPage: React.FC = () => {
 
             <button
               onClick={handleVerify}
-              disabled={!otp || otp.length !== 6 || otpLoading}
+              disabled={!otp || otp.length !== 6 || otpLoading || seconds <= 0} 
               className="w-full bg-freeze-color text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {otpLoading ? (
@@ -171,6 +223,8 @@ const UserOtpPage: React.FC = () => {
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Verifying...
                 </div>
+              ) : seconds <= 0 ? (
+                "OTP Expired - Resend Required"
               ) : (
                 "Verify"
               )}
