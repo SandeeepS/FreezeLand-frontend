@@ -14,8 +14,8 @@ import {
   AlertCircle,
   Wrench,
   UserCheck,
-  IndianRupee,
-  Hammer,
+  // IndianRupee,
+  // Hammer,
   History,
 } from "lucide-react";
 
@@ -98,6 +98,7 @@ const ServiceDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [image, setImage] = useState<string>("");
+  const [serviceImageUrls, setServiceImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,6 +143,32 @@ const ServiceDetails: React.FC = () => {
       }
     };
     getImage();
+  }, [complaint]);
+
+  useEffect(() => {
+    const fetchServiceImages = async () => {
+      if (!complaint?.image || complaint.image.length === 0) {
+        setServiceImageUrls([]);
+        return;
+      }
+      try {
+        const urls = await Promise.all(
+          complaint.image.map(async (imgKey) => {
+            try {
+              const result = await getImageUrl(imgKey, "mechanic");
+              return result?.data?.url || ""; 
+            } catch {
+              return ""; 
+            }
+          })
+        );
+        setServiceImageUrls(urls.filter(Boolean));
+      } catch (error) {
+        console.log("Error fetching service images", error);
+        setServiceImageUrls([]);
+      }
+    };
+    fetchServiceImages();
   }, [complaint]);
 
   const formatDate = (dateString: string) => {
@@ -313,7 +340,7 @@ const ServiceDetails: React.FC = () => {
           </div>
 
           {/* Service Information */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Wrench className="w-5 h-5 text-green-600" />
               Service Information
@@ -345,8 +372,8 @@ const ServiceDetails: React.FC = () => {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+          </div>*/}
+        </div> 
 
         {/* Problem Description */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
@@ -415,23 +442,27 @@ const ServiceDetails: React.FC = () => {
         </div>
 
         {/* Images Section */}
-        {complaint.image && complaint.image.length > 0 && (
+        {serviceImageUrls.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <ImageIcon className="w-5 h-5 text-purple-600" />
               Service Images
             </h2>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {complaint.image.map((img, index) => (
+              {serviceImageUrls.map((url, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-3"
+                  className="border border-gray-200 rounded-lg p-3 flex items-center justify-center bg-gray-100 h-48"
                 >
-                  <div className="bg-gray-100 rounded-lg h-48 flex items-center justify-center">
+                  {url ? (
+                    <img
+                      src={url}
+                      alt={`Service Image ${index + 1}`}
+                      className="object-contain h-full w-full rounded"
+                    />
+                  ) : (
                     <ImageIcon className="w-12 h-12 text-gray-400" />
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2 truncate">{img}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -439,7 +470,7 @@ const ServiceDetails: React.FC = () => {
         )}
 
         {/* Work Details */}
-        {complaint.workDetails && complaint.workDetails.length > 0 && (
+        {/* {complaint.workDetails && complaint.workDetails.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Hammer className="w-5 h-5 text-indigo-600" />
@@ -501,7 +532,7 @@ const ServiceDetails: React.FC = () => {
               </div>
             ))}
           </div>
-        )}
+        )} */}
 
         {/* Work History */}
         {complaint.workHistory && complaint.workHistory.length > 0 && (
