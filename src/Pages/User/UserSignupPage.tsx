@@ -56,11 +56,11 @@ const UserSignupPage: React.FC = () => {
   });
 
   return (
-    <div className="bg-[url('/Images/loginPageBackground.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
+    <div className=" bg-cover bg-center h-screen w-screen flex items-center justify-center">
       <div className="w-full lg:w-1/3 pt-8">
         <div className="pl-14 ">
           <h1 className="w-full text-5xl  text-black font-exo  p-10">
-            FREEZE <span className="text-white font-exo">LAND</span>{" "}
+            FREEZE <span className="text-freeze-color font-exo">LAND</span>{" "}
           </h1>
         </div>
         <div className="pl-6">
@@ -74,7 +74,7 @@ const UserSignupPage: React.FC = () => {
                   Already have an account?{" "}
                   <a
                     href="/login"
-                    className="text-blue-600 font-semibold hover:underline"
+                    className="text-freeze-color font-semibold hover:underline"
                   >
                     Sign in here
                   </a>
@@ -197,7 +197,7 @@ const UserSignupPage: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none"
+                  className="w-full py-3 px-4 bg-freeze-color text-white text-sm font-semibold rounded-md hover:bg-blue-600 focus:outline-none"
                 >
                   Sign up
                 </button>

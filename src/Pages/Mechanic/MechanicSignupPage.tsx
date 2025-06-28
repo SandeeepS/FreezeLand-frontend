@@ -47,7 +47,7 @@ const MechanicSignupPage: React.FC = () => {
   });
 
   return (
-    <div className="bg-[url('/Images/penguineBlack.jpg')] bg-cover bg-center h-screen w-screen flex items-center">
+    <div className=" bg-cover bg-center h-screen w-screen flex items-center justify-center">
       <div className="w-full lg:w-1/3 pt-8">
         <div className="pl-14 ">
           <h1 className="w-full text-5xl  text-black font-exo  p-10">
@@ -65,7 +65,7 @@ const MechanicSignupPage: React.FC = () => {
                   Already have an account?{" "}
                   <a
                     href="/mech/login"
-                    className="text-blue-600 font-semibold hover:underline"
+                    className="text-freeze-color font-semibold hover:underline"
                   >
                     Sign in here
                   </a>
@@ -179,7 +179,7 @@ const MechanicSignupPage: React.FC = () => {
                 <div className="flex items-center"></div>
                 <a
                   href="javascript:void(0);"
-                  className="text-blue-600 text-sm font-semibold hover:underline"
+                  className="text-freeze-color text-sm font-semibold hover:underline"
                 >
                   Forgot Password?
                 </a>
@@ -188,7 +188,7 @@ const MechanicSignupPage: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none"
+                  className="w-full py-3 px-4 bg-freeze-color text-white text-sm font-semibold rounded-md hover:bg-blue-600 focus:outline-none"
                 >
                   Sign up
                 </button>
