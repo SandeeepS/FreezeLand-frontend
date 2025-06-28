@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { getImageUrl } from "../../../Api/admin";
+
 interface ServiceDetailsProps {
   serviceDetails: {
     name: string;
@@ -9,6 +12,28 @@ interface ServiceDetailsProps {
 }
 
 const ServiceDetails = ({ serviceDetails }: ServiceDetailsProps) => {
+
+    const [image,setImage] = useState();
+    useEffect(() => {
+         const fetchData = async () => {
+        try {
+          if (serviceDetails?.imageKey) {
+            const result = await getImageUrl(
+              serviceDetails?.imageKey,
+              "service"
+            );
+            if (result) {
+              setImage(result.data.url);
+            }
+          }
+        } catch (error) {
+          console.log(error as Error);
+        }
+      };
+      fetchData();
+    },[serviceDetails])
+    if (!serviceDetails) return null;
+
   if (!serviceDetails) return null;
 
   return (
@@ -39,7 +64,7 @@ const ServiceDetails = ({ serviceDetails }: ServiceDetailsProps) => {
           {serviceDetails.imageKey && (
             <div className="md:flex md:justify-end">
               <img 
-                src={serviceDetails.imageKey} 
+                src={image} 
                 alt={serviceDetails.name} 
                 className="w-full md:w-40 h-40 object-cover rounded-lg"
               />

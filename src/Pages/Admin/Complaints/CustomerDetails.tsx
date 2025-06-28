@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { getImageUrl } from "../../../Api/admin";
+
 interface CustomerDetailsProps {
   user: {
     profile_picture?: string;
@@ -10,7 +13,29 @@ interface CustomerDetailsProps {
 }
 
 const CustomerDetails = ({ user, name }: CustomerDetailsProps) => {
+    
+  const [image,setImage] = useState();
+  useEffect(() => {
+       const fetchData = async () => {
+      try {
+        if (user.profile_picture) {
+          const result = await getImageUrl(
+            user.profile_picture,
+            "service"
+          );
+          if (result) {
+            setImage(result.data.url);
+          }
+        }
+      } catch (error) {
+        console.log(error as Error);
+      }
+    };
+    fetchData();
+  },[user])
   if (!user) return null;
+
+
   
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -22,7 +47,7 @@ const CustomerDetails = ({ user, name }: CustomerDetailsProps) => {
         <div className="flex items-center">
           {user.profile_picture ? (
             <img 
-              src={user.profile_picture} 
+              src={image} 
               alt={name} 
               className="w-12 h-12 rounded-full object-cover mr-4" 
             />
