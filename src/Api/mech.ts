@@ -217,6 +217,7 @@ const getComplaintDetails = async (id: string) => {
   }
 };
 
+//function to get image url for mechanic 
 const getImageUrl = async (imageKey: string, type: string) => {
   try {
     const result = await Api.get(mechRoutes.getImageUrl, {
