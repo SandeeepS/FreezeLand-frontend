@@ -70,6 +70,8 @@ const forgotVerifyOtpMech = async (otp: string) => {
     mechErrorHandler(error as Error);
   }
 };
+
+//function to update the new password of the user 
 const updateNewPasswordMech = async (password: string, mechId: string) => {
   try {
     return await Api.put(mechRoutes.updateNewPasswordMech,{
@@ -217,6 +219,7 @@ const getComplaintDetails = async (id: string) => {
   }
 };
 
+//function to get image url for mechanic
 const getImageUrl = async (imageKey: string, type: string) => {
   try {
     const result = await Api.get(mechRoutes.getImageUrl, {
