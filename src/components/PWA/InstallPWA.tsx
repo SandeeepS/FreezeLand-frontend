@@ -1,84 +1,78 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
-
 
 const InstallPWA: React.FC = () => {
   const [supportsPWA, setSupportsPWA] = useState(false);
-  const [promptInstall, setPromptInstall] = useState<InstallPromptEvent | null>(null);
+  const [promptInstall, setPromptInstall] = useState<InstallPromptEvent | null>(
+    null
+  );
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
-      // Store the install prompt for later use
       setPromptInstall(e as InstallPromptEvent);
       setSupportsPWA(true);
+      setShowModal(true); // Show the modal
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener("beforeinstallprompt", handler);
 
-    // Check if the app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setSupportsPWA(false); // Already installed, don't show button
+    // Detect if app is already installed
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setSupportsPWA(false);
     }
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  const handleClick = async () => {
-    if (!promptInstall) {
-      return;
-    }
-    // Show the prompt
+  const handleInstallClick = async () => {
+    if (!promptInstall) return;
+
     promptInstall.prompt();
-    
-    // Wait for the user to respond to the prompt
     const { outcome } = await promptInstall.userChoice;
     console.log(`User response to the install prompt: ${outcome}`);
-    
-    // We no longer need the prompt. Clear it
+
     setPromptInstall(null);
+    setShowModal(false);
   };
 
-  if (!supportsPWA) {
+  const handleDismiss = () => {
+    setShowModal(false);
+  };
+
+  if (!supportsPWA || !showModal) {
     return null;
   }
 
   return (
-    <button
-      className="install-button"
-      onClick={handleClick}
-      style={{
-        backgroundColor: '#3367D6',
-        color: 'white',
-        padding: '10px 15px',
-        border: 'none',
-        borderRadius: '4px',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px'
-      }}
-    >
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="18" 
-        height="18" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-      >
-        <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
-      </svg>
-      Install App
-    </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-sm text-center">
+        <h2 className="text-xl font-semibold mb-3">Install Our App</h2>
+        <p className="text-sm text-gray-600 mb-6">
+          Get faster access and a better experience by installing our app on
+          your device.
+        </p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={handleInstallClick}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+          >
+            Install
+          </button>
+          <button
+            onClick={handleDismiss}
+            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition"
+          >
+            Maybe Later
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -29,8 +29,6 @@ interface IServiceDetails {
   name: string;
 }
 
-
-
 /**
  * ComplaintDetail component displays detailed information about a service complaint
  * including customer information, mechanic details, work details bill and complaint status
@@ -118,8 +116,6 @@ const ComplaintDetail: React.FC = () => {
     fetchMechanicDetails();
   }, [complaint?.currentMechanicId, complaint?.acceptedAt]);
 
-
-
   // Render loading state
   if (isLoading) {
     return (
@@ -168,8 +164,9 @@ const ComplaintDetail: React.FC = () => {
   // for  show the report button (only when mechanic is assigned)
   const showReportButton = complaint.currentMechanicId && mechanicDetails;
 
-   //  payment is completed and invoice can be downloaded after completed 
-  const isPaymentCompleted = status === "completed" && complaint.orderId !== null;
+  //  payment is completed and invoice can be downloaded after completed
+  const isPaymentCompleted =
+    status === "completed" && complaint.orderId !== null;
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
@@ -283,9 +280,9 @@ const ComplaintDetail: React.FC = () => {
         onSubmit={createReport}
         reporterRole="user"
         targetRole="mechanic"
-        targetId={mechanicDetails?._id || ""}
-        targetName={mechanicDetails?.name || ""}
-        reporterId={userDetails._id || ""}
+        targetId={mechanicDetails?._id as string}
+        targetName={mechanicDetails?.name as string}
+        reporterId={userDetails._id as string}
         complaintId={complaint._id}
       />
 
