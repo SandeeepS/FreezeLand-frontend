@@ -5,7 +5,7 @@ import { login } from "../../Api/user";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUserCredental } from "../../App/slices/AuthSlice";
-// import OAuth from "../../components/Common/OAuth";
+import OAuth from "../../components/Common/OAuth";
 import toast from "react-hot-toast";
 import { initialVal2 } from "../../interfaces/IPages/User/IUserInterfaces";
 
@@ -129,13 +129,13 @@ const UserLoginPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* <div className="my-4 flex items-center">
+              <div className="my-4 flex items-center">
                 <hr className="w-full border-gray-300" />
                 <p className="text-sm text-gray-600 text-center mx-4">or</p>
                 <hr className="w-full border-gray-300" />
               </div>
 
-              <OAuth /> */}
+              <OAuth />
             </form>
           </div>
         </div>
