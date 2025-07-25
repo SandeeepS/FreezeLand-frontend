@@ -4,7 +4,7 @@ import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import app from '../../firebase';
 import { googleLogin } from '../../Api/user';
 import { useDispatch } from 'react-redux';
-import { saveUser, setUserCredental } from '../../App/slices/AuthSlice';
+import {  setUserCredental } from '../../App/slices/AuthSlice';
 
 const OAuth = () => {
 
@@ -21,15 +21,14 @@ const OAuth = () => {
                 const result = await googleLogin(resultsFromGoogle.user.displayName, resultsFromGoogle.user.email, resultsFromGoogle.user.photoURL);
                 console.log("result from the googleLoging in the OAuth",result)
                 if (result) {
-                    const data = result.data.data;
+                    const data = result.data.data.data;
                     const userData  = {
-                        id:data._id,
+                        id:data.id,
                         name:data.name,
                         email:data.email,
                         role:data.role
                     }
                     dispatch(setUserCredental(userData));
-                    dispatch(saveUser(result.data.data));
                     // navigate('/user/home');
                 }
             }
