@@ -37,7 +37,7 @@ const UserSignupPage: React.FC = () => {
       const hanSub = async () => {
         try {
           const result = await signup(formData);
-          if ('error' in result) {
+          if ("error" in result) {
             errorHandler(new Error(result.error as string));
             return;
           }
@@ -66,7 +66,7 @@ const UserSignupPage: React.FC = () => {
         <div className="pl-6">
           <div className="font-[sans-serif] bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
             <form className="space-y-5" onSubmit={handleSubmit}>
-              <div>
+              <div className="flex flex-col items-center text-center">
                 <h3 className="text-gray-800 text-3xl font-extrabold">
                   Sign up
                 </h3>
