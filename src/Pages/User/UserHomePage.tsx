@@ -6,9 +6,9 @@ import ServiceList from "../../components/User/ServiceList";
 import Promo2 from "../../components/User/WhyChooseUs";
 import Footer from "../../components/User/Footer";
 import LocationModal from "../../components/Common/LocationModal";
-import InitialLoader from "../Common/InitialLoader";
 import { useAppSelector } from "../../App/store";
 import { getProfile } from "../../Api/user";
+import FallBackLoader from "../../components/Common/FallBackLoader";
 
 const slides = [
   {
@@ -85,7 +85,7 @@ const UserHomePage: React.FC = () => {
   return (
     <>
       {showSplash ? (
-        <InitialLoader />
+        <FallBackLoader/>
       ) : (
         <div className="home flex flex-col overflow-hidden">
           <div className="fixed top-0 left-0 w-full z-10">

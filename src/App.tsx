@@ -47,6 +47,7 @@ import SelectReportComponent from "./components/Admin/Reports/SelectReportCompon
 import AllReportComponent from "./components/Admin/Reports/AllReportComponent";
 import ServiceDetails from "./Pages/Mechanic/ServiceHistory/ServiceDetails";
 import UserServiceHistory from "./components/User/ServiceHistory/UserServiceHistory";
+import FallBackLoader from "./components/Common/FallBackLoader";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -81,7 +82,7 @@ function App() {
         <InstallPWA />
       </header>
       <Toaster position="top-right" reverseOrder={false} />
-      <Suspense fallback={<div>...Loading</div>}>
+      <Suspense fallback={<FallBackLoader/>}>
         <Routes>
           {/* userRoutes */}
           <Route path="" element={<UserLoggedOut />}>
