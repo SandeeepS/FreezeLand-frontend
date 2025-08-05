@@ -74,7 +74,7 @@ const baseErrorHandler = async (
       case 500:
         toast.error(errorMessage || "Server error. Please try again later.");
         break;
-
+   
       default:
         toast.error(errorMessage || `Error: ${status}`);
     }
