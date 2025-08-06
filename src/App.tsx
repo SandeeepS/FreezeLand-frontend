@@ -55,6 +55,7 @@ import AdminCompliantDetailsPage from "./Pages/Admin/Complaints/AdminCompliantDe
 import MechanicForVerificationList from "./Pages/Admin/Mechanic/MechanicForVerificationList";
 import SelectReportComponent from "./components/Admin/Reports/SelectReportComponent";
 import AllReportComponent from "./components/Admin/Reports/AllReportComponent";
+import ServiceOverview from "./Pages/User/Service/ServiceOverview";
 
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
@@ -109,6 +110,7 @@ function App() {
               <Route path="showAllAddress" element={<AllAddress />} />
               <Route path="editAddress/:id" element={<EditAddress />} />
               <Route path="service/:id" element={<Service />} />
+              <Route path="serviceDetails/:id" element={<ServiceOverview/>}/>
               <Route path="registeredComplaintByUser/:id" element={<ComplaintDetail />} />
               <Route path="payment/success" element={<PaymentSuccessPage />} />
             </Route>

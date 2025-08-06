@@ -25,7 +25,7 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
   const navigate = useNavigate();
   const handleClick = (_id: string) => {
     console.log("clicked id is ", _id);
-    navigate(`/user/service/${_id}`);
+    navigate(`/user/serviceDetails/${_id}`);
   };
 
   return (
