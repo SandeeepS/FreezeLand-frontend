@@ -101,7 +101,7 @@ const Header: React.FC = () => {
         serviceElement.scrollIntoView({ behavior: "smooth" });
       }
     } else {
-      navigate("/user/homepage");
+      navigate("/");
       setTimeout(() => {
         const serviceElement = document.getElementById("serviceList");
         if (serviceElement) {
@@ -152,7 +152,7 @@ const Header: React.FC = () => {
           <li
             className="p-4 cursor-pointer"
             onClick={() => {
-              navigate("/user/homepage");
+              navigate("/");
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >

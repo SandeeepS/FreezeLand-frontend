@@ -21,7 +21,7 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
     };
     fetchData();
   });
-  
+
   const navigate = useNavigate();
   const handleClick = (_id: string) => {
     console.log("clicked id is ", _id);
@@ -31,7 +31,7 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
   return (
     <motion.div
       onClick={() => handleClick(data._id)}
-      className="w-full xs:w-56 sm:w-60 bg-white rounded-xl h-auto min-h-[22rem] sm:h-96 cursor-pointer m-2 sm:m-4 shadow-md hover:shadow-lg transition-shadow"
+      className="w-full xs:w-56 sm:w-60 bg-white rounded-xl  min-h-[22rem]  cursor-pointer m-2 sm:m-4 shadow-md hover:shadow-lg transition-shadow"
       variants={fadeIn("up", 0.2)}
       initial="hidden"
       whileInView={"show"}
@@ -43,35 +43,29 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
       <div className="p-2">
         {image ? (
           <img
-            className="w-full h-40 object-cover rounded-xl"
+            className="w-full h-64 object-cover rounded-t-lg"
             src={image}
             alt={data.name}
           />
         ) : (
           <img
-            className="w-full h-40 object-cover rounded-xl"
+            className="w-full h-40 object-cover rounded-t-lg"
             src="/Images/AC service.jpg"
             alt="Default service"
           />
         )}
       </div>
 
-      <div className="p-3 sm:p-4">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-2 line-clamp-2">
-          {data.name}
-        </h3>
-
-        <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-3">
-          {data.discription}
-        </p>
+      <div className="p-2">
+        <div className=" flex flex-col items-center">
+          <h3 className=" font-exo text-sm sm:text-base font-semibold text-gray-800 mb-2 line-clamp-2">
+            {data.name}
+          </h3>
+        </div>
 
         {/* Price and button container */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-14">
-          <span className="text-sm sm:text-base font-bold text-freeze-color">
-            ₹{data.serviceCharge}
-          </span>
-
-          <button className="w-full sm:w-auto px-3 py-2 bg-freeze-color text-white text-xs sm:text-sm rounded hover:bg-blue-700 transition-colors">
+        <div className="flex flex-col sm:flex-row justify-between  sm:items-center gap-2 ">
+          <button className="w-full  px-3 py-2 bg-freeze-color text-white text-xs sm:text-sm rounded hover:bg-blue-700 transition-colors">
             Book Now
           </button>
         </div>
