@@ -64,8 +64,8 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
         </div>
 
         {/* Price and button container */}
-        <div className="flex flex-col sm:flex-row justify-between  sm:items-center gap-2 ">
-          <button className="w-full  px-3 py-2 bg-freeze-color text-white text-xs sm:text-sm rounded hover:bg-blue-700 transition-colors">
+        <div className="flex flex-col  sm:flex-row justify-between  sm:items-center gap-2 ">
+          <button className="w-full  px-3 py-2 bg-freeze-color text-white text-xs sm:text-sm rounded-b-lg hover:bg-blue-700 transition-colors">
             Book Now
           </button>
         </div>
