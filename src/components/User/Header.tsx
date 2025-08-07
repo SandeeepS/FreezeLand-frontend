@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const navigateTo = "/login";
+  const navigateTo = "/auth/login";
 
   const userNavigationItems = [
     {
@@ -117,8 +117,6 @@ const Header: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-
-
   const handleLogout = async () => {
     try {
       Swal.fire({
@@ -190,20 +188,22 @@ const Header: React.FC = () => {
             </button>
 
             {/* Card */}
-            <div className="">
-              <Card
-                isOpen={isCardOpen}
-                onClose={toggleCard}
-                logout={logout}
-                authLogout={userLogout}
-                navigateTo={navigateTo}
-                coverImage={image || "https://example.com/user-cover.jpg"}
-                profileImage={image || "https://example.com/user-profile.jpg"}
-                userName={userProfileDetails?.name || "Name"}
-                navigationItems={userNavigationItems}
-                userRole="user"
-              />
-            </div>
+            {userData?.id && (
+              <div className="">
+                <Card
+                  isOpen={isCardOpen}
+                  onClose={toggleCard}
+                  logout={logout}
+                  authLogout={userLogout}
+                  navigateTo={navigateTo}
+                  coverImage={image || "https://example.com/user-cover.jpg"}
+                  profileImage={image || "https://example.com/user-profile.jpg"}
+                  userName={userProfileDetails?.name || "Name"}
+                  navigationItems={userNavigationItems}
+                  userRole="user"
+                />
+              </div>
+            )}
           </li>
         </ul>
 
@@ -248,19 +248,19 @@ const Header: React.FC = () => {
             >
               QUEUE
             </li>
-                 <li
+            <li
               className="p-4 border-b cursor-pointer"
               onClick={() => handleMobileNavigation("/user/account")}
             >
               ACCOUNT
             </li>
-                 <li
+            <li
               className="p-4 border-b cursor-pointer"
               onClick={() => handleMobileNavigation("/user/address")}
             >
               ADDRESS
             </li>
-                 <li
+            <li
               className="p-4 border-b cursor-pointer"
               onClick={() => handleMobileNavigation("/user/serviceHistory")}
             >

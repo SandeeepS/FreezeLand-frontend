@@ -60,22 +60,32 @@ import ServiceOverview from "./Pages/User/Service/ServiceOverview";
 const UserHomePage = lazy(() => import("./Pages/User/UserHomePage"));
 const UserSignupPage = lazy(() => import("./Pages/User/UserSignupPage"));
 const UserLoginPage = lazy(() => import("./Pages/User/UserLoginPage"));
-const PaymentSuccessPage = lazy(() => import("./Pages/User/Payment/PaymentSuccessPage"));
+const PaymentSuccessPage = lazy(
+  () => import("./Pages/User/Payment/PaymentSuccessPage")
+);
 const Service = lazy(() => import("./Pages/User/Service"));
 
 const AdminLoginPage = lazy(() => import("./Pages/Admin/AdminLoginPage"));
 const AdminDashboard = lazy(() => import("./Pages/Admin/AdminDashboard"));
 const AdminUserListing = lazy(() => import("./Pages/Admin/AdminUserListing"));
 const AdminMechListing = lazy(() => import("./Pages/Admin/AdminMechListing"));
-const AdminDeviceListing = lazy(() => import("./Pages/Admin/AdminDeviceListing"));
+const AdminDeviceListing = lazy(
+  () => import("./Pages/Admin/AdminDeviceListing")
+);
 const AdminServices = lazy(() => import("./Pages/Admin/AdminServices"));
 const NewService = lazy(() => import("./Pages/Admin/NewService"));
 const EditServices = lazy(() => import("./Pages/Admin/EditService"));
 const AddNewDevice = lazy(() => import("./components/Admin/AddNewDevice"));
 
-const MechanicLoginPage = lazy(() => import("./Pages/Mechanic/MechanicLoginPage"));
-const MechanicHomePage = lazy(() => import("./Pages/Mechanic/MechanicHomePage"));
-const MechanicSignupPage = lazy(() => import("./Pages/Mechanic/MechanicSignupPage"));
+const MechanicLoginPage = lazy(
+  () => import("./Pages/Mechanic/MechanicLoginPage")
+);
+const MechanicHomePage = lazy(
+  () => import("./Pages/Mechanic/MechanicHomePage")
+);
+const MechanicSignupPage = lazy(
+  () => import("./Pages/Mechanic/MechanicSignupPage")
+);
 
 function App() {
   return (
@@ -85,11 +95,14 @@ function App() {
       </header>
 
       <Toaster position="top-right" reverseOrder={false} />
-
       <Suspense fallback={<FallBackLoader />}>
         <Routes>
           {/* User Routes */}
-          <Route path="/" element={<UserLoggedOut />}>
+
+          <Route index path="/" element={<UserHomePage />} />
+          <Route path="/user/serviceDetails/:id" element={<ServiceOverview />}/>
+          
+          <Route path="/auth" element={<UserLoggedOut />}>
             <Route path="signup" element={<UserSignupPage />} />
             <Route path="login" element={<UserLoginPage />} />
             <Route path="otp-page/:id" element={<UserOtpPage />} />
@@ -97,7 +110,6 @@ function App() {
           </Route>
 
           <Route path="/user" element={<UserLoggedIn />}>
-            <Route index path="homepage" element={<UserHomePage />} />
             <Route path="" element={<UserLayout />}>
               <Route path="account" element={<Profile />} />
               <Route path="address" element={<Address />} />
@@ -110,8 +122,10 @@ function App() {
               <Route path="showAllAddress" element={<AllAddress />} />
               <Route path="editAddress/:id" element={<EditAddress />} />
               <Route path="service/:id" element={<Service />} />
-              <Route path="serviceDetails/:id" element={<ServiceOverview/>}/>
-              <Route path="registeredComplaintByUser/:id" element={<ComplaintDetail />} />
+              <Route
+                path="registeredComplaintByUser/:id"
+                element={<ComplaintDetail />}
+              />
               <Route path="payment/success" element={<PaymentSuccessPage />} />
             </Route>
           </Route>
@@ -131,12 +145,21 @@ function App() {
               <Route path="addNewService" element={<NewService />} />
               <Route path="editService/:id" element={<EditServices />} />
               <Route path="addNewDevice" element={<AddNewDevice />} />
-              <Route path="verifyMechanic" element={<MechanicForVerificationList />} />
+              <Route
+                path="verifyMechanic"
+                element={<MechanicForVerificationList />}
+              />
               <Route path="mechanic/details/:id" element={<MechanicVerify />} />
               <Route path="complaints" element={<AdminComplaintListing />} />
-              <Route path="viewMoreComplaintDetails/:id" element={<AdminCompliantDetailsPage />} />
+              <Route
+                path="viewMoreComplaintDetails/:id"
+                element={<AdminCompliantDetailsPage />}
+              />
               <Route path="reports" element={<SelectReportComponent />} />
-              <Route path="showAllreports/:reportRole" element={<AllReportComponent />} />
+              <Route
+                path="showAllreports/:reportRole"
+                element={<AllReportComponent />}
+              />
             </Route>
           </Route>
 
@@ -145,7 +168,10 @@ function App() {
             <Route path="mech/login" element={<MechanicLoginPage />} />
             <Route path="mech/signuppage" element={<MechanicSignupPage />} />
             <Route path="mech/veryfy-otp/:id" element={<MechOtpPage />} />
-            <Route path="mech/forgot-password" element={<ForgetPasswordForMech />} />
+            <Route
+              path="mech/forgot-password"
+              element={<ForgetPasswordForMech />}
+            />
           </Route>
 
           <Route path="/mech" element={<MechLoggedIn />}>
@@ -153,7 +179,10 @@ function App() {
             <Route path="" element={<MechLayOut />}>
               <Route path="verifyMechanic" element={<VerifyMechanic />} />
               <Route path="allWorks" element={<AllWorksPage />} />
-              <Route path="complaintDetails/:id" element={<ComplaintDetailsPage />} />
+              <Route
+                path="complaintDetails/:id"
+                element={<ComplaintDetailsPage />}
+              />
               <Route path="queue" element={<MechQueue />} />
               <Route path="profile" element={<MechanicProfile />} />
               <Route path="editProfile" element={<MechanicEditProfile />} />
