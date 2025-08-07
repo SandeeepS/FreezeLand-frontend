@@ -184,7 +184,7 @@ const Service: React.FC = () => {
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 mt-12">
         {/* Header Section */}
-        <div className="pt-20 pb-8 bg-white shadow-sm border-b border-gray-100">
+        <div className="pt-14 pb-4 bg-white shadow-sm border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -199,8 +199,8 @@ const Service: React.FC = () => {
 
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex ">
-            <div className="lg:col-span-3 mb-4">
+          <div className="flex w-full ">
+            <div className="lg:col-span-3 mb-4 w-full">
               <ServiceDetails
                 serviceImage={serviceImage}
                 discription={service?.discription}
@@ -212,141 +212,142 @@ const Service: React.FC = () => {
           {/* Registration Form Section */}
           {hasAddresses && (
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-blue-500 px-8 py-6">
+              <div className=" bg-freeze-color  px-8 py-4 h-14">
                 <h2 className="text-2xl font-semibold text-white">
                   Service Registration Details
                 </h2>
-                <p className="text-blue-100 mt-1">
+                <p className="text-black mt-1 py-4 ">
                   Please provide the necessary information to schedule your
                   service
                 </p>
               </div>
+              <div className="flex flex-col justify-center items-center w-full">
+                <div className="p-8 mt-6 w-full">
+                  <Formik
+                    initialValues={{
+                      name: "",
+                      discription: "",
+                      location: "",
+                      files: [] as File[],
+                      defaultAddress: defaultAddress,
+                    }}
+                    validationSchema={ServiceFormValidation}
+                    enableReinitialize={true}
+                    onSubmit={async (values) => {
+                      try {
+                        setIsSubmitting(true);
 
-              <div className="p-8">
-                <Formik
-                  initialValues={{
-                    name: "",
-                    discription: "",
-                    location: "",
-                    files: [] as File[],
-                    defaultAddress: defaultAddress,
-                  }}
-                  validationSchema={ServiceFormValidation}
-                  enableReinitialize={true}
-                  onSubmit={async (values) => {
-                    try {
-                      setIsSubmitting(true);
-
-                      // Validate location
-                      const locationValidation =
-                        validateLocationName(locationName);
-                      if (!locationValidation.ok) {
-                        setLocationError(locationValidation.message || "");
-                        setIsSubmitting(false);
-                        return;
-                      }
-
-                      // Validate defaultAddress
-                      if (!defaultAddress) {
-                        console.error("Default address is required");
-                        setIsSubmitting(false);
-                        return;
-                      }
-
-                      setLocationError("");
-                      let imageKeys: string[] = [];
-
-                      // Process image upload if file exists
-                      if (values.files && values.files.length > 0) {
-                        const folderName = "ServiceComplaints";
-
-                        try {
-                          // Upload all files concurrently
-                          const uploadPromises = values.files.map(
-                            async (file) => {
-                              const fileName = file.name || "";
-                              const fileType = file.type;
-
-                              const response = await getS3SingUrl(
-                                fileName,
-                                fileType,
-                                folderName
-                              );
-
-                              if (response?.data?.uploadURL) {
-                                // Upload the image to S3
-                                await fetch(response.data.uploadURL, {
-                                  method: "PUT",
-                                  headers: {
-                                    "Content-Type": fileType,
-                                  },
-                                  body: file,
-                                });
-
-                                return response.data.key;
-                              }
-                              return null;
-                            }
-                          );
-
-                          // Wait for all uploads to complete
-                          const uploadResults = await Promise.all(
-                            uploadPromises
-                          );
-                          imageKeys = uploadResults.filter(
-                            (key): key is string => key !== null
-                          );
-
-                          console.log("Image keys saved:", imageKeys);
-                        } catch (error) {
-                          console.error("Failed to upload images:", error);
+                        // Validate location
+                        const locationValidation =
+                          validateLocationName(locationName);
+                        if (!locationValidation.ok) {
+                          setLocationError(locationValidation.message || "");
+                          setIsSubmitting(false);
+                          return;
                         }
+
+                        // Validate defaultAddress
+                        if (!defaultAddress) {
+                          console.error("Default address is required");
+                          setIsSubmitting(false);
+                          return;
+                        }
+
+                        setLocationError("");
+                        let imageKeys: string[] = [];
+
+                        // Process image upload if file exists
+                        if (values.files && values.files.length > 0) {
+                          const folderName = "ServiceComplaints";
+
+                          try {
+                            // Upload all files concurrently
+                            const uploadPromises = values.files.map(
+                              async (file) => {
+                                const fileName = file.name || "";
+                                const fileType = file.type;
+
+                                const response = await getS3SingUrl(
+                                  fileName,
+                                  fileType,
+                                  folderName
+                                );
+
+                                if (response?.data?.uploadURL) {
+                                  // Upload the image to S3
+                                  await fetch(response.data.uploadURL, {
+                                    method: "PUT",
+                                    headers: {
+                                      "Content-Type": fileType,
+                                    },
+                                    body: file,
+                                  });
+
+                                  return response.data.key;
+                                }
+                                return null;
+                              }
+                            );
+
+                            // Wait for all uploads to complete
+                            const uploadResults = await Promise.all(
+                              uploadPromises
+                            );
+                            imageKeys = uploadResults.filter(
+                              (key): key is string => key !== null
+                            );
+
+                            console.log("Image keys saved:", imageKeys);
+                          } catch (error) {
+                            console.error("Failed to upload images:", error);
+                          }
+                        }
+
+                        // Prepare data for submission
+                        const combinedData: Iconcern = {
+                          name: values.name,
+                          image: imageKeys,
+                          defaultAddress: defaultAddress,
+                          discription: values.discription,
+                          locationName: locationName,
+                          userId: userId,
+                          serviceId: service?._id,
+                          serviceCharge: service?.serviceCharge,
+                        };
+
+                        console.log("Submitting data:", combinedData);
+
+                        // Register complaint
+                        const result = await registerComplaint(combinedData);
+                        if (result) {
+                          console.log("Result from backend:", result);
+                          setShowModal(true);
+                        }
+                      } catch (error) {
+                        console.error("Error submitting form:", error);
+                      } finally {
+                        setIsSubmitting(false);
                       }
-
-                      // Prepare data for submission
-                      const combinedData: Iconcern = {
-                        name: values.name,
-                        image: imageKeys,
-                        defaultAddress: defaultAddress,
-                        discription: values.discription,
-                        locationName: locationName,
-                        userId: userId,
-                        serviceId: service?._id,
-                        serviceCharge: service?.serviceCharge,
-                      };
-
-                      console.log("Submitting data:", combinedData);
-
-                      // Register complaint
-                      const result = await registerComplaint(combinedData);
-                      if (result) {
-                        console.log("Result from backend:", result);
-                        setShowModal(true);
-                      }
-                    } catch (error) {
-                      console.error("Error submitting form:", error);
-                    } finally {
-                      setIsSubmitting(false);
-                    }
-                  }}
-                >
-                  {(formik) => (
-                    <ServiceForm
-                      formik={formik}
-                      userProfile={userProfile}
-                      defaultAddress={defaultAddress}
-                      setDefaultAddress={setDefaultAddress}
-                      locationName={locationName}
-                      locationError={locationError}
-                      validateLocationName={validateLocationName}
-                      handleFetchLocation={handleFetchLocation}
-                      handleRemoveLocation={handleRemoveLocation}
-                      showLocationOptions={showLocationOptions}
-                      setShowLocationOptions={setShowLocationOptions}
-                      isSubmitting={isSubmitting}
-                    />
-                  )}
-                </Formik>
+                    }}
+                  >
+                    {(formik) => (
+                      <ServiceForm
+                        formik={formik}
+                        userProfile={userProfile}
+                        defaultAddress={defaultAddress}
+                        setDefaultAddress={setDefaultAddress}
+                        locationName={locationName}
+                        locationError={locationError}
+                        validateLocationName={validateLocationName}
+                        handleFetchLocation={handleFetchLocation}
+                        handleRemoveLocation={handleRemoveLocation}
+                        showLocationOptions={showLocationOptions}
+                        setShowLocationOptions={setShowLocationOptions}
+                        isSubmitting={isSubmitting}
+                      />
+                    )}
+                  </Formik>
+                </div>
               </div>
             </div>
           )}

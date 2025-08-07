@@ -238,4 +238,5 @@ export interface ServiceData {
   status: boolean;
   isDeleted: boolean;
   imageKey: string;
+  serviceCharge:number
 }

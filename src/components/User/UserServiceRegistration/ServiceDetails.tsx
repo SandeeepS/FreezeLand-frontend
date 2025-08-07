@@ -13,14 +13,14 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({
   discription,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden md:flex md:px-6">
+    <div className=" flex justify-around rounded-lg  overflow-hidden md:flex md:px-6">
       {/* Image Section */}
-      <div className="relative aspect-video bg-gray-100">
+      <div className="relative aspect-video">
         {serviceImage ? (
           <img
             src={serviceImage}
             alt="Service"
-            className="h-96 object-cover"
+            className="h-52 object-cover "
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 "/placeholder-service-image.jpg";
