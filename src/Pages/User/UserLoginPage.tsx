@@ -63,7 +63,7 @@ const UserLoginPage: React.FC = () => {
                 <p className="text-gray-600 text-sm mt-2">
                   Don't have an account?{" "}
                   <a
-                    href="/signup"
+                    href="/auth/signup"
                     className="text-freeze-color font-semibold hover:underline"
                   >
                     Sign up here
@@ -116,7 +116,7 @@ const UserLoginPage: React.FC = () => {
               <div className="flex flex-col items-center text-center">
                 <div className="flex items-center"></div>
                 <a
-                  href="/user/forget-password"
+                  href="/auth/user/forget-password"
                   className="text-freeze-color text-sm font-semibold hover:underline"
                 >
                   Forgot Password?
