@@ -5,12 +5,11 @@ import toast from "react-hot-toast";
 import { MdPowerSettingsNew } from "react-icons/md";
 import { HeaderDropDownProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { persistor } from "../../App/store";
-import { useState } from "react";
-
-
+import { useEffect, useRef, useState } from "react";
 
 const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   isOpen,
+  onClose,
   logout,
   authLogout,
   navigateTo,
@@ -21,6 +20,29 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [imageError, setImageError] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        onClose?.();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
   const handleLogout = async () => {
     try {
@@ -47,7 +69,10 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
   };
 
   return (
-    <div className="absolute right-0 top-10 rounded-lg mt-16 mr-8 w-64  bg-stone-100 shadow-lg z-10">
+    <div
+      ref={dropdownRef}
+      className="absolute right-0 top-10 rounded-lg mt-16 mr-8 w-64  bg-stone-100 shadow-lg z-10"
+    >
       <div className="rounded-t-lg h-32 overflow-hidden">
         <img
           className="object-cover object-top w-full"
@@ -88,12 +113,12 @@ const HeaderDropDown: React.FC<HeaderDropDownProps> = ({
         ))}
 
         <li>
-          <div className="flex items-center cursor-pointer hover:bg-stone-200 p-2 rounded">
+          <div
+            onClick={handleLogout}
+            className="flex items-center cursor-pointer hover:bg-stone-200 p-2 rounded"
+          >
             <MdPowerSettingsNew className="text-red-500 h-4 w-4 mr-2" />
-            <button
-              onClick={handleLogout}
-              className="bg-transparent border-none p-0 mr-2 text-sm text-black"
-            >
+            <button className="bg-transparent border-none p-0 mr-2 text-sm text-black">
               Logout
             </button>
           </div>

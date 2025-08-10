@@ -4,7 +4,7 @@ import MechHeader from "../../components/Mech/MechHeader";
 import MechPromo1 from "../../components/Mech/MechPromo1";
 import AssignedWorks from "../../components/Mech/AssignedWroks/AssignedWorks";
 import { useEffect, useState } from "react";
-import InitialLoader from "../Common/InitialLoader";
+import FallBackLoader from "../../components/Common/FallBackLoader";
 const MechanicHomePage: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
 
@@ -40,7 +40,7 @@ const MechanicHomePage: React.FC = () => {
   return (
     <>
       {showSplash ? (
-        <InitialLoader />
+        <FallBackLoader />
       ) : (
         <div className="home flex flex-col overflow-hidden">
           <div className="fixed top-0 left-0 w-full z-10">

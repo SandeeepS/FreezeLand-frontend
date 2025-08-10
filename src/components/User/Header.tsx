@@ -150,7 +150,7 @@ const Header: React.FC = () => {
         {/* Desktop Menu */}
         <ul className="p-4 hidden md:flex">
           <li
-            className="p-4 cursor-pointer"
+            className="p-4 cursor-pointer hover:text-black"
             onClick={() => {
               navigate("/");
               window.scrollTo({ top: 0, behavior: "smooth" });
@@ -159,34 +159,42 @@ const Header: React.FC = () => {
             HOME
           </li>
 
-          <li className="p-4 cursor-pointer" onClick={handleServicesClick}>
+          <li className="p-4 cursor-pointer hover:text-black" onClick={handleServicesClick}>
             SERVICES
           </li>
 
           <li
-            className="p-4 cursor-pointer"
+            className="p-4 cursor-pointer hover:text-black"
             onClick={() => navigate("/user/queue")}
           >
             QUEUE
           </li>
 
           <li className="p-2 cursor-pointer">
-            <button
-              className=" flex w-10 h-10 items-center rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={toggleCard}
-            >
-              <img
-                src={
-                  imageError || !image
-                    ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
-                    : image
-                }
-                alt="User profile"
-                className="h-10 w-10 rounded-full object-cover"
-                onError={() => setImageError(true)}
-              />
-            </button>
-
+            {userData?.id ? (
+              <button
+                className=" flex w-10 h-10 items-center rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={toggleCard}
+              >
+                <img
+                  src={
+                    imageError || !image
+                      ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
+                      : image
+                  }
+                  alt="User profile"
+                  className="h-10 w-10 rounded-full object-cover"
+                  onError={() => setImageError(true)}
+                />
+              </button>
+            ) : (
+              <li
+                className="p-2 cursor-pointer hover:text-black"
+                onClick={() => navigate("/auth/login")}
+              >
+                LOGIN
+              </li>
+            )}
             {/* Card */}
             {userData?.id && (
               <div className="">

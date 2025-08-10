@@ -17,7 +17,7 @@ const InstallPWA: React.FC = () => {
       e.preventDefault();
       setPromptInstall(e as InstallPromptEvent);
       setSupportsPWA(true);
-      setShowModal(true); // Show the modal
+      setShowModal(true); 
     };
 
     window.addEventListener("beforeinstallprompt", handler);
@@ -50,7 +50,7 @@ const InstallPWA: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex top-0 left-0 justify-center items-start bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-sm text-center">
         <h2 className="text-xl font-semibold mb-3">Install Our App</h2>
         <p className="text-sm text-gray-600 mb-6">
