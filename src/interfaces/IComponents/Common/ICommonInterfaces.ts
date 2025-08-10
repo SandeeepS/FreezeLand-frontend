@@ -44,6 +44,7 @@ export interface NavItem {
 export interface HeaderDropDownProps {
   isOpen: boolean;
   onClose: () => void;
+  
   logout: () => Promise<AxiosResponse | undefined>;
   authLogout: () => UnknownAction;
   navigateTo: string;
