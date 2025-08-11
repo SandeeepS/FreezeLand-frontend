@@ -14,7 +14,7 @@ const PaymentSuccess = () => {
   const [countdown, setCountdown] = useState(20);
 
   const continueToHomePage = () => {
-    navigate("/user/homepage");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -26,15 +26,14 @@ const PaymentSuccess = () => {
         console.log("entered in the payment success");
         console.log(sessionId, "sessionId");
 
-        if (sessionId) { 
+        if (sessionId) {
           try {
             const response = await successPayment(sessionId);
             console.log(response, "response.data");
             const exactData = response?.data.result;
-            console.log("exact data is ",exactData);
-            const { message, status, data } = exactData;
-            if (status == "SUCCESS"){
-              console.log(message);
+            console.log("exact data is ", exactData);
+            const { status, data } = exactData;
+            if (status == "SUCCESS") {
               setOrderStatus(true);
               console.log("PAYMENT SUCCESS");
               setOrderDetails(data);
@@ -92,7 +91,7 @@ const PaymentSuccess = () => {
 
         <button
           className="bg-freeze-color border-rounded rounded-lg p-2 shadow-lg text-white font-semibold hover:bg-blue-700 transition-all"
-            onClick={continueToHomePage}
+          onClick={continueToHomePage}
         >
           Continue to home page
         </button>

@@ -16,7 +16,7 @@ const ServiceCancelBtn: React.FC<ServiceCancelBtnProps> = ({
   const navigate = useNavigate();
   let redirectLink : string;
   if(userRole == "user"){
-     redirectLink = "/user/homepage";
+     redirectLink = "/";
   }else if(userRole == "mechanic"){
      redirectLink = "/mech/homepage"
   }

@@ -29,7 +29,7 @@ const UserLoginPage: React.FC = () => {
           if (result?.status === 200 && result.data.data.success) {
             console.log("result fron the front end ", result);
             dispatch(setUserCredental(result?.data.data.data));
-            navigate("/user/homepage");
+            navigate("/");
           } else if (
             result?.status === 200 &&
             result.data.data.success == false

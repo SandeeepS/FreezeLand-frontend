@@ -98,7 +98,7 @@ const UserOtpPage: React.FC = () => {
         dispatch(setUserCredental(result.data.data));
         toast.success("OTP verified successfully!");
         sessionStorage.removeItem(timerKey);
-        navigate("/login");
+        navigate("/auth/login");
       } else if ("data" in result) {
         console.log("login failed due to problem in otp verification");
         toast.error(result?.data?.message || "Signup Failed");

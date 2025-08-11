@@ -95,7 +95,7 @@ const Header: React.FC = () => {
     // Close mobile menu when an item is clicked
     setNav(true);
 
-    if (location.pathname === "/user/homepage") {
+    if (location.pathname === "/") {
       const serviceElement = document.getElementById("serviceList");
       if (serviceElement) {
         serviceElement.scrollIntoView({ behavior: "smooth" });
@@ -234,7 +234,7 @@ const Header: React.FC = () => {
           <ul className="text-black pl-6">
             <li
               className="p-4 border-b cursor-pointer"
-              onClick={() => handleMobileNavigation("/user/homepage")}
+              onClick={() => handleMobileNavigation("/")}
             >
               HOME
             </li>
