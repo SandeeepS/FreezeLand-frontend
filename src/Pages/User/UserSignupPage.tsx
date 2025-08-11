@@ -44,7 +44,7 @@ const UserSignupPage: React.FC = () => {
           console.log("resutl is", result);
           if (result) {
             const TempUserId = result.data.result._id;
-            navigate(`/otp-page/${TempUserId}`);
+            navigate(`/auth/otp-page/${TempUserId}`);
           }
           console.log("result from the signup form is", result);
         } catch (error) {

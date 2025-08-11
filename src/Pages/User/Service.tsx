@@ -162,13 +162,13 @@ const Service: React.FC = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    navigate("/user/homepage");
+    navigate("/");
   };
 
   const handleCloseAddressWarningModal = () => {
     setShowAddressWarningModal(false);
     // Navigate back to previous page or homepage
-    navigate("/user/homepage");
+    navigate("/");
   };
 
   const handleAddAddress = () => {
