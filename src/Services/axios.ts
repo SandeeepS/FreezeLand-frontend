@@ -1,5 +1,5 @@
-import axios, { AxiosInstance } from "axios";
 
+import axios, { AxiosInstance } from "axios";
 //use this isUsingProduction false for locally testing
 const isUsingProduction = true;
 
