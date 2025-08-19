@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../App/store";
 import { UserDetails } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import { getImageUrl, getProfile } from "../../Api/user";
+import ProfileImage from "../Common/Profile/ProfileImage";
 
 const Profile: React.FC = () => {
   const userData = useAppSelector((state) => state.auth.userData);
 
   const [image, setImage] = React.useState<string>("");
-  const [imageError, setImageError] = useState(false);
 
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: "",
@@ -84,20 +84,7 @@ const Profile: React.FC = () => {
           <div className="h-20 bg-gradient-to-r from-black to-freeze-color rounded-t-lg"></div>
 
           <div className="flex flex-col md:flex-row items-center md:items-end px-6 relative">
-            <div className="absolute -top-16 md:relative md:-top-10 bg-white p-2 rounded-full shadow-lg border-4 border-white">
-              <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden">
-                <img
-                  src={
-                    imageError || !image
-                      ? "https://cdn-icons-png.flaticon.com/128/64/64572.png"
-                      : image
-                  }
-                  alt="User profile"
-                  className="w-full h-full object-cover"
-                  onError={() => setImageError(true)}
-                />
-              </div>
-            </div>
+            <ProfileImage image={image} />
 
             <div className="mt-16 md:mt-0 md:ml-6 pb-6 flex-grow">
               <h1 className="text-2xl font-bold text-gray-800">

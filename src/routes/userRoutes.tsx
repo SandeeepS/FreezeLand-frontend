@@ -16,6 +16,8 @@ import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHis
 import ServiceOverview from "../Pages/User/Service/ServiceOverview";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
+import { userProfileLoader } from "../loaders/userLoader";
+import { getImageUrl } from "../Api/user";
 
 const UserHomePage = React.lazy(() => import("../Pages/User/UserHomePage"));
 const UserSignupPage = React.lazy(() => import("../Pages/User/UserSignupPage"));
@@ -49,7 +51,11 @@ export const userRoutes: RouteObject[] = [
         path: "",
         element: <UserLayout />,
         children: [
-          { path: "testProfile", element: <MainProfile /> },
+          {
+            path: "testProfile",
+            element: <MainProfile role="user"  getImage={getImageUrl} />,
+            loader: userProfileLoader
+          },
           { path: "account", element: <Profile /> },
           { path: "address", element: <Address /> },
           { path: "history", element: <History /> },
