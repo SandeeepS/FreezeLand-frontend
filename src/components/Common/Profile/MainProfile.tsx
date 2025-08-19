@@ -1,6 +1,6 @@
 import React from "react";
 
-const Profile = () => {
+const MainProfile:React.FC= () => {
   return (
     <div>
       <h1>This is Common profile section </h1>
@@ -10,4 +10,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default MainProfile;

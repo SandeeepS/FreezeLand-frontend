@@ -2,7 +2,6 @@ import { RouteObject } from "react-router-dom";
 import UserLoggedIn from "../components/User/UserLoggedIn";
 import UserLoggedOut from "../components/User/UserLoggedOut";
 import UserLayout from "../Pages/User/UserLayout";
-
 import Profile from "../components/User/Profile";
 import Address from "../components/User/Address";
 import History from "../components/User/History";
@@ -16,6 +15,7 @@ import ComplaintDetail from "../components/User/Queue/ComplaintDetials/Complaint
 import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHistory";
 import ServiceOverview from "../Pages/User/Service/ServiceOverview";
 import React from "react";
+import MainProfile from "../components/Common/Profile/MainProfile";
 
 const UserHomePage = React.lazy(() => import("../Pages/User/UserHomePage"));
 const UserSignupPage = React.lazy(() => import("../Pages/User/UserSignupPage"));
@@ -49,6 +49,7 @@ export const userRoutes: RouteObject[] = [
         path: "",
         element: <UserLayout />,
         children: [
+          { path: "testProfile", element: <MainProfile /> },
           { path: "account", element: <Profile /> },
           { path: "address", element: <Address /> },
           { path: "history", element: <History /> },
