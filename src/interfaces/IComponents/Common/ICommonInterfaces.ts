@@ -106,6 +106,7 @@ export interface IMainProfileDetails {
   email: string;
   phone: number | string;
   profile_picture?: string;
+  address: []
 }
 
 export interface UserDetailsInProfile {

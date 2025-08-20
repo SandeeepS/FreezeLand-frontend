@@ -8,7 +8,7 @@ const UserLayout: React.FC = () => {
       <div className="header fixed top-0 left-0 w-full z-10">
         <Header />
       </div>
-      <div>
+      <div className="pt-16">
           <Outlet/>
       </div>
     </div>
