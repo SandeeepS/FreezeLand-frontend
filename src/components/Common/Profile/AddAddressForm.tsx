@@ -159,7 +159,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({ onClose, onSave }) => {
           onCancel={() => setShowMap(false)}
           onConfirm={(loc) => {
             setCoords({ lat: loc.lat, lng: loc.lng });
-            if (loc.formattedAddress) setFullAddress(loc.formattedAddress);
+            if (loc.formatted_address) setFullAddress(loc.formatted_address);
             setShowMap(false);
           }}
         />
