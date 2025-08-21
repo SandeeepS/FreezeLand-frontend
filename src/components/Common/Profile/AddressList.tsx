@@ -14,22 +14,37 @@ interface Address {
 
 interface AddressListProps {
   addresses: Address[];
-  role: "user" | "mechanic" | "admin"  | string;
+  role: "user" | "mechanic" | "admin" | string;
+  onAddAddress?: () => void; // 👈 callback to open modal / navigate to add address page
 }
 
-const AddressList: React.FC<AddressListProps> = ({ addresses, role }) => {
+const AddressList: React.FC<AddressListProps> = ({
+  addresses,
+  role,
+  onAddAddress,
+}) => {
   return (
     <div className="bg-white shadow-md rounded-2xl p-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
-        {role === "admin"
-          ? "Admin Address"
-          : role === "mechanic"
-          ? "Workshop Address"
-          : "User Addresses"}
-      </h3>
+      <div className="flex flex-col items-center">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          {role === "admin"
+            ? "Admin Address"
+            : role === "mechanic"
+            ? "Workshop Address"
+            : "User Addresses"}
+        </h3>
+      </div>
 
       {addresses.length === 0 ? (
-        <p className="text-gray-500">No address added yet.</p>
+        <div className="flex flex-col items-center justify-center text-center space-y-4">
+          <p className="text-gray-500">No address added yet.</p>
+          <button
+            onClick={onAddAddress}
+            className="px-4 py-2 bg-freeze-color text-white rounded-xl shadow hover:bg-blue-800 transition"
+          >
+            ➕ Add Address
+          </button>
+        </div>
       ) : (
         <div className="space-y-4">
           {addresses.map((addr) => (
@@ -62,6 +77,15 @@ const AddressList: React.FC<AddressListProps> = ({ addresses, role }) => {
               </div>
             </div>
           ))}
+          {/* Add Address option even when addresses exist */}
+          <div className="flex justify-center">
+            <button
+              onClick={onAddAddress}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition"
+            >
+              ➕ Add New Address
+            </button>
+          </div>
         </div>
       )}
     </div>

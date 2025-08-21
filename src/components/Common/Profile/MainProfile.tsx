@@ -6,9 +6,10 @@ import {
   MainProfileDetailsData,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
 import { useLoaderData } from "react-router-dom";
+import AddAddressForm from "./AddAddressForm";
 
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
-  console.log("role is ",role)
+  console.log("role is ", role);
   const userData = useLoaderData() as IMainProfileDetails;
 
   const [details, setDetails] = useState<IMainProfileDetails>({
@@ -20,7 +21,8 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   });
 
   const [image, setImage] = useState("");
-
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newAddress , setNewAddress] = useState("")
   useEffect(() => {
     setDetails({
       name: userData.name || "",
@@ -45,6 +47,17 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
     fetchData();
   }, [details]);
 
+  
+  // const handleSaveAddress = (newAddress: any) => {
+  //   // For now just append to state
+  //   setNewAddress((prev) => ({
+  //     ...prev,
+  //     address: [...prev.address, { ...newAddress, _id: Date.now().toString(), isDeleted: false }],
+  //   }));
+
+  //   // Later: call backend API to save new address
+  // };
+
   return (
     <div className="mt-16 flex flex-col items-center">
       {/* Profile Image */}
@@ -53,11 +66,10 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       {/* Basic Info */}
       <div className="mt-6 w-full max-w-lg bg-white shadow-md rounded-2xl p-6 flex flex-col justify-center items-center">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
-           {details.name}
+          {details.name}
         </h2>
 
         <div className="space-y-2">
-       
           <p>
             <span className="font-medium text-gray-600">Email:</span>{" "}
             {details.email}
@@ -70,9 +82,22 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       </div>
 
       {/* Address Section */}
+      {/* Address Section */}
       <div className="mt-6 w-full max-w-lg">
-        <AddressList addresses={details.address || []} role={role} />
+        <AddressList
+          addresses={details.address || []}
+          role={role}
+          onAddAddress={() => setShowAddForm(true)}
+        />
       </div>
+
+      {/* Add Address Form */}
+      {showAddForm && (
+        <AddAddressForm
+          onClose={() => setShowAddForm(false)}
+          // onSave={handleSaveAddress}
+        />
+      )}
     </div>
   );
 };
