@@ -7,6 +7,8 @@ import {
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
 import { useLoaderData } from "react-router-dom";
 import AddAddressForm from "./AddAddressForm";
+import { AddUserAddress } from "../../../Api/user";
+import { AddMechAddress } from "../../../Api/mech";
 
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
@@ -22,7 +24,6 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
 
   const [image, setImage] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newAddress , setNewAddress] = useState("")
   useEffect(() => {
     setDetails({
       name: userData.name || "",
@@ -47,7 +48,6 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
     fetchData();
   }, [details]);
 
-  
   // const handleSaveAddress = (newAddress: any) => {
   //   // For now just append to state
   //   setNewAddress((prev) => ({
@@ -55,8 +55,16 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   //     address: [...prev.address, { ...newAddress, _id: Date.now().toString(), isDeleted: false }],
   //   }));
 
-  //   // Later: call backend API to save new address
+  //   Need to impliment the api in the user.ts
   // };
+  let addressUpdateFunction;
+  if (role == "user") {
+    addressUpdateFunction = AddUserAddress;
+  } else {
+    addressUpdateFunction = AddMechAddress;
+  }
+
+  console.log("Address address update function isss", addressUpdateFunction);
 
   return (
     <div className="mt-16 flex flex-col items-center">
@@ -82,7 +90,6 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       </div>
 
       {/* Address Section */}
-      {/* Address Section */}
       <div className="mt-6 w-full max-w-lg">
         <AddressList
           addresses={details.address || []}
@@ -94,8 +101,9 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       {/* Add Address Form */}
       {showAddForm && (
         <AddAddressForm
+          role={role}
           onClose={() => setShowAddForm(false)}
-          // onSave={handleSaveAddress}
+          onSave={addressUpdateFunction}
         />
       )}
     </div>

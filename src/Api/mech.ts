@@ -8,6 +8,7 @@ import {
 import { AddAddress } from "../interfaces/AddAddress";
 import { mechErrorHandler } from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
+import { IAddress } from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const mechSignup = async ({
   name,
@@ -353,13 +354,9 @@ const updateWorkDetails = async (complaintId: string, workDetails: object) => {
 };
 
 //adding mechanic address
-const AddMechAddress = async (_id: string | undefined, values: AddAddress) => {
+const AddMechAddress = async (newAddress:IAddress) => {
   try {
-    console.log(
-      "Entered in the AddMechAddress fucntion in the mech.ts  and the id is",
-      _id
-    );
-    const result = await Api.post(mechRoutes.addMechAddress, { _id, values });
+    const result = await Api.post(mechRoutes.addMechAddress, { newAddress});
     return result;
   } catch (error) {
     console.log(error);

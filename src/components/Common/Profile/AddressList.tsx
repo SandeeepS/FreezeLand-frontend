@@ -1,4 +1,5 @@
 import React from "react";
+import { MdAdd } from "react-icons/md";
 
 interface Address {
   _id: string;
@@ -40,9 +41,10 @@ const AddressList: React.FC<AddressListProps> = ({
           <p className="text-gray-500">No address added yet.</p>
           <button
             onClick={onAddAddress}
-            className="px-4 py-2 bg-freeze-color text-white rounded-xl shadow hover:bg-blue-800 transition"
+            className="px-4 py-2 bg-freeze-color text-white rounded-xl shadow hover:bg-blue-700 transition flex items-center "
           >
-            ➕ Add Address
+            <MdAdd className="mr-1" />
+            Add Address
           </button>
         </div>
       ) : (
@@ -81,9 +83,10 @@ const AddressList: React.FC<AddressListProps> = ({
           <div className="flex justify-center">
             <button
               onClick={onAddAddress}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center"
             >
-              ➕ Add New Address
+              <MdAdd className="mr-1" />
+              Add New Address
             </button>
           </div>
         </div>

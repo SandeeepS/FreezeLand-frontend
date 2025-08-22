@@ -10,6 +10,7 @@ import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentBu
 import { LocationData } from "../components/Common/PopularCities";
 import userErrorHandler from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
+import { IAddress } from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const signup = async ({
   name,
@@ -211,13 +212,13 @@ const EditUserDetails = async (values: EditUserFormData) => {
   }
 };
 
-const AddUserAddress = async (_id: string | undefined, values: AddAddress) => {
+const AddUserAddress = async ( newAddress:IAddress) => {
   try {
     console.log(
-      "Entered in the AddUserAddress fucntion in the user.ts  and the id is",
-      _id
+      "Entered in the AddUserAddress fucntion in the user.ts is",
+      newAddress
     );
-    const result = await Api.post(userRoutes.addAddress, { _id, values });
+    const result = await Api.post(userRoutes.addAddress, {newAddress});
     return result;
   } catch (error) {
     console.log(error);

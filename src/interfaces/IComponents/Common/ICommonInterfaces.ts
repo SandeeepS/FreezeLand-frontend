@@ -106,7 +106,7 @@ export interface IMainProfileDetails {
   email: string;
   phone: number | string;
   profile_picture?: string;
-  address: []
+  address: [];
 }
 
 export interface UserDetailsInProfile {
@@ -181,4 +181,14 @@ export interface MainProfileDetailsData {
     imageKey: string,
     type: string
   ) => Promise<{ data: { url: string } } | undefined>;
+}
+
+export interface IAddress {
+  userId: string;
+  addressType: "Home" | "Work";
+  fullAddress: string;
+  houseNumber: string;
+  longitude: number;
+  latitude: number;
+  landmark: string;
 }
