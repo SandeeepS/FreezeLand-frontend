@@ -4,12 +4,16 @@ import { MdWork } from "react-icons/md";
 import { IoHomeSharp } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { useAppSelector } from "../../../App/store";
-import { IAddress } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
+import {
+  IAddress,
+  IAddressResponse,
+} from "../../../interfaces/IComponents/Common/ICommonInterfaces";
+import { useNavigate } from "react-router-dom";
 
 interface AddAddressFormProps {
   role: string;
   onClose: () => void;
-  onSave: ( address: IAddress) => void;
+  onSave: (address: IAddress) => Promise<IAddressResponse>;
 }
 
 const AddAddressForm: React.FC<AddAddressFormProps> = ({
@@ -23,6 +27,8 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
   } else {
     data = useAppSelector((state) => state.auth.mechData);
   }
+  const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
   const [addressType, setAddressType] = useState<"Home" | "Work">("Home");
   const [showMap, setShowMap] = useState(false);
   const [landmark, setLandmark] = useState("");
@@ -42,7 +48,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
         toast.error("Please pick a location on the map.");
         return;
       }
-
+      setIsSaving(true);
       const newAddress: IAddress = {
         userId: data.id,
         addressType: addressType,
@@ -52,17 +58,21 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
         latitude: coords.lat,
         landmark: landmark,
       };
-      const response = await onSave( newAddress);
+      const response = await onSave(newAddress);
       console.log(
         "response from the backend after updating the address is ",
         response
       );
+      onClose();
+
     } catch (error) {
       console.log(
         "Error occured while updating the address to the databse from the AddAddressForm"
       );
       toast.error("Address adding failed !");
       throw error;
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -181,9 +191,18 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
           </button>
           <button
             onClick={handleSave}
-            className="rounded-lg bg-freeze-color px-4 py-2 text-white hover:bg-blue-700 w-36"
+            className={`rounded-lg bg-freeze-color px-4 py-2 text-white w-36 hover:bg-blue-700 flex items-center justify-center ${
+              isSaving ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+            disabled={isSaving}
           >
-            Save Address
+            {isSaving ? (
+              <>
+                <span className="loader mr-2"></span> Saving...
+              </>
+            ) : (
+              "Save Address"
+            )}
           </button>
         </div>
       </div>

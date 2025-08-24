@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ProfileImage from "./ProfileImage";
 import AddressList from "./AddressList"; // new reusable component
 import {
+  IAddress,
+  IAddressResponse,
   IMainProfileDetails,
   MainProfileDetailsData,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
@@ -57,7 +59,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
 
   //   Need to impliment the api in the user.ts
   // };
-  let addressUpdateFunction;
+  let addressUpdateFunction: (address: IAddress) => Promise<any>;
   if (role == "user") {
     addressUpdateFunction = AddUserAddress;
   } else {

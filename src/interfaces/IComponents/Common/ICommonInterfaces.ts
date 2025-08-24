@@ -192,3 +192,16 @@ export interface IAddress {
   latitude: number;
   landmark: string;
 }
+
+export interface IAddressResponse {
+   _id: string;
+  userId: string;
+  addressType: "Home" | "Work";
+  fullAddress:string;
+  houseNumber:string;
+  longitude:number;
+  latitude:number;
+  landmark:string;
+  isDeleted:boolean;
+  isDefaultAddress:boolean;
+}

@@ -10,7 +10,7 @@ import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentBu
 import { LocationData } from "../components/Common/PopularCities";
 import userErrorHandler from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
-import { IAddress } from "../interfaces/IComponents/Common/ICommonInterfaces";
+import { IAddress, IAddressResponse } from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const signup = async ({
   name,
@@ -212,7 +212,7 @@ const EditUserDetails = async (values: EditUserFormData) => {
   }
 };
 
-const AddUserAddress = async ( newAddress:IAddress) => {
+const AddUserAddress = async ( newAddress:IAddress) =>  {
   try {
     console.log(
       "Entered in the AddUserAddress fucntion in the user.ts is",
