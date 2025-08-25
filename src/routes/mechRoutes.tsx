@@ -16,12 +16,23 @@ import MechEditAddress from "../components/Mech/Profile/MechEditAddress";
 import ServiceHistory from "../Pages/Mechanic/ServiceHistory/ServiceHistory";
 import ServiceDetails from "../Pages/Mechanic/ServiceHistory/ServiceDetails";
 import React from "react";
+import MainProfile from "../components/Common/Profile/MainProfile";
+import { getImageUrl } from "../Api/mech";
+import { mechanicProfileLoader } from "../loaders/mechLoader";
 
-const MechanicLoginPage = React.lazy(() => import("../Pages/Mechanic/MechanicLoginPage"));
-const MechanicHomePage = React.lazy(() => import("../Pages/Mechanic/MechanicHomePage"));
-const MechanicSignupPage = React.lazy(() => import("../Pages/Mechanic/MechanicSignupPage"));
+const MechanicLoginPage = React.lazy(
+  () => import("../Pages/Mechanic/MechanicLoginPage")
+);
+const MechanicHomePage = React.lazy(
+  () => import("../Pages/Mechanic/MechanicHomePage")
+);
+const MechanicSignupPage = React.lazy(
+  () => import("../Pages/Mechanic/MechanicSignupPage")
+);
 const MechOtpPage = React.lazy(() => import("../Pages/Mechanic/MechOtpPage"));
-const ForgetPasswordForMech = React.lazy(() => import("../Pages/Mechanic/ForgetPasswordForMech"));
+const ForgetPasswordForMech = React.lazy(
+  () => import("../Pages/Mechanic/ForgetPasswordForMech")
+);
 
 export const mechRoutes: RouteObject[] = [
   {
@@ -43,6 +54,11 @@ export const mechRoutes: RouteObject[] = [
         path: "",
         element: <MechLayOut />,
         children: [
+          {
+            path: "mechTestProfile",
+            element: <MainProfile role="mech" getImage={getImageUrl} />,
+            loader: mechanicProfileLoader,
+          },
           { path: "verifyMechanic", element: <VerifyMechanic /> },
           { path: "allWorks", element: <AllWorksPage /> },
           { path: "complaintDetails/:id", element: <ComplaintDetailsPage /> },

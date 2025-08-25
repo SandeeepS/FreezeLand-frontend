@@ -42,7 +42,7 @@ export interface MechDetails2{
   phone: number | string;
   address?: string;
   location?: string;
-  photo?:string;
+  profile_picture?:string;
   defaultAddressDetails:AddressDetails;
 }
 

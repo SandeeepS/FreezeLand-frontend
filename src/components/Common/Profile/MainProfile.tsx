@@ -3,7 +3,6 @@ import ProfileImage from "./ProfileImage";
 import AddressList from "./AddressList"; // new reusable component
 import {
   IAddress,
-  IAddressResponse,
   IMainProfileDetails,
   MainProfileDetailsData,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
@@ -14,7 +13,7 @@ import { AddMechAddress } from "../../../Api/mech";
 
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
-  const userData = useLoaderData() as IMainProfileDetails;
+  const data = useLoaderData() as IMainProfileDetails;
 
   const [details, setDetails] = useState<IMainProfileDetails>({
     name: "",
@@ -28,19 +27,21 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   useEffect(() => {
     setDetails({
-      name: userData.name || "",
-      email: userData.email || "",
-      phone: userData.phone || "",
-      profile_picture: userData.profile_picture || "",
-      address: userData.address || [],
+      name: data.name || "",
+      email: data.email || "",
+      phone: data.phone || "",
+      profile_picture: data.profile_picture || "",
+      address: data.address || [],
     });
-  }, [userData]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("slfsdflksdflksdfnlsdn")
         if (details.profile_picture) {
           const result = await getImage(details.profile_picture, "service");
+          console.log("Resul after getting the image is ", result);
           if (result) setImage(result.data.url);
         }
       } catch (error) {
@@ -48,17 +49,13 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       }
     };
     fetchData();
-  }, [details]);
+  }, [details.profile_picture]);
 
-  // const handleSaveAddress = (newAddress: any) => {
-  //   // For now just append to state
-  //   setNewAddress((prev) => ({
-  //     ...prev,
-  //     address: [...prev.address, { ...newAddress, _id: Date.now().toString(), isDeleted: false }],
-  //   }));
+  useEffect(() => {
+    console.log("image is ", image);
+  });
 
-  //   Need to impliment the api in the user.ts
-  // };
+
   let addressUpdateFunction: (address: IAddress) => Promise<any>;
   if (role == "user") {
     addressUpdateFunction = AddUserAddress;
