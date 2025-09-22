@@ -356,6 +356,7 @@ const updateWorkDetails = async (complaintId: string, workDetails: object) => {
 //adding mechanic address
 const AddMechAddress = async (newAddress:IAddress) => {
   try {
+    console.log("address for stroing is ",newAddress);
     const result = await Api.post(mechRoutes.addMechAddress, { newAddress});
     return result;
   } catch (error) {
