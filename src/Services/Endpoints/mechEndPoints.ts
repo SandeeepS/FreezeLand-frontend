@@ -27,6 +27,7 @@ const mechRoutes = {
   editAddress:"/mech/editAddress",
   createRoute:"/mech/report",
   handleRemoveMechAddress:"/mech/handleRemoveMechAddress",
+  getMechanicAddress:"/mech/getMechanicAddress",
   logout: "/mech/logout",
 };
 

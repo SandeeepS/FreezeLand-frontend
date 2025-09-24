@@ -44,7 +44,7 @@ export interface NavItem {
 export interface HeaderDropDownProps {
   isOpen: boolean;
   onClose: () => void;
-  
+
   logout: () => Promise<AxiosResponse | undefined>;
   authLogout: () => UnknownAction;
   navigateTo: string;
@@ -101,6 +101,14 @@ export interface UserDetails {
   defaultAddressDetails: AddressDetails;
 }
 
+export interface IMainProfileDetails {
+  name: string;
+  email: string;
+  phone: number | string;
+  profile_picture?: string;
+  address: [];
+}
+
 export interface UserDetailsInProfile {
   name: string;
   profile_picture?: string;
@@ -114,7 +122,7 @@ export interface ServiceListingCardProps {
     title?: string;
     name?: string;
     discription?: string;
-    serviceCharge?:number
+    serviceCharge?: number;
   };
 }
 
@@ -165,4 +173,35 @@ export interface MechData {
   isVerified: boolean;
   isBlocked: boolean;
   isDeleted: boolean;
+}
+
+export interface MainProfileDetailsData {
+  role: string;
+  getImage: (
+    imageKey: string,
+    type: string
+  ) => Promise<{ data: { url: string } } | undefined>;
+}
+
+export interface IAddress {
+  userId: string;
+  addressType: "Home" | "Work";
+  fullAddress: string;
+  houseNumber: string;
+  longitude: number;
+  latitude: number;
+  landmark: string;
+}
+
+export interface IAddressResponse {
+   _id: string;
+  userId: string;
+  addressType: "Home" | "Work";
+  fullAddress:string;
+  houseNumber:string;
+  longitude:number;
+  latitude:number;
+  landmark:string;
+  isDeleted:boolean;
+  isDefaultAddress:boolean;
 }

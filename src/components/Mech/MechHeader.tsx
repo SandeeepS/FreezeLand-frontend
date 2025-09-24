@@ -65,9 +65,9 @@ const MechHeader: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (mechProfileDetails?.photo) {
+        if (mechProfileDetails?.profile_picture) {
           const result = await getImageUrl(
-            mechProfileDetails.photo,
+            mechProfileDetails.profile_picture,
             "mechanic"
           );
           console.log("imageUrld", result);
@@ -134,7 +134,7 @@ const MechHeader: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[100px] flex justify-between w-full bg-freeze-color ">
+      <div className="text-white font-bold h-[85px] flex justify-between w-full bg-freeze-color ">
         <div className="flex-col">
           <h1 className="w-full text-3xl text-black font-exo p-8 pt-5 pb-0">
             FREEZE <span className="text-white font-exo">LAND</span>
