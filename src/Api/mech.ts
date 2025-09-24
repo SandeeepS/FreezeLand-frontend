@@ -72,10 +72,10 @@ const forgotVerifyOtpMech = async (otp: string) => {
   }
 };
 
-//function to update the new password of the user 
+//function to update the new password of the user
 const updateNewPasswordMech = async (password: string, mechId: string) => {
   try {
-    return await Api.put(mechRoutes.updateNewPasswordMech,{
+    return await Api.put(mechRoutes.updateNewPasswordMech, {
       password,
       mechId,
     });
@@ -95,7 +95,7 @@ const resendMechOtp = async (tempMechId: string) => {
   }
 };
 
-const resendOtp_forgetPassword_mechanic = async() => {
+const resendOtp_forgetPassword_mechanic = async () => {
   try {
     const result = await Api.post(mechRoutes.resendOtp_forgetPassword_mechanic);
     return result;
@@ -103,7 +103,7 @@ const resendOtp_forgetPassword_mechanic = async() => {
     console.log(error);
     mechErrorHandler(error as Error);
   }
-}
+};
 
 const mLogout = async () => {
   try {
@@ -271,7 +271,9 @@ const getAllAcceptedServices = async (mechanicId: string) => {
 const getAllCompletedServices = async (mechanicId: string) => {
   try {
     console.log("Entered in the getAllCompleted in the mech.ts", mechanicId);
-    const result = await Api.get(mechRoutes.getAllCompletedServices,{params:{mechanicId}});
+    const result = await Api.get(mechRoutes.getAllCompletedServices, {
+      params: { mechanicId },
+    });
     return result;
   } catch (error) {
     console.log(error as Error);
@@ -354,10 +356,10 @@ const updateWorkDetails = async (complaintId: string, workDetails: object) => {
 };
 
 //adding mechanic address
-const AddMechAddress = async (newAddress:IAddress) => {
+const AddMechAddress = async (newAddress: IAddress) => {
   try {
-    console.log("address for stroing is ",newAddress);
-    const result = await Api.post(mechRoutes.addMechAddress, { newAddress});
+    console.log("address for stroing is ", newAddress);
+    const result = await Api.post(mechRoutes.addMechAddress, { newAddress });
     return result;
   } catch (error) {
     console.log(error);
@@ -384,28 +386,47 @@ const EditExistingMechAddress = async (
   }
 };
 
-//function to create a report in mechanic side 
-const createReport = async (reportData : IReportData) =>  {
-  try{
-    console.log("reportdata in the mechts. CreateReport",reportData);
-    const result = await Api.post(mechRoutes.createRoute,{reportData});
+//function to create a report in mechanic side
+const createReport = async (reportData: IReportData) => {
+  try {
+    console.log("reportdata in the mechts. CreateReport", reportData);
+    const result = await Api.post(mechRoutes.createRoute, { reportData });
     return result;
-  }catch(error) {
-    console.log("Error while creating a report in the mech.ts",error);
+  } catch (error) {
+    console.log("Error while creating a report in the mech.ts", error);
     mechErrorHandler(error as Error);
   }
-}
+};
 
 //funtion to remove the mechAddress
-const handleRemoveMechAddress = async (mechId:string,addressId:string) => {
-  try{
-    const result = await Api.put(mechRoutes.handleRemoveMechAddress,{mechId,addressId});
+const handleRemoveMechAddress = async (mechId: string, addressId: string) => {
+  try {
+    const result = await Api.put(mechRoutes.handleRemoveMechAddress, {
+      mechId,
+      addressId,
+    });
     return result;
-  }catch(error){
-    console.log("Error occured in the mech.ts while handleRemoveMechAddress",error);
+  } catch (error) {
+    console.log(
+      "Error occured in the mech.ts while handleRemoveMechAddress",
+      error
+    );
     mechErrorHandler(error as Error);
   }
-}
+};
+
+//function to get all the address of the mechanic.
+const getMechanicAddress = async (mechanicId: string) => {
+  try {
+    const result = await Api.get(mechRoutes.getMechanicAddress, {
+      params: { mechanicId },
+    });
+    return result;
+  } catch (error) {
+    console.log("Error occured while accessing the mechanic address", error);
+    mechErrorHandler(error as Error);
+  }
+};
 
 export {
   mechLogin,
@@ -424,6 +445,7 @@ export {
   getAllDevices,
   verifyMechanic,
   getComplaintDetails,
+  getMechanicAddress,
   resendOtp_forgetPassword_mechanic,
   getMechanicDetails,
   getS3SingUrlForMechCredinential,
@@ -435,5 +457,5 @@ export {
   updateMechanicDetails,
   AddMechAddress,
   EditExistingMechAddress,
-  handleRemoveMechAddress
+  handleRemoveMechAddress,
 };

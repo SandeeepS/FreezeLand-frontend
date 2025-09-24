@@ -27,7 +27,8 @@ const userRoutes = {
   updateUserLocation:"/user/updateUserLocation",
   getPresignedUrl:"/user/getPresignedUrl",
   createRoute:"/user/report",
-  handleRemoveUserAddress:"/user/handleRemoveUserAddress"
+  handleRemoveUserAddress:"/user/handleRemoveUserAddress",
+  getAllAddressOfUser:"/user/getAllAddressOfUser"
 };
 
 export default userRoutes;

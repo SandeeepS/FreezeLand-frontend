@@ -21,12 +21,15 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
   onClose,
   onSave,
 }) => {
+  
   let data;
   if (role == "user") {
     data = useAppSelector((state) => state.auth.userData);
   } else {
     data = useAppSelector((state) => state.auth.mechData);
   }
+
+
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [addressType, setAddressType] = useState<"Home" | "Work">("Home");

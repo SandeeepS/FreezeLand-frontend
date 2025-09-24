@@ -10,7 +10,10 @@ import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentBu
 import { LocationData } from "../components/Common/PopularCities";
 import userErrorHandler from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
-import { IAddress, IAddressResponse } from "../interfaces/IComponents/Common/ICommonInterfaces";
+import {
+  IAddress,
+  IAddressResponse,
+} from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const signup = async ({
   name,
@@ -128,9 +131,9 @@ const updateNewPassword = async (password: string, userId: string) => {
     userErrorHandler(error as Error);
   }
 };
-const resendOtp = async (tempUserId:string) => {
+const resendOtp = async (tempUserId: string) => {
   try {
-    const result =  await Api.post(userRoutes.resendOtp,{tempUserId});
+    const result = await Api.post(userRoutes.resendOtp, { tempUserId });
     return result;
   } catch (error) {
     console.log(error);
@@ -196,8 +199,8 @@ const getAllUserRegisteredServices = async (userId: string) => {
 
 const EditUserDetails = async (values: EditUserFormData) => {
   try {
-    console.log("Entered in the EditUserDetails in the user.ts",values);
-    const {_id,name,phone,profile_picture} = values
+    console.log("Entered in the EditUserDetails in the user.ts", values);
+    const { _id, name, phone, profile_picture } = values;
     const result = await Api.put(userRoutes.editUser, {
       _id,
       name,
@@ -212,13 +215,13 @@ const EditUserDetails = async (values: EditUserFormData) => {
   }
 };
 
-const AddUserAddress = async ( newAddress:IAddress) =>  {
+const AddUserAddress = async (newAddress: IAddress) => {
   try {
     console.log(
       "Entered in the AddUserAddress fucntion in the user.ts is",
       newAddress
     );
-    const result = await Api.post(userRoutes.addAddress, {newAddress});
+    const result = await Api.post(userRoutes.addAddress, { newAddress });
     return result;
   } catch (error) {
     console.log(error);
@@ -367,7 +370,6 @@ const updateUserLocation = async (
   }
 };
 
-
 const getS3SingUrl = async (
   fileName: string,
   fileType: string,
@@ -389,28 +391,51 @@ const getS3SingUrl = async (
   }
 };
 
-//function to create a report in mechanic side 
-const createReport = async (reportData : IReportData) =>  {
-  try{
-    console.log("reportdata in the mechts. CreateReport",reportData);
-    const result = await Api.post(userRoutes.createRoute,{reportData});
+//function to create a report in mechanic side
+const createReport = async (reportData: IReportData) => {
+  try {
+    console.log("reportdata in the mechts. CreateReport", reportData);
+    const result = await Api.post(userRoutes.createRoute, { reportData });
     return result;
-  }catch(error) {
-    console.log("Error while creating a report in the mech.ts",error);
+  } catch (error) {
+    console.log("Error while creating a report in the mech.ts", error);
     userErrorHandler(error as Error);
   }
-}
+};
 
 //funtion to remove the userAddress
-const handleRemoveUserAddress = async (userId:string,addressId:string) => {
-  try{
-    const result = await Api.put(userRoutes.handleRemoveUserAddress,{userId,addressId});
+const handleRemoveUserAddress = async (userId: string, addressId: string) => {
+  try {
+    const result = await Api.put(userRoutes.handleRemoveUserAddress, {
+      userId,
+      addressId,
+    });
     return result;
-  }catch(error){
-    console.log("Error occured in the user.ts while handleRemoveUserAddress",error);
+  } catch (error) {
+    console.log(
+      "Error occured in the user.ts while handleRemoveUserAddress",
+      error
+    );
     userErrorHandler(error as Error);
   }
-}
+};
+
+//function to get the userAddress
+const getAllAddressOfUser = async (userId: string) => {
+  try {
+    const result = await Api.get(userRoutes.getAllAddressOfUser, {
+      params: { userId },
+    });
+    console.log("userAdddress from the backend in hte user.ts is ",result)
+    return result;
+  } catch (error) {
+    console.log(
+      "Error occured in the user.ts while accessing the userAddress",
+      error
+    );
+    userErrorHandler(error as Error);
+  }
+};
 
 export {
   signup,
@@ -436,6 +461,7 @@ export {
   handlePayment,
   registerComplaint,
   getAllServices,
+  getAllAddressOfUser,
   getAllUserRegisteredServices,
   getUserRegisteredServiceDetailsById,
   handleRemoveUserAddress,

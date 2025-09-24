@@ -91,7 +91,6 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       {/* Address Section */}
       <div className="mt-6 w-full max-w-lg">
         <AddressList
-          addresses={details.address || []}
           role={role}
           onAddAddress={() => setShowAddForm(true)}
         />
