@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import OlaMapPicker from "../maps/OlaMapPicker";
 import { MdWork } from "react-icons/md";
 import { IoHomeSharp } from "react-icons/io5";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useAppSelector } from "../../../App/store";
 import {
   IAddress,
@@ -38,8 +38,8 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     initialData?.addressType || "Home"
   );
   const [showMap, setShowMap] = useState(false);
-  const [landmark, setLandmark] = useState("");
-  const [houseNumber, setHouseNumber] = useState("");
+  const [landmark, setLandmark] = useState(initialData? initialData.landmark : "");
+  const [houseNumber, setHouseNumber] = useState(initialData? initialData.houseNumber : "");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     initialData
       ? { lat: initialData.latitude, lng: initialData.longitude }
@@ -70,11 +70,17 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
         latitude: coords.lat,
         landmark: landmark,
       };
+      console.log("new Address is ----------------",newAddress);
       const response = await onSave(newAddress);
       console.log(
         "response from the backend after updating the address is ",
         response
       );
+      if(response){
+        toast.success("Address updated successfully");
+      }else{
+        toast.error("Address updation failed!!");
+      }
       onClose();
     } catch (error) {
       console.log(
@@ -174,7 +180,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
           </label>
           <input
             type="text"
-            value={initialData?.landmark ? initialData.landmark : landmark}
+            value= {landmark}
             onChange={(e) => setLandmark(e.target.value)}
             className="w-full rounded-lg border p-2"
             placeholder="Near Govt School, Temple etc."
@@ -188,7 +194,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
           </label>
           <input
             type="text"
-            value={initialData?.houseNumber ? initialData.houseNumber : houseNumber}
+            value={houseNumber}
             onChange={(e) => setHouseNumber(e.target.value)}
             className="w-full rounded-lg border p-2"
             placeholder="12/A, Flat No. 3"

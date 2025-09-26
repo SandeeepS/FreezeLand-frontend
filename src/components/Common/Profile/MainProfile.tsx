@@ -14,6 +14,7 @@ import { AddMechAddress } from "../../../Api/mech";
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
   const data = useLoaderData() as IMainProfileDetails;
+  const [addressRefreshKey, setAddressRefreshKey] = useState(0);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
   const [details, setDetails] = useState<IMainProfileDetails>({
@@ -63,6 +64,10 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
     addressUpdateFunction = AddMechAddress;
   }
 
+  const handleAddressSaved = (_updatedAddress: IAddress) => {
+    setAddressRefreshKey((prev) => prev + 1);
+  };
+
   console.log("Address address update function isss", addressUpdateFunction);
 
   return (
@@ -91,6 +96,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       {/* Address Section */}
       <div className="mt-6 w-full max-w-lg">
         <AddressList
+          key={addressRefreshKey}
           role={role}
           onAddAddress={() => setShowAddForm(true)}
           onEditAddress={(addr) => {
@@ -111,7 +117,13 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
             setShowAddForm(false);
             setEditingAddress(null);
           }}
-          onSave={addressUpdateFunction}
+          onSave={async (addr) => {
+            const response = await addressUpdateFunction(addr);
+            if (response?.data?.result) {
+              handleAddressSaved(response.data.result);
+            }
+            return response;
+          }}
         />
       )}
     </div>
