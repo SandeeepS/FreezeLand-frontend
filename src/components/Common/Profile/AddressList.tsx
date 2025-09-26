@@ -3,6 +3,7 @@ import { MdAdd } from "react-icons/md";
 import { useAppSelector } from "../../../App/store";
 import { getAllAddressOfUser } from "../../../Api/user";
 import { getMechanicAddress } from "../../../Api/mech";
+import ConfirmModal from "../Modal/ConfirmModal";
 
 interface Address {
   _id: string;
@@ -18,7 +19,12 @@ interface AddressListProps {
 }
 
 const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
-  //need to create a api call for getting the address of user/ mechanic based on the role
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAction, setSelectedAction] = useState<
+    "edit" | "remove" | "setDefault" | null
+  >(null);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+
   let data;
   let getAddressFunction: (id: string) => Promise<any>;
   const [address, setAddress] = useState<Address[]>();
@@ -46,6 +52,38 @@ const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
   useEffect(() => {
     console.log("Result from the backend is ...", address);
   });
+
+  const handleOpenModal = (
+    action: "edit" | "remove" | "setDefault",
+    addr: Address
+  ) => {
+    setSelectedAction(action);
+    setSelectedAddress(addr);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedAddress || !selectedAction) return;
+
+    try {
+      if (selectedAction === "edit") {
+        // navigate or open edit modal
+        console.log("Editing address:", selectedAddress);
+      } else if (selectedAction === "remove") {
+        // call API to remove address
+        console.log("Removing address:", selectedAddress);
+      } else if (selectedAction === "setDefault") {
+        // call API to set default
+        console.log("Setting default address:", selectedAddress);
+      }
+    } catch (error) {
+      console.error("Error performing action:", error);
+    } finally {
+      setIsModalOpen(false);
+      setSelectedAction(null);
+      setSelectedAddress(null);
+    }
+  };
 
   return (
     <div className="bg-white shadow-md rounded-2xl p-6">
@@ -88,14 +126,23 @@ const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
                     {addr.landmark}, {addr.houseNumber},
                   </p>
 
-                  <div className=" mt-3 flex ">
-                    <button className=" h-10 bottom-0 px-3 py-1 text-sm bg-blue-500 text-white rounded-sm hover:bg-blue-600">
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      onClick={() => handleOpenModal("edit", addr)}
+                      className="h-10 px-3 py-1 text-sm bg-blue-500 text-white rounded-sm hover:bg-blue-600"
+                    >
                       Edit
                     </button>
-                    <button className="h-10 px-3 py-1 text-sm bg-red-500 text-white rounded-sm hover:bg-red-600">
+                    <button
+                      onClick={() => handleOpenModal("remove", addr)}
+                      className="h-10 px-3 py-1 text-sm bg-red-500 text-white rounded-sm hover:bg-red-600"
+                    >
                       Remove
                     </button>
-                    <button className="h-10 px-3 py-1 text-sm bg-green-500 text-white rounded-sm hover:bg-green-600">
+                    <button
+                      onClick={() => handleOpenModal("setDefault", addr)}
+                      className="h-10 px-3 py-1 text-sm bg-green-500 text-white rounded-sm hover:bg-green-600"
+                    >
                       Set Default
                     </button>
                   </div>
@@ -114,6 +161,26 @@ const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title={
+          selectedAction === "edit"
+            ? "Edit Address"
+            : selectedAction === "remove"
+            ? "Remove Address"
+            : "Set Default Address"
+        }
+        message={
+          selectedAction === "edit"
+            ? "Do you want to edit this address?"
+            : selectedAction === "remove"
+            ? "Are you sure you want to delete this address?"
+            : "Do you want to set this as your default address?"
+        }
+        onConfirm={handleConfirm}
+        onCancel={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
