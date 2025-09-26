@@ -88,14 +88,14 @@ const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
                     {addr.landmark}, {addr.houseNumber},
                   </p>
 
-                  <div className="mt-3 flex gap-3">
-                    <button className="px-3 py-1 text-sm bg-blue-500 text-white rounded-xl hover:bg-blue-600">
+                  <div className=" mt-3 flex ">
+                    <button className=" h-10 bottom-0 px-3 py-1 text-sm bg-blue-500 text-white rounded-sm hover:bg-blue-600">
                       Edit
                     </button>
-                    <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-xl hover:bg-red-600">
+                    <button className="h-10 px-3 py-1 text-sm bg-red-500 text-white rounded-sm hover:bg-red-600">
                       Remove
                     </button>
-                    <button className="px-3 py-1 text-sm bg-green-500 text-white rounded-xl hover:bg-green-600">
+                    <button className="h-10 px-3 py-1 text-sm bg-green-500 text-white rounded-sm hover:bg-green-600">
                       Set Default
                     </button>
                   </div>
