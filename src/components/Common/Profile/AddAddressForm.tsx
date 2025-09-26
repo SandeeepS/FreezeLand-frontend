@@ -12,16 +12,19 @@ import { useNavigate } from "react-router-dom";
 
 interface AddAddressFormProps {
   role: string;
+  mode: "add" | "edit";
+  initialData?: IAddress;
   onClose: () => void;
   onSave: (address: IAddress) => Promise<IAddressResponse>;
 }
 
 const AddAddressForm: React.FC<AddAddressFormProps> = ({
   role,
+  mode,
+  initialData,
   onClose,
   onSave,
 }) => {
-  
   let data;
   if (role == "user") {
     data = useAppSelector((state) => state.auth.userData);
@@ -29,17 +32,22 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     data = useAppSelector((state) => state.auth.mechData);
   }
 
-
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
-  const [addressType, setAddressType] = useState<"Home" | "Work">("Home");
+  const [addressType, setAddressType] = useState<"Home" | "Work">(
+    initialData?.addressType || "Home"
+  );
   const [showMap, setShowMap] = useState(false);
   const [landmark, setLandmark] = useState("");
   const [houseNumber, setHouseNumber] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
-    null
+    initialData
+      ? { lat: initialData.latitude, lng: initialData.longitude }
+      : null
   );
-  const [fullAddress, setFullAddress] = useState("");
+  const [fullAddress, setFullAddress] = useState(
+    initialData?.fullAddress || ""
+  );
   const handleSave = async () => {
     try {
       if (!data) {
@@ -53,6 +61,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
       }
       setIsSaving(true);
       const newAddress: IAddress = {
+        ...(initialData?.userId && { _id: initialData._id }),
         userId: data.id,
         addressType: addressType,
         fullAddress: fullAddress,
@@ -67,12 +76,13 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
         response
       );
       onClose();
-
     } catch (error) {
       console.log(
         "Error occured while updating the address to the databse from the AddAddressForm"
       );
-      toast.error("Address adding failed !");
+      toast.error(
+        mode === "edit" ? "Update failed!" : "Address adding failed!"
+      );
       throw error;
     } finally {
       setIsSaving(false);
@@ -83,7 +93,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
         <h2 className="mb-4 text-xl font-semibold text-gray-800">
-          Add Address
+          {mode === "edit" ? "Edit Address" : "Add Address"}
         </h2>
 
         <div className="mb-4">
@@ -164,7 +174,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
           </label>
           <input
             type="text"
-            value={landmark}
+            value={initialData?.landmark ? initialData.landmark : landmark}
             onChange={(e) => setLandmark(e.target.value)}
             className="w-full rounded-lg border p-2"
             placeholder="Near Govt School, Temple etc."
@@ -178,7 +188,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
           </label>
           <input
             type="text"
-            value={houseNumber}
+            value={initialData?.houseNumber ? initialData.houseNumber : houseNumber}
             onChange={(e) => setHouseNumber(e.target.value)}
             className="w-full rounded-lg border p-2"
             placeholder="12/A, Flat No. 3"
@@ -199,13 +209,11 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
             }`}
             disabled={isSaving}
           >
-            {isSaving ? (
-              <>
-                <span className="loader mr-2"></span> Saving...
-              </>
-            ) : (
-              "Save Address"
-            )}
+            {isSaving
+              ? "Saving..."
+              : mode === "edit"
+              ? "Update Address"
+              : "Save Address"}
           </button>
         </div>
       </div>

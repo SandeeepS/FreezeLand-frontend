@@ -184,6 +184,7 @@ export interface MainProfileDetailsData {
 }
 
 export interface IAddress {
+  _id?:string;
   userId: string;
   addressType: "Home" | "Work";
   fullAddress: string;

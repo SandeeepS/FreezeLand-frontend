@@ -7,7 +7,11 @@ import ConfirmModal from "../Modal/ConfirmModal";
 
 interface Address {
   _id: string;
+  userId: string;
   fullAddress: string;
+  addressType: "Home" | "Work";
+  longitude: number;
+  latitude: number;
   landmark: string;
   houseNumber: string;
   isDeleted: boolean;
@@ -16,9 +20,14 @@ interface Address {
 interface AddressListProps {
   role: "user" | "mechanic" | "admin" | string;
   onAddAddress?: () => void; // callback to open modal / navigate to add address page
+  onEditAddress?: (addr: Address) => void;
 }
 
-const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
+const AddressList: React.FC<AddressListProps> = ({
+  role,
+  onAddAddress,
+  onEditAddress,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState<
     "edit" | "remove" | "setDefault" | null
@@ -67,7 +76,11 @@ const AddressList: React.FC<AddressListProps> = ({ role, onAddAddress }) => {
 
     try {
       if (selectedAction === "edit") {
-        // navigate or open edit modal
+        if (selectedAction === "edit") {
+          if (selectedAddress) {
+            onEditAddress?.(selectedAddress);
+          }
+        }
         console.log("Editing address:", selectedAddress);
       } else if (selectedAction === "remove") {
         // call API to remove address
