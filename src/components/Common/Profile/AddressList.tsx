@@ -58,6 +58,7 @@ const AddressList: React.FC<AddressListProps> = ({
     const fetch = async () => {
       try {
         const response = await getAddressFunction(data?.id as string);
+        console.log("Response after fetching the address of user / mechanic ",response);
         setAddress(response.data.result);
       } catch (error) {
         console.log("error while fetching the data", error);

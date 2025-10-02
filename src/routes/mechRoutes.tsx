@@ -18,6 +18,7 @@ import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { getImageUrl } from "../Api/mech";
 import { mechanicProfileLoader } from "../loaders/mechLoader";
+import ErrorFallBack from "../components/Common/ErrorFallBack";
 
 const MechanicLoginPage = React.lazy(
   () => import("../Pages/Mechanic/MechanicLoginPage")
@@ -52,6 +53,12 @@ export const mechRoutes: RouteObject[] = [
       {
         path: "",
         element: <MechLayOut />,
+        errorElement: (
+          <ErrorFallBack
+            error={new Error("An unknown error occurred.")}
+            resetErrorBoundary={() => window.location.reload()}
+          />
+        ),
         children: [
           {
             path: "mechTestProfile",

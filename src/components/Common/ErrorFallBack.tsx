@@ -7,7 +7,7 @@ const ErrorFallBack: React.FC<ErrorFallbackProps> = ({
 }) => {
   console.log("Error occured ", error);
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center">
       <div>
         <DotLottieReact
           src="https://lottie.host/ddaa5cc0-be5f-4d16-a4fc-2f16ec040185/YLpCmGOPCj.lottie"
