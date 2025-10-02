@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAppSelector } from "../../../App/store";
-import { getMechanicDetails, handleRemoveMechAddress } from "../../../Api/mech";
+import { getMechanicDetails } from "../../../Api/mech";
 import { MechDetails } from "../../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import Footer from "../../User/Footer";
 import { AddAddress } from "../../../interfaces/AddAddress";
@@ -44,20 +44,20 @@ const MechAllAddress: React.FC = () => {
     navigate(`/mech/editAddress/${id}`);
   };
 
-  const handleRemoveAddress = async (id: string) => {
-    try {
-      const result = await handleRemoveMechAddress(mechId as string, id);
-      console.log("result after removing address", result);
-      if (result?.data.success === true) {
-        toast.success("Address removed successfully");
-        setAllAddress((prev) => prev.filter((address) => address._id !== id));
-      } else {
-        toast.error("Address removal failed");
-      }
-    } catch (error) {
-      console.log("Error occured while removing the address", error);
-    }
-  };
+  // const handleRemoveAddress = async (id: string) => {
+  //   try {
+  //     const result = await handleRemoveMechAddress(mechId as string, id);
+  //     console.log("result after removing address", result);
+  //     if (result?.data.success === true) {
+  //       toast.success("Address removed successfully");
+  //       setAllAddress((prev) => prev.filter((address) => address._id !== id));
+  //     } else {
+  //       toast.error("Address removal failed");
+  //     }
+  //   } catch (error) {
+  //     console.log("Error occured while removing the address", error);
+  //   }
+  // };
 
   return (
     <div className="bg-white h-full rounded-lg shadow-md flex flex-col space-y-12 overflow-y-auto mt-32 w-full">
@@ -118,7 +118,7 @@ const MechAllAddress: React.FC = () => {
                     </Button>
                     <Button
                       size="small"
-                      onClick={() => handleRemoveAddress(address._id as string)}
+                      onClick={() => console.log("removed the old remove address function add the common remove function of instead of it ")}
                     >
                       Remove
                     </Button>

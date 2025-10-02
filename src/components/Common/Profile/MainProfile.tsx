@@ -58,6 +58,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   });
 
   let addressUpdateFunction: (address: IAddress) => Promise<any>;
+
   if (role == "user") {
     addressUpdateFunction = AddUserAddress;
   } else {

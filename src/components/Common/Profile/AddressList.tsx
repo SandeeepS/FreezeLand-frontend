@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { useAppSelector } from "../../../App/store";
-import { getAllAddressOfUser } from "../../../Api/user";
-import { getMechanicAddress } from "../../../Api/mech";
+import { getAllAddressOfUser, removeUserAddress } from "../../../Api/user";
+import { getMechanicAddress, removeMechAddress } from "../../../Api/mech";
 import ConfirmModal from "../Modal/ConfirmModal";
+import toast from "react-hot-toast";
 
 interface Address {
   _id: string;
@@ -19,7 +20,7 @@ interface Address {
 
 interface AddressListProps {
   role: "user" | "mechanic" | "admin" | string;
-  onAddAddress?: () => void; // callback to open modal / navigate to add address page
+  onAddAddress?: () => void;
   onEditAddress?: (addr: Address) => void;
 }
 
@@ -28,6 +29,8 @@ const AddressList: React.FC<AddressListProps> = ({
   onAddAddress,
   onEditAddress,
 }) => {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [address, setAddress] = useState<Address[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState<
     "edit" | "remove" | "setDefault" | null
@@ -36,14 +39,19 @@ const AddressList: React.FC<AddressListProps> = ({
 
   let data;
   let getAddressFunction: (id: string) => Promise<any>;
-  const [address, setAddress] = useState<Address[]>();
+  let addressRemoveFunction: (
+    userId: string,
+    addressId: string
+  ) => Promise<any>;
 
   if (role == "user") {
     data = useAppSelector((state) => state.auth.userData);
     getAddressFunction = getAllAddressOfUser;
+    addressRemoveFunction = removeUserAddress;
   } else {
     data = useAppSelector((state) => state.auth.mechData);
     getAddressFunction = getMechanicAddress;
+    addressRemoveFunction = removeMechAddress;
   }
 
   useEffect(() => {
@@ -83,8 +91,34 @@ const AddressList: React.FC<AddressListProps> = ({
         }
         console.log("Editing address:", selectedAddress);
       } else if (selectedAction === "remove") {
-        // call API to remove address
-        console.log("Removing address:", selectedAddress);
+        const prev = address ?? [];
+        const updated = prev.filter((a) => a._id !== selectedAddress._id);
+
+        // optimistic UI update
+        setAddress(updated);
+        setIsModalOpen(false);
+        setDeletingId(selectedAddress._id);
+
+        try {
+          const result = await addressRemoveFunction(
+            selectedAddress.userId,
+            selectedAddress._id
+          );
+          console.log("result after removing the address is ", result);
+          if(result.data.success){
+            toast.success("Address removed successfully");
+          }
+        } catch (error) {
+          // rollback on failure
+          console.error("Failed to delete address:", error);
+          setAddress(prev);
+          toast.error("Failed to Delete Address");
+        } finally {
+          setDeletingId(null);
+          setSelectedAction(null);
+          setSelectedAddress(null);
+        }
+        return;
       } else if (selectedAction === "setDefault") {
         // call API to set default
         console.log("Setting default address:", selectedAddress);
@@ -122,7 +156,7 @@ const AddressList: React.FC<AddressListProps> = ({
           </button>
         </div>
       ) : (
-        <div className=" space-y-4">
+        <div className=" space-y-4 overflow-y-scroll md:overflow-x-scroll md:overflow-y-hidden ">
           <div className="md:flex ">
             {address &&
               address.map((addr) => (
@@ -162,18 +196,19 @@ const AddressList: React.FC<AddressListProps> = ({
                 </div>
               ))}
           </div>
-          {/* Add Address option even when addresses exist */}
-          <div className="flex justify-center">
-            <button
-              onClick={onAddAddress}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center"
-            >
-              <MdAdd className="mr-1" />
-              Add New Address
-            </button>
-          </div>
         </div>
       )}
+
+      {/* Add Address option even when addresses exist */}
+      <div className="flex justify-center mt-5">
+        <button
+          onClick={onAddAddress}
+          className="px-4 py-2 bg-freeze-color text-white rounded-xl shadow hover:bg-blue-500 transition flex items-center"
+        >
+          <MdAdd className="mr-1" />
+          Add New Address
+        </button>
+      </div>
 
       <ConfirmModal
         isOpen={isModalOpen}

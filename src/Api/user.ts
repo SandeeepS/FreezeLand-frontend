@@ -215,7 +215,7 @@ const EditUserDetails = async (values: EditUserFormData) => {
   }
 };
 
-//this function is also used to edit the address if the _id is present it is used for editing hte existing address 
+//this function is also used to edit the address if the _id is present it is used for editing hte existing address
 const AddUserAddress = async (newAddress: IAddress) => {
   try {
     console.log(
@@ -260,6 +260,21 @@ const setDefaultAddress = async (
     return result;
   } catch (error) {
     console.log(error);
+    userErrorHandler(error as Error);
+  }
+};
+
+//API for deleting/removing an existing address
+const removeUserAddress = async (userId: string,addressId:string) => {
+  try {
+    console.log("userid and addressId in the user.ts for removing is ",userId ," ", addressId)
+    const result = await Api.put(userRoutes.removeAddress, { userId,addressId });
+    return result;
+  } catch (error) {
+    console.log(
+      "error occured while removing the address of user in the user.ts",
+      error
+    );
     userErrorHandler(error as Error);
   }
 };
@@ -427,7 +442,7 @@ const getAllAddressOfUser = async (userId: string) => {
     const result = await Api.get(userRoutes.getAllAddressOfUser, {
       params: { userId },
     });
-    console.log("userAdddress from the backend in hte user.ts is ",result)
+    console.log("userAdddress from the backend in hte user.ts is ", result);
     return result;
   } catch (error) {
     console.log(
@@ -447,6 +462,7 @@ export {
   createReport,
   getS3SingUrl,
   verifyOtp,
+  removeUserAddress,
   resendOtp,
   getService,
   getImageUrl,
