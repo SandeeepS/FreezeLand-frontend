@@ -18,6 +18,7 @@ import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { userProfileLoader } from "../loaders/userLoader";
 import { getImageUrl } from "../Api/user";
+import ErrorFallBack from "../components/Common/ErrorFallBack";
 
 const UserHomePage = React.lazy(() => import("../Pages/User/UserHomePage"));
 const UserSignupPage = React.lazy(() => import("../Pages/User/UserSignupPage"));
@@ -50,6 +51,12 @@ export const userRoutes: RouteObject[] = [
       {
         path: "",
         element: <UserLayout />,
+        errorElement: ( // Provide required props to ErrorFallBack
+          <ErrorFallBack
+            error={new Error("An unknown error occurred.")}
+            resetErrorBoundary={() => window.location.reload()}
+          />
+        ),
         children: [
           {
             path: "testProfile",

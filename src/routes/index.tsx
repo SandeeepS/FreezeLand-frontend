@@ -7,5 +7,5 @@ export const appRoutes = [
   ...userRoutes,
   ...adminRoutes,
   ...mechRoutes,
-  { path: "*", element: <NotFound /> },
+  { path: "*", element: <NotFound />, },
 ];

@@ -14,6 +14,7 @@ const userRoutes = {
   addAddress:"/user/addAddress",
   editAddress:"/user/editAddress",
   setDefaultAddress:"/user/setDefaultAddress",
+  removeAddress:"/user/removeAddress",
   registerService:"/user/registerService",
   getAllServices:"/user/getAllServices",
   getAllUserRegisteredServices:"/user/getAllUserRegisteredServices",

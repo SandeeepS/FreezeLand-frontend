@@ -14,7 +14,9 @@ import { AddMechAddress } from "../../../Api/mech";
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
   const data = useLoaderData() as IMainProfileDetails;
-
+  const [addressRefreshKey, setAddressRefreshKey] = useState(0);
+  const [formMode, setFormMode] = useState<"add" | "edit">("add");
+  const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
   const [details, setDetails] = useState<IMainProfileDetails>({
     name: "",
     phone: "",
@@ -38,7 +40,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("slfsdflksdflksdfnlsdn")
+        console.log("slfsdflksdflksdfnlsdn");
         if (details.profile_picture) {
           const result = await getImage(details.profile_picture, "service");
           console.log("Resul after getting the image is ", result);
@@ -55,13 +57,17 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
     console.log("image is ", image);
   });
 
-
   let addressUpdateFunction: (address: IAddress) => Promise<any>;
+
   if (role == "user") {
     addressUpdateFunction = AddUserAddress;
   } else {
     addressUpdateFunction = AddMechAddress;
   }
+
+  const handleAddressSaved = (_updatedAddress: IAddress) => {
+    setAddressRefreshKey((prev) => prev + 1);
+  };
 
   console.log("Address address update function isss", addressUpdateFunction);
 
@@ -91,8 +97,14 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       {/* Address Section */}
       <div className="mt-6 w-full max-w-lg">
         <AddressList
+          key={addressRefreshKey}
           role={role}
           onAddAddress={() => setShowAddForm(true)}
+          onEditAddress={(addr) => {
+            setFormMode("edit");
+            setEditingAddress(addr);
+            setShowAddForm(true);
+          }}
         />
       </div>
 
@@ -100,8 +112,19 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       {showAddForm && (
         <AddAddressForm
           role={role}
-          onClose={() => setShowAddForm(false)}
-          onSave={addressUpdateFunction}
+          mode={formMode}
+          initialData={editingAddress || undefined}
+          onClose={() => {
+            setShowAddForm(false);
+            setEditingAddress(null);
+          }}
+          onSave={async (addr) => {
+            const response = await addressUpdateFunction(addr);
+            if (response?.data?.result) {
+              handleAddressSaved(response.data.result);
+            }
+            return response;
+          }}
         />
       )}
     </div>
