@@ -12,7 +12,6 @@ import userErrorHandler from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
 import {
   IAddress,
-  IAddressResponse,
 } from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const signup = async ({
