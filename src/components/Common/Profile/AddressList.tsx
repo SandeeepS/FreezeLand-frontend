@@ -36,7 +36,7 @@ const AddressList: React.FC<AddressListProps> = ({
     "edit" | "remove" | "setDefault" | null
   >(null);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-
+  console.log(deletingId);
   let data;
   let getAddressFunction: (id: string) => Promise<any>;
   let addressRemoveFunction: (

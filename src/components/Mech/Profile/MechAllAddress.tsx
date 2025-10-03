@@ -8,7 +8,6 @@ import { getMechanicDetails } from "../../../Api/mech";
 import { MechDetails } from "../../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import Footer from "../../User/Footer";
 import { AddAddress } from "../../../interfaces/AddAddress";
-import toast from "react-hot-toast";
 import { MdLocationOff } from "react-icons/md";
 
 const MechAllAddress: React.FC = () => {

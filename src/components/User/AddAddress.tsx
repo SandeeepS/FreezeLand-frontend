@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { Formik } from "formik";
 import { AddressValidation } from "../Common/Validations";
-import { AddUserAddress, getProfile } from "../../Api/user";
+import { getProfile } from "../../Api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../App/store";
 import { IUserData } from "../../interfaces/IUserData";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const AddAddress: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserData | null>(null);
   const userData = useSelector((state: RootState) => state.auth.userData);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   
   console.log("userData from the store is ", userData);
@@ -71,11 +71,11 @@ const AddAddress: React.FC = () => {
               if (userProfile) {
                 _id = userProfile._id;
               }
-              const result = await AddUserAddress(_id, { ...values, isDeleted: false });
-              if (result) {
-                console.log("result reached the frontend",result);
-                navigate('/user/account');
-              }
+              // const result = await AddUserAddress(_id, { ...values, isDeleted: false });
+              // if (result) {
+              //   console.log("result reached the frontend",result);
+              //   navigate('/user/account');
+              // }
             }}
           >
             {(formik) => (

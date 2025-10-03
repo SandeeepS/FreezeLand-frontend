@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import OlaMapPicker from "../maps/OlaMapPicker";
 import { MdWork } from "react-icons/md";
 import { IoHomeSharp } from "react-icons/io5";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useAppSelector } from "../../../App/store";
 import {
   IAddress,
   IAddressResponse,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
-import { useNavigate } from "react-router-dom";
 
 interface AddAddressFormProps {
   role: string;
@@ -32,7 +31,6 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     data = useAppSelector((state) => state.auth.mechData);
   }
 
-  const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [addressType, setAddressType] = useState<"Home" | "Work">(
     initialData?.addressType || "Home"
