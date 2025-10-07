@@ -17,7 +17,6 @@ import ServiceDetails from "../Pages/Mechanic/ServiceHistory/ServiceDetails";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { getImageUrl } from "../Api/mech";
-import { mechanicProfileLoader } from "../loaders/mechLoader";
 import ErrorFallBack from "../components/Common/ErrorFallBack";
 
 const MechanicLoginPage = React.lazy(
@@ -63,7 +62,6 @@ export const mechRoutes: RouteObject[] = [
           {
             path: "mechTestProfile",
             element: <MainProfile role="mech" getImage={getImageUrl} />,
-            loader: mechanicProfileLoader,
           },
           { path: "verifyMechanic", element: <VerifyMechanic /> },
           { path: "allWorks", element: <AllWorksPage /> },

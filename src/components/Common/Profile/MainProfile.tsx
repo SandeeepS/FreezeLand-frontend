@@ -23,11 +23,10 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
 
   let currentUserDataFromRedux: UserDataType | null;
   let getProfileFunction: (_id: string) => Promise<any>;
-
   if (role == "user") {
     currentUserDataFromRedux = useAppSelector((state) => state.auth.userData);
     getProfileFunction = getProfile;
-  } else if (role == "mechanic") {
+  } else if (role == "mech") {
     currentUserDataFromRedux = useAppSelector((state) => state.auth.mechData);
     getProfileFunction = getMechanicDetails;
   }
@@ -50,8 +49,13 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       try {
         if (currentUserDataFromRedux) {
           let result = await getProfileFunction(currentUserDataFromRedux.id);
-          const fetchedData = result.data.data.data;
-
+          let fetchedData;
+          console.log("fetched data is ", result);
+          if (role == "user") {
+            fetchedData = result.data.data.data;
+          } else {
+            fetchedData = result.data.result;
+          }
           setDetails({
             name: fetchedData.name || "",
             email: fetchedData.email || "",

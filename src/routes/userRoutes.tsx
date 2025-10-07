@@ -16,7 +16,6 @@ import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHis
 import ServiceOverview from "../Pages/User/Service/ServiceOverview";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
-import { userProfileLoader } from "../loaders/userLoader";
 import { getImageUrl } from "../Api/user";
 import ErrorFallBack from "../components/Common/ErrorFallBack";
 
