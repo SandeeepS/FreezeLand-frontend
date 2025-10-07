@@ -51,7 +51,7 @@ export const userRoutes: RouteObject[] = [
       {
         path: "",
         element: <UserLayout />,
-        errorElement: ( 
+        errorElement: (
           <ErrorFallBack
             error={new Error("An unknown error occurred.")}
             resetErrorBoundary={() => window.location.reload()}
@@ -60,13 +60,12 @@ export const userRoutes: RouteObject[] = [
         children: [
           {
             path: "profile",
-            element: <MainProfile role="user"  getImage={getImageUrl} />,
-            loader: userProfileLoader
+            element: <MainProfile role="user" getImage={getImageUrl} />,
           },
           { path: "account", element: <Profile /> },
           { path: "address", element: <Address /> },
           { path: "history", element: <History /> },
-          { path: "editProfile", element: <ProfileEdit />},
+          { path: "editProfile", element: <ProfileEdit /> },
           { path: "payment", element: <Payments /> },
           { path: "queue", element: <Queue /> },
           { path: "serviceHistory", element: <UserServiceHistory /> },
