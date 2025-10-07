@@ -10,6 +10,7 @@ import { useLoaderData } from "react-router-dom";
 import AddAddressForm from "./AddAddressForm";
 import { AddUserAddress } from "../../../Api/user";
 import { AddMechAddress } from "../../../Api/mech";
+import InitialLoader from "../../../Pages/Common/InitialLoader";
 
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
@@ -35,7 +36,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
       profile_picture: data.profile_picture || "",
       address: data.address || [],
     });
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +71,10 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   };
 
   console.log("Address address update function isss", addressUpdateFunction);
+
+  if (!data) {
+    return <InitialLoader />;
+  }
 
   return (
     <div className="mt-16 flex flex-col items-center">

@@ -32,7 +32,7 @@ const Header: React.FC = () => {
     {
       icon: <CgProfile className="mr-2" />,
       label: "Profile",
-      path: "/user/account",
+      path: "/user/profile",
     },
     {
       icon: <MdEventNote className="mr-2" />,
