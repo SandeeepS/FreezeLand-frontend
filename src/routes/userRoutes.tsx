@@ -53,7 +53,10 @@ export const userRoutes: RouteObject[] = [
           />
         ),
         children: [
-          { path: "profile", element: <MainProfile role="user" getImage={getImageUrl} />},
+          {
+            path: "profile",
+            element: <MainProfile role="user" getImage={getImageUrl} />,
+          },
           { path: "account", element: <Profile /> },
           { path: "history", element: <History /> },
           { path: "editProfile", element: <ProfileEdit /> },
@@ -61,7 +64,10 @@ export const userRoutes: RouteObject[] = [
           { path: "queue", element: <Queue /> },
           { path: "serviceHistory", element: <UserServiceHistory /> },
           { path: "service/:id", element: <Service /> },
-          { path: "registeredComplaintByUser/:id", element: <ComplaintDetail />},
+          {
+            path: "registeredComplaintByUser/:id",
+            element: <ComplaintDetail />,
+          },
           { path: "payment/success", element: <PaymentSuccessPage /> },
         ],
       },
