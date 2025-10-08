@@ -92,10 +92,7 @@ const OtpVerificationPage: React.FC<OtpVerificationPageProps> = ({
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
-  const handleOTPChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setOTP(value);
-  };
+
 
   const handleVerify = async () => {
     if (seconds <= 0) {
