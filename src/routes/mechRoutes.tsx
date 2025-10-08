@@ -6,18 +6,11 @@ import VerifyMechanic from "../Pages/Mechanic/VerifyMechanic";
 import AllWorksPage from "../Pages/Mechanic/Works/AllWorksPage";
 import ComplaintDetailsPage from "../Pages/Mechanic/Works/ComplaintDetailsPage";
 import MechQueue from "../Pages/Mechanic/Queue/MechQueue";
-import MechanicProfile from "../components/Mech/Profile/MechanicProfile";
-import MechanicEditProfile from "../components/Mech/Profile/MechanicEditProfile";
-import MechAddress from "../components/Mech/Profile/MechAddress";
-import MechAddAddress from "../components/Mech/Profile/MechAddAddress";
-import MechAllAddress from "../components/Mech/Profile/MechAllAddress";
-import MechEditAddress from "../components/Mech/Profile/MechEditAddress";
 import ServiceHistory from "../Pages/Mechanic/ServiceHistory/ServiceHistory";
 import ServiceDetails from "../Pages/Mechanic/ServiceHistory/ServiceDetails";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { getImageUrl } from "../Api/mech";
-import { mechanicProfileLoader } from "../loaders/mechLoader";
 import ErrorFallBack from "../components/Common/ErrorFallBack";
 
 const MechanicLoginPage = React.lazy(
@@ -61,22 +54,15 @@ export const mechRoutes: RouteObject[] = [
         ),
         children: [
           {
-            path: "mechTestProfile",
+            path: "profile",
             element: <MainProfile role="mech" getImage={getImageUrl} />,
-            loader: mechanicProfileLoader,
           },
           { path: "verifyMechanic", element: <VerifyMechanic /> },
           { path: "allWorks", element: <AllWorksPage /> },
           { path: "complaintDetails/:id", element: <ComplaintDetailsPage /> },
           { path: "queue", element: <MechQueue /> },
-          { path: "profile", element: <MechanicProfile /> },
-          { path: "editProfile", element: <MechanicEditProfile /> },
           { path: "serviceHistory", element: <ServiceHistory /> },
           { path: "serviceDetails/:id", element: <ServiceDetails /> },
-          { path: "mechAddress", element: <MechAddress /> },
-          { path: "AddAddress", element: <MechAddAddress /> },
-          { path: "showAllAddress", element: <MechAllAddress /> },
-          { path: "editAddress/:id", element: <MechEditAddress /> },
         ],
       },
     ],

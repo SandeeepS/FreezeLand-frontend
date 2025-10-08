@@ -1,11 +1,14 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { ErrorFallbackProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { useRouteError } from "react-router-dom";
 
 const ErrorFallBack: React.FC<ErrorFallbackProps> = ({
   error,
   resetErrorBoundary,
 }) => {
   console.log("Error occured ", error);
+  const currentError = useRouteError();
+  console.log("Current error is ",currentError);
   return (
     <div className="flex flex-col items-center justify-center">
       <div>

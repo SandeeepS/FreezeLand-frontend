@@ -6,15 +6,31 @@ import {
   IMainProfileDetails,
   MainProfileDetailsData,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
-import { useLoaderData } from "react-router-dom";
 import AddAddressForm from "./AddAddressForm";
-import { AddUserAddress } from "../../../Api/user";
-import { AddMechAddress } from "../../../Api/mech";
-import InitialLoader from "../../../Pages/Common/InitialLoader";
+import { AddUserAddress, getProfile } from "../../../Api/user";
+import { AddMechAddress, getMechanicDetails } from "../../../Api/mech";
+import { useAppSelector } from "../../../App/store";
+
+interface UserDataType {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
 
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
-  const data = useLoaderData() as IMainProfileDetails;
+
+  let currentUserDataFromRedux: UserDataType | null;
+  let getProfileFunction: (_id: string) => Promise<any>;
+  if (role == "user") {
+    currentUserDataFromRedux = useAppSelector((state) => state.auth.userData);
+    getProfileFunction = getProfile;
+  } else if (role == "mech") {
+    currentUserDataFromRedux = useAppSelector((state) => state.auth.mechData);
+    getProfileFunction = getMechanicDetails;
+  }
+
   const [addressRefreshKey, setAddressRefreshKey] = useState(0);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
@@ -25,18 +41,38 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
     profile_picture: "",
     address: [],
   });
-
   const [image, setImage] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
+
   useEffect(() => {
-    setDetails({
-      name: data.name || "",
-      email: data.email || "",
-      phone: data.phone || "",
-      profile_picture: data.profile_picture || "",
-      address: data.address || [],
-    });
-  }, [data]);
+    const fetch = async () => {
+      try {
+        if (currentUserDataFromRedux) {
+          let result = await getProfileFunction(currentUserDataFromRedux.id);
+          let fetchedData;
+          console.log("fetched data is ", result);
+          if (role == "user") {
+            fetchedData = result.data.data.data;
+          } else {
+            fetchedData = result.data.result;
+          }
+          setDetails({
+            name: fetchedData.name || "",
+            email: fetchedData.email || "",
+            phone: fetchedData.phone || "",
+            profile_picture: fetchedData.profile_picture || "",
+            address: fetchedData.address || [],
+          });
+        }
+      } catch (error) {
+        console.log(
+          "error occured while fetching userDetails from the backend ",
+          error
+        );
+      }
+    };
+    fetch();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,10 +107,6 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   };
 
   console.log("Address address update function isss", addressUpdateFunction);
-
-  if (!data) {
-    return <InitialLoader />;
-  }
 
   return (
     <div className="mt-16 flex flex-col items-center">

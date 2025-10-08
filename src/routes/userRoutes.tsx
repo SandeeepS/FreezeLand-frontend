@@ -3,12 +3,8 @@ import UserLoggedIn from "../components/User/UserLoggedIn";
 import UserLoggedOut from "../components/User/UserLoggedOut";
 import UserLayout from "../Pages/User/UserLayout";
 import Profile from "../components/User/Profile";
-import Address from "../components/User/Address";
 import History from "../components/User/History";
 import Payments from "../components/User/Payments";
-import AddAddress from "../components/User/AddAddress";
-import AllAddress from "../components/User/AllAddress";
-import { EditAddress } from "../components/User/EditAddress";
 import Queue from "../components/User/Queue/Queue";
 import ProfileEdit from "../components/User/ProfileEdit";
 import ComplaintDetail from "../components/User/Queue/ComplaintDetials/ComplaintDetail";
@@ -16,7 +12,6 @@ import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHis
 import ServiceOverview from "../Pages/User/Service/ServiceOverview";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
-import { userProfileLoader } from "../loaders/userLoader";
 import { getImageUrl } from "../Api/user";
 import ErrorFallBack from "../components/Common/ErrorFallBack";
 
@@ -51,7 +46,7 @@ export const userRoutes: RouteObject[] = [
       {
         path: "",
         element: <UserLayout />,
-        errorElement: ( 
+        errorElement: (
           <ErrorFallBack
             error={new Error("An unknown error occurred.")}
             resetErrorBoundary={() => window.location.reload()}
@@ -60,19 +55,14 @@ export const userRoutes: RouteObject[] = [
         children: [
           {
             path: "profile",
-            element: <MainProfile role="user"  getImage={getImageUrl} />,
-            loader: userProfileLoader
+            element: <MainProfile role="user" getImage={getImageUrl} />,
           },
           { path: "account", element: <Profile /> },
-          { path: "address", element: <Address /> },
           { path: "history", element: <History /> },
-          { path: "editProfile", element: <ProfileEdit />},
+          { path: "editProfile", element: <ProfileEdit /> },
           { path: "payment", element: <Payments /> },
           { path: "queue", element: <Queue /> },
           { path: "serviceHistory", element: <UserServiceHistory /> },
-          { path: "AddAddress", element: <AddAddress /> },
-          { path: "showAllAddress", element: <AllAddress /> },
-          { path: "editAddress/:id", element: <EditAddress /> },
           { path: "service/:id", element: <Service /> },
           {
             path: "registeredComplaintByUser/:id",
