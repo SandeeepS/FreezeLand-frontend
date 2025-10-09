@@ -58,7 +58,10 @@ const AddressList: React.FC<AddressListProps> = ({
     const fetch = async () => {
       try {
         const response = await getAddressFunction(data?.id as string);
-        console.log("Response after fetching the address of user / mechanic ",response);
+        console.log(
+          "Response after fetching the address of user / mechanic ",
+          response
+        );
         setAddress(response.data.result);
       } catch (error) {
         console.log("error while fetching the data", error);
@@ -106,7 +109,7 @@ const AddressList: React.FC<AddressListProps> = ({
             selectedAddress._id
           );
           console.log("result after removing the address is ", result);
-          if(result.data.success){
+          if (result.data.success) {
             toast.success("Address removed successfully");
           }
         } catch (error) {
@@ -197,19 +200,19 @@ const AddressList: React.FC<AddressListProps> = ({
                 </div>
               ))}
           </div>
+
+          {/* Add Address option even when addresses exist */}
+          <div className="flex justify-center mt-5">
+            <button
+              onClick={onAddAddress}
+              className="px-4 py-2 bg-freeze-color text-white rounded-xl shadow hover:bg-blue-500 transition flex items-center"
+            >
+              <MdAdd className="mr-1" />
+              Add New Address
+            </button>
+          </div>
         </div>
       )}
-
-      {/* Add Address option even when addresses exist */}
-      <div className="flex justify-center mt-5">
-        <button
-          onClick={onAddAddress}
-          className="px-4 py-2 bg-freeze-color text-white rounded-xl shadow hover:bg-blue-500 transition flex items-center"
-        >
-          <MdAdd className="mr-1" />
-          Add New Address
-        </button>
-      </div>
 
       <ConfirmModal
         isOpen={isModalOpen}
