@@ -60,20 +60,29 @@ const AddressList: React.FC<AddressListProps> = ({
     addressRemoveFunction = removeMechAddress;
   }
 
+  const fetchAddresses = async () => {
+    try {
+      const response = await getAddressFunction(data?.id as string);
+      console.log(
+        "Response after fetching the address of user / mechanic ",
+        response
+      );
+
+      const sortedAddresses = response.data.result.sort(
+        (a: Address, b: Address) =>
+          (b.isDefaultAddress ? 1 : 0) - (a.isDefaultAddress ? 1 : 0)
+      );
+
+      setAddress(sortedAddresses);
+    } catch (error) {
+      console.log("Error while fetching the data", error);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await getAddressFunction(data?.id as string);
-        console.log(
-          "Response after fetching the address of user / mechanic ",
-          response
-        );
-        setAddress(response.data.result);
-      } catch (error) {
-        console.log("error while fetching the data", error);
-      }
-    };
-    fetch();
+    if (data?.id) {
+      fetchAddresses();
+    }
   }, [data?.id, getAddressFunction]);
 
   useEffect(() => {
@@ -136,6 +145,10 @@ const AddressList: React.FC<AddressListProps> = ({
             selectedAddress._id
           );
           console.log("result after setting defult address is ", result);
+          if (result.data.success) {
+            toast.success("Default address updated successfully");
+            await fetchAddresses();
+          }
         } catch (error) {
           console.log("error occured while setDefaultAdress ", error);
         }
