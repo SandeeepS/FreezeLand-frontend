@@ -80,6 +80,10 @@ const AddressList: React.FC<AddressListProps> = ({
   };
 
   useEffect(() => {
+    console.log("fetched address are ",address);
+  })
+
+  useEffect(() => {
     if (data?.id) {
       fetchAddresses();
     }
@@ -100,7 +104,6 @@ const AddressList: React.FC<AddressListProps> = ({
 
   const handleConfirm = async () => {
     if (!selectedAddress || !selectedAction) return;
-
     try {
       if (selectedAction === "edit") {
         if (selectedAction === "edit") {
@@ -113,14 +116,20 @@ const AddressList: React.FC<AddressListProps> = ({
         const prev = address ?? [];
         const updated = prev.filter((a) => a._id !== selectedAddress._id);
 
-        // optimistic UI update
         setAddress(updated);
         setIsModalOpen(false);
         setDeletingId(selectedAddress._id);
 
         try {
+          console.log(data);
+          let userId: string = "";
+          if (role == "mech") {
+            userId = data?.id ?? "";
+          } else {
+            userId = selectedAddress._id;
+          }
           const result = await addressRemoveFunction(
-            selectedAddress.userId,
+            userId,
             selectedAddress._id
           );
           console.log("result after removing the address is ", result);
@@ -140,10 +149,15 @@ const AddressList: React.FC<AddressListProps> = ({
         return;
       } else if (selectedAction === "setDefault") {
         try {
-          const result = await onSetDefaultAddress(
-            selectedAddress.userId,
-            selectedAddress._id
-          );
+          console.log(data);
+          let userId: string = "";
+          if (role == "mech") {
+            userId = data?.id ?? "";
+          } else {
+            userId = selectedAddress.userId;
+          }
+          console.log("the rolr of the user is ", role);
+          const result = await onSetDefaultAddress(userId, selectedAddress._id);
           console.log("result after setting defult address is ", result);
           if (result.data.success) {
             toast.success("Default address updated successfully");

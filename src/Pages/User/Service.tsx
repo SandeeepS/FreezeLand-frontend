@@ -167,23 +167,19 @@ const Service: React.FC = () => {
 
   const handleCloseAddressWarningModal = () => {
     setShowAddressWarningModal(false);
-    // Navigate back to previous page or homepage
     navigate("/");
   };
 
   const handleAddAddress = () => {
     setShowAddressWarningModal(false);
-    // Navigate to add address page
     navigate("/user/AddAddress");
   };
 
-  // Check if user has addresses before rendering the form
   const hasAddresses = userProfile?.address && userProfile.address.length > 0;
   console.log("DefaultAddress is", defaultAddress);
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 mt-12">
-        {/* Header Section */}
         <div className="pt-14 pb-4 bg-white shadow-sm border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
