@@ -7,8 +7,8 @@ import {
   MainProfileDetailsData,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
 import AddAddressForm from "./AddAddressForm";
-import { AddUserAddress, getProfile } from "../../../Api/user";
-import { AddMechAddress, getMechanicDetails } from "../../../Api/mech";
+import { AddUserAddress, getProfile, setDefaultAddress } from "../../../Api/user";
+import { AddMechAddress, getMechanicDetails, setMechDefaultAddress } from "../../../Api/mech";
 import { useAppSelector } from "../../../App/store";
 
 interface UserDataType {
@@ -95,11 +95,14 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   });
 
   let addressUpdateFunction: (address: IAddress) => Promise<any>;
+  let setAsDefaultFunction:(userId:string,addressId:string) => Promise<any>
 
   if (role == "user") {
     addressUpdateFunction = AddUserAddress;
+    setAsDefaultFunction = setDefaultAddress;
   } else {
     addressUpdateFunction = AddMechAddress;
+    setAsDefaultFunction = setMechDefaultAddress;
   }
 
   const handleAddressSaved = (_updatedAddress: IAddress) => {
@@ -142,6 +145,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
             setEditingAddress(addr);
             setShowAddForm(true);
           }}
+          onSetDefaultAddress={setAsDefaultFunction}
         />
       </div>
 

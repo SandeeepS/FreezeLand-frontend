@@ -23,12 +23,14 @@ interface AddressListProps {
   role: "user" | "mechanic" | "admin" | string;
   onAddAddress?: () => void;
   onEditAddress?: (addr: Address) => void;
+  onSetDefaultAddress: (userId: string, addressId: string) => Promise<any>;
 }
 
 const AddressList: React.FC<AddressListProps> = ({
   role,
   onAddAddress,
   onEditAddress,
+  onSetDefaultAddress,
 }) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [address, setAddress] = useState<Address[]>();
@@ -128,8 +130,15 @@ const AddressList: React.FC<AddressListProps> = ({
         }
         return;
       } else if (selectedAction === "setDefault") {
-        // call API to set default
-        console.log("Setting default address:", selectedAddress);
+        try {
+          const result = await onSetDefaultAddress(
+            selectedAddress.userId,
+            selectedAddress._id
+          );
+          console.log("result after setting defult address is ", result);
+        } catch (error) {
+          console.log("error occured while setDefaultAdress ", error);
+        }
       }
     } catch (error) {
       console.error("Error performing action:", error);
