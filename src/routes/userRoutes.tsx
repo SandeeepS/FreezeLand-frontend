@@ -2,11 +2,9 @@ import { RouteObject } from "react-router-dom";
 import UserLoggedIn from "../components/User/UserLoggedIn";
 import UserLoggedOut from "../components/User/UserLoggedOut";
 import UserLayout from "../Pages/User/UserLayout";
-import Profile from "../components/User/Profile";
 import History from "../components/User/History";
 import Payments from "../components/User/Payments";
 import Queue from "../components/User/Queue/Queue";
-import ProfileEdit from "../components/User/ProfileEdit";
 import ComplaintDetail from "../components/User/Queue/ComplaintDetials/ComplaintDetail";
 import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHistory";
 import ServiceOverview from "../Pages/User/Service/ServiceOverview";
@@ -57,9 +55,7 @@ export const userRoutes: RouteObject[] = [
             path: "profile",
             element: <MainProfile role="user" getImage={getImageUrl} />,
           },
-          { path: "account", element: <Profile /> },
           { path: "history", element: <History /> },
-          { path: "editProfile", element: <ProfileEdit /> },
           { path: "payment", element: <Payments /> },
           { path: "queue", element: <Queue /> },
           { path: "serviceHistory", element: <UserServiceHistory /> },
