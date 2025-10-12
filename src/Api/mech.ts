@@ -2,6 +2,7 @@ import Api from "../Services/axios";
 import mechRoutes from "../Services/Endpoints/mechEndPoints";
 import {
   EditMechanicFormData,
+  EditMechFormData,
   FormData,
   MechanicForm,
 } from "../interfaces/IPages/Mechanic/IMechanicInterfaces";
@@ -431,11 +432,30 @@ const getMechanicAddress = async (mechanicId: string) => {
 //function to set default address for mechanic.
 const setMechDefaultAddress = async (mechId: string, addressId: string) => {
   try {
-    console.log("mech id and addressId is ",mechId , addressId);
+    console.log("mech id and addressId is ", mechId, addressId);
     const result = await Api.put(mechRoutes.setDefaultAddress, {
       mechId,
       addressId,
     });
+    return result;
+  } catch (error) {
+    console.log(error);
+    mechErrorHandler(error as Error);
+  }
+};
+
+//here function to edit the mechanci profile Details
+const EditMechProfileDetails = async (values: EditMechFormData) => {
+  try {
+    console.log("Entered in the EditUserDetails in the user.ts", values);
+    const { _id, name, phone, profile_picture } = values;
+    const result = await Api.put(mechRoutes.editUser, {
+      _id,
+      name,
+      phone,
+      profile_picture,
+    });
+    console.log("result from the backend is ", result);
     return result;
   } catch (error) {
     console.log(error);
@@ -464,6 +484,7 @@ export {
   getMechanicAddress,
   resendOtp_forgetPassword_mechanic,
   getMechanicDetails,
+  EditMechProfileDetails,
   getS3SingUrlForMechCredinential,
   getAllUserRegisteredServices,
   getAllCompletedServices,

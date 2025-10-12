@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
 import ProfileImage from "./ProfileImage";
-import AddressList from "./AddressList"; // new reusable component
+import AddressList from "./AddressList";
+import EditProfileModal from "./EditProfileModal";
 import {
   IAddress,
   IMainProfileDetails,
   MainProfileDetailsData,
 } from "../../../interfaces/IComponents/Common/ICommonInterfaces";
 import AddAddressForm from "./AddAddressForm";
-import { AddUserAddress, getProfile, setDefaultAddress } from "../../../Api/user";
-import { AddMechAddress, getMechanicDetails, setMechDefaultAddress } from "../../../Api/mech";
+import {
+  AddUserAddress,
+  getProfile,
+  setDefaultAddress,
+  EditUserDetails,
+} from "../../../Api/user";
+import {
+  AddMechAddress,
+  EditMechProfileDetails,
+  getMechanicDetails,
+  setMechDefaultAddress,
+} from "../../../Api/mech";
 import { useAppSelector } from "../../../App/store";
 
 interface UserDataType {
@@ -21,15 +32,19 @@ interface UserDataType {
 const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("role is ", role);
 
-  let currentUserDataFromRedux: UserDataType | null;
-  let getProfileFunction: (_id: string) => Promise<any>;
-  if (role == "user") {
-    currentUserDataFromRedux = useAppSelector((state) => state.auth.userData);
-    getProfileFunction = getProfile;
-  } else if (role == "mech") {
-    currentUserDataFromRedux = useAppSelector((state) => state.auth.mechData);
-    getProfileFunction = getMechanicDetails;
-  }
+  const currentUserDataFromRedux: UserDataType | null =
+    role === "user"
+      ? useAppSelector((state) => state.auth.userData)
+      : role === "mech"
+      ? useAppSelector((state) => state.auth.mechData)
+      : null;
+
+  const getProfileFunction: (_id: string) => Promise<any> =
+    role === "user"
+      ? getProfile
+      : role === "mech"
+      ? getMechanicDetails
+      : async () => {};
 
   const [addressRefreshKey, setAddressRefreshKey] = useState(0);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
@@ -43,6 +58,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   });
   const [image, setImage] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -95,14 +111,17 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   });
 
   let addressUpdateFunction: (address: IAddress) => Promise<any>;
-  let setAsDefaultFunction:(userId:string,addressId:string) => Promise<any>
+  let setAsDefaultFunction: (userId: string, addressId: string) => Promise<any>;
+  let editProfileFunction: (values: any) => Promise<any> = async () => {};
 
   if (role == "user") {
     addressUpdateFunction = AddUserAddress;
     setAsDefaultFunction = setDefaultAddress;
+    editProfileFunction = EditUserDetails;
   } else {
     addressUpdateFunction = AddMechAddress;
     setAsDefaultFunction = setMechDefaultAddress;
+    editProfileFunction = EditMechProfileDetails;
   }
 
   const handleAddressSaved = (_updatedAddress: IAddress) => {
@@ -115,6 +134,14 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
     <div className="mt-28 flex flex-col items-center">
       {/* Profile Image */}
       <ProfileImage image={image} />
+
+      {/* Edit Profile Button */}
+      <button
+        onClick={() => setShowEditModal(true)}
+        className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+      >
+        Edit Profile
+      </button>
 
       {/* Basic Info */}
       <div className="mt-6 w-full max-w-lg bg-white shadow-md rounded-2xl p-6 flex flex-col justify-center items-center">
@@ -166,6 +193,23 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
             }
             return response;
           }}
+        />
+      )}
+
+      {/* Edit Profile Modal */}
+      {showEditModal && currentUserDataFromRedux && (
+        <EditProfileModal
+          role={role === "user" ? "user" : "mech"}
+          currentData={{
+            _id: currentUserDataFromRedux.id,
+            name: details.name,
+            phone: String(details.phone),
+            email: details.email,
+            profile_picture: details.profile_picture ?? "",
+          }}
+          currentImage={image}
+          onClose={() => setShowEditModal(false)}
+          onSave={editProfileFunction}
         />
       )}
     </div>
