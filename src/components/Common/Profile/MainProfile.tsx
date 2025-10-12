@@ -16,6 +16,7 @@ import {
 } from "../../../Api/user";
 import {
   AddMechAddress,
+  EditMechProfileDetails,
   getMechanicDetails,
   setMechDefaultAddress,
 } from "../../../Api/mech";
@@ -120,7 +121,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   } else {
     addressUpdateFunction = AddMechAddress;
     setAsDefaultFunction = setMechDefaultAddress;
-    // editProfileFunction = EditMechDetails;
+    editProfileFunction = EditMechProfileDetails;
   }
 
   const handleAddressSaved = (_updatedAddress: IAddress) => {

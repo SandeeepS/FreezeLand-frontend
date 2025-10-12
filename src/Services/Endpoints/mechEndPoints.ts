@@ -28,6 +28,7 @@ const mechRoutes = {
   removeMechAddress: "/mech/handleRemoveMechAddress",
   getMechanicAddress: "/mech/getMechanicAddress",
   setDefaultAddress: "/mech/setDefaultAddress",
+  editUser: "/mech/editMechanicProfileDetails",
   logout: "/mech/logout",
 };
 

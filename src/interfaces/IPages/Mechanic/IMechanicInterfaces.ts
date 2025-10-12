@@ -32,6 +32,13 @@ export interface TableDataItem {
   [key: string]: unknown;
 }
 
+  export interface EditMechFormData{
+    _id : string;
+    name : string ;
+    phone : string;
+    profile_picture : string;
+  }
+
 // Define the column configuration
 export interface TableColumn {
   key: string;
