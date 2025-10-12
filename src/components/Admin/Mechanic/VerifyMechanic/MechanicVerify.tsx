@@ -9,7 +9,7 @@ const MechanicVerify: React.FC = () => {
   const [mechanic, setMechanic] = useState<MechData | null>(null);
   const [employeeLicense, setEmployeeLicense] = useState<string>("");
   const [adharProof, setAdharProof] = useState<string>("");
-  const [photo,setPhoto] = useState<string>("")
+  const [photo, setPhoto] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [verificationStatus, setVerificationStatus] = useState<boolean>();
   const [hasInitiatedVerification, setHasInitiatedVerification] =
@@ -33,20 +33,20 @@ const MechanicVerify: React.FC = () => {
 
         if (mechanicData) {
           // Check if required fields exist and are not empty
-          const hasRequiredFields =
-            mechanicData.employeeLicense &&
-            mechanicData.employeeLicense.trim() !== "" &&
-            mechanicData.adharProof &&
-            mechanicData.adharProof.trim() !== "" &&
-            mechanicData.photo &&
-            mechanicData.photo.trim() !== "";
+          const hasRequiredFields = Boolean(
+            mechanicData.employeeLicense?.trim() &&
+              mechanicData.adharProof?.trim() &&
+              mechanicData.photo?.trim()
+          );
+
+          setHasInitiatedVerification(hasRequiredFields);
 
           setHasInitiatedVerification(hasRequiredFields);
 
           if (hasRequiredFields) {
             // Fetch license and Aadhaar images concurrently only if fields exist
-            const [photo,licenseImage, adharImage] = await Promise.all([
-              getImageUrl(mechanicData.photo,"photo"),
+            const [photo, licenseImage, adharImage] = await Promise.all([
+              getImageUrl(mechanicData.photo, "photo"),
               getImageUrl(mechanicData.employeeLicense, "license"),
               getImageUrl(mechanicData.adharProof, "adhar"),
             ]);
@@ -58,8 +58,8 @@ const MechanicVerify: React.FC = () => {
             if (adharImage?.data?.url) {
               setAdharProof(adharImage.data.url);
             }
-            if(photo?.data.url){
-              setPhoto(photo.data.url)
+            if (photo?.data.url) {
+              setPhoto(photo.data.url);
             }
 
             console.log("Fetched License and Aadhaar URLs:", {

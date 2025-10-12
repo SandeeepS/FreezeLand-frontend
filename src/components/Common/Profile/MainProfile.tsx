@@ -112,7 +112,7 @@ const MainProfile: React.FC<MainProfileDetailsData> = ({ role, getImage }) => {
   console.log("Address address update function isss", addressUpdateFunction);
 
   return (
-    <div className="mt-16 flex flex-col items-center">
+    <div className="mt-28 flex flex-col items-center">
       {/* Profile Image */}
       <ProfileImage image={image} />
 
