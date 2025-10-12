@@ -143,7 +143,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[90px] flex justify-between w-full bg-freeze-color">
+      <div className="text-white font-bold h-[85px] flex justify-between w-full bg-freeze-color">
         <h1 className="w-full text-3xl text-black font-exo p-6">
           FREEZE <span className="text-white font-exo">LAND</span>
         </h1>
