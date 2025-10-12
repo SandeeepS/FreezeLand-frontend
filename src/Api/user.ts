@@ -248,8 +248,8 @@ const EditExistAddress = async (
 };
 
 const setDefaultAddress = async (
-  userId: string | undefined,
-  addressId: string | undefined
+  userId: string ,
+  addressId: string
 ) => {
   try {
     const result = await Api.put(userRoutes.setDefaultAddress, {

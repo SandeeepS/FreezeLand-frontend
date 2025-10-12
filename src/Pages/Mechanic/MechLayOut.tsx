@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 const MechLayOut: React.FC = () => {
   return (
     <div>
-      <div className="header fixed top-0 left-0 w-full z-10">
+      <div className="header fixed top-0 left-0 w-full z-10 ">
         <MechHeader />
       </div>
       <div>

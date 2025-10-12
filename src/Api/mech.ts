@@ -428,6 +428,21 @@ const getMechanicAddress = async (mechanicId: string) => {
   }
 };
 
+//function to set default address for mechanic.
+const setMechDefaultAddress = async (mechId: string, addressId: string) => {
+  try {
+    console.log("mech id and addressId is ",mechId , addressId);
+    const result = await Api.put(mechRoutes.setDefaultAddress, {
+      mechId,
+      addressId,
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    mechErrorHandler(error as Error);
+  }
+};
+
 export {
   mechLogin,
   createRoom,
@@ -437,6 +452,7 @@ export {
   getImageUrl,
   verifyMechOtp,
   resendMechOtp,
+  setMechDefaultAddress,
   updateWorkDetails,
   forgotPasswordMech,
   forgotVerifyOtpMech,

@@ -9,7 +9,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ image }) => {
  console.log("image is ",image)
   return (
     <div>
-      <div className=" md:-top-10  p-1   ">
+      <div className="">
         <div className="w-36 h-36 md:w-48 md:h-48 ">
           <img
             src={
