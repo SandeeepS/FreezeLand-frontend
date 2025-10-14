@@ -7,7 +7,6 @@ import Payments from "../components/User/Payments";
 import Queue from "../components/User/Queue/Queue";
 import ComplaintDetail from "../components/User/Queue/ComplaintDetials/ComplaintDetail";
 import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHistory";
-import ServiceOverview from "../Pages/User/Service/ServiceOverview";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { getImageUrl } from "../Api/user";
@@ -25,8 +24,6 @@ const Service = React.lazy(() => import("../Pages/User/Service"));
 
 export const userRoutes: RouteObject[] = [
   { index: true, path: "/", element: <UserHomePage /> },
-  { path: "/user/serviceDetails/:id", element: <ServiceOverview /> },
-
   {
     path: "/auth",
     element: <UserLoggedOut />,
