@@ -192,6 +192,7 @@ export interface IAddress {
   longitude: number;
   latitude: number;
   landmark: string;
+
 }
 
 export interface IAddressResponse {

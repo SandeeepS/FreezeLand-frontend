@@ -297,10 +297,10 @@ const getUserRegisteredServiceDetailsById = async (id: string) => {
     );
     const result = await Api.get(
       userRoutes.getUserRegisteredServiceDetailsById,
-      { params: { id } }
+      { params:{ id }}
     );
     return result;
-  } catch (error) {
+  } catch (error){
     console.log(error as Error);
     userErrorHandler(error as Error);
   }
