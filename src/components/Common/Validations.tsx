@@ -118,7 +118,6 @@ export const ServiceFormValidation = Yup.object({
     .min(1, "At least one image is required")
     .max(5, "Maximum 5 images allowed"),
 
-  defaultAddress: Yup.string().required("Please Select the address"),
 });
 
 export const MechanicVerificationValidationSchema = Yup.object({

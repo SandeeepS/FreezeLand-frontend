@@ -12,8 +12,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({
   serviceAmount,
   discription,
 }) => {
-  return (
-    <div className=" flex justify-around rounded-lg  overflow-hidden md:flex md:px-6">
+  return ( 
+    <div className=" flex  justify-around rounded-lg  overflow-hidden md:flex md:px-6">
       {/* Image Section */}
       <div className="relative aspect-video">
         {serviceImage ? (

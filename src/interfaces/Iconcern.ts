@@ -2,9 +2,8 @@ export interface Iconcern {
   _id?:string;
   name:string
   image: string[];
-  defaultAddress:string;
+  address:string;
   discription: string;
-  locationName: object;
   userId?:string;
   serviceId?:string;
   serviceCharge?:number;
