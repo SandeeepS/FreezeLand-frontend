@@ -7,6 +7,9 @@ import {
   getService,
   registerComplaint,
   getImageUrl,
+  AddUserAddress,
+  removeUserAddress,
+  setDefaultAddress,
 } from "../../Api/user";
 import Footer from "../../components/User/Footer";
 import { Formik } from "formik";
@@ -17,24 +20,24 @@ import { RootState } from "../../App/store";
 import ConformationModal from "../../components/Common/ConformationModal";
 import UserData from "../../interfaces/UserData";
 import ServiceDetails from "../../components/User/UserServiceRegistration/ServiceDetails";
-import ServiceForm from "../../components/User/UserServiceRegistration/ServiceForm";
-import AddressWarningModal from "../../components/User/UserServiceRegistration/AddressWarningModal";
-
-const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-
-interface LocationData {
-  address: string;
-  latitude: number | null;
-  longitude: number | null;
-}
+import {
+  IAddress,
+  IAddressResponse,
+} from "../../interfaces/IComponents/Common/ICommonInterfaces";
+import { MdCheckCircle } from "react-icons/md";
+import ConfirmModal from "../../components/Common/Modal/ConfirmModal";
+import toast from "react-hot-toast";
+import AddAddressForm from "../../components/Common/Profile/AddAddressForm";
 
 interface Address {
   _id: string;
+  userId: string;
   fullAddress: string;
-  houseNumber: string;
+  addressType: "Home" | "Work";
   longitude: number;
   latitude: number;
   landmark: string;
+  houseNumber: string;
   isDeleted: boolean;
   isDefaultAddress: boolean;
 }
@@ -49,30 +52,31 @@ const Service: React.FC = () => {
   const [serviceAmount, setServiceAmount] = useState<number>();
   const [userProfile, setUserProfile] = useState<UserData>();
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [defaultAddress, setDefaultAddress] = useState<string>("");
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [serviceImage, setServiceImage] = useState<string>("");
-  const [locationError, setLocationError] = useState<string>("");
-
-  const [locationName, setLocationName] = useState<LocationData>({
-    address: "",
-    latitude: null,
-    longitude: null,
-  });
-
   const [showModal, setShowModal] = useState(false);
-  const [showAddressWarningModal, setShowAddressWarningModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showLocationOptions, setShowLocationOptions] = useState(false);
 
+  // Address management states
+  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
+  const [formMode, setFormMode] = useState<"add" | "edit">("add");
+  const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
+  const [addressRefreshKey, setAddressRefreshKey] = useState(0);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "remove" | "setDefault";
+    address: Address | null;
+  }>({ type: "remove", address: null });
+
+  // Fetch initial data
   useEffect(() => {
     if (!id || !userId) return;
 
     const fetchData = async () => {
       try {
-        const [serviceRes, profileRes, addressRes] = await Promise.all([
+        const [serviceRes, profileRes] = await Promise.all([
           getService(id),
           getProfile(userId),
-          getAllAddressOfUser(userId),
         ]);
 
         if (serviceRes?.data) {
@@ -89,73 +93,105 @@ const Service: React.FC = () => {
         if (profileRes?.data?.data?.data) {
           setUserProfile(profileRes.data.data.data);
         }
-
-        if (addressRes?.data?.result) {
-          const addressList = addressRes.data.result;
-          setAddresses(addressList);
-
-          if (addressList.length === 0) {
-            setShowAddressWarningModal(true);
-          } else {
-            setShowAddressWarningModal(false);
-            const defaultAddr = addressList.find(
-              (addr: Address) => addr.isDefaultAddress
-            );
-            if (defaultAddr) setDefaultAddress(defaultAddr._id);
-          }
-        }
       } catch (error) {
         console.error("Error fetching data:", error);
-        setShowAddressWarningModal(true);
       }
     };
 
     fetchData();
   }, [id, userId]);
 
-  const handleFetchLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        try {
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
-          );
-          const data = await response.json();
+  // Fetch addresses
+  const fetchAddresses = async () => {
+    if (!userId) return;
 
-          if (data.results?.length > 0) {
-            setLocationName({
-              address: data.results[0].formatted_address,
-              latitude,
-              longitude,
-            });
-            setLocationError("");
-          }
-        } catch (error) {
-          console.error("Error fetching location name:", error);
-          setLocationError("Failed to fetch location. Please try again.");
-        }
-      },
-      (error) => {
-        console.error("Error fetching location:", error);
-        setLocationError(
-          "Failed to get your location. Please enable location services."
+    try {
+      const addressRes = await getAllAddressOfUser(userId);
+      if (addressRes?.data?.result) {
+        const addressList = addressRes.data.result;
+
+        // Sort addresses: default first
+        const sortedAddresses = addressList.sort(
+          (a: Address, b: Address) =>
+            (b.isDefaultAddress ? 1 : 0) - (a.isDefaultAddress ? 1 : 0)
         );
-      },
-      { enableHighAccuracy: true }
-    );
-  };
 
-  const validateLocationName = (value: LocationData) => {
-    if (!value.address || value.latitude === null || value.longitude === null) {
-      return { ok: false, message: "Location is required" };
+        setAddresses(sortedAddresses);
+
+        // Auto-select default address
+        const defaultAddr = sortedAddresses.find(
+          (addr: Address) => addr.isDefaultAddress
+        );
+        if (defaultAddr) {
+          setSelectedAddress(defaultAddr._id);
+        } else if (sortedAddresses.length > 0) {
+          setSelectedAddress(sortedAddresses[0]._id);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
     }
-    return { ok: true };
   };
 
-  const handleRemoveLocation = () => {
-    setLocationName({ address: "", longitude: null, latitude: null });
-    setShowLocationOptions(false);
+  useEffect(() => {
+    fetchAddresses();
+  }, [userId, addressRefreshKey]);
+
+  // Handle save address
+  const handleSaveAddress = async (
+    addr: IAddress
+  ): Promise<IAddressResponse> => {
+    try {
+      const response = await AddUserAddress(addr);
+      if (response?.data?.result) {
+        toast.success(
+          formMode === "add"
+            ? "Address added successfully"
+            : "Address updated successfully"
+        );
+        setAddressRefreshKey((prev) => prev + 1);
+        setShowAddAddressForm(false);
+        setEditingAddress(null);
+      }
+      return response?.data as IAddressResponse;
+    } catch (error) {
+      console.error("Error saving address:", error);
+      toast.error("Failed to save address");
+      throw error;
+    }
+  };
+
+  // Confirm action
+  const handleConfirmAction = async () => {
+    if (!confirmAction.address) return;
+
+    try {
+      if (confirmAction.type === "remove") {
+        const result = await removeUserAddress(
+          userId!,
+          confirmAction.address._id
+        );
+        if (result && result.data && result.data.success) {
+          toast.success("Address removed successfully");
+          setAddressRefreshKey((prev) => prev + 1);
+        }
+      } else if (confirmAction.type === "setDefault") {
+        const result = await setDefaultAddress(
+          userId!,
+          confirmAction.address._id
+        );
+        if (result && result.data && result.data.success) {
+          toast.success("Default address updated successfully");
+          setAddressRefreshKey((prev) => prev + 1);
+        }
+      }
+    } catch (error) {
+      console.error("Error performing action:", error);
+      toast.error("Failed to perform action");
+    } finally {
+      setIsConfirmModalOpen(false);
+      setConfirmAction({ type: "remove", address: null });
+    }
   };
 
   const handleCloseModal = () => {
@@ -163,21 +199,9 @@ const Service: React.FC = () => {
     navigate("/");
   };
 
-  const handleCloseAddressWarningModal = () => {
-    setShowAddressWarningModal(false);
-    navigate("/");
-  };
-
-  const handleAddAddress = () => {
-    setShowAddressWarningModal(false);
-    navigate("/user/AddAddress");
-  };
-
-  const hasAddresses = addresses.length > 0;
-
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 mt-12">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
         {/* Header */}
         <div className="pt-14 pb-4 bg-white shadow-sm border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -198,143 +222,265 @@ const Service: React.FC = () => {
             serviceAmount={serviceAmount}
           />
 
+          {/* Address Selection Section */}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
+            <div className=" px-8">
+              <p className="text-black mt-1 py-4">
+                Choose an address where you need the service
+              </p>
+            </div>
+
+            <div className="p-8">
+              {/* Address List */}
+              {addresses.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-center space-y-4 py-8">
+                  <p className="text-gray-500 text-lg">No address added yet.</p>
+                  <p className="text-gray-400 text-sm">
+                    Please add an address to continue with the service booking
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4
+    md:max-h-[400px] md:overflow-y-auto
+    scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+                >
+                  {addresses.map((addr) => (
+                    <div
+                      key={addr._id}
+                      onClick={() => setSelectedAddress(addr._id)}
+                      className={`relative cursor-pointer p-4 rounded-xl border transition-all ${
+                        selectedAddress === addr._id
+                          ? "border-blue-500 bg-blue-50 shadow-md"
+                          : "border-gray-200 bg-gray-50 hover:border-blue-300"
+                      } `}
+                    >
+                      {/* Selection Indicator */}
+                      {selectedAddress === addr._id && (
+                        <div className="absolute top-2 right-2">
+                          <MdCheckCircle className="text-blue-500 text-2xl" />
+                        </div>
+                      )}
+
+                      {/* Default Badge */}
+                      {addr.isDefaultAddress && (
+                        <div className="absolute top-0 left-0 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-tr-lg rounded-bl-lg">
+                          Default
+                        </div>
+                      )}
+
+                      {/* Address Details */}
+                      <div className="mt-6 mb-4">
+                        <p className="font-medium text-gray-800 line-clamp-3">
+                          {addr.fullAddress}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {addr.landmark}, {addr.houseNumber}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {addr.addressType}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Registration Form Section */}
-          {hasAddresses && (
+          {addresses.length > 0 && (
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-freeze-color px-8 py-4">
-                <h2 className="text-2xl font-semibold text-white">
-                  Service Registration Details
-                </h2>
+              <div className=" px-8 py-4">
                 <p className="text-black mt-1 py-4">
                   Please provide the necessary information to schedule your
                   service
                 </p>
               </div>
 
-              <div className="flex flex-col justify-center items-center w-full">
-                <div className="p-8 mt-6 w-full">
-                  <Formik
-                    initialValues={{
-                      name: "",
-                      discription: "",
-                      location: "",
-                      files: [] as File[],
-                      defaultAddress: defaultAddress,
-                    }}
-                    validationSchema={ServiceFormValidation}
-                    enableReinitialize={true}
-                    onSubmit={async (values) => {
-                      try {
-                        setIsSubmitting(true);
-
-                        const locationValidation =
-                          validateLocationName(locationName);
-                        if (!locationValidation.ok) {
-                          setLocationError(locationValidation.message || "");
-                          setIsSubmitting(false);
-                          return;
-                        }
-
-                        if (!defaultAddress) {
-                          console.error("Default address is required");
-                          setIsSubmitting(false);
-                          return;
-                        }
-
-                        setLocationError("");
-                        let imageKeys: string[] = [];
-
-                        if (values.files?.length > 0) {
-                          const folderName = "ServiceComplaints";
-                          const uploadPromises = values.files.map(
-                            async (file) => {
-                              const res = await getS3SingUrl(
-                                file.name,
-                                file.type,
-                                folderName
-                              );
-                              if (res?.data?.uploadURL) {
-                                await fetch(res.data.uploadURL, {
-                                  method: "PUT",
-                                  headers: { "Content-Type": file.type },
-                                  body: file,
-                                });
-                                return res.data.key;
-                              }
-                              return null;
-                            }
-                          );
-                          const uploadResults = await Promise.all(uploadPromises);
-                          imageKeys = uploadResults.filter(
-                            (key): key is string => key !== null
-                          );
-                        }
-
-                        const combinedData: Iconcern = {
-                          name: values.name,
-                          image: imageKeys,
-                          defaultAddress,
-                          discription: values.discription,
-                          locationName,
-                          userId,
-                          serviceId: service?._id,
-                          serviceCharge: service?.serviceCharge,
-                        };
-
-                        const result = await registerComplaint(combinedData);
-                        if (result) setShowModal(true);
-                      } catch (error) {
-                        console.error("Error submitting form:", error);
-                      } finally {
+              <div className="p-8">
+                <Formik
+                  initialValues={{
+                    name: "",
+                    discription: "",
+                    files: [] as File[],
+                  }}
+                  validationSchema={ServiceFormValidation}
+                  enableReinitialize={true}
+                  onSubmit={async (values) => {
+                    try {
+                      console.log("cliked submit bunnn")
+                      setIsSubmitting(true);
+                      if (!selectedAddress) {
+                        toast.error("Please select an address");
                         setIsSubmitting(false);
+                        return;
                       }
-                    }}
-                  >
-                    {(formik) => (
-                      <ServiceForm
-                        formik={formik}
-                        userProfile={userProfile ?? { address: [] }}
-                        defaultAddress={defaultAddress}
-                        setDefaultAddress={setDefaultAddress}
-                        locationName={locationName}
-                        locationError={locationError}
-                        validateLocationName={validateLocationName}
-                        handleFetchLocation={handleFetchLocation}
-                        handleRemoveLocation={handleRemoveLocation}
-                        showLocationOptions={showLocationOptions}
-                        setShowLocationOptions={setShowLocationOptions}
-                        isSubmitting={isSubmitting}
-                      />
-                    )}
-                  </Formik>
-                </div>
-              </div>
-            </div>
-          )}
 
-          {/* Loading skeleton when fetching profile */}
-          {!hasAddresses && !showAddressWarningModal && (
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
-                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                      let imageKeys: string[] = [];
+
+                      if (values.files?.length > 0) {
+                        const folderName = "ServiceComplaints";
+                        const uploadPromises = values.files.map(
+                          async (file) => {
+                            const res = await getS3SingUrl(
+                              file.name,
+                              file.type,
+                              folderName
+                            );
+                            if (res?.data?.uploadURL) {
+                              await fetch(res.data.uploadURL, {
+                                method: "PUT",
+                                headers: { "Content-Type": file.type },
+                                body: file,
+                              });
+                              return res.data.key;
+                            }
+                            return null;
+                          }
+                        );
+                        const uploadResults = await Promise.all(uploadPromises);
+                        imageKeys = uploadResults.filter(
+                          (key): key is string => key !== null
+                        );
+                      }
+
+                      const combinedData: Iconcern = {
+                        name: values.name,
+                        image: imageKeys,
+                        address: selectedAddress, 
+                        discription: values.discription,
+                        userId,
+                        serviceId: service?._id,
+                        serviceCharge: service?.serviceCharge,
+                      };
+
+                      const result = await registerComplaint(combinedData);
+                      if (result) setShowModal(true);
+                    } catch (error) {
+                      console.error("Error submitting form:", error);
+                      toast.error("Failed to submit service request");
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                  }}
+                >
+                  {(formik) => (
+                    <form onSubmit={formik.handleSubmit} className="space-y-6">
+                      {/* Service Name */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formik.values.name}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Enter service name"
+                        />
+                        {formik.touched.name && formik.errors.name && (
+                          <p className="text-red-500 text-sm mt-1">
+                            {formik.errors.name}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Description
+                        </label>
+                        <textarea
+                          name="discription"
+                          value={formik.values.discription}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          rows={4}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Describe your service requirements"
+                        />
+                        {formik.touched.discription &&
+                          formik.errors.discription && (
+                            <p className="text-red-500 text-sm mt-1">
+                              {formik.errors.discription}
+                            </p>
+                          )}
+                      </div>
+
+                      {/* File Upload */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Upload Images (Optional)
+                        </label>
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={(e) => {
+                            const files = Array.from(e.target.files || []);
+                            formik.setFieldValue("files", files);
+                          }}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      {/* Submit Button */}
+                      <div className="flex justify-center pt-4">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting || !selectedAddress}
+                          className={`px-8 py-3 rounded-lg font-semibold text-white transition-all ${
+                            isSubmitting || !selectedAddress
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl"
+                          }`}
+                        >
+                          {isSubmitting
+                            ? "Submitting..."
+                            : "Submit Service Request"}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </Formik>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Loading Your Profile
-              </h3>
-              <p className="text-gray-500">
-                Please wait while we fetch your account information...
-              </p>
             </div>
           )}
         </div>
 
         {/* Modals */}
-        <AddressWarningModal
-          show={showAddressWarningModal}
-          onClose={handleCloseAddressWarningModal}
-          onAddAddress={handleAddAddress}
-          userName={userProfile?.name || userData?.name}
+        {showAddAddressForm && (
+          <AddAddressForm
+            role="user"
+            mode={formMode}
+            initialData={editingAddress || undefined}
+            onClose={() => {
+              setShowAddAddressForm(false);
+              setEditingAddress(null);
+            }}
+            onSave={handleSaveAddress}
+          />
+        )}
+
+        <ConfirmModal
+          isOpen={isConfirmModalOpen}
+          title={
+            confirmAction.type === "remove"
+              ? "Remove Address"
+              : "Set Default Address"
+          }
+          message={
+            confirmAction.type === "remove"
+              ? "Are you sure you want to delete this address?"
+              : "Do you want to set this as your default address?"
+          }
+          onConfirm={handleConfirmAction}
+          onCancel={() => setIsConfirmModalOpen(false)}
         />
+
         <ConformationModal show={showModal} onClose={handleCloseModal} />
       </div>
       <Footer />
