@@ -50,7 +50,7 @@ const Service: React.FC = () => {
 
   const [service, setService] = useState<Iconcern>();
   const [serviceAmount, setServiceAmount] = useState<number>();
-  const [userProfile, setUserProfile] = useState<UserData>();
+  const [_, setUserProfile] = useState<UserData>();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [serviceImage, setServiceImage] = useState<string>("");
@@ -59,7 +59,7 @@ const Service: React.FC = () => {
 
   // Address management states
   const [showAddAddressForm, setShowAddAddressForm] = useState(false);
-  const [formMode, setFormMode] = useState<"add" | "edit">("add");
+  const [formMode] = useState<"add" | "edit">("add");
   const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
   const [addressRefreshKey, setAddressRefreshKey] = useState(0);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -309,7 +309,7 @@ const Service: React.FC = () => {
                   enableReinitialize={true}
                   onSubmit={async (values) => {
                     try {
-                      console.log("cliked submit bunnn")
+                      console.log("cliked submit bunnn");
                       setIsSubmitting(true);
                       if (!selectedAddress) {
                         toast.error("Please select an address");
@@ -348,7 +348,7 @@ const Service: React.FC = () => {
                       const combinedData: Iconcern = {
                         name: values.name,
                         image: imageKeys,
-                        address: selectedAddress, 
+                        address: selectedAddress,
                         discription: values.discription,
                         userId,
                         serviceId: service?._id,
