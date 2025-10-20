@@ -481,7 +481,7 @@ const Service: React.FC = () => {
           onCancel={() => setIsConfirmModalOpen(false)}
         />
 
-        <ConformationModal show={showModal} onClose={handleCloseModal} />
+        <ConformationModal show={showModal} onClose={handleCloseModal}/>
       </div>
       <Footer />
     </>

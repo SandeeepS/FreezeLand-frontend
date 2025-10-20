@@ -6,8 +6,11 @@ import { fadeIn } from "../../variants";
 import { getImageUrl } from "../../Api/user";
 import { ServiceListingCardProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import ServiceModal from "../../Pages/User/Service/ServiceModal";
+import { useAppSelector } from "../../App/store";
 
 const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
+  const userData = useAppSelector((state) => state.auth.userData);
+  const userId = userData?.id;
   const [image, setImage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -30,8 +33,16 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
     setIsModalOpen(true);
   };
 
-  const handleRegisterComplaint = (serviceId: string) => {
-    navigate(`/user/service/${serviceId}`);
+  const handleRegisterComplaint = async (data: { 
+    name: string; 
+    discription: string; 
+    files: File[]; 
+    address: string; 
+    serviceId: string; 
+    userId?: string; 
+    serviceCharge: number; 
+  }) => {
+    navigate(`/user/service/${data.serviceId}`);
   };
 
   return (
@@ -84,7 +95,8 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceId={data._id}
-        onRegisterComplaint={handleRegisterComplaint}
+        userId={userId}
+        onSubmit={handleRegisterComplaint}
       />
     </>
   );
