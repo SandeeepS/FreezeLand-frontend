@@ -40,15 +40,6 @@ interface ServiceModalProps {
   onClose: () => void;
   serviceId: string;
   userId?: string;
-  onSubmit: (data: {
-    name: string;
-    discription: string;
-    files: File[];
-    address: string;
-    serviceId: string;
-    userId?: string;
-    serviceCharge: number;
-  }) => Promise<void>;
 }
 
 const ServiceModal: React.FC<ServiceModalProps> = ({
@@ -56,7 +47,6 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
   onClose,
   serviceId,
   userId,
-  onSubmit,
 }) => {
   // Step management
   const [currentStep, setCurrentStep] = useState(1);

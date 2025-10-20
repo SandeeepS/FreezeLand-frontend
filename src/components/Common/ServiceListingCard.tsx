@@ -1,6 +1,5 @@
 // ServiceListingCard.tsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../variants";
 import { getImageUrl } from "../../Api/user";
@@ -13,7 +12,6 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
   const userId = userData?.id;
   const [image, setImage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,18 +29,6 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
 
   const handleClick = () => {
     setIsModalOpen(true);
-  };
-
-  const handleRegisterComplaint = async (data: { 
-    name: string; 
-    discription: string; 
-    files: File[]; 
-    address: string; 
-    serviceId: string; 
-    userId?: string; 
-    serviceCharge: number; 
-  }) => {
-    navigate(`/user/service/${data.serviceId}`);
   };
 
   return (
@@ -96,7 +82,6 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
         onClose={() => setIsModalOpen(false)}
         serviceId={data._id}
         userId={userId}
-        onSubmit={handleRegisterComplaint}
       />
     </>
   );
