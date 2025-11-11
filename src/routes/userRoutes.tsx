@@ -20,7 +20,6 @@ const ForgetPassword = React.lazy(() => import("../Pages/User/ForgetPassword"));
 const PaymentSuccessPage = React.lazy(
   () => import("../Pages/User/Payment/PaymentSuccessPage")
 );
-const Service = React.lazy(() => import("../Pages/User/Service"));
 
 export const userRoutes: RouteObject[] = [
   { index: true, path: "/", element: <UserHomePage /> },
@@ -56,7 +55,6 @@ export const userRoutes: RouteObject[] = [
           { path: "payment", element: <Payments /> },
           { path: "queue", element: <Queue /> },
           { path: "serviceHistory", element: <UserServiceHistory /> },
-          { path: "service/:id", element: <Service /> },
           {
             path: "registeredComplaintByUser/:id",
             element: <ComplaintDetail />,
