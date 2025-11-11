@@ -1,16 +1,17 @@
 // ServiceListingCard.tsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../variants";
 import { getImageUrl } from "../../Api/user";
 import { ServiceListingCardProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
 import ServiceModal from "../../Pages/User/Service/ServiceModal";
+import { useAppSelector } from "../../App/store";
 
 const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
+  const userData = useAppSelector((state) => state.auth.userData);
+  const userId = userData?.id;
   const [image, setImage] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,10 +29,6 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
 
   const handleClick = () => {
     setIsModalOpen(true);
-  };
-
-  const handleRegisterComplaint = (serviceId: string) => {
-    navigate(`/user/service/${serviceId}`);
   };
 
   return (
@@ -84,7 +81,7 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceId={data._id}
-        onRegisterComplaint={handleRegisterComplaint}
+        userId={userId}
       />
     </>
   );
