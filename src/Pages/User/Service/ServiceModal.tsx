@@ -292,7 +292,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with Close Button */}
-        <div className="relative px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <div className="relative   px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <button
             onClick={handleClose}
             className="absolute top-4 right-4 p-2 hover:bg-white rounded-full transition-colors"
@@ -306,7 +306,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
           </h2>
 
           {/* Progress Steps */}
-          <div className="flex items-center justify-between max-w-md">
+          <div className="flex items-center  justify-between max-w-md">
             {steps.map((step, index) => (
               <React.Fragment key={step.number}>
                 <div className="flex flex-col items-center">

@@ -4,15 +4,11 @@ import { motion } from "framer-motion";
 import { fadeIn } from "../../variants";
 import { getImageUrl } from "../../Api/user";
 import { ServiceListingCardProps } from "../../interfaces/IComponents/Common/ICommonInterfaces";
-import ServiceModal from "../../Pages/User/Service/ServiceModal";
-import { useAppSelector } from "../../App/store";
+import { useNavigate } from "react-router-dom";
 
 const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
-  const userData = useAppSelector((state) => state.auth.userData);
-  const userId = userData?.id;
   const [image, setImage] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,7 +24,8 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
   }, [data.imageKey]);
 
   const handleClick = () => {
-    setIsModalOpen(true);
+    console.log("service id from the cared is",data._id)
+    navigate(`/user/service/${data._id}`);
   };
 
   return (
@@ -77,12 +74,12 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
       </motion.div>
 
       {/* Service Details Modal */}
-      <ServiceModal
+      {/* <ServiceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceId={data._id}
         userId={userId}
-      />
+      /> */}
     </>
   );
 };
