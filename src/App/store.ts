@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/AuthSlice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
+import serviceRegistrationReduce from "./slices/ServiceRegistrationSlice";
 import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
@@ -15,6 +16,7 @@ const persistedReducer = persistReducer(persistConfig, authReducer);
 export const store = configureStore({
   reducer: {
     auth: persistedReducer,
+    serviceRegistration : serviceRegistrationReduce,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

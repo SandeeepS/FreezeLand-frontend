@@ -11,6 +11,7 @@ import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { getImageUrl } from "../Api/user";
 import ErrorFallBack from "../components/Common/ErrorFallBack";
+import ServiceRegistrationPage from "../Pages/User/Service/ServiceRegistrationPage";
 
 const UserHomePage = React.lazy(() => import("../Pages/User/UserHomePage"));
 const UserSignupPage = React.lazy(() => import("../Pages/User/UserSignupPage"));
@@ -54,6 +55,8 @@ export const userRoutes: RouteObject[] = [
           { path: "history", element: <History /> },
           { path: "payment", element: <Payments /> },
           { path: "queue", element: <Queue /> },
+          { path: "service/:serviceId", element: <ServiceRegistrationPage /> },
+
           { path: "serviceHistory", element: <UserServiceHistory /> },
           {
             path: "registeredComplaintByUser/:id",
