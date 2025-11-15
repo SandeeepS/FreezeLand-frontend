@@ -24,7 +24,7 @@ const ServiceListingCard: React.FC<ServiceListingCardProps> = ({ data }) => {
   }, [data.imageKey]);
 
   const handleClick = () => {
-    console.log("service id from the cared is",data._id)
+    console.log("service id from the cared is", data._id);
     navigate(`/user/service/${data._id}`);
   };
 
