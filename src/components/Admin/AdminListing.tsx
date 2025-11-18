@@ -81,13 +81,8 @@ const AdminListing: React.FC = () => {
   return (
     <>
       {/* Side Bar */}
-      <div className="w-20 md:w-56  fixed text-white left-0  h-screen border-r bg-[#4B4B4B]">
-        {/* Heading */}
-        <div className="text-center">
-          <h1 className="w-full text-xl md:text-2xl text-freeze-color font-exo p-6 md:p-10">
-            FREEZE <span className="text-white font-exo">LAND</span>
-          </h1>
-        </div>
+      <div className="w-20 md:w-56  mt-24 fixed text-white left-0  h-screen border-r bg-[#4B4B4B]">
+ 
 
         {/* Profile */}
         {/* <div className="flex justify-center items-center mt-4 md:mt-8">
@@ -104,14 +99,14 @@ const AdminListing: React.FC = () => {
         </h2> */}
 
         {/* Listing */}
-        <div className="mx-4 md:mx-12 mt-6 space-y-4 md:space-y-5">
-          <ul className="space-y-4 md:space-y-6">
+        <div className="  mt-16 ">
+          <ul className="space-y-4 md:space-y-6 w-full ">
             {SIDEBAR_LINKS.map((link, index) => (
               <li
                 key={index}
-                className={`font-medium rounded-md  hover:bg-freeze-color hover:text-white transition-all duration-300 ${
+                className={`font-medium  w-full md:pl-8 h-8 hover:bg-freeze-color hover:text-white transition-all duration-300 ${
                   activeLink === index ? "text-freeze-color" : ""
-                }`}
+                }   `}
               >
                 <Link
                   to={link.path}
