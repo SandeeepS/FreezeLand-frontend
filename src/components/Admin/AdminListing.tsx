@@ -109,7 +109,7 @@ const AdminListing: React.FC = () => {
             {SIDEBAR_LINKS.map((link, index) => (
               <li
                 key={index}
-                className={`font-medium w-full md:pl-8 h-8 hover:bg-freeze-color ${
+                className={`font-medium w-full md:pl-8 h-8 pt-1 hover:bg-freeze-color ${
                   link.logout ? "hover:bg-red-600" : "hover:bg-freeze-color"
                 } hover:text-white transition-all duration-300 ${
                   activeLink === index && !link.logout
@@ -120,7 +120,7 @@ const AdminListing: React.FC = () => {
                 {link.logout ? (
                   <button
                     onClick={handleLogout}
-                    className="flex items-center justify-center md:justify-start md:space-x-5 w-full h-full text-left"
+                    className="flex items-center justify-center md:justify-start md:space-x-5 w-full h-full text-left "
                   >
                     <span>{link.icon()}</span>
                     <span className="hidden md:inline text-sm md:text-base ml-2">
@@ -129,8 +129,8 @@ const AdminListing: React.FC = () => {
                   </button>
                 ) : (
                   <Link
-                    to={link.path}
-                    className="flex items-center justify-center md:justify-start md:space-x-5"
+                    to={link.path as string}
+                    className="flex items-center justify-center md:justify-start md:space-x-5 "
                     onClick={() => handleLinkClick(index)}
                   >
                     <span>{link.icon({})}</span>
