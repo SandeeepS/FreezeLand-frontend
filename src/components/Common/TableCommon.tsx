@@ -251,7 +251,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
       </Box>
 
       <TableContainer sx={{ maxHeight: 600, minHeight: 350 }}>
-        <Table stickyHeader>
+        <Table stickyHeader sx={{ overflow: "hidden" }}>
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -284,141 +284,158 @@ const TableCommon: React.FC<TableCommonProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((datas, index) => (
-                <TableRow
-                  hover
-                  key={datas._id}
+            {sortedData.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
                   sx={{
-                    transition: "all 0.2s ease",
-                    backgroundColor: index % 2 === 0 ? "#ffffff" : "#fafbfc",
-                    "&:hover": {
-                      backgroundColor: "#f0f4ff !important",
-                      transform: "scale(1.002)",
-                      boxShadow: "0 2px 8px rgba(102, 126, 234, 0.1)",
-                    },
+                    textAlign: "center",
+                    padding: "40px 0",
+                    fontSize: "1rem",
+                    color: "#777",
+                    fontWeight: 600,
                   }}
                 >
-                  <TableCell
+                  No Data Found
+                </TableCell>
+              </TableRow>
+            ) : (
+              sortedData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((datas, index) => (
+                  <TableRow
+                    hover
+                    key={datas._id}
                     sx={{
-                      fontWeight: 600,
-                      color: "#34495e",
-                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      backgroundColor: index % 2 === 0 ? "#ffffff" : "#fafbfc",
+                      "&:hover": {
+                        backgroundColor: "#f0f4ff !important",
+                        transform: "scale(1.002)",
+                        boxShadow: "0 2px 8px rgba(102, 126, 234, 0.1)",
+                      },
                     }}
                   >
-                    {datas.name}
-                  </TableCell>
-                  {datas.email && (
-                    <TableCell sx={{ color: "#5a6c7d", fontSize: "0.9rem" }}>
-                      {datas.email}
+                    <TableCell
+                      sx={{
+                        fontWeight: 600,
+                        color: "#34495e",
+                        fontSize: "0.95rem",
+                      }}
+                    >
+                      {datas.name}
                     </TableCell>
-                  )}
-                  {currentPath !== "/admin/complaints" && (
-                    <TableCell>
-                      <Chip
-                        label={datas.isBlocked ? "Blocked" : "Active"}
-                        size="small"
-                        sx={{
-                          backgroundColor: datas.isBlocked
-                            ? "#ffebee"
-                            : "#e8f5e9",
-                          color: datas.isBlocked ? "#c62828" : "#2e7d32",
-                          fontWeight: 600,
-                          fontSize: "0.8rem",
-                          borderRadius: "6px",
-                          padding: "4px 8px",
-                          border: `1px solid ${
-                            datas.isBlocked ? "#ef9a9a" : "#a5d6a7"
-                          }`,
-                        }}
-                      />
-                    </TableCell>
-                  )}
-                  {currentPath !== "/admin/complaints" && (
-                    <TableCell>
-                      <ToggleButton
-                        value="check"
-                        selected={datas.isBlocked}
-                        onChange={() =>
-                          handleBlockUnblock(
-                            datas._id,
-                            datas.isBlocked ?? false
-                          )
-                        }
-                        sx={{
-                          backgroundColor: datas.isBlocked
-                            ? "#f44336"
-                            : "#4caf50",
-                          height: "36px",
-                          color: "white",
-                          width: "120px",
-                          fontWeight: 600,
-                          fontSize: "0.85rem",
-                          borderRadius: "8px",
-                          border: "none",
-                          transition: "all 0.3s ease",
-                          "&.Mui-selected": {
+                    {datas.email && (
+                      <TableCell sx={{ color: "#5a6c7d", fontSize: "0.9rem" }}>
+                        {datas.email}
+                      </TableCell>
+                    )}
+                    {currentPath !== "/admin/complaints" && (
+                      <TableCell>
+                        <Chip
+                          label={datas.isBlocked ? "Blocked" : "Active"}
+                          size="small"
+                          sx={{
+                            backgroundColor: datas.isBlocked
+                              ? "#ffebee"
+                              : "#e8f5e9",
+                            color: datas.isBlocked ? "#c62828" : "#2e7d32",
+                            fontWeight: 600,
+                            fontSize: "0.8rem",
+                            borderRadius: "6px",
+                            padding: "4px 8px",
+                            border: `1px solid ${
+                              datas.isBlocked ? "#ef9a9a" : "#a5d6a7"
+                            }`,
+                          }}
+                        />
+                      </TableCell>
+                    )}
+                    {currentPath !== "/admin/complaints" && (
+                      <TableCell>
+                        <ToggleButton
+                          value="check"
+                          selected={datas.isBlocked}
+                          onChange={() =>
+                            handleBlockUnblock(
+                              datas._id,
+                              datas.isBlocked ?? false
+                            )
+                          }
+                          sx={{
                             backgroundColor: datas.isBlocked
                               ? "#f44336"
                               : "#4caf50",
+                            height: "36px",
                             color: "white",
-                          },
-                          "&:hover": {
-                            backgroundColor: datas.isBlocked
-                              ? "#d32f2f"
-                              : "#388e3c",
-                            transform: "translateY(-2px)",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                          },
-                        }}
-                      >
-                        {datas.isBlocked ? "Blocked" : "Unblocked"}
-                      </ToggleButton>
-                    </TableCell>
-                  )}
-                  {/* <TableCell>
+                            width: "120px",
+                            fontWeight: 600,
+                            fontSize: "0.85rem",
+                            borderRadius: "8px",
+                            border: "none",
+                            transition: "all 0.3s ease",
+                            "&.Mui-selected": {
+                              backgroundColor: datas.isBlocked
+                                ? "#f44336"
+                                : "#4caf50",
+                              color: "white",
+                            },
+                            "&:hover": {
+                              backgroundColor: datas.isBlocked
+                                ? "#d32f2f"
+                                : "#388e3c",
+                              transform: "translateY(-2px)",
+                              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                            },
+                          }}
+                        >
+                          {datas.isBlocked ? "Blocked" : "Unblocked"}
+                        </ToggleButton>
+                      </TableCell>
+                    )}
+                    {/* <TableCell>
                     <Button onClick={() => handleEdit(datas._id)}>
                       Edit
                     </Button>
                   </TableCell> */}
-                  {/* <TableCell>
+                    {/* <TableCell>
                     <Button
                       onClick={() => handleDelete(datas._id, datas.isDeleted)}
                     >
                       Delete
                     </Button>
                   </TableCell> */}
-                  {role && handleViewMore && role === "admin" && (
-                    <TableCell>
-                      <Button
-                        onClick={() => handleViewMore(datas._id)}
-                        variant="contained"
-                        sx={{
-                          background:
-                            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                          color: "white",
-                          fontWeight: 600,
-                          fontSize: "0.85rem",
-                          textTransform: "none",
-                          borderRadius: "8px",
-                          padding: "8px 20px",
-                          boxShadow: "0 2px 8px rgba(102, 126, 234, 0.3)",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
+                    {role && handleViewMore && role === "admin" && (
+                      <TableCell>
+                        <Button
+                          onClick={() => handleViewMore(datas._id)}
+                          variant="contained"
+                          sx={{
                             background:
-                              "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
-                            transform: "translateY(-2px)",
-                            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
-                          },
-                        }}
-                      >
-                        View More
-                      </Button>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
+                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            color: "white",
+                            fontWeight: 600,
+                            fontSize: "0.85rem",
+                            textTransform: "none",
+                            borderRadius: "8px",
+                            padding: "8px 20px",
+                            boxShadow: "0 2px 8px rgba(102, 126, 234, 0.3)",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              background:
+                                "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                              transform: "translateY(-2px)",
+                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
+                            },
+                          }}
+                        >
+                          View More
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

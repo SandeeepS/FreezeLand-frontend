@@ -22,7 +22,7 @@ const AdminComplaintListing = () => {
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
 
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150, align: "" },
   ];
 
   useEffect(() => {
