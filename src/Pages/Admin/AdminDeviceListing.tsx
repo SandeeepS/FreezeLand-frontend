@@ -27,10 +27,10 @@ const AdminDeviceListing: React.FC = () => {
       id: "isBlocked",
       label: "Status",
       minWidth: 170,
-      align: "right",
+      align: "",
       format: (value: boolean) => (value ? "Blocked" : "Active"),
     },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150, align: "" },
   ];
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const AdminDeviceListing: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[695px]">
       <div className="mx-4">
         <TopBar
           pathName={pathName}
@@ -103,7 +103,7 @@ const AdminDeviceListing: React.FC = () => {
         />
       </div>
 
-      <div className="flex justify-center items-center mx-5 h-screen">
+      <div className="flex  mx-5 h-screen ">
         <TableCommon
           columns={columns}
           data={filteredDevices}

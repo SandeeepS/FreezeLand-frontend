@@ -17,10 +17,10 @@ const AdminMechListing: React.FC = () => {
       id: "isBlocked",
       label: "Status",
       minWidth: 170,
-      align: "right",
+      align: "",
       format: (value: boolean) => (value ? "Blocked" : "Active"),
     },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150, align: "" },
   ];
   const location = useLocation();
   const pathName = location.pathname;
@@ -70,6 +70,7 @@ const AdminMechListing: React.FC = () => {
       variant: "contained" as const,
       color: "primary" as const,
     },
+    
   ];
 
   const filteredMechs = mechs.filter(
@@ -79,7 +80,7 @@ const AdminMechListing: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[695px]">
       <div className="mx-4">
         <TopBar
           pathName={pathName}
@@ -96,7 +97,7 @@ const AdminMechListing: React.FC = () => {
         />
       </div>
 
-      <div className="flex justify-center items-center mx-5  h-screen">
+      <div className="flex   mx-5  h-screen">
         <TableCommon
           columns={columns}
           data={filteredMechs}

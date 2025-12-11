@@ -71,7 +71,7 @@ const AdminComplaintListing = () => {
     );
 
   return (
-    <div className="admin-complaint-listing flex flex-col h-screen">
+    <div className="admin-complaint-listing flex flex-col h-[695px]">
       <div className="mx-4">
         <TopBar
           pathName={pathName}
@@ -82,7 +82,7 @@ const AdminComplaintListing = () => {
       </div>
       <div className="flex  justify-center my-5"></div>
 
-      <div className="tableDiv flex justify-center items-center mx-5 h-screen">
+      <div className="tableDiv flex  mx-5 h-screen">
         <TableCommon
           columns={columns}
           data={filteredComplaint}

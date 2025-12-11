@@ -12,6 +12,8 @@ import ToggleButton from "@mui/material/ToggleButton";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import SortIcon from "@mui/icons-material/Sort";
@@ -30,7 +32,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
   const location = useLocation();
   const currentPath = location.pathname;
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [rowsPerPage, setRowsPerPage] = useState(4);
   const [filter, setFilter] = useState<"all" | "blocked" | "unblocked">("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(
@@ -79,7 +81,10 @@ const TableCommon: React.FC<TableCommonProps> = ({
             blockUnblockFunciton(id).then((result) => {
               if (result?.success) {
                 updateStatus(id, !isCurrentlyBlocked, false);
-                Swal.fire({ title: "Success!", icon: "success" });
+                Swal.fire({
+                  title: "Success!",
+                  icon: "success",
+                });
               } else {
                 toast.error(result?.message);
               }
@@ -126,63 +131,127 @@ const TableCommon: React.FC<TableCommonProps> = ({
     <Paper
       sx={{
         width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
+        overflow: "hidden",
+        borderRadius: 3,
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+        background: "linear-gradient(to bottom, #ffffff, #f8f9fa)",
+        height: 500,
       }}
     >
       {/* Filter & Sort Options */}
-      <div className="flex justify-end p-4 space-x-4">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: 2,
+          padding: "20px 24px",
+          borderBottom: "2px solid #e3f2fd",
+        }}
+      >
         {/* Filter Icon Button with Dropdown */}
-        <div>
-          <IconButton onClick={(e) => setFilterAnchorEl(e.currentTarget)}>
-            <FilterListIcon />
-          </IconButton>
-          <Menu
-            anchorEl={filterAnchorEl}
-            open={Boolean(filterAnchorEl)}
-            onClose={() => setFilterAnchorEl(null)}
+        <IconButton
+          onClick={(e) => setFilterAnchorEl(e.currentTarget)}
+          sx={{
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            color: "#667eea",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "white",
+              transform: "translateY(-2px)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            },
+          }}
+        >
+          <FilterListIcon />
+        </IconButton>
+
+        <Menu
+          anchorEl={filterAnchorEl}
+          open={Boolean(filterAnchorEl)}
+          onClose={() => setFilterAnchorEl(null)}
+          PaperProps={{
+            sx: {
+              borderRadius: 2,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+              mt: 1,
+            },
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              setFilter("all");
+              setFilterAnchorEl(null);
+            }}
+            selected={filter === "all"}
+            sx={{
+              "&.Mui-selected": {
+                backgroundColor: "#e3f2fd",
+                "&:hover": { backgroundColor: "#bbdefb" },
+              },
+            }}
           >
-            <MenuItem
-              selected={filter === "all"}
-              onClick={() => {
-                setFilter("all");
-                setFilterAnchorEl(null);
-              }}
-            >
-              All Users
-            </MenuItem>
-            <MenuItem
-              selected={filter === "blocked"}
-              onClick={() => {
-                setFilter("blocked");
-                setFilterAnchorEl(null);
-              }}
-            >
-              Blocked Users
-            </MenuItem>
-            <MenuItem
-              selected={filter === "unblocked"}
-              onClick={() => {
-                setFilter("unblocked");
-                setFilterAnchorEl(null);
-              }}
-            >
-              Unblocked Users
-            </MenuItem>
-          </Menu>
-        </div>
+            All Users
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setFilter("blocked");
+              setFilterAnchorEl(null);
+            }}
+            selected={filter === "blocked"}
+            sx={{
+              "&.Mui-selected": {
+                backgroundColor: "#ffebee",
+                "&:hover": { backgroundColor: "#ffcdd2" },
+              },
+            }}
+          >
+            Blocked Users
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setFilter("unblocked");
+              setFilterAnchorEl(null);
+            }}
+            selected={filter === "unblocked"}
+            sx={{
+              "&.Mui-selected": {
+                backgroundColor: "#e8f5e9",
+                "&:hover": { backgroundColor: "#c8e6c9" },
+              },
+            }}
+          >
+            Unblocked Users
+          </MenuItem>
+        </Menu>
 
         {/* Sort Icon Button */}
         <IconButton
           onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+          sx={{
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            color: "#667eea",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "white",
+              transform: "translateY(-2px)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            },
+          }}
         >
-          <SortIcon />
+          <SortIcon
+            sx={{
+              transform: sortOrder === "desc" ? "rotate(180deg)" : "none",
+              transition: "transform 0.3s ease",
+            }}
+          />
         </IconButton>
-      </div>
+      </Box>
 
-      <TableContainer sx={{ flexGrow: 1 }}>
-        <Table stickyHeader aria-label="sticky table">
+      <TableContainer sx={{ maxHeight: 600, minHeight: 350 }}>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -198,6 +267,16 @@ const TableCommon: React.FC<TableCommonProps> = ({
                       | undefined
                   }
                   style={{ minWidth: column.minWidth }}
+                  sx={{
+                    backgroundColor: "#f5f7fa",
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    color: "#2c3e50",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    borderBottom: "2px solid #e0e0e0",
+                    padding: "16px",
+                  }}
                 >
                   {column.label}
                 </TableCell>
@@ -207,20 +286,60 @@ const TableCommon: React.FC<TableCommonProps> = ({
           <TableBody>
             {sortedData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((datas) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={datas._id}>
-                  <TableCell>{datas.name}</TableCell>
-                  {datas.email && <TableCell>{datas.email}</TableCell>}
-                  {currentPath !== "/admin/complaints" && (
-                    <TableCell align="right">
-                      {datas.isBlocked ? "Blocked" : "Active"}
+              .map((datas, index) => (
+                <TableRow
+                  hover
+                  key={datas._id}
+                  sx={{
+                    transition: "all 0.2s ease",
+                    backgroundColor: index % 2 === 0 ? "#ffffff" : "#fafbfc",
+                    "&:hover": {
+                      backgroundColor: "#f0f4ff !important",
+                      transform: "scale(1.002)",
+                      boxShadow: "0 2px 8px rgba(102, 126, 234, 0.1)",
+                    },
+                  }}
+                >
+                  <TableCell
+                    sx={{
+                      fontWeight: 600,
+                      color: "#34495e",
+                      fontSize: "0.95rem",
+                    }}
+                  >
+                    {datas.name}
+                  </TableCell>
+                  {datas.email && (
+                    <TableCell sx={{ color: "#5a6c7d", fontSize: "0.9rem" }}>
+                      {datas.email}
                     </TableCell>
                   )}
-                  <TableCell align="right">
-                    {currentPath !== "/admin/complaints" && (
+                  {currentPath !== "/admin/complaints" && (
+                    <TableCell>
+                      <Chip
+                        label={datas.isBlocked ? "Blocked" : "Active"}
+                        size="small"
+                        sx={{
+                          backgroundColor: datas.isBlocked
+                            ? "#ffebee"
+                            : "#e8f5e9",
+                          color: datas.isBlocked ? "#c62828" : "#2e7d32",
+                          fontWeight: 600,
+                          fontSize: "0.8rem",
+                          borderRadius: "6px",
+                          padding: "4px 8px",
+                          border: `1px solid ${
+                            datas.isBlocked ? "#ef9a9a" : "#a5d6a7"
+                          }`,
+                        }}
+                      />
+                    </TableCell>
+                  )}
+                  {currentPath !== "/admin/complaints" && (
+                    <TableCell>
                       <ToggleButton
                         value="check"
-                        selected={!datas.isBlocked}
+                        selected={datas.isBlocked}
                         onChange={() =>
                           handleBlockUnblock(
                             datas._id,
@@ -228,66 +347,102 @@ const TableCommon: React.FC<TableCommonProps> = ({
                           )
                         }
                         sx={{
-                          backgroundColor: datas.isBlocked ? "red" : "#90ee90",
-                          height: "35px",
+                          backgroundColor: datas.isBlocked
+                            ? "#f44336"
+                            : "#4caf50",
+                          height: "36px",
                           color: "white",
                           width: "120px",
+                          fontWeight: 600,
+                          fontSize: "0.85rem",
+                          borderRadius: "8px",
+                          border: "none",
+                          transition: "all 0.3s ease",
                           "&.Mui-selected": {
                             backgroundColor: datas.isBlocked
-                              ? "red"
-                              : "#90ee90",
+                              ? "#f44336"
+                              : "#4caf50",
+                            color: "white",
                           },
                           "&:hover": {
                             backgroundColor: datas.isBlocked
-                              ? "#ff4d4d"
-                              : "#81c784",
+                              ? "#d32f2f"
+                              : "#388e3c",
+                            transform: "translateY(-2px)",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
                           },
                         }}
                       >
                         {datas.isBlocked ? "Blocked" : "Unblocked"}
                       </ToggleButton>
-                    )}
-
-                    {/* <Button
-                      variant="outlined"
-                      sx={{ marginLeft: "10px" }}
-                      onClick={() => handleEdit(datas._id)}
-                    >
+                    </TableCell>
+                  )}
+                  {/* <TableCell>
+                    <Button onClick={() => handleEdit(datas._id)}>
                       Edit
-                    </Button> */}
-                    {/* <Button
-                      variant="contained"
-                      sx={{ marginLeft: "10px" }}
-                      color="error"
+                    </Button>
+                  </TableCell> */}
+                  {/* <TableCell>
+                    <Button
                       onClick={() => handleDelete(datas._id, datas.isDeleted)}
                     >
                       Delete
-                    </Button> */}
-                    {role && handleViewMore && role === "admin" && (
+                    </Button>
+                  </TableCell> */}
+                  {role && handleViewMore && role === "admin" && (
+                    <TableCell>
                       <Button
-                        variant="contained"
-                        sx={{ marginLeft: "10px" }}
-                        color="primary"
                         onClick={() => handleViewMore(datas._id)}
+                        variant="contained"
+                        sx={{
+                          background:
+                            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          color: "white",
+                          fontWeight: 600,
+                          fontSize: "0.85rem",
+                          textTransform: "none",
+                          borderRadius: "8px",
+                          padding: "8px 20px",
+                          boxShadow: "0 2px 8px rgba(102, 126, 234, 0.3)",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                            transform: "translateY(-2px)",
+                            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
+                          },
+                        }}
                       >
                         View More
                       </Button>
-                    )}
-                  </TableCell>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
           </TableBody>
         </Table>
       </TableContainer>
-
       <TablePagination
-        rowsPerPageOptions={[4, 10, 25]}
+        // rowsPerPageOptions={[2, 5, 10, 25]}
         component="div"
         count={sortedData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          borderTop: "2px solid #e3f2fd",
+          backgroundColor: "#fafbfc",
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
+            {
+              fontWeight: 600,
+              color: "#5a6c7d",
+            },
+          "& .MuiTablePagination-select": {
+            borderRadius: "6px",
+            border: "1px solid #e0e0e0",
+          },
+        }}
       />
     </Paper>
   );
