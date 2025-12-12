@@ -75,8 +75,8 @@ const AdminUserListing: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-[695px]">
-      <div className=" mx-4">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <div className=" mx-4 flex-shrink-0">
         
         <TopBar
           pathName={pathName}
@@ -88,7 +88,7 @@ const AdminUserListing: React.FC = () => {
       <div className="flex items-center my-5">
 
       </div>
-      <div className="flex  mx-5 h-screen">
+      <div className="flex-1 mx-5 mb-5 overflow-hidden">
         <TableCommon
           columns={columns}
           data={filteredUsers || []} 

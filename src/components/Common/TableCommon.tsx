@@ -28,6 +28,7 @@ const TableCommon: React.FC<TableCommonProps> = ({
   blockUnblockFunciton,
   role,
   handleViewMore,
+  serverSide,
 }) => {
   const location = useLocation();
   const currentPath = location.pathname;
@@ -39,28 +40,25 @@ const TableCommon: React.FC<TableCommonProps> = ({
     null
   );
 
-  // Filter Data
-  const filteredData = data.filter((user) => {
-    if (filter === "blocked") return user.isBlocked;
-    if (filter === "unblocked") return !user.isBlocked;
-    return true;
-  });
+  const finalData = data ?? [];
 
-  // Sort Data
-  const sortedData = [...filteredData].sort((a, b) => {
-    if (sortOrder === "asc") return a.name.localeCompare(b.name);
-    return b.name.localeCompare(a.name);
-  });
+  // use count:
+  const count = serverSide?.total ?? 0;
 
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
+  // pagination handlers:
+  const handlePageChange = (_: unknown, newPage: number) => {
+    if (serverSide) serverSide.onPageChange(newPage);
+    else setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newLimit = +e.target.value;
+    if (serverSide) {
+      serverSide.onRowsPerPageChange(newLimit);
+    } else {
+      setRowsPerPage(newLimit);
+      setPage(0);
+    }
   };
 
   const handleBlockUnblock = async (
@@ -99,34 +97,6 @@ const TableCommon: React.FC<TableCommonProps> = ({
     }
   };
 
-  // const handleEdit = (_id: string | undefined) => {
-  //   navigate(`${navLink}${_id}`);
-  // };
-
-  // const handleDelete = async (id: string, isCurrentlyDeleted: boolean) => {
-  //   try {
-  //     Swal.fire({
-  //       title: "Are you sure?",
-  //       icon: "question",
-  //       showCancelButton: true,
-  //       confirmButtonColor: "#3085d6",
-  //       cancelButtonColor: "#d33",
-  //       confirmButtonText: "Yes!",
-  //     }).then((result) => {
-  //       if (result.isConfirmed) {
-  //         deleteFunction(id).then((result) => {
-  //           if (result?.success) {
-  //             updateStatus(id, isCurrentlyDeleted, true);
-  //             Swal.fire({ title: "Deleted!", icon: "success" });
-  //           } else toast.error(result?.message);
-  //         });
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log(error as Error);
-  //   }
-  // };
-
   return (
     <Paper
       sx={{
@@ -134,19 +104,20 @@ const TableCommon: React.FC<TableCommonProps> = ({
         overflow: "hidden",
         borderRadius: 3,
         boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-        background: "linear-gradient(to bottom, #ffffff, #f8f9fa)",
-        height: 500,
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
       }}
     >
       {/* Filter & Sort Options */}
       <Box
+        display="flex"
+        justifyContent="flex-end"
+        gap={2}
+        p={2}
         sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: 2,
-          padding: "20px 24px",
-          borderBottom: "2px solid #e3f2fd",
+          borderBottom: "1px solid #e0e0e0",
+          flexShrink: 0,
         }}
       >
         {/* Filter Icon Button with Dropdown */}
@@ -241,41 +212,45 @@ const TableCommon: React.FC<TableCommonProps> = ({
             },
           }}
         >
-          <SortIcon
-            sx={{
-              transform: sortOrder === "desc" ? "rotate(180deg)" : "none",
-              transition: "transform 0.3s ease",
-            }}
-          />
+          <SortIcon />
         </IconButton>
       </Box>
 
-      <TableContainer sx={{ maxHeight: 600, minHeight: 350 }}>
-        <Table stickyHeader sx={{ overflow: "hidden" }}>
+      {/* Table Container with proper scrolling */}
+      <TableContainer
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "#f1f1f1",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#888",
+            borderRadius: "4px",
+            "&:hover": {
+              backgroundColor: "#555",
+            },
+          },
+        }}
+      >
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={
-                    column.align as
-                      | "center"
-                      | "left"
-                      | "right"
-                      | "inherit"
-                      | "justify"
-                      | undefined
-                  }
+                  align={column.align as "center" | "left" | "right" | "inherit" | "justify"}
                   style={{ minWidth: column.minWidth }}
                   sx={{
-                    backgroundColor: "#f5f7fa",
+                    backgroundColor: "#f8f9fa",
                     fontWeight: 700,
                     fontSize: "0.95rem",
-                    color: "#2c3e50",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                    borderBottom: "2px solid #e0e0e0",
-                    padding: "16px",
+                    color: "#333",
+                    borderBottom: "2px solid #667eea",
                   }}
                 >
                   {column.label}
@@ -284,180 +259,191 @@ const TableCommon: React.FC<TableCommonProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedData.length === 0 ? (
+            {finalData?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
+                  align="center"
                   sx={{
-                    textAlign: "center",
-                    padding: "40px 0",
-                    fontSize: "1rem",
-                    color: "#777",
-                    fontWeight: 600,
+                    py: 8,
+                    color: "#999",
+                    fontSize: "1.1rem",
                   }}
                 >
                   No Data Found
                 </TableCell>
               </TableRow>
             ) : (
-              sortedData
+              (
+                finalData as unknown as Array<
+                  Record<string, any> & {
+                    _id: string;
+                    name: string;
+                    email?: string;
+                    isBlocked?: boolean;
+                  }
+                >
+              )
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((datas, index) => (
-                  <TableRow
-                    hover
-                    key={datas._id}
-                    sx={{
-                      transition: "all 0.2s ease",
-                      backgroundColor: index % 2 === 0 ? "#ffffff" : "#fafbfc",
-                      "&:hover": {
-                        backgroundColor: "#f0f4ff !important",
-                        transform: "scale(1.002)",
-                        boxShadow: "0 2px 8px rgba(102, 126, 234, 0.1)",
-                      },
-                    }}
-                  >
-                    <TableCell
+                .map(
+                  (
+                    datas: Record<string, any> & {
+                      _id: string;
+                      name: string;
+                      email?: string;
+                      isBlocked?: boolean;
+                    },
+                    index: number
+                  ) => (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={index}
                       sx={{
-                        fontWeight: 600,
-                        color: "#34495e",
-                        fontSize: "0.95rem",
+                        "&:hover": {
+                          backgroundColor: "#f5f5f5",
+                        },
                       }}
                     >
-                      {datas.name}
-                    </TableCell>
-                    {datas.email && (
-                      <TableCell sx={{ color: "#5a6c7d", fontSize: "0.9rem" }}>
-                        {datas.email}
-                      </TableCell>
-                    )}
-                    {currentPath !== "/admin/complaints" && (
                       <TableCell>
                         <Chip
-                          label={datas.isBlocked ? "Blocked" : "Active"}
-                          size="small"
+                          label={datas.name}
                           sx={{
-                            backgroundColor: datas.isBlocked
-                              ? "#ffebee"
-                              : "#e8f5e9",
-                            color: datas.isBlocked ? "#c62828" : "#2e7d32",
+                            backgroundColor: "#e3f2fd",
+                            color: "#1976d2",
                             fontWeight: 600,
-                            fontSize: "0.8rem",
-                            borderRadius: "6px",
-                            padding: "4px 8px",
-                            border: `1px solid ${
-                              datas.isBlocked ? "#ef9a9a" : "#a5d6a7"
-                            }`,
+                            fontSize: "0.85rem",
                           }}
                         />
                       </TableCell>
-                    )}
-                    {currentPath !== "/admin/complaints" && (
-                      <TableCell>
-                        <ToggleButton
-                          value="check"
-                          selected={datas.isBlocked}
-                          onChange={() =>
-                            handleBlockUnblock(
-                              datas._id,
-                              datas.isBlocked ?? false
-                            )
-                          }
-                          sx={{
-                            backgroundColor: datas.isBlocked
-                              ? "#f44336"
-                              : "#4caf50",
-                            height: "36px",
-                            color: "white",
-                            width: "120px",
-                            fontWeight: 600,
-                            fontSize: "0.85rem",
-                            borderRadius: "8px",
-                            border: "none",
-                            transition: "all 0.3s ease",
-                            "&.Mui-selected": {
+                      {datas.email && (
+                        <TableCell>
+                          <Chip
+                            label={datas.email}
+                            sx={{
+                              backgroundColor: "#fff3e0",
+                              color: "#f57c00",
+                              fontWeight: 500,
+                              fontSize: "0.85rem",
+                            }}
+                          />
+                        </TableCell>
+                      )}
+
+                      {currentPath !== "/admin/complaints" && (
+                        <TableCell>
+                          <Chip
+                            label={datas.isBlocked ? "Blocked" : "Active"}
+                            sx={{
+                              backgroundColor: datas.isBlocked
+                                ? "#ffebee"
+                                : "#e8f5e9",
+                              color: datas.isBlocked ? "#d32f2f" : "#2e7d32",
+                              fontWeight: 600,
+                              fontSize: "0.85rem",
+                            }}
+                          />
+                        </TableCell>
+                      )}
+
+                      {currentPath !== "/admin/complaints" && (
+                        <TableCell>
+                          <ToggleButton
+                            value="check"
+                            selected={datas.isBlocked}
+                            onChange={() =>
+                              handleBlockUnblock(
+                                datas._id,
+                                datas.isBlocked ?? false
+                              )
+                            }
+                            sx={{
                               backgroundColor: datas.isBlocked
                                 ? "#f44336"
                                 : "#4caf50",
+                              height: "36px",
                               color: "white",
-                            },
-                            "&:hover": {
-                              backgroundColor: datas.isBlocked
-                                ? "#d32f2f"
-                                : "#388e3c",
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                            },
-                          }}
-                        >
-                          {datas.isBlocked ? "Blocked" : "Unblocked"}
-                        </ToggleButton>
-                      </TableCell>
-                    )}
-                    {/* <TableCell>
-                    <Button onClick={() => handleEdit(datas._id)}>
-                      Edit
-                    </Button>
-                  </TableCell> */}
-                    {/* <TableCell>
-                    <Button
-                      onClick={() => handleDelete(datas._id, datas.isDeleted)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell> */}
-                    {role && handleViewMore && role === "admin" && (
-                      <TableCell>
-                        <Button
-                          onClick={() => handleViewMore(datas._id)}
-                          variant="contained"
-                          sx={{
-                            background:
-                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                            color: "white",
-                            fontWeight: 600,
-                            fontSize: "0.85rem",
-                            textTransform: "none",
-                            borderRadius: "8px",
-                            padding: "8px 20px",
-                            boxShadow: "0 2px 8px rgba(102, 126, 234, 0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
+                              width: "120px",
+                              fontWeight: 600,
+                              fontSize: "0.85rem",
+                              borderRadius: "8px",
+                              border: "none",
+                              transition: "all 0.3s ease",
+                              "&.Mui-selected": {
+                                backgroundColor: datas.isBlocked
+                                  ? "#f44336"
+                                  : "#4caf50",
+                                color: "white",
+                              },
+                              "&:hover": {
+                                backgroundColor: datas.isBlocked
+                                  ? "#d32f2f"
+                                  : "#388e3c",
+                                transform: "translateY(-2px)",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                              },
+                            }}
+                          >
+                            {datas.isBlocked ? "Blocked" : "Unblocked"}
+                          </ToggleButton>
+                        </TableCell>
+                      )}
+
+                      {role && handleViewMore && role === "admin" && (
+                        <TableCell>
+                          <Button
+                            onClick={() => handleViewMore(datas._id)}
+                            variant="contained"
+                            sx={{
                               background:
-                                "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
-                            },
-                          }}
-                        >
-                          View More
-                        </Button>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              fontWeight: 600,
+                              fontSize: "0.85rem",
+                              textTransform: "none",
+                              borderRadius: "8px",
+                              padding: "8px 20px",
+                              boxShadow: "0 2px 8px rgba(102, 126, 234, 0.3)",
+                              transition: "all 0.3s ease",
+                              "&:hover": {
+                                background:
+                                  "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                                transform: "translateY(-2px)",
+                                boxShadow:
+                                  "0 4px 12px rgba(102, 126, 234, 0.4)",
+                              },
+                            }}
+                          >
+                            View More
+                          </Button>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  )
+                )
             )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination - Fixed at bottom */}
       <TablePagination
-        // rowsPerPageOptions={[2, 5, 10, 25]}
+        rowsPerPageOptions={[4, 8, 12, 16]}
         component="div"
-        count={sortedData.length}
+        count={serverSide ? count : finalData.length}
         rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={serverSide?.page ?? page}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
         sx={{
-          borderTop: "2px solid #e3f2fd",
-          backgroundColor: "#fafbfc",
-          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
-            {
-              fontWeight: 600,
-              color: "#5a6c7d",
-            },
-          "& .MuiTablePagination-select": {
-            borderRadius: "6px",
-            border: "1px solid #e0e0e0",
+          borderTop: "1px solid #e0e0e0",
+          flexShrink: 0,
+          ".MuiTablePagination-toolbar": {
+            minHeight: "56px",
+          },
+          ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
+            margin: 0,
           },
         }}
       />

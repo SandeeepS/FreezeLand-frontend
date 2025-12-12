@@ -85,17 +85,17 @@ const AdminServices: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col h-[695px]">
-      <div className=" mx-4">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <div className="mx-4 flex-shrink-0">
         <TopBar
           pathName={pathName}
           heading="Services"
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
-        />{" "}
+        />
       </div>
 
-      <div className="flex  justify-center my-5">
+      <div className="flex justify-center my-5 flex-shrink-0">
         <CommonButtonSpace
           buttons={buttonConfigs}
           alignment="right"
@@ -103,7 +103,7 @@ const AdminServices: React.FC = () => {
         />
       </div>
 
-      <div className="flex  mx-5 h-screen">
+      <div className="flex-1 mx-5 mb-5 overflow-hidden">
         <TableCommon
           columns={columns}
           data={filteredService}

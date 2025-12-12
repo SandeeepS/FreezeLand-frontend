@@ -27,7 +27,7 @@ const AdminMechListing: React.FC = () => {
   console.log("pathname is", pathName);
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
-  console.log('Search is ',search);
+  console.log("Search is ", search);
   const [mechs, setMech] = useState<MechData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -70,7 +70,6 @@ const AdminMechListing: React.FC = () => {
       variant: "contained" as const,
       color: "primary" as const,
     },
-    
   ];
 
   const filteredMechs = mechs.filter(
@@ -80,8 +79,8 @@ const AdminMechListing: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col h-[695px]">
-      <div className="mx-4">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <div className="mx-4 flex-shrink-0">
         <TopBar
           pathName={pathName}
           heading="All Mechanics"
@@ -89,7 +88,7 @@ const AdminMechListing: React.FC = () => {
           onSearchChange={setSearchQuery}
         />
       </div>
-      <div className="flex  justify-center my-5">
+      <div className="flex justify-center my-5 flex-shrink-0">
         <CommonButtonSpace
           buttons={buttonConfigs}
           alignment="right"
@@ -97,7 +96,7 @@ const AdminMechListing: React.FC = () => {
         />
       </div>
 
-      <div className="flex   mx-5  h-screen">
+      <div className="flex-1 mx-5 mb-5 overflow-hidden">
         <TableCommon
           columns={columns}
           data={filteredMechs}
