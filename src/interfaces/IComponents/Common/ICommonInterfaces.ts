@@ -163,7 +163,18 @@ export interface TableCommonProps {
   handleViewMore?: (id: string) => void;
   navLink?: string;
   role?: string;
+  serverSide?: ServerSideProps;
+
 }
+
+export interface ServerSideProps {
+  page: number;
+  rowsPerPage: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  onRowsPerPageChange: (limit: number) => void;
+  loading?: boolean;
+};
 
 //used in TableCommon2
 export interface MechData {

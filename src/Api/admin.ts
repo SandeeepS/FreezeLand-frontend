@@ -5,7 +5,7 @@ import {
 import { InewService } from "../interfaces/IPages/Admin/IAdminInterfaces";
 import Api from "../Services/axios";
 import adminRoutes from "../Services/Endpoints/adminEndPoints";
-import { adminErrorHandler} from "./errorHandler";
+import { adminErrorHandler } from "./errorHandler";
 
 const adminLogin = async (email: string, password: string) => {
   console.log("entered in the admin login ");
@@ -291,11 +291,24 @@ const getAllServices = async (search: string) => {
   }
 };
 
-const getAllDevices = async (search: string) => {
+const getAllDevices = async ({
+  page ,
+  limit,
+  search = "",
+  sort = "name:asc",
+  filter = "all",
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort?: string;
+  filter?: string;
+}) => {
   try {
     console.log("entered in the admin.ts for accessing the all devices ");
+    const params = { page, limit, search, sort, filter };
     const result = await Api.get(adminRoutes.getAllDevices, {
-      params: { search },
+      params,
     });
     if (result) {
       return result;
@@ -333,11 +346,11 @@ const editExistService = async (
 };
 
 //function to get all the compliant registered by the user
-const getAllComplaints = async (search:string) => {
+const getAllComplaints = async (search: string) => {
   try {
     console.log("search value in the getAllComplaints in the admin.ts", search);
-    const result = await Api.get(adminRoutes.getAllComplaints,{
-      params: {search},
+    const result = await Api.get(adminRoutes.getAllComplaints, {
+      params: { search },
     });
     return result;
   } catch (error) {
@@ -345,7 +358,7 @@ const getAllComplaints = async (search:string) => {
   }
 };
 
-//function to delete the complaint 
+//function to delete the complaint
 const deleteComplaint = async (id: string): Promise<DeletingResponse> => {
   try {
     console.log("enterd in the admints for deleting device");
@@ -363,7 +376,7 @@ const deleteComplaint = async (id: string): Promise<DeletingResponse> => {
   }
 };
 
-//listing the complaints and unlisting 
+//listing the complaints and unlisting
 const listUnlistComplaints = async (id: string): Promise<BlockingResponse> => {
   try {
     console.log("entered in the listUnlistDevices");
@@ -392,42 +405,66 @@ const getComplaintById = async (id: string) => {
   }
 };
 
-//function to cancel the service 
-const cancelComplaint = async (complaintId:string, userRole : string,reason:string) =>{
-  try{
-    console.log("reached in the admin.ts , and complaintId and userRole is ",complaintId,userRole,reason);
-    const result = await Api.post(adminRoutes.cancelComplaint,{complaintId,userRole,reason})
+//function to cancel the service
+const cancelComplaint = async (
+  complaintId: string,
+  userRole: string,
+  reason: string
+) => {
+  try {
+    console.log(
+      "reached in the admin.ts , and complaintId and userRole is ",
+      complaintId,
+      userRole,
+      reason
+    );
+    const result = await Api.post(adminRoutes.cancelComplaint, {
+      complaintId,
+      userRole,
+      reason,
+    });
     return result;
-  }catch(error) {
-    console.log("error occured while cancel the comlaint in the admin ts ",error);
+  } catch (error) {
+    console.log(
+      "error occured while cancel the comlaint in the admin ts ",
+      error
+    );
     adminErrorHandler(error as Error);
   }
-}
+};
 
-//getting all reports 
-const getAllReportsByReporterRole = async(reporterRole:string) => {
-  try{
-    console.log("Entered in the getAllReports in the admin.ts ",reporterRole);
-    const result = await Api.get(adminRoutes.getAllReports,{params:{reporterRole}});
+//getting all reports
+const getAllReportsByReporterRole = async (reporterRole: string) => {
+  try {
+    console.log("Entered in the getAllReports in the admin.ts ", reporterRole);
+    const result = await Api.get(adminRoutes.getAllReports, {
+      params: { reporterRole },
+    });
     return result;
-  }catch(error){
-    console.log("Error occured while fetching all reports in the admin.ts getAllReports",error);
+  } catch (error) {
+    console.log(
+      "Error occured while fetching all reports in the admin.ts getAllReports",
+      error
+    );
     adminErrorHandler(error as Error);
   }
-}
+};
 
 //updating report status
-const updateReportStatus = async(reportId:string, status: string) => {
-  try{
-    const response = await Api.put(adminRoutes.updateReportStatus,{reportId,status});
+const updateReportStatus = async (reportId: string, status: string) => {
+  try {
+    const response = await Api.put(adminRoutes.updateReportStatus, {
+      reportId,
+      status,
+    });
     return response;
-  }catch(error){
-    console.log("Error occured during updating the reportsstatus from the updateReportStatus in the admin.ts");
+  } catch (error) {
+    console.log(
+      "Error occured during updating the reportsstatus from the updateReportStatus in the admin.ts"
+    );
     adminErrorHandler(error as Error);
   }
-}
-
-
+};
 
 export {
   adminLogin,
@@ -458,5 +495,5 @@ export {
   deleteComplaint,
   getComplaintById,
   cancelComplaint,
-  updateReportStatus
+  updateReportStatus,
 };
