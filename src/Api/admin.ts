@@ -292,8 +292,8 @@ const getAllServices = async (search: string) => {
 };
 
 const getAllDevices = async ({
-  page = 1,
-  limit = 4,
+  page ,
+  limit,
   search = "",
   sort = "name:asc",
   filter = "all",

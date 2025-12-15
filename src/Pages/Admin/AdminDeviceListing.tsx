@@ -45,6 +45,8 @@ const AdminDeviceListing: React.FC = () => {
           search: search,
         });
 
+        console.log("final data of the devices ",result);
+
         if (result?.data) {
           setDevices(result.data.data.devices);
           setTotal(result.data.data.totalDevices);
