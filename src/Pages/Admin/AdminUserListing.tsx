@@ -13,10 +13,10 @@ const AdminUserListing: React.FC = () => {
       id: "isBlocked",
       label: "Status",
       minWidth: 170,
-      align: "right",
+      align: "",
       format: (value: boolean) => (value ? "Blocked" : "Active"),
     },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150, align: "" },
   ];
   const location = useLocation();
   const pathName = location.pathname;
@@ -75,8 +75,8 @@ const AdminUserListing: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className=" mx-4">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <div className=" mx-4 flex-shrink-0">
         
         <TopBar
           pathName={pathName}
@@ -88,7 +88,7 @@ const AdminUserListing: React.FC = () => {
       <div className="flex items-center my-5">
 
       </div>
-      <div className="flex justify-center items-center mx-5 h-screen">
+      <div className="flex-1 mx-5 mb-5 overflow-hidden">
         <TableCommon
           columns={columns}
           data={filteredUsers || []} 

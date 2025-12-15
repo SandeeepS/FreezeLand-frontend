@@ -12,6 +12,7 @@ import { GiMechaHead } from "react-icons/gi";
 import { GrServices } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { FaPowerOff } from "react-icons/fa6";
 
 const AdminListing: React.FC = () => {
   const [activeLink, setActiveLink] = useState(0);
@@ -72,23 +73,22 @@ const AdminListing: React.FC = () => {
     },
     {
       name: "Reports",
-      icon: TbReportSearch ,
+      icon: TbReportSearch,
       id: 6,
       path: "/admin/reports",
+    },
+    {
+      name: "Logout",
+      icon: () => <FaPowerOff className="w-4 h-4" />,
+      id: 8,
+      logout: true,
     },
   ];
 
   return (
     <>
       {/* Side Bar */}
-      <div className="w-20 md:w-56  fixed text-white left-0  h-screen border-r bg-[#4B4B4B]">
-        {/* Heading */}
-        <div className="text-center">
-          <h1 className="w-full text-xl md:text-2xl text-freeze-color font-exo p-6 md:p-10">
-            FREEZE <span className="text-white font-exo">LAND</span>
-          </h1>
-        </div>
-
+      <div className="w-20 md:w-56  mt-24 fixed text-white left-0  h-screen border-r bg-[#4B4B4B]">
         {/* Profile */}
         {/* <div className="flex justify-center items-center mt-4 md:mt-8">
           <div className="rounded-full overflow-hidden w-10 h-10 md:w-16 md:h-16">
@@ -104,39 +104,47 @@ const AdminListing: React.FC = () => {
         </h2> */}
 
         {/* Listing */}
-        <div className="mx-4 md:mx-12 mt-6 space-y-4 md:space-y-5">
-          <ul className="space-y-4 md:space-y-6">
+        <div className="  mt-16 ">
+          <ul className="space-y-4 md:space-y-6 w-full">
             {SIDEBAR_LINKS.map((link, index) => (
               <li
                 key={index}
-                className={`font-medium rounded-md  hover:bg-freeze-color hover:text-white transition-all duration-300 ${
-                  activeLink === index ? "text-freeze-color" : ""
+                className={`font-medium w-full md:pl-8 h-8 pt-1 hover:bg-freeze-color ${
+                  link.logout ? "hover:bg-red-600" : "hover:bg-freeze-color"
+                } hover:text-white transition-all duration-300 ${
+                  activeLink === index && !link.logout
+                    ? "text-freeze-color"
+                    : ""
                 }`}
               >
-                <Link
-                  to={link.path}
-                  className="flex items-center justify-center md:justify-start md:space-x-5"
-                  onClick={() => handleLinkClick(index)}
-                >
-                  <span>{link.icon({})}</span>
-                  <span className="hidden md:inline text-sm md:text-base">
-                    {link.name}
-                  </span>
-                </Link>
+                {link.logout ? (
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center justify-center md:justify-start md:space-x-5 w-full h-full text-left "
+                  >
+                    <span>{link.icon()}</span>
+                    <span className="hidden md:inline text-sm md:text-base ml-2">
+                      {link.name}
+                    </span>
+                  </button>
+                ) : (
+                  <Link
+                    to={link.path as string}
+                    className="flex items-center justify-center md:justify-start md:space-x-5 "
+                    onClick={() => handleLinkClick(index)}
+                  >
+                    <span>{link.icon({})}</span>
+                    <span className="hidden md:inline text-sm md:text-base">
+                      {link.name}
+                    </span>
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
         </div>
 
         {/* Logout Button */}
-        <div className="flex justify-center items-center mt-10 md:mt-12">
-          <button
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 md:py-2 md:px-4 rounded transition-all duration-300"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
       </div>
     </>
   );

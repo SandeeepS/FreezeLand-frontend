@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import {
   getAllDevices,
   deleteDevice,
@@ -14,12 +13,15 @@ import CommonButtonSpace from "../../components/Admin/CommonSpaceForButton";
 const AdminDeviceListing: React.FC = () => {
   const location = useLocation();
   const pathName = location.pathname;
-  console.log("pathname is", pathName);
+
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
-  console.log("search is ", search);
+
   const [devices, setDevices] = useState<DeviceData[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [rowsPerPage, setRowsPerPage] = useState<number>(4);
+  const [page, setPage] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const columns = [
     { id: "name", label: "Name", minWidth: 170 },
@@ -27,28 +29,37 @@ const AdminDeviceListing: React.FC = () => {
       id: "isBlocked",
       label: "Status",
       minWidth: 170,
-      align: "right",
       format: (value: boolean) => (value ? "Blocked" : "Active"),
     },
-    { id: "actions", label: "Actions", minWidth: 150, align: "right" },
+    { id: "actions", label: "Actions", minWidth: 150 },
   ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("entered in the useEffect in the adminservice listing ");
-        const result = await getAllDevices(search);
-        console.log("result reached in the frontend", result);
+        setLoading(true);
+
+        const result = await getAllDevices({
+          page,
+          limit: rowsPerPage,
+          search: search,
+        });
+
+        console.log("final data of the devices ",result);
+
         if (result?.data) {
-          setDevices(result?.data?.data?.devices);
+          setDevices(result.data.data.devices);
+          setTotal(result.data.data.totalDevices);
         }
       } catch (error) {
-        console.log(error as Error);
+        console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [search]);
+  }, [page, rowsPerPage, search]);
 
   const updateDeviceStatus = (
     id: string,
@@ -57,45 +68,36 @@ const AdminDeviceListing: React.FC = () => {
   ) => {
     setDevices((prevDevice) =>
       isDeleted
-        ? prevDevice.filter((devices) => devices._id !== id)
-        : prevDevice.map((devices) =>
-            devices._id === id ? { ...devices, isBlocked } : devices
-          )
+        ? prevDevice.filter((d) => d._id !== id)
+        : prevDevice.map((d) => (d._id === id ? { ...d, isBlocked } : d))
     );
   };
 
   const navigate = useNavigate();
-  const handleAddNewDevice = () => {
-    console.log("button clicked");
-    navigate("/admin/addNewDevice");
-  };
 
   const buttonConfigs = [
     {
       label: "Add New Device",
-      onClick: handleAddNewDevice,
+      onClick: () => navigate("/admin/addNewDevice"),
       variant: "contained" as const,
       color: "primary" as const,
     },
   ];
 
-  const navigationLink = "/admin/editDevice/";
-
-  const filteredDevices = devices.filter((divice) =>
-    divice.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <div className="flex flex-col h-screen">
-      <div className="mx-4">
+    <div className="flex flex-col h-screen overflow-hidden ">
+      <div className="mx-4 flex-shrink-0">
         <TopBar
           pathName={pathName}
           heading="All Devices"
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          searchQuery={search}
+          onSearchChange={() => {
+            setPage(0);
+          }}
         />
       </div>
-      <div className="flex  justify-center my-5">
+
+      <div className="flex justify-center my-5 flex-shrink-0">
         <CommonButtonSpace
           buttons={buttonConfigs}
           alignment="right"
@@ -103,14 +105,25 @@ const AdminDeviceListing: React.FC = () => {
         />
       </div>
 
-      <div className="flex justify-center items-center mx-5 h-screen">
+      <div className="flex-1 mx-5 mb-5 overflow-hidden">
         <TableCommon
           columns={columns}
-          data={filteredDevices}
+          data={devices}
           updateStatus={updateDeviceStatus}
           blockUnblockFunciton={listUnlistDevices}
           deleteFunction={deleteDevice}
-          navLink={navigationLink}
+          serverSide={{
+            page,
+            rowsPerPage,
+            total,
+            loading,
+            onPageChange: (newPage: number) => setPage(newPage),
+            onRowsPerPageChange: (newLimit: number) => {
+              setRowsPerPage(newLimit);
+              setPage(0);
+            },
+          }}
+          navLink="/admin/editDevice/"
         />
       </div>
     </div>
