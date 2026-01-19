@@ -13,6 +13,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({
   service,
   imageUrl,
 }) => {
+  console.log("service details are ", service);
   return (
     <div className=" flex flex-col items-center">
       <div className="max-w-xl">

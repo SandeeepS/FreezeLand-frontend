@@ -8,7 +8,7 @@ interface ProgressBarProps {
 const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep }) => {
   const steps = [
     { number: 1, label: "Service Details" },
-    { number: 2, label: "Requirements" },
+    { number: 2, label: "Additional Details" },
     { number: 3, label: "Address" },
   ];
 
