@@ -29,14 +29,14 @@ const RequirementsForm: React.FC<RequirementsFormProps> = ({
     <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Service Name *
+          Full Name*
         </label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => onFormChange("name", e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="e.g., AC Repair for Living Room"
+          placeholder="Enter your full name"
         />
         {formErrors.name && (
           <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
@@ -45,7 +45,7 @@ const RequirementsForm: React.FC<RequirementsFormProps> = ({
 
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Description *
+          Description*
         </label>
         <textarea
           value={formData.discription}
