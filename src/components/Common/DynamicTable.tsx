@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-export  type ColumnType<T> = {
+export type ColumnType<T> = {
   key: keyof T;
   header: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
+};
+
+type PaginationData = {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
 };
 
 type DynamicTableProps<T> = {
@@ -15,7 +22,12 @@ type DynamicTableProps<T> = {
   className?: string;
   onRowClick?: (row: T) => void;
   itemsPerPageOptions?: number[];
-  defaultItemsPerPage?: number;
+  // Server-side pagination props
+  paginationData: PaginationData;
+  onPageChange: (page: number) => void;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+  onSearchChange: (searchQuery: string) => void;
+  searchQuery?: string; // Added to control search input from parent
 };
 
 const DynamicTable = <T extends Record<string, unknown>>({
@@ -27,71 +39,51 @@ const DynamicTable = <T extends Record<string, unknown>>({
   className = "",
   onRowClick,
   itemsPerPageOptions = [5, 25, 50, 100],
-  defaultItemsPerPage = 5,
+  paginationData,
+  onPageChange,
+  onItemsPerPageChange,
+  onSearchChange,
+  searchQuery: controlledSearchQuery,
 }: DynamicTableProps<T>) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState(data);
+  // Use local state only if not controlled by parent
+  const [localSearchQuery, setLocalSearchQuery] = useState("");
+  const searchQuery = controlledSearchQuery ?? localSearchQuery;
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage);
+  const { totalItems, totalPages, currentPage, itemsPerPage } = paginationData;
 
-  // Search function to filter data
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredData(data);
-    } else {
-      const lowercaseQuery = searchQuery.toLowerCase();
-      const filtered = data.filter((item) => {
-        // Search through all columns of the item
-        return columns.some((column) => {
-          const value = item[column.key];
-          // Check if the value exists and includes the search query
-          return (
-            value !== undefined &&
-            value !== null &&
-            String(value).toLowerCase().includes(lowercaseQuery)
-          );
-        });
-      });
-      setFilteredData(filtered);
-    }
-
-    setCurrentPage(1);
-  }, [searchQuery, data, columns]);
-
-  const totalItems = filteredData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("currentItems are ", currentItems);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
+    onPageChange(page);
   };
 
   const handleItemsPerPageChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1);
+    const newItemsPerPage = Number(e.target.value);
+    onItemsPerPageChange(newItemsPerPage);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const newQuery = e.target.value;
+    // Update local state if not controlled
+    if (controlledSearchQuery === undefined) {
+      setLocalSearchQuery(newQuery);
+    }
+    // Always notify parent
+    onSearchChange(newQuery);
   };
 
   // Generate page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxPagesToShow = 5; // Show up to 5 page numbers at once
+    const maxPagesToShow = 5;
 
     let startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
-    // Adjust start page if end page is maxed out
     if (endPage === totalPages) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
@@ -111,7 +103,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
       return column.render(value, item);
     }
 
-    // Handle different value types safely
     if (value === null || value === undefined) {
       return "";
     }
@@ -136,7 +127,7 @@ const DynamicTable = <T extends Record<string, unknown>>({
               </div>
             </div>
 
-            {/* Search Input with increased border radius */}
+            {/* Search Input */}
             <div className="my-4">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -168,16 +159,17 @@ const DynamicTable = <T extends Record<string, unknown>>({
             </div>
           </div>
 
-          <div className="block w-full overflow-x-auto h-screen">
+          {/* FIXED: Removed h-screen, added max-h with proper scrolling */}
+          <div className="block w-full overflow-x-auto max-h-[1000px] overflow-y-auto">
             {loading ? (
               <div className="p-6 text-center">Loading data...</div>
-            ) : filteredData.length === 0 ? (
+            ) : data.length === 0 ? (
               <div className="p-6 text-center">
                 {searchQuery ? "No results found" : emptyMessage}
               </div>
             ) : (
               <table className="items-center w-full bg-transparent border-collapse">
-                <thead>
+                <thead className="sticky top-0 z-10">
                   <tr>
                     {columns.map((column) => (
                       <th
@@ -191,7 +183,7 @@ const DynamicTable = <T extends Record<string, unknown>>({
                 </thead>
 
                 <tbody>
-                  {currentItems.map((item, index) => (
+                  {data.map((item, index) => (
                     <tr
                       key={index}
                       className="border-b border-gray-300 cursor-pointer hover:bg-gray-200 transition duration-200"
@@ -212,22 +204,22 @@ const DynamicTable = <T extends Record<string, unknown>>({
             )}
           </div>
 
-          {/* Pagination Controls */}
-          {filteredData.length > 0 && (
+          {/* Pagination Controls - Always show if we have pagination data */}
+          {(totalItems >= 0 || totalPages >= 0) && (
             <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-              <div className="flex items-center text-sm text-gray-700">
-                <span className="mr-2">Showing</span>
-                <span className="font-medium">{indexOfFirstItem + 1}</span>
-                <span className="mx-1">to</span>
-                <span className="font-medium">
-                  {Math.min(indexOfLastItem, totalItems)}
-                </span>
-                <span className="mx-1">of</span>
-                <span className="font-medium">{totalItems}</span>
-                <span className="ml-1">results</span>
+              <div className="flex flex-wrap items-center text-sm text-gray-700 gap-2">
+                <div className="flex items-center gap-1">
+                  <span>Showing</span>
+                  <span className="font-medium">{totalItems >= 0 ? indexOfFirstItem + 1 : 0}</span>
+                  <span>to</span>
+                  <span className="font-medium">{indexOfLastItem}</span>
+                  <span>of</span>
+                  <span className="font-medium">{totalItems}</span>
+                  <span>results</span>
+                </div>
 
-                <div className="ml-8 flex items-center">
-                  <span className="mr-2">Rows per page:</span>
+                <div className="flex items-center gap-2">
+                  <span>Rows per page:</span>
                   <select
                     value={itemsPerPage}
                     onChange={handleItemsPerPageChange}

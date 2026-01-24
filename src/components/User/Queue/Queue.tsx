@@ -6,9 +6,8 @@ import DynamicTable, { ColumnType } from "../../Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import { AllRegisteredServices } from "../../../interfaces/IComponents/User/IUserInterfaces";
-import { MdOutlineSpeakerNotesOff } from "react-icons/md";
+import QueueEmptyState from "./QueueEmptyState";
 
-// Define the formatted data interface with index signature
 interface FormattedQueueData {
   id: string;
   name: string;
@@ -42,38 +41,77 @@ const Queue: React.FC = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
   const userId = userData?.id;
+
   const [allRegisteredServices, setAllRegisteredService] = useState<
     AllRegisteredServices[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [serviceImages, setServiceImages] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
 
-  // Fetch data
+  // Pagination and search state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // FIXED: Added debounce for search to avoid too many API calls
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // FIXED: Fetch data whenever pagination or search params change
   useEffect(() => {
     const fetchData = async () => {
+      if (!userId) return;
+
       try {
         setLoading(true);
-        const result = await getAllUserRegisteredServices(userId as string);
-        console.log("data reached", result);
-        if (result?.allRegisteredUserServices) {
+
+        console.log("Fetching with params:", {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+
+        const result = await getAllUserRegisteredServices(userId as string, {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+
+        console.log("API Response:", result);
+
+        if (result?.allRegisteredUserServices?.allRegisteredUserServices) {
           // Filter only incomplete/running services (exclude completed ones)
-          const incompleteServices = result.allRegisteredUserServices.filter(
+          const incompleteServices = result.allRegisteredUserServices.allRegisteredUserServices.filter(
             (service: AllRegisteredServices) =>
               service.status !== "completed" &&
               service.status !== "cancelled" &&
-              service.status !== "rejected"
+              service.status !== "rejected",
           );
 
           setAllRegisteredService(incompleteServices);
           console.log(
             "Incomplete/Running services from the frontend:",
-            incompleteServices
+            incompleteServices,
           );
+
+          // FIXED: Use pagination data from server response
+          setTotalItems(result.allRegisteredUserServices.pagination?.totalItems || 0);
+          setTotalPages(result.allRegisteredUserServices.pagination?.totalPages || 0);
 
           // Fetch images for each incomplete service
           if (incompleteServices.length > 0) {
@@ -83,14 +121,19 @@ const Queue: React.FC = () => {
       } catch (error) {
         console.error(
           "Error occurred while fetching the registered services:",
-          error
+          error,
         );
+        // Reset data on error
+        setAllRegisteredService([]);
+        setTotalItems(0);
+        setTotalPages(0);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
-  }, [userId]);
+  }, [userId, currentPage, itemsPerPage, debouncedSearchQuery]); // FIXED: Added all dependencies
 
   // Fetch image URLs for all services
   const fetchServiceImages = async (services: AllRegisteredServices[]) => {
@@ -108,7 +151,7 @@ const Queue: React.FC = () => {
         try {
           const imageResult = await getImageUrl(
             service.serviceDetails[0].imageKey,
-            "service"
+            "service",
           );
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[service._id] = imageResult.data.url;
@@ -223,40 +266,38 @@ const Queue: React.FC = () => {
         }))
       : [];
 
-  // Handle row click - Navigate to detail page
   const handleRowClick = (item: FormattedQueueData) => {
     console.log("Clicked on service:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
 
-  // Custom empty state for queue
-  const QueueEmptyState = () => (
-    <div className="text-center py-16">
-      <div className="mx-auto max-w-md">
-        <div className="mx-auto mt-32 h-24 w-24 text-gray-400">
-          <MdOutlineSpeakerNotesOff className="h-full w-full" />
-        </div>
-        <h3 className="mt-6 text-lg font-medium text-gray-900">
-          No Active Services
-        </h3>
-        <p className="mt-2 text-sm text-gray-500">
-          You don't have any services currently in progress. All your services
-          are either completed or you haven't registered any yet.
-        </p>
-      </div>
-    </div>
-  );
+  // FIXED: These handlers now properly trigger data re-fetch through state changes
+  const handlePageChange = (page: number) => {
+    console.log("Page changed to:", page);
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    console.log("Items per page changed to:", newItemsPerPage);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  const handleSearchChange = (query: string) => {
+    console.log("Search query changed to:", query);
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   // If no data is available and we're not loading, show the empty state
   if (!loading && allRegisteredServices.length === 0) {
     return (
       <div className="mt-16">
-        <QueueEmptyState />
+        <QueueEmptyState searchQuery={searchQuery} />
       </div>
     );
   }
 
-  // Otherwise show the table with real data
   return (
     <DynamicTable<FormattedQueueData>
       title="Active Services Queue"
@@ -266,6 +307,16 @@ const Queue: React.FC = () => {
       emptyMessage="No active services in queue"
       onRowClick={handleRowClick}
       className="mt-16 cursor-pointer"
+      paginationData={{
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+      }}
+      onPageChange={handlePageChange}
+      onItemsPerPageChange={handleItemsPerPageChange}
+      onSearchChange={handleSearchChange}
+      searchQuery={searchQuery}
     />
   );
 };
