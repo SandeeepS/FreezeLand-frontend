@@ -22,12 +22,11 @@ type DynamicTableProps<T> = {
   className?: string;
   onRowClick?: (row: T) => void;
   itemsPerPageOptions?: number[];
-  // Server-side pagination props
   paginationData: PaginationData;
   onPageChange: (page: number) => void;
   onItemsPerPageChange: (itemsPerPage: number) => void;
   onSearchChange: (searchQuery: string) => void;
-  searchQuery?: string; // Added to control search input from parent
+  searchQuery?: string;
 };
 
 const DynamicTable = <T extends Record<string, unknown>>({
@@ -45,12 +44,9 @@ const DynamicTable = <T extends Record<string, unknown>>({
   onSearchChange,
   searchQuery: controlledSearchQuery,
 }: DynamicTableProps<T>) => {
-  // Use local state only if not controlled by parent
   const [localSearchQuery, setLocalSearchQuery] = useState("");
   const searchQuery = controlledSearchQuery ?? localSearchQuery;
-
   const { totalItems, totalPages, currentPage, itemsPerPage } = paginationData;
-
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
@@ -68,34 +64,26 @@ const DynamicTable = <T extends Record<string, unknown>>({
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
-    // Update local state if not controlled
     if (controlledSearchQuery === undefined) {
       setLocalSearchQuery(newQuery);
     }
-    // Always notify parent
     onSearchChange(newQuery);
   };
 
-  // Generate page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxPagesToShow = 5;
-
     let startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
     if (endPage === totalPages) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-
     return pageNumbers;
   };
 
-  // Helper function to safely render cell value
   const renderCellValue = (item: T, column: ColumnType<T>) => {
     const value = item[column.key];
 
@@ -127,7 +115,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
               </div>
             </div>
 
-            {/* Search Input */}
             <div className="my-4">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -159,7 +146,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
             </div>
           </div>
 
-          {/* FIXED: Removed h-screen, added max-h with proper scrolling */}
           <div className="block w-full overflow-x-auto max-h-[1000px] overflow-y-auto">
             {loading ? (
               <div className="p-6 text-center">Loading data...</div>
@@ -204,13 +190,14 @@ const DynamicTable = <T extends Record<string, unknown>>({
             )}
           </div>
 
-          {/* Pagination Controls - Always show if we have pagination data */}
           {(totalItems >= 0 || totalPages >= 0) && (
             <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
               <div className="flex flex-wrap items-center text-sm text-gray-700 gap-2">
                 <div className="flex items-center gap-1">
                   <span>Showing</span>
-                  <span className="font-medium">{totalItems >= 0 ? indexOfFirstItem + 1 : 0}</span>
+                  <span className="font-medium">
+                    {totalItems >= 0 ? indexOfFirstItem + 1 : 0}
+                  </span>
                   <span>to</span>
                   <span className="font-medium">{indexOfLastItem}</span>
                   <span>of</span>
@@ -239,7 +226,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
                   className="isolate inline-flex -space-x-px rounded-md shadow-sm"
                   aria-label="Pagination"
                 >
-                  {/* First page button */}
                   <button
                     onClick={() => goToPage(1)}
                     disabled={currentPage === 1}
@@ -274,7 +260,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
                     </svg>
                   </button>
 
-                  {/* Previous page button */}
                   <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -297,7 +282,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
                     </svg>
                   </button>
 
-                  {/* Page numbers */}
                   {getPageNumbers().map((number) => (
                     <button
                       key={number}
@@ -312,7 +296,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
                     </button>
                   ))}
 
-                  {/* Next page button */}
                   <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -337,7 +320,6 @@ const DynamicTable = <T extends Record<string, unknown>>({
                     </svg>
                   </button>
 
-                  {/* Last page button */}
                   <button
                     onClick={() => goToPage(totalPages)}
                     disabled={currentPage === totalPages}

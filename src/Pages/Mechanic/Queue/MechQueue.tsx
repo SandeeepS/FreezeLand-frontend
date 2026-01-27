@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import DynamicTable, { ColumnType } from "../../../components/Common/DynamicTable";
+import DynamicTable, {
+  ColumnType,
+} from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import { getAllAcceptedServices, getImageUrl } from "../../../Api/mech";
-import {
-  AllAcceptedServices,
-} from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
+import { AllAcceptedServices } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 
-// Define the formatted service interface with index signature
 interface FormattedService {
   id: string;
   name: string;
@@ -19,7 +18,6 @@ interface FormattedService {
   [key: string]: unknown;
 }
 
-// Helper function to get status color
 const getStatusColor = (status: string): string => {
   switch (status) {
     case "pending":
@@ -43,32 +41,59 @@ const MechQueue: React.FC = () => {
     AllAcceptedServices[]
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  // Add state for storing image URLs
   const [serviceImages, setServiceImages] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
 
-  // Fetch data
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     const fetchData = async () => {
+      if (!mechanicId) return;
       try {
         setLoading(true);
-        const result = await getAllAcceptedServices(mechanicId as string);
+        console.log("Fetching with params form the mechanicQueue componnet:", {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+        const result = await getAllAcceptedServices(mechanicId as string, {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
         console.log("data reached", result);
-        if (result?.data?.result) {
-          setAllAcceptedServices(result.data.result);
-          console.log("Accepted services:", result.data.result);
-          // Fetch images for services and devices
-          fetchAllImages(result.data.result);
+        if (result?.data.acceptedServices.allAcceptedServices) {
+          setAllAcceptedServices(
+            result.data.acceptedServices.allAcceptedServices,
+          );
+          console.log(
+            "Accepted services:",
+            result.data.acceptedServices.allAcceptedServices,
+          );
+          setTotalItems(result.data.acceptedServices.pagination.totalItems);
+          setTotalPages(result.data.acceptedServices.pagination.totalPages);
+          fetchAllImages(result.data.acceptedServices.allAcceptedServices);
         }
       } catch (error) {
         console.error(
           "Error occurred while fetching the accepted services:",
-          error
+          error,
         );
       } finally {
         setLoading(false);
@@ -82,7 +107,6 @@ const MechQueue: React.FC = () => {
     const deviceImagesMap: Record<string, string[]> = {};
 
     for (const service of services) {
-      // Fetch service logo image from serviceDetails
       if (
         Array.isArray(service.serviceDetails) &&
         service.serviceDetails[0]?.imageKey
@@ -90,7 +114,7 @@ const MechQueue: React.FC = () => {
         try {
           const imageResult = await getImageUrl(
             service.serviceDetails[0].imageKey,
-            "service"
+            "service",
           );
 
           if (imageResult && imageResult.data && imageResult.data.url) {
@@ -216,6 +240,23 @@ const MechQueue: React.FC = () => {
     navigate(`/mech/complaintDetails/${item.id}`);
   };
 
+  const handlePageChange = (page: number) => {
+    console.log("Page changed to:", page);
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    console.log("Items per page changed to:", newItemsPerPage);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string): void => {
+    console.log("Search query changed to:", query);
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
   return (
     <DynamicTable<FormattedService>
       title="Accepted Services"
@@ -225,6 +266,16 @@ const MechQueue: React.FC = () => {
       emptyMessage="No services Accepted yet"
       onRowClick={handleRowClick}
       className="mt-16 cursor-pointer"
+      paginationData={{
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+      }}
+      onPageChange={handlePageChange}
+      onItemsPerPageChange={handleItemsPerPageChange}
+      onSearchChange={handleSearchChange}
+      searchQuery={searchQuery}
     />
   );
 };

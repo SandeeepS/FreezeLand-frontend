@@ -218,3 +218,10 @@ export interface IAddressResponse {
   isDeleted:boolean;
   isDefaultAddress:boolean;
 }
+
+
+export interface IPagination {
+  page: number;
+  limit: number;
+  search?: string;
+}

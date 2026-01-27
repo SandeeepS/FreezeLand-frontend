@@ -4,7 +4,7 @@ import UserLoggedOut from "../components/User/UserLoggedOut";
 import UserLayout from "../Pages/User/UserLayout";
 import History from "../components/User/History";
 import Payments from "../components/User/Payments";
-import Queue from "../components/User/Queue/Queue";
+import Queue from "../Pages/User/Queue/Queue";
 import ComplaintDetail from "../components/User/Queue/ComplaintDetials/ComplaintDetail";
 import UserServiceHistory from "../components/User/ServiceHistory/UserServiceHistory";
 import React from "react";

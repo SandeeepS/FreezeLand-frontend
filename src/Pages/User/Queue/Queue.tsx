@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/user";
-import DynamicTable, { ColumnType } from "../../Common/DynamicTable";
+import DynamicTable, {
+  ColumnType,
+} from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import { AllRegisteredServices } from "../../../interfaces/IComponents/User/IUserInterfaces";
-import QueueEmptyState from "./QueueEmptyState";
+import QueueEmptyState from "../../../components/User/Queue/QueueEmptyState";
 
 interface FormattedQueueData {
   id: string;
@@ -18,7 +20,6 @@ interface FormattedQueueData {
   [key: string]: unknown;
 }
 
-// Helper function to get status color
 const getStatusColor = (status: string): string => {
   switch (status) {
     case "pending":
@@ -41,7 +42,6 @@ const Queue: React.FC = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.userData);
   const userId = userData?.id;
-
   const [allRegisteredServices, setAllRegisteredService] = useState<
     AllRegisteredServices[]
   >([]);
@@ -53,26 +53,20 @@ const Queue: React.FC = () => {
     {},
   );
 
-  // Pagination and search state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [totalItems, setTotalItems] = useState(25);
   const [totalPages, setTotalPages] = useState(0);
-
-  // FIXED: Added debounce for search to avoid too many API calls
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
-  // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 500); // 500ms delay
-
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // FIXED: Fetch data whenever pagination or search params change
   useEffect(() => {
     const fetchData = async () => {
       if (!userId) return;
@@ -95,13 +89,13 @@ const Queue: React.FC = () => {
         console.log("API Response:", result);
 
         if (result?.allRegisteredUserServices?.allRegisteredUserServices) {
-          // Filter only incomplete/running services (exclude completed ones)
-          const incompleteServices = result.allRegisteredUserServices.allRegisteredUserServices.filter(
-            (service: AllRegisteredServices) =>
-              service.status !== "completed" &&
-              service.status !== "cancelled" &&
-              service.status !== "rejected",
-          );
+          const incompleteServices =
+            result.allRegisteredUserServices.allRegisteredUserServices.filter(
+              (service: AllRegisteredServices) =>
+                service.status !== "completed" &&
+                service.status !== "cancelled" &&
+                service.status !== "rejected",
+            );
 
           setAllRegisteredService(incompleteServices);
           console.log(
@@ -109,11 +103,13 @@ const Queue: React.FC = () => {
             incompleteServices,
           );
 
-          // FIXED: Use pagination data from server response
-          setTotalItems(result.allRegisteredUserServices.pagination?.totalItems || 0);
-          setTotalPages(result.allRegisteredUserServices.pagination?.totalPages || 0);
+          setTotalItems(
+            result.allRegisteredUserServices.pagination?.totalItems || 0,
+          );
+          setTotalPages(
+            result.allRegisteredUserServices.pagination?.totalPages || 0,
+          );
 
-          // Fetch images for each incomplete service
           if (incompleteServices.length > 0) {
             fetchServiceImages(incompleteServices);
           }
@@ -123,7 +119,6 @@ const Queue: React.FC = () => {
           "Error occurred while fetching the registered services:",
           error,
         );
-        // Reset data on error
         setAllRegisteredService([]);
         setTotalItems(0);
         setTotalPages(0);
@@ -133,15 +128,13 @@ const Queue: React.FC = () => {
     };
 
     fetchData();
-  }, [userId, currentPage, itemsPerPage, debouncedSearchQuery]); // FIXED: Added all dependencies
+  }, [userId, currentPage, itemsPerPage, debouncedSearchQuery]);
 
-  // Fetch image URLs for all services
   const fetchServiceImages = async (services: AllRegisteredServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
     const deviceImagesMap: Record<string, string[]> = {};
 
     for (const service of services) {
-      // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
         Array.isArray(service.serviceDetails) &&
@@ -161,10 +154,8 @@ const Queue: React.FC = () => {
         }
       }
 
-      // Fetch device images from the image field
       if (service.image && service.image.length > 0) {
         const deviceImageUrls: string[] = [];
-
         for (const deviceImg of service.image) {
           try {
             const deviceImgResult = await getImageUrl(deviceImg, "service");
@@ -190,7 +181,6 @@ const Queue: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Define the columns for the service table with proper typing
   const serviceColumns: ColumnType<FormattedQueueData>[] = [
     {
       key: "service",
@@ -249,7 +239,6 @@ const Queue: React.FC = () => {
     },
   ];
 
-  // Transform your data to match the table structure with proper typing
   const formattedData: FormattedQueueData[] =
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: AllRegisteredServices) => ({
@@ -271,7 +260,6 @@ const Queue: React.FC = () => {
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
 
-  // FIXED: These handlers now properly trigger data re-fetch through state changes
   const handlePageChange = (page: number) => {
     console.log("Page changed to:", page);
     setCurrentPage(page);
@@ -280,16 +268,15 @@ const Queue: React.FC = () => {
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     console.log("Items per page changed to:", newItemsPerPage);
     setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
+    setCurrentPage(1);
   };
 
-  const handleSearchChange = (query: string) => {
+  const handleSearchChange = (query: string): void => {
     console.log("Search query changed to:", query);
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
-  // If no data is available and we're not loading, show the empty state
   if (!loading && allRegisteredServices.length === 0) {
     return (
       <div className="mt-16">

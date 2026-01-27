@@ -241,8 +241,3 @@ export interface ServiceData {
   serviceCharge: number;
 }
 
-export interface IPagination {
-  page: number;
-  limit: number;
-  search?: string;
-}
