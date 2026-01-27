@@ -197,9 +197,15 @@ const getMechanicDetails = async (id: string) => {
 };
 
 //function to get all userRegistered compliants in the mechside
-const getAllUserRegisteredServices = async () => {
+const getAllUserRegisteredServices = async (pagination: IPagination) => {
   try {
-    const result = await Api.get(mechRoutes.getAllUserRegisteredServices);
+    const result = await Api.get(mechRoutes.getAllUserRegisteredServices, {
+      params: {
+        page: pagination.page,
+        limit: pagination.limit,
+        search: pagination.search,
+      },
+    });
     console.log("details reached in the mech.ts tttt", result);
     return result.data;
   } catch (error) {

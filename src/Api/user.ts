@@ -112,6 +112,7 @@ const forgotPassword = async (email: string) => {
     userErrorHandler(error as Error);
   }
 };
+
 const forgotVerifyOtp = async (otp: string) => {
   try {
     return await Api.post(userRoutes.forgotVerifyOtp, { otp });
@@ -120,6 +121,7 @@ const forgotVerifyOtp = async (otp: string) => {
     userErrorHandler(error as Error);
   }
 };
+
 const updateNewPassword = async (password: string, userId: string) => {
   try {
     return await Api.put(userRoutes.updateNewPassword, { password, userId });

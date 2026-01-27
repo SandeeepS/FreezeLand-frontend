@@ -100,7 +100,7 @@ const MechQueue: React.FC = () => {
       }
     };
     fetchData();
-  }, [mechanicId]);
+  }, [mechanicId,currentPage, itemsPerPage, debouncedSearchQuery]);
 
   const fetchAllImages = async (services: AllAcceptedServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
