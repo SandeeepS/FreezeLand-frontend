@@ -88,7 +88,6 @@ const AllWorksPage: React.FC = () => {
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
     {},
   );
-
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
@@ -164,7 +163,6 @@ const AllWorksPage: React.FC = () => {
         }
       }
 
-      // Fetch device images from the image field
       if (complaint.image && complaint.image.length > 0) {
         const deviceImageUrls: string[] = [];
 
@@ -193,7 +191,6 @@ const AllWorksPage: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Import the ColumnType from DynamicTable and use it properly
   const complaintColumns: ColumnType<FormattedComplaintData>[] = [
     {
       key: "service",
@@ -263,7 +260,6 @@ const AllWorksPage: React.FC = () => {
     },
   ];
 
-  // Transform data for the table with proper typing
   const formattedData: FormattedComplaintData[] =
     allComplaints.length > 0
       ? allComplaints.map((complaint: ComplaintService) => ({
