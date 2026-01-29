@@ -37,7 +37,6 @@ interface ComplaintService {
   createdAt?: string;
 }
 
-// Define the exact shape of your table data
 export interface FormattedComplaintData {
   id: string;
   name: string;
@@ -47,8 +46,8 @@ export interface FormattedComplaintData {
   completion: number;
   description: string;
   originalData: ComplaintService;
-  service: string; // Add this for the service column
-  deviceImage: string; // Add this for the device image column
+  service: string;
+  deviceImage: string; 
   [key: string]: unknown;
 }
 
@@ -273,8 +272,8 @@ const AllWorksPage: React.FC = () => {
           completion: complaint.completionPercentage || 0,
           description: complaint.description || "No description provided",
           originalData: complaint,
-          service: complaint.serviceDetails[0]?.name || "Unknown Service", // Add this
-          deviceImage: complaint.image?.[0] || "", // Add this
+          service: complaint.serviceDetails[0]?.name || "Unknown Service", 
+          deviceImage: complaint.image?.[0] || "", 
         }))
       : [];
 
