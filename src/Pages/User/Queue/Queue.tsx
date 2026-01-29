@@ -60,9 +60,15 @@ const Queue: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);

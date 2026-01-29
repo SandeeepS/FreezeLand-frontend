@@ -10,7 +10,10 @@ import { paymentData } from "../components/User/Queue/ComplaintDetials/PaymentBu
 import { LocationData } from "../components/Common/PopularCities";
 import userErrorHandler from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
-import { IAddress, IPagination } from "../interfaces/IComponents/Common/ICommonInterfaces";
+import {
+  IAddress,
+  IPagination,
+} from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const signup = async ({
   name,

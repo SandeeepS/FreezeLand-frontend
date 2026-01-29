@@ -55,9 +55,15 @@ const MechQueue: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -100,7 +106,7 @@ const MechQueue: React.FC = () => {
       }
     };
     fetchData();
-  }, [mechanicId,currentPage, itemsPerPage, debouncedSearchQuery]);
+  }, [mechanicId, currentPage, itemsPerPage, debouncedSearchQuery]);
 
   const fetchAllImages = async (services: AllAcceptedServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
@@ -228,7 +234,7 @@ const MechQueue: React.FC = () => {
               : "Unknown Service",
           userName:
             Array.isArray(service.userDetails) && service.userDetails[0]?.name
-              ? service.userDetails[0].name
+              ? service.name
               : service.name || "Unknown User",
           status: service.status || "pending",
           originalData: service,
