@@ -194,7 +194,6 @@ const getAllUserRegisteredServices = async (
         search: pagination.search,
       },
     });
-    console.log("details reached in the user.ts tttt", result);
     return result.data;
   } catch (error) {
     console.log(

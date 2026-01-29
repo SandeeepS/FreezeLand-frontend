@@ -74,19 +74,11 @@ const Queue: React.FC = () => {
       try {
         setLoading(true);
 
-        console.log("Fetching with params:", {
-          page: currentPage,
-          limit: itemsPerPage,
-          search: debouncedSearchQuery,
-        });
-
         const result = await getAllUserRegisteredServices(userId as string, {
           page: currentPage,
           limit: itemsPerPage,
           search: debouncedSearchQuery,
         });
-
-        console.log("API Response:", result);
 
         if (result?.allRegisteredUserServices?.allRegisteredUserServices) {
           const incompleteServices =
@@ -98,10 +90,6 @@ const Queue: React.FC = () => {
             );
 
           setAllRegisteredService(incompleteServices);
-          console.log(
-            "Incomplete/Running services from the frontend:",
-            incompleteServices,
-          );
 
           setTotalItems(
             result.allRegisteredUserServices.pagination?.totalItems || 0,
@@ -256,28 +244,24 @@ const Queue: React.FC = () => {
       : [];
 
   const handleRowClick = (item: FormattedQueueData) => {
-    console.log("Clicked on service:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
 
   const handlePageChange = (page: number) => {
-    console.log("Page changed to:", page);
     setCurrentPage(page);
   };
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
-    console.log("Items per page changed to:", newItemsPerPage);
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1);
   };
 
   const handleSearchChange = (query: string): void => {
-    console.log("Search query changed to:", query);
     setSearchQuery(query);
     setCurrentPage(1);
   };
 
-  if (!loading && allRegisteredServices.length === 0) {
+  if ((!loading && allRegisteredServices === null) || undefined) {
     return (
       <div className="mt-16">
         <QueueEmptyState searchQuery={searchQuery} />

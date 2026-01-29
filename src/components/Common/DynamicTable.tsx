@@ -65,6 +65,7 @@ const DynamicTable = <T extends Record<string, unknown>>({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     if (controlledSearchQuery === undefined) {
+      console.log("search query is",newQuery);
       setLocalSearchQuery(newQuery);
     }
     onSearchChange(newQuery);
