@@ -156,7 +156,7 @@ const DynamicTable = <T extends Record<string, unknown>>({
               </div>
             ) : (
               <table className="items-center w-full bg-transparent border-collapse">
-                <thead className="sticky top-0 z-10">
+                <thead className="sticky top-0">
                   <tr>
                     {columns.map((column) => (
                       <th

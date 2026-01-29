@@ -47,7 +47,7 @@ export interface FormattedComplaintData {
   description: string;
   originalData: ComplaintService;
   service: string;
-  deviceImage: string; 
+  deviceImage: string;
   [key: string]: unknown;
 }
 
@@ -94,9 +94,15 @@ const AllWorksPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -272,8 +278,8 @@ const AllWorksPage: React.FC = () => {
           completion: complaint.completionPercentage || 0,
           description: complaint.description || "No description provided",
           originalData: complaint,
-          service: complaint.serviceDetails[0]?.name || "Unknown Service", 
-          deviceImage: complaint.image?.[0] || "", 
+          service: complaint.serviceDetails[0]?.name || "Unknown Service",
+          deviceImage: complaint.image?.[0] || "",
         }))
       : [];
 
