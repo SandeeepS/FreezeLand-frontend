@@ -286,6 +286,7 @@ const getAllAcceptedServices = async (
   }
 };
 
+//function to getAllCompleted Services 
 const getAllCompletedServices = async (mechanicId: string) => {
   try {
     console.log("Entered in the getAllCompleted in the mech.ts", mechanicId);
