@@ -26,7 +26,7 @@ export interface IComplaintDetails {
       createdAt: Date;
       isBlocked: boolean;
       isDeleted: boolean;
-    }
+    },
   ];
   userDetails: {
     _id: string;
@@ -238,5 +238,6 @@ export interface ServiceData {
   status: boolean;
   isDeleted: boolean;
   imageKey: string;
-  serviceCharge:number
+  serviceCharge: number;
 }
+
