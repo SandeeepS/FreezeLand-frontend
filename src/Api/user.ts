@@ -12,6 +12,7 @@ import userErrorHandler from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
 import {
   IAddress,
+  IPagination,
 } from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const signup = async ({
@@ -65,7 +66,7 @@ const getImageUrl = async (imageKey: string, type: string) => {
 const googleLogin = async (
   name: string | null,
   email: string | null,
-  googlePhotoUrl: string | null
+  googlePhotoUrl: string | null,
 ) => {
   try {
     if (!name || !email) return;
@@ -114,6 +115,7 @@ const forgotPassword = async (email: string) => {
     userErrorHandler(error as Error);
   }
 };
+
 const forgotVerifyOtp = async (otp: string) => {
   try {
     return await Api.post(userRoutes.forgotVerifyOtp, { otp });
@@ -122,6 +124,7 @@ const forgotVerifyOtp = async (otp: string) => {
     userErrorHandler(error as Error);
   }
 };
+
 const updateNewPassword = async (password: string, userId: string) => {
   try {
     return await Api.put(userRoutes.updateNewPassword, { password, userId });
@@ -154,7 +157,7 @@ const getProfile = async (userId: string) => {
   try {
     console.log(
       "Entered in the getProfile in the user.ts and the userId is ",
-      userId
+      userId,
     );
     const result = await Api.get(userRoutes.getProfile, { params: { userId } });
     console.log("UserProfile form the backend in the user.ts is ", result);
@@ -181,16 +184,23 @@ const getAllServices = async () => {
 };
 
 //getting all registered complaint of the user
-const getAllUserRegisteredServices = async (userId: string) => {
+const getAllUserRegisteredServices = async (
+  userId: string,
+  pagination: IPagination,
+) => {
   try {
     const result = await Api.get(userRoutes.getAllUserRegisteredServices, {
-      params: { userId },
+      params: {
+        userId,
+        page: pagination.page,
+        limit: pagination.limit,
+        search: pagination.search,
+      },
     });
-    console.log("details reached in the user.ts tttt", result);
     return result.data;
   } catch (error) {
     console.log(
-      "error occured while fetching the user registerd services form the user.ts"
+      "error occured while fetching the user registerd services form the user.ts",
     );
     userErrorHandler(error as Error);
   }
@@ -219,7 +229,7 @@ const AddUserAddress = async (newAddress: IAddress) => {
   try {
     console.log(
       "Entered in the AddUserAddress fucntion in the user.ts is",
-      newAddress
+      newAddress,
     );
     const result = await Api.post(userRoutes.addAddress, { newAddress });
     return result;
@@ -232,7 +242,7 @@ const AddUserAddress = async (newAddress: IAddress) => {
 const EditExistAddress = async (
   _id: string | undefined,
   addressId: string | undefined,
-  values: AddAddress
+  values: AddAddress,
 ) => {
   try {
     const result = await Api.put(userRoutes.editAddress, {
@@ -247,10 +257,7 @@ const EditExistAddress = async (
   }
 };
 
-const setDefaultAddress = async (
-  userId: string ,
-  addressId: string
-) => {
+const setDefaultAddress = async (userId: string, addressId: string) => {
   try {
     const result = await Api.put(userRoutes.setDefaultAddress, {
       userId,
@@ -264,15 +271,23 @@ const setDefaultAddress = async (
 };
 
 //API for deleting/removing an existing address
-const removeUserAddress = async (userId: string,addressId:string) => {
+const removeUserAddress = async (userId: string, addressId: string) => {
   try {
-    console.log("userid and addressId in the user.ts for removing is ",userId ," ", addressId)
-    const result = await Api.put(userRoutes.removeAddress, { userId,addressId });
+    console.log(
+      "userid and addressId in the user.ts for removing is ",
+      userId,
+      " ",
+      addressId,
+    );
+    const result = await Api.put(userRoutes.removeAddress, {
+      userId,
+      addressId,
+    });
     return result;
   } catch (error) {
     console.log(
       "error occured while removing the address of user in the user.ts",
-      error
+      error,
     );
     userErrorHandler(error as Error);
   }
@@ -293,14 +308,14 @@ const registerComplaint = async (data: Iconcern) => {
 const getUserRegisteredServiceDetailsById = async (id: string) => {
   try {
     console.log(
-      "Entered in the getUserRegisteredServiceDetailsById in the user.ts"
+      "Entered in the getUserRegisteredServiceDetailsById in the user.ts",
     );
     const result = await Api.get(
       userRoutes.getUserRegisteredServiceDetailsById,
-      { params:{ id }}
+      { params: { id } },
     );
     return result;
-  } catch (error){
+  } catch (error) {
     console.log(error as Error);
     userErrorHandler(error as Error);
   }
@@ -370,7 +385,7 @@ const successPayment = async (sessionId: string) => {
 //function to  send userLocation and update in the backend.
 const updateUserLocation = async (
   userId: string,
-  locationData: LocationData
+  locationData: LocationData,
 ) => {
   try {
     console.log("location details in the updateUserLocation is", locationData);
@@ -388,13 +403,13 @@ const updateUserLocation = async (
 const getS3SingUrl = async (
   fileName: string,
   fileType: string,
-  folderName: string
+  folderName: string,
 ) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the user.ts file",
       fileName,
-      fileType
+      fileType,
     );
 
     const result = await Api.get(userRoutes.getPresignedUrl, {
@@ -429,7 +444,7 @@ const handleRemoveUserAddress = async (userId: string, addressId: string) => {
   } catch (error) {
     console.log(
       "Error occured in the user.ts while handleRemoveUserAddress",
-      error
+      error,
     );
     userErrorHandler(error as Error);
   }
@@ -446,7 +461,7 @@ const getAllAddressOfUser = async (userId: string) => {
   } catch (error) {
     console.log(
       "Error occured in the user.ts while accessing the userAddress",
-      error
+      error,
     );
     userErrorHandler(error as Error);
   }

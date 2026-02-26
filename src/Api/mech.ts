@@ -9,7 +9,10 @@ import {
 import { AddAddress } from "../interfaces/AddAddress";
 import { mechErrorHandler } from "./errorHandler";
 import { IReportData } from "../components/Common/Report/ReportModal";
-import { IAddress } from "../interfaces/IComponents/Common/ICommonInterfaces";
+import {
+  IAddress,
+  IPagination,
+} from "../interfaces/IComponents/Common/ICommonInterfaces";
 
 const mechSignup = async ({
   name,
@@ -133,13 +136,13 @@ const getAllMechanics = async () => {
 const getS3SingUrlForMechCredinential = async (
   fileName: string,
   fileType: string,
-  name: string
+  name: string,
 ) => {
   try {
     console.log(
       "entered in the getS3SingUrl function in the mech.ts file",
       fileName,
-      fileType
+      fileType,
     );
 
     const result = await Api.get(mechRoutes.getS3SingUrlForMechCredinential, {
@@ -194,14 +197,20 @@ const getMechanicDetails = async (id: string) => {
 };
 
 //function to get all userRegistered compliants in the mechside
-const getAllUserRegisteredServices = async () => {
+const getAllUserRegisteredServices = async (pagination: IPagination) => {
   try {
-    const result = await Api.get(mechRoutes.getAllUserRegisteredServices);
+    const result = await Api.get(mechRoutes.getAllUserRegisteredServices, {
+      params: {
+        page: pagination.page,
+        limit: pagination.limit,
+        search: pagination.search,
+      },
+    });
     console.log("details reached in the mech.ts tttt", result);
     return result.data;
   } catch (error) {
     console.log(
-      "error occured while fetching the user registerd services form the mech.ts"
+      "error occured while fetching the user registerd services form the mech.ts",
     );
     mechErrorHandler(error as Error);
   }
@@ -238,7 +247,7 @@ const updateWorkAssigned = async (
   complaintId: string,
   mechanicId: string,
   status: string,
-  roomId: string
+  roomId: string,
 ) => {
   try {
     console.log("ehtered in the updateWorkAssigned");
@@ -256,11 +265,19 @@ const updateWorkAssigned = async (
 };
 
 //function to get all accepted cmpliants by teh mechanic
-const getAllAcceptedServices = async (mechanicId: string) => {
+const getAllAcceptedServices = async (
+  mechanicId: string,
+  pagination: IPagination,
+) => {
   try {
     console.log("Entered in the getAllAcceptedService");
     const result = await Api.get(mechRoutes.getAllAcceptedServices, {
-      params: { mechanicId },
+      params: {
+        mechanicId,
+        page: pagination.page,
+        limit: pagination.limit,
+        search: pagination.search,
+      },
     });
     return result;
   } catch (error) {
@@ -269,6 +286,7 @@ const getAllAcceptedServices = async (mechanicId: string) => {
   }
 };
 
+//function to getAllCompleted Services 
 const getAllCompletedServices = async (mechanicId: string) => {
   try {
     console.log("Entered in the getAllCompleted in the mech.ts", mechanicId);
@@ -285,20 +303,20 @@ const getAllCompletedServices = async (mechanicId: string) => {
 //function to update the complaint status by mechanic
 const updateComplaintStatus = async (
   complaintId: string,
-  nextStatus: string
+  nextStatus: string,
 ) => {
   try {
     console.log(
       "Entered in the updateComplaintStatus",
       complaintId,
-      nextStatus
+      nextStatus,
     );
     const result = await Api.put(
       mechRoutes.updateComplaintStatus,
       {},
       {
         params: { complaintId, nextStatus },
-      }
+      },
     );
     return result;
   } catch (error) {
@@ -310,13 +328,13 @@ const updateComplaintStatus = async (
 //editing mechanic Details
 const updateMechanicDetails = async (
   mechId: string,
-  values: EditMechanicFormData
+  values: EditMechanicFormData,
 ) => {
   try {
     console.log(
       "Entered in the updateMechanicDetails in the mech.ts",
       mechId,
-      values
+      values,
     );
     const result = await Api.put(mechRoutes.editMechanic, {
       mechId,
@@ -372,7 +390,7 @@ const AddMechAddress = async (newAddress: IAddress) => {
 const EditExistingMechAddress = async (
   _id: string | undefined,
   addressId: string | undefined,
-  values: AddAddress
+  values: AddAddress,
 ) => {
   try {
     const result = await Api.put(mechRoutes.editAddress, {
@@ -410,7 +428,7 @@ const removeMechAddress = async (mechId: string, addressId: string) => {
   } catch (error) {
     console.log(
       "Error occured in the mech.ts while handleRemoveMechAddress",
-      error
+      error,
     );
     mechErrorHandler(error as Error);
   }

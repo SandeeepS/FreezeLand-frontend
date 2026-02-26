@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/user";
-import DynamicTable, { ColumnType } from "../../Common/DynamicTable";
+import DynamicTable, {
+  ColumnType,
+} from "../../../components/Common/DynamicTable";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../App/store";
 import { AllRegisteredServices } from "../../../interfaces/IComponents/User/IUserInterfaces";
-import { MdOutlineSpeakerNotesOff } from "react-icons/md";
+import QueueEmptyState from "../../../components/User/Queue/QueueEmptyState";
 
-// Define the formatted data interface with index signature
 interface FormattedQueueData {
   id: string;
   name: string;
@@ -19,7 +20,6 @@ interface FormattedQueueData {
   [key: string]: unknown;
 }
 
-// Helper function to get status color
 const getStatusColor = (status: string): string => {
   switch (status) {
     case "pending":
@@ -47,35 +47,63 @@ const Queue: React.FC = () => {
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [serviceImages, setServiceImages] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
 
-  // Fetch data
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     const fetchData = async () => {
+      if (!userId) return;
+
       try {
         setLoading(true);
-        const result = await getAllUserRegisteredServices(userId as string);
-        console.log("data reached", result);
-        if (result?.allRegisteredUserServices) {
-          // Filter only incomplete/running services (exclude completed ones)
-          const incompleteServices = result.allRegisteredUserServices.filter(
-            (service: AllRegisteredServices) =>
-              service.status !== "completed" &&
-              service.status !== "cancelled" &&
-              service.status !== "rejected"
-          );
+
+        const result = await getAllUserRegisteredServices(userId as string, {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+
+        if (result?.allRegisteredUserServices?.allRegisteredUserServices) {
+          const incompleteServices =
+            result.allRegisteredUserServices.allRegisteredUserServices.filter(
+              (service: AllRegisteredServices) =>
+                service.status !== "completed" &&
+                service.status !== "cancelled" &&
+                service.status !== "rejected",
+            );
 
           setAllRegisteredService(incompleteServices);
-          console.log(
-            "Incomplete/Running services from the frontend:",
-            incompleteServices
+
+          setTotalItems(
+            result.allRegisteredUserServices.pagination?.totalItems || 0,
+          );
+          setTotalPages(
+            result.allRegisteredUserServices.pagination?.totalPages || 0,
           );
 
-          // Fetch images for each incomplete service
           if (incompleteServices.length > 0) {
             fetchServiceImages(incompleteServices);
           }
@@ -83,22 +111,24 @@ const Queue: React.FC = () => {
       } catch (error) {
         console.error(
           "Error occurred while fetching the registered services:",
-          error
+          error,
         );
+        setAllRegisteredService([]);
+        setTotalItems(0);
+        setTotalPages(0);
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [userId]);
 
-  // Fetch image URLs for all services
+    fetchData();
+  }, [userId, currentPage, itemsPerPage, debouncedSearchQuery]);
+
   const fetchServiceImages = async (services: AllRegisteredServices[]) => {
     const serviceImagesMap: Record<string, string> = {};
     const deviceImagesMap: Record<string, string[]> = {};
 
     for (const service of services) {
-      // Fetch service logo image from serviceDetails
       if (
         service.serviceDetails &&
         Array.isArray(service.serviceDetails) &&
@@ -108,7 +138,7 @@ const Queue: React.FC = () => {
         try {
           const imageResult = await getImageUrl(
             service.serviceDetails[0].imageKey,
-            "service"
+            "service",
           );
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[service._id] = imageResult.data.url;
@@ -118,10 +148,8 @@ const Queue: React.FC = () => {
         }
       }
 
-      // Fetch device images from the image field
       if (service.image && service.image.length > 0) {
         const deviceImageUrls: string[] = [];
-
         for (const deviceImg of service.image) {
           try {
             const deviceImgResult = await getImageUrl(deviceImg, "service");
@@ -147,7 +175,6 @@ const Queue: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Define the columns for the service table with proper typing
   const serviceColumns: ColumnType<FormattedQueueData>[] = [
     {
       key: "service",
@@ -206,7 +233,6 @@ const Queue: React.FC = () => {
     },
   ];
 
-  // Transform your data to match the table structure with proper typing
   const formattedData: FormattedQueueData[] =
     allRegisteredServices.length > 0
       ? allRegisteredServices.map((service: AllRegisteredServices) => ({
@@ -223,40 +249,32 @@ const Queue: React.FC = () => {
         }))
       : [];
 
-  // Handle row click - Navigate to detail page
   const handleRowClick = (item: FormattedQueueData) => {
-    console.log("Clicked on service:", item);
     navigate(`/user/registeredComplaintByUser/${item.id}`);
   };
 
-  // Custom empty state for queue
-  const QueueEmptyState = () => (
-    <div className="text-center py-16">
-      <div className="mx-auto max-w-md">
-        <div className="mx-auto mt-32 h-24 w-24 text-gray-400">
-          <MdOutlineSpeakerNotesOff className="h-full w-full" />
-        </div>
-        <h3 className="mt-6 text-lg font-medium text-gray-900">
-          No Active Services
-        </h3>
-        <p className="mt-2 text-sm text-gray-500">
-          You don't have any services currently in progress. All your services
-          are either completed or you haven't registered any yet.
-        </p>
-      </div>
-    </div>
-  );
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
-  // If no data is available and we're not loading, show the empty state
-  if (!loading && allRegisteredServices.length === 0) {
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string): void => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  if ((!loading && allRegisteredServices === null) || undefined) {
     return (
       <div className="mt-16">
-        <QueueEmptyState />
+        <QueueEmptyState searchQuery={searchQuery} />
       </div>
     );
   }
 
-  // Otherwise show the table with real data
   return (
     <DynamicTable<FormattedQueueData>
       title="Active Services Queue"
@@ -266,6 +284,16 @@ const Queue: React.FC = () => {
       emptyMessage="No active services in queue"
       onRowClick={handleRowClick}
       className="mt-16 cursor-pointer"
+      paginationData={{
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+      }}
+      onPageChange={handlePageChange}
+      onItemsPerPageChange={handleItemsPerPageChange}
+      onSearchChange={handleSearchChange}
+      searchQuery={searchQuery}
     />
   );
 };

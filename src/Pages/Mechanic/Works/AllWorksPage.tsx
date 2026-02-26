@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useNavigate } from "react-router-dom";
-import DynamicTable, { ColumnType } from "../../../components/Common/DynamicTable";
+import DynamicTable, {
+  ColumnType,
+} from "../../../components/Common/DynamicTable";
 import { getAllUserRegisteredServices, getImageUrl } from "../../../Api/mech";
 
 interface ServiceDetail {
@@ -35,7 +37,6 @@ interface ComplaintService {
   createdAt?: string;
 }
 
-// Define the exact shape of your table data
 export interface FormattedComplaintData {
   id: string;
   name: string;
@@ -45,9 +46,9 @@ export interface FormattedComplaintData {
   completion: number;
   description: string;
   originalData: ComplaintService;
-  service: string; // Add this for the service column
-  deviceImage: string; // Add this for the device image column
-   [key: string]: unknown;
+  service: string;
+  deviceImage: string;
+  [key: string]: unknown;
 }
 
 const getStatusColor = (status: string): string => {
@@ -81,32 +82,69 @@ const AllWorksPage: React.FC = () => {
   const [allComplaints, setAllComplaints] = useState<ComplaintService[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [serviceImages, setServiceImages] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getAllUserRegisteredServices();
+        console.log("Fetching with params from the AllWorksPage componnet:", {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+        const result = await getAllUserRegisteredServices({
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+        console.log("result from the backend is ", result);
 
-        if (result?.allRegisteredUserServices) {
-          setAllComplaints(result.allRegisteredUserServices);
-          fetchAllImages(result.allRegisteredUserServices);
+        if (result?.allRegisteredUserServices.allRegisteredUserServices) {
+          setAllComplaints(
+            result.allRegisteredUserServices.allRegisteredUserServices,
+          );
+          setTotalItems(result.allRegisteredUserServices.pagination.totalItems);
+          setTotalPages(result.allRegisteredUserServices.pagination.totalPages);
+          fetchAllImages(
+            result.allRegisteredUserServices.allRegisteredUserServices,
+          );
         }
       } catch (error) {
         console.error("Error fetching complaints:", error);
+        setAllComplaints([]);
+        setTotalItems(0);
+        setTotalPages(0);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [currentPage, itemsPerPage, debouncedSearchQuery]);
 
-  // Fetching image URLs for all services and devices
   const fetchAllImages = async (complaints: ComplaintService[]) => {
     const serviceImagesMap: Record<string, string> = {};
     const deviceImagesMap: Record<string, string[]> = {};
@@ -120,7 +158,7 @@ const AllWorksPage: React.FC = () => {
         try {
           const imageResult = await getImageUrl(
             complaint.serviceDetails[0].imageKey,
-            "service"
+            "service",
           );
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[complaint._id] = imageResult.data.url;
@@ -130,7 +168,6 @@ const AllWorksPage: React.FC = () => {
         }
       }
 
-      // Fetch device images from the image field
       if (complaint.image && complaint.image.length > 0) {
         const deviceImageUrls: string[] = [];
 
@@ -159,7 +196,6 @@ const AllWorksPage: React.FC = () => {
     setDeviceImages(deviceImagesMap);
   };
 
-  // Import the ColumnType from DynamicTable and use it properly
   const complaintColumns: ColumnType<FormattedComplaintData>[] = [
     {
       key: "service",
@@ -208,18 +244,16 @@ const AllWorksPage: React.FC = () => {
       header: "Device Images",
       render: (_, item) => (
         <div className="flex">
-          {deviceImages[item.id]?.map(
-            (imgUrl: string, idx: number) => (
-              <img
-                key={idx}
-                src={imgUrl || "/api/placeholder/40/40"}
-                alt={`device-${idx}`}
-                className={`w-10 h-10 rounded-full border-2 border-white shadow ${
-                  idx > 0 ? "-ml-4" : ""
-                }`}
-              />
-            )
-          ) || (
+          {deviceImages[item.id]?.map((imgUrl: string, idx: number) => (
+            <img
+              key={idx}
+              src={imgUrl || "/api/placeholder/40/40"}
+              alt={`device-${idx}`}
+              className={`w-10 h-10 rounded-full border-2 border-white shadow ${
+                idx > 0 ? "-ml-4" : ""
+              }`}
+            />
+          )) || (
             <img
               src="/api/placeholder/40/40"
               alt="No device image"
@@ -231,7 +265,6 @@ const AllWorksPage: React.FC = () => {
     },
   ];
 
-  // Transform data for the table with proper typing
   const formattedData: FormattedComplaintData[] =
     allComplaints.length > 0
       ? allComplaints.map((complaint: ComplaintService) => ({
@@ -245,14 +278,31 @@ const AllWorksPage: React.FC = () => {
           completion: complaint.completionPercentage || 0,
           description: complaint.description || "No description provided",
           originalData: complaint,
-          service: complaint.serviceDetails[0]?.name || "Unknown Service", // Add this
-          deviceImage: complaint.image?.[0] || "", // Add this
+          service: complaint.serviceDetails[0]?.name || "Unknown Service",
+          deviceImage: complaint.image?.[0] || "",
         }))
       : [];
 
   const handleRowClick = (item: FormattedComplaintData) => {
     console.log("Clicked on complaint:", item);
     navigate(`/mech/complaintDetails/${item.id}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    console.log("Page changed to:", page);
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    console.log("Items per page changed to:", newItemsPerPage);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string): void => {
+    console.log("Search query changed to:", query);
+    setSearchQuery(query);
+    setCurrentPage(1);
   };
 
   return (
@@ -266,6 +316,16 @@ const AllWorksPage: React.FC = () => {
         emptyMessage="No service requests available. New requests will appear here when customers submit them."
         onRowClick={handleRowClick}
         className="cursor-pointer"
+        paginationData={{
+          currentPage,
+          totalPages,
+          totalItems,
+          itemsPerPage,
+        }}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+        onSearchChange={handleSearchChange}
+        searchQuery={searchQuery}
       />
     </div>
   );
