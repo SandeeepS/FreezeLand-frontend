@@ -1,7 +1,7 @@
 import React from "react";
 import MechHeader from "../../components/Mech/Header";
 import { Outlet } from "react-router-dom";
-import SideBar from "../../components/Mech/SideBar";
+import SideBar from "../../components/Mech/Sidebar";
 const MechanicLayout: React.FC = () => {
   return (
     <div className="flex flex-col bg-[#DFECF8]">
