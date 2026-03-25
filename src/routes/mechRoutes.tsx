@@ -10,21 +10,18 @@ import ServiceDetails from "../Pages/Mechanic/ServiceHistory/ServiceDetails";
 import React from "react";
 import MainProfile from "../components/Common/Profile/MainProfile";
 import { getImageUrl } from "../Api/mech";
-import ErrorFallBack from "../components/Common/ErrorFallBack";
 import MechanicLayout from "../layout/mechanic/MechanicLayout";
 
 const MechanicLoginPage = React.lazy(
-  () => import("../Pages/Mechanic/MechanicLoginPage")
+  () => import("../Pages/Mechanic/MechanicLoginPage"),
 );
-const MechanicHomePage = React.lazy(
-  () => import("../Pages/Mechanic/MechanicHomePage")
-);
+
 const MechanicSignupPage = React.lazy(
-  () => import("../Pages/Mechanic/MechanicSignupPage")
+  () => import("../Pages/Mechanic/MechanicSignupPage"),
 );
 const MechOtpPage = React.lazy(() => import("../Pages/Mechanic/MechOtpPage"));
 const ForgetPasswordForMech = React.lazy(
-  () => import("../Pages/Mechanic/ForgetPasswordForMech")
+  () => import("../Pages/Mechanic/ForgetPasswordForMech"),
 );
 
 export const mechRoutes: RouteObject[] = [
