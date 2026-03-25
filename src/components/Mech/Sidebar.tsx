@@ -4,6 +4,8 @@ import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { FaHistory } from "react-icons/fa";
 import { ImAddressBook } from "react-icons/im";
+import { GrTasks } from "react-icons/gr";
+import { MdOutlineUpdate } from "react-icons/md";
 
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -61,16 +63,22 @@ const SideBar: React.FC = () => {
       path: "/mech/profile",
     },
     {
-      name: "Service History",
-      icon: FaHistory,
+      name: "Works",
+      icon: GrTasks,
       id: 3,
-      path: "/mech/serviceHistory",
+      path: "/mech/allWorks",
     },
     {
-      name: "Address",
-      icon: ImAddressBook,
+      name: "Accepted Services",
+      icon: MdOutlineUpdate,
       id: 4,
-      path: "/mech/mechAddress",
+      path: "/mech/queue",
+    },
+    {
+      name: "Service History",
+      icon: FaHistory,
+      id: 4,
+      path: "/mech/serviceHistory",
     },
     {
       name: "Logout",

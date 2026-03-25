@@ -3,14 +3,15 @@ import { useState } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { mechLogout } from "../../App/slices/AuthSlice";
-import Card from "../Common/HeaderDropDown";
-import { CgProfile } from "react-icons/cg";
-import { MdEventNote, MdPowerSettingsNew } from "react-icons/md";
+import { MdPowerSettingsNew } from "react-icons/md";
 import { persistor, useAppSelector } from "../../App/store";
-import { getImageUrl, getMechanicDetails, mechanicLogout } from "../../Api/mech";
+import {
+  getImageUrl,
+  getMechanicDetails,
+  mechanicLogout,
+} from "../../Api/mech";
 import { MechDetails2 } from "../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import toast from "react-hot-toast";
-import { FaRegAddressBook } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 const Header: React.FC = () => {
@@ -25,25 +26,6 @@ const Header: React.FC = () => {
   const [isCardOpen, setIsCardOpen] = useState(false);
   const navigateTo = "/mech/login";
 
-  const mechNavigationItems = [
-    {
-      icon: <CgProfile className="mr-2" />,
-      label: "Profile",
-      path: "/mech/profile",
-    },
-    {
-      icon: <MdEventNote className="mr-2" />,
-      label: "Service History",
-      path: "/mech/serviceHistory",
-    },
-    {
-      icon: <FaRegAddressBook className="mr-2" />,
-      label: "Address",
-      path: "/mech/mechAddress",
-    },
-    // Add more mechanic-specific navigation items
-  ];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,7 +36,7 @@ const Header: React.FC = () => {
         setIsVerified(result?.data?.result.isVerified);
       } catch (error) {
         console.log(
-          "error occurred while accessing the mechDetails in the Header.tsx"
+          "error occurred while accessing the mechDetails in the Header.tsx",
         );
         throw error as Error;
       }
@@ -68,7 +50,7 @@ const Header: React.FC = () => {
         if (mechProfileDetails?.profile_picture) {
           const result = await getImageUrl(
             mechProfileDetails.profile_picture,
-            "mechanic"
+            "mechanic",
           );
           console.log("imageUrld", result);
           if (result) {
@@ -81,14 +63,6 @@ const Header: React.FC = () => {
     };
     fetchData();
   }, [mechProfileDetails]);
-
-  const handleNavigationClick = (path: string) => {
-    if (!isVerified) {
-      toast("Complete the Verification first !!");
-      return;
-    }
-    navigate(path);
-  };
 
   const handleMobileNavClick = (action?: () => void) => {
     if (!isVerified) {
@@ -134,7 +108,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="text-white font-bold h-[85px] flex justify-between w-full bg-freeze-color ">
+      <div className="text-white font-bold h-[96px] flex justify-between w-full bg-freeze-color ">
         <div className="flex-col">
           <h1 className="w-full text-3xl text-black font-exo p-8 pt-5 pb-0">
             FREEZE <span className="text-white font-exo">LAND</span>
@@ -143,27 +117,6 @@ const Header: React.FC = () => {
         </div>
         {/* Desktop Menu */}
         <ul className="p-6 hidden md:flex">
-          <li
-            className="p-4 cursor-pointer"
-            onClick={() => handleNavigationClick("/mech/homepage")}
-          >
-            HOME
-          </li>
-
-          <li
-            className="p-4 cursor-pointer"
-            onClick={() => handleNavigationClick("/mech/allWorks")}
-          >
-            WORKS
-          </li>
-
-          <li
-            className="p-4 cursor-pointer"
-            onClick={() => handleNavigationClick("/mech/queue")}
-          >
-            QUEUE
-          </li>
-
           <li className="p-2 cursor-pointer">
             <button
               className=" flex w-10 h-10 items-center rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -178,8 +131,8 @@ const Header: React.FC = () => {
               />
             </button>
 
-            {/* Card */}
-            <div className="">
+            {/* Card commented for future use , don't need to delete  */}
+            {/* <div className="">
               <Card
                 isOpen={isCardOpen}
                 onClose={toggleCard}
@@ -194,7 +147,7 @@ const Header: React.FC = () => {
                 userRole="Professional Mechanic"
                 navigationItems={mechNavigationItems}
               />
-            </div>
+            </div> */}
           </li>
         </ul>
 
@@ -219,7 +172,7 @@ const Header: React.FC = () => {
           {!isVerified && (
             <div className="px-6 mb-4">
               <div className="bg-yellow-500 text-black text-sm px-3 py-2 rounded">
-                ⚠️ Account not verified
+                Account not verified
               </div>
             </div>
           )}
@@ -229,11 +182,9 @@ const Header: React.FC = () => {
               className={`p-4 border-b cursor-pointer transition-opacity ${
                 !isVerified ? "opacity-50 cursor-not-allowed" : ""
               }`}
-              onClick={() =>
-                handleMobileNavClick(() => navigate("/mech/homepage"))
-              }
+              onClick={() => handleMobileNavClick(() => navigate("/mech"))}
             >
-              HOME
+              DASHBOARD
             </li>
             <li
               className={`p-4 border-b cursor-pointer transition-opacity ${
@@ -243,7 +194,7 @@ const Header: React.FC = () => {
                 handleMobileNavClick(() => navigate("/mech/profile"))
               }
             >
-              ACCOUNT
+              PROFILE
             </li>
             <li
               className={`p-4 border-b cursor-pointer transition-opacity ${
@@ -253,7 +204,7 @@ const Header: React.FC = () => {
                 handleMobileNavClick(() => navigate("/mech/allWorks"))
               }
             >
-              SERVICES
+              WORKS
             </li>
 
             <li
@@ -272,31 +223,10 @@ const Header: React.FC = () => {
                 !isVerified ? "opacity-50 cursor-not-allowed" : ""
               }`}
               onClick={() =>
-                handleMobileNavClick(() => navigate("/mech/profile"))
-              }
-            >
-              PROFILE
-            </li>
-
-            <li
-              className={`p-4 border-b cursor-pointer transition-opacity ${
-                !isVerified ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={() =>
                 handleMobileNavClick(() => navigate("/mech/serviceHistory"))
               }
             >
               SERVICE HISTORY
-            </li>
-            <li
-              className={`p-4 border-b cursor-pointer transition-opacity ${
-                !isVerified ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={() =>
-                handleMobileNavClick(() => navigate("/mech/mechAddress"))
-              }
-            >
-              MECHADDRESS
             </li>
 
             {/* Logout Button - Always accessible */}

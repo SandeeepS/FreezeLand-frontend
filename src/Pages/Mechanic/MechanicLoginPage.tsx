@@ -22,7 +22,7 @@ const MechanicLoginPage: React.FC = () => {
 
   useEffect(() => {
     if (mechData) {
-      navigate("/mech/homepage");
+      navigate("/mech");
     }
   }, [mechData, navigate]);
 
@@ -38,7 +38,7 @@ const MechanicLoginPage: React.FC = () => {
           if (result?.status === 200 && result.data.data.success) {
             console.log("result reched in the login page  ", result);
             dispatch(setMechCredential(result.data.data.data));
-            navigate("/mech/homepage");
+            navigate("/mech");
           } else {
             console.log("loging failed due to Incorrect password or email");
             toast.error(result?.data?.data.message || "Login failed");

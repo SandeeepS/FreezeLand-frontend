@@ -249,7 +249,7 @@ const VerifyMechanic: React.FC = () => {
       toast.success("Verification submitted successfully!");
 
       console.log("Verification response:", response);
-      navigate("/mech/homepage");
+      navigate("/mech");
     } catch (error) {
       toast.dismiss();
       console.error("Verification error:", error);

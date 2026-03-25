@@ -42,32 +42,58 @@ const UserServiceHistory: React.FC = () => {
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [serviceImages, setServiceImages] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getAllUserRegisteredServices(userId as string);
+        const result = await getAllUserRegisteredServices(userId as string, {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
         console.log("data reached", result);
         if (result?.allRegisteredUserServices) {
           // Filter only completed services/complaints
-          const completedServices = result.allRegisteredUserServices.filter(
+          const completedServices = result.allRegisteredUserServices.allRegisteredUserServices.filter(
             (service: AllRegisteredServices) =>
               service.status === "completed" ||
               service.status === "cancelled" ||
-              service.status === "rejected"
+              service.status === "rejected",
           );
 
           setAllRegisteredService(completedServices);
+          setTotalItems(result.allRegisteredUserServices.pagination.totalItems);
+          setTotalPages(result.allRegisteredUserServices.pagination.totalPages);
           console.log(
             "Completed services from the frontend:",
-            completedServices
+            completedServices,
           );
 
           // Fetch images for each completed service
@@ -78,7 +104,7 @@ const UserServiceHistory: React.FC = () => {
       } catch (error) {
         console.error(
           "Error occurred while fetching the service history:",
-          error
+          error,
         );
       } finally {
         setLoading(false);
@@ -103,7 +129,7 @@ const UserServiceHistory: React.FC = () => {
         try {
           const imageResult = await getImageUrl(
             service.serviceDetails[0].imageKey,
-            "service"
+            "service",
           );
           if (imageResult && imageResult.data && imageResult.data.url) {
             serviceImagesMap[service._id] = imageResult.data.url;
@@ -212,7 +238,7 @@ const UserServiceHistory: React.FC = () => {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
-                }
+                },
               )
             : new Date(item.originalData.createdAt).toLocaleDateString(
                 "en-US",
@@ -220,7 +246,7 @@ const UserServiceHistory: React.FC = () => {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
-                }
+                },
               )}
         </span>
       ),
@@ -277,6 +303,23 @@ const UserServiceHistory: React.FC = () => {
     );
   }
 
+  const handlePageChange = (page: number) => {
+    console.log("Page changed to:", page);
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    console.log("Items per page changed to:", newItemsPerPage);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string): void => {
+    console.log("Search query changed to:", query);
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
   // Otherwise show the table with completed services data
   return (
     <DynamicTable<FormattedServiceData>
@@ -287,6 +330,16 @@ const UserServiceHistory: React.FC = () => {
       emptyMessage="No completed services found"
       onRowClick={handleRowClick}
       className="mt-16 cursor-pointer"
+      paginationData={{
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+      }}
+      onPageChange={handlePageChange}
+      onItemsPerPageChange={handleItemsPerPageChange}
+      onSearchChange={handleSearchChange}
+      searchQuery={searchQuery}
     />
   );
 };
