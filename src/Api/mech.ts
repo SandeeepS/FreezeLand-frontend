@@ -286,12 +286,20 @@ const getAllAcceptedServices = async (
   }
 };
 
-//function to getAllCompleted Services 
-const getAllCompletedServices = async (mechanicId: string) => {
+//function to getAllCompleted Services
+const getAllCompletedServices = async (
+  mechanicId: string,
+  pagination: IPagination,
+) => {
   try {
     console.log("Entered in the getAllCompleted in the mech.ts", mechanicId);
     const result = await Api.get(mechRoutes.getAllCompletedServices, {
-      params: { mechanicId },
+      params: {
+        mechanicId,
+        page: pagination.page,
+        limit: pagination.limit,
+        search: pagination.search,
+      },
     });
     return result;
   } catch (error) {
