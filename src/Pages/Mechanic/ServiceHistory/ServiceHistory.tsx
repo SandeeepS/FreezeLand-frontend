@@ -49,29 +49,61 @@ const ServiceHistory: React.FC = () => {
 
   // Add state for storing image URLs
   const [serviceImages, setServiceImages] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [deviceImages, setDeviceImages] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [totalItems, setTotalItems] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  const params = new URLSearchParams();
+  params.set("page", currentPage.toString());
+  params.set("limit", itemsPerPage.toString());
+  if (searchQuery) params.set("search", searchQuery);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      navigate({ search: params.toString() }, { replace: true });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getAllCompletedServices(mechanicId as string);
-        console.log("data reached", result);
+        const result = await getAllCompletedServices(mechanicId as string, {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchQuery,
+        });
+        console.log("value of result is",result);
         if (result?.data?.result) {
-          setCompletedServices(result.data.result);
+          console.log("data reached", result.data.result.pagination);
+
+          setCompletedServices(result.data.result.completedServices);
+          setTotalItems(
+            result.data.result.pagination.totalItems,
+          );
+          setTotalPages(
+            result.data.result.pagination.totalPages,
+          );
           console.log("Completed services:", result.data.result);
           // Fetch images for services and devices
-          fetchAllImages(result.data.result);
+          fetchAllImages(result.data.result.completedServices);
         }
       } catch (error) {
         console.error(
           "Error occurred while fetching the completed services:",
-          error
+          error,
         );
       } finally {
         setLoading(false);
@@ -94,7 +126,7 @@ const ServiceHistory: React.FC = () => {
         try {
           const imageResult = await getImageUrl(
             serviceDetailsArr[0].imageKey,
-            "service"
+            "service",
           );
 
           if (imageResult && imageResult.data && imageResult.data.url) {
@@ -248,6 +280,23 @@ const ServiceHistory: React.FC = () => {
     navigate(`/mech/serviceDetails/${item.id}`);
   };
 
+  const handlePageChange = (page: number) => {
+    console.log("Page changed to:", page);
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    console.log("Items per page changed to:", newItemsPerPage);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string): void => {
+    console.log("Search query changed to:", query);
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="px-4 py-6">
       <h1 className="text-2xl font-bold mb-6">Service History</h1>
@@ -259,6 +308,16 @@ const ServiceHistory: React.FC = () => {
         emptyMessage="No completed services found"
         onRowClick={handleRowClick}
         className="cursor-pointer"
+        paginationData={{
+          currentPage,
+          totalPages,
+          totalItems,
+          itemsPerPage,
+        }}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+        onSearchChange={handleSearchChange}
+        searchQuery={searchQuery}
       />
     </div>
   );
