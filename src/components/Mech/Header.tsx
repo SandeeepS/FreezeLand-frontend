@@ -7,13 +7,13 @@ import Card from "../Common/HeaderDropDown";
 import { CgProfile } from "react-icons/cg";
 import { MdEventNote, MdPowerSettingsNew } from "react-icons/md";
 import { persistor, useAppSelector } from "../../App/store";
-import { getImageUrl, getMechanicDetails, mLogout } from "../../Api/mech";
+import { getImageUrl, getMechanicDetails, mechanicLogout } from "../../Api/mech";
 import { MechDetails2 } from "../../interfaces/IComponents/Mechanic/IMechanicInterface";
 import toast from "react-hot-toast";
 import { FaRegAddressBook } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-const MechHeader: React.FC = () => {
+const Header: React.FC = () => {
   const dispatch = useDispatch();
 
   const mechData = useAppSelector((state) => state.auth.mechData);
@@ -54,7 +54,7 @@ const MechHeader: React.FC = () => {
         setIsVerified(result?.data?.result.isVerified);
       } catch (error) {
         console.log(
-          "error occurred while accessing the mechDetails in the MechHeader.tsx"
+          "error occurred while accessing the mechDetails in the Header.tsx"
         );
         throw error as Error;
       }
@@ -120,7 +120,7 @@ const MechHeader: React.FC = () => {
         confirmButtonText: "Yes",
       }).then((result) => {
         if (result.isConfirmed) {
-          mLogout().then(() => console.log(""));
+          mechanicLogout().then(() => console.log(""));
           dispatch(mechLogout());
           persistor.purge();
           toast.success("You are logged out!");
@@ -183,7 +183,7 @@ const MechHeader: React.FC = () => {
               <Card
                 isOpen={isCardOpen}
                 onClose={toggleCard}
-                logout={mLogout}
+                logout={mechanicLogout}
                 authLogout={mechLogout}
                 navigateTo={navigateTo}
                 coverImage={image || "https://example.com/mechanic-cover.jpg"}
@@ -316,4 +316,4 @@ const MechHeader: React.FC = () => {
   );
 };
 
-export default MechHeader;
+export default Header;
