@@ -18,7 +18,7 @@ const ServiceCancelBtn: React.FC<ServiceCancelBtnProps> = ({
   if(userRole == "user"){
      redirectLink = "/";
   }else if(userRole == "mechanic"){
-     redirectLink = "/mech/homepage"
+     redirectLink = "/mech"
   }
   
   const [showModal, setShowModal] = useState(false);

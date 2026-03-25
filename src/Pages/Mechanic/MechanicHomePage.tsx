@@ -1,6 +1,6 @@
 import CarousalComponent from "../../components/User/CarousalComponent";
 import Footer from "../../components/User/Footer";
-import MechHeader from "../../components/Mech/MechHeader";
+import MechHeader from "../../components/Mech/Header";
 import MechPromo1 from "../../components/Mech/MechPromo1";
 import AssignedWorks from "../../components/Mech/AssignedWroks/AssignedWorks";
 import { useEffect, useState } from "react";
