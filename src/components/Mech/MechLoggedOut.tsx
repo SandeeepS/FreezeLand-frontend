@@ -4,7 +4,7 @@ import { useAppSelector } from "../../App/store";
 const MechLoggedOut = () => {
   const { mechData } = useAppSelector((state) => state.auth);
   if (mechData) {
-    return <Navigate to="/mech/homepage" />;
+    return <Navigate to="/mech" />;
   } else {
     return <Outlet />;
   }

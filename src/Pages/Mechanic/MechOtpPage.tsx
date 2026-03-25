@@ -9,8 +9,8 @@ const MechOtpPage: React.FC = () => {
     resendOtpFn: resendMechOtp,
     userDataSelector: (state: any) => state.auth.mechData,
     setCredentialAction: setMechCredential,
-    homeRoute: "/mech/homepage",
-    successRoute: "/mech/homepage",
+    homeRoute: "/mech",
+    successRoute: "/mech",
     timerKeyPrefix: "mech_otp_timer_",
     icon: "settings" as const,
   };

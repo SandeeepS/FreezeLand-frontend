@@ -109,7 +109,7 @@ const resendOtp_forgetPassword_mechanic = async () => {
   }
 };
 
-const mLogout = async () => {
+const mechanicLogout = async () => {
   try {
     const result = await Api.get(mechRoutes.logout);
     if (result) {
@@ -484,7 +484,7 @@ const EditMechProfileDetails = async (values: EditMechFormData) => {
 export {
   mechLogin,
   createRoom,
-  mLogout,
+  mechanicLogout,
   mechSignup,
   createReport,
   getImageUrl,
