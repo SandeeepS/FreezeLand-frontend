@@ -181,12 +181,12 @@ const ServiceDetails: React.FC = () => {
     });
   };
 
-  const formatAddress = (address: string) => {
-    if (address.length > 100) {
-      return address.substring(0, 100) + "...";
-    }
-    return address;
-  };
+  // const formatAddress = (address: string) => {
+  //   if (address.length > 100) {
+  //     return address.substring(0, 100) + "...";
+  //   }
+  //   return address;
+  // };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
