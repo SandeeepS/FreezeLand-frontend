@@ -397,7 +397,7 @@ const ServiceDetails: React.FC = () => {
             <div>
               <span className="text-sm text-gray-500">Address:</span>
               <p className="text-gray-900">
-                {formatAddress(complaint.locationName.address)}
+                {/* {formatAddress(complaint.userDetails)} */}
               </p>
             </div>
 
@@ -428,13 +428,13 @@ const ServiceDetails: React.FC = () => {
               <div>
                 <span className="text-sm text-gray-500">Latitude:</span>
                 <p className="font-medium text-gray-900">
-                  {complaint.locationName.latitude}
+                  {complaint?.locationName?.latitude || "N/A"}
                 </p>
               </div>
               <div>
                 <span className="text-sm text-gray-500">Longitude:</span>
                 <p className="font-medium text-gray-900">
-                  {complaint.locationName.longitude}
+                  {complaint?.locationName?.longitude || "N/A"}
                 </p>
               </div>
             </div>
