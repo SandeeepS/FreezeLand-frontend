@@ -14,6 +14,7 @@ import {
   IAddress,
   IPagination,
 } from "../interfaces/IComponents/Common/ICommonInterfaces";
+import { AxiosError } from "axios";
 
 const signup = async ({
   name,
@@ -163,6 +164,11 @@ const getProfile = async (userId: string) => {
     console.log("UserProfile form the backend in the user.ts is ", result);
     return result;
   } catch (error) {
+    //sending null to the frontend if the user is not logged in.
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 401) {
+      return null;
+    }
     console.log("error while accessing the user details in the user.ts", error);
     userErrorHandler(error as Error);
   }
