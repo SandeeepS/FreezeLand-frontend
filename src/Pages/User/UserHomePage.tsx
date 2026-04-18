@@ -44,6 +44,7 @@ const UserHomePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("user id in the userHomePage is ",userId);
         const userProfile = await getProfile(userId as string);
         console.log("User details in the homepage is", userProfile);
 
