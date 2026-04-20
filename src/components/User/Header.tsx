@@ -50,11 +50,12 @@ const Header: React.FC = () => {
     const fetchData = async () => {
       try {
         const userId = userData?.id;
+        if (!userId) return;
         const result = await getProfile(userId as string);
         setUserProfileDetails(result?.data.data.data);
       } catch (error) {
         console.log(
-          "error occured while accessing the userDeatils in the Header.tsx"
+          "error occured while accessing the userDeatils in the Header.tsx",
         );
         throw error as Error;
       }
@@ -68,9 +69,10 @@ const Header: React.FC = () => {
     const fetchData = async () => {
       try {
         if (userProfileDetails?.profile_picture) {
+          if (!userProfileDetails?.profile_picture) return;
           const result = await getImageUrl(
             userProfileDetails.profile_picture,
-            "service"
+            "service",
           );
           if (result) {
             setImage(result.data.url);
@@ -159,7 +161,10 @@ const Header: React.FC = () => {
             HOME
           </li>
 
-          <li className="p-4 cursor-pointer hover:text-black" onClick={handleServicesClick}>
+          <li
+            className="p-4 cursor-pointer hover:text-black"
+            onClick={handleServicesClick}
+          >
             SERVICES
           </li>
 
