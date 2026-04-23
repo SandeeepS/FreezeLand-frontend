@@ -1,4 +1,4 @@
-import Api from "../Services/axios";
+import Api, { publicAxios } from "../Services/axios";
 import userRoutes from "../Services/Endpoints/userEndPoints";
 import { AddAddress } from "../interfaces/AddAddress";
 import { Iconcern } from "../interfaces/Iconcern";
@@ -54,7 +54,7 @@ const login = async (email: string, password: string) => {
 
 const getImageUrl = async (imageKey: string, type: string) => {
   try {
-    const result = await Api.get(userRoutes.getImageUrl, {
+    const result = await publicAxios.get(userRoutes.getImageUrl, {
       params: { imageKey, type },
     });
     return result;
@@ -178,7 +178,7 @@ const getProfile = async (userId: string) => {
 const getAllServices = async () => {
   try {
     console.log("entered in the user.ts");
-    const result = await Api.get(userRoutes.getAllServices);
+    const result = await publicAxios.get(userRoutes.getAllServices);
     if (result) {
       return result;
     }
