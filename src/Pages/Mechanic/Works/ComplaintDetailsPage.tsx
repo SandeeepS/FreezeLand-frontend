@@ -55,6 +55,8 @@ const ComplaintDetailsPage: React.FC = () => {
 
     try {
       const result = await getComplaintDetails(id);
+      console.log("result from the backend is ",result);
+      
       if (result && result.data.result && result.data.result.length > 0) {
         const complaintData = result.data.result[0];
         setUserComplaintDetails(complaintData);
