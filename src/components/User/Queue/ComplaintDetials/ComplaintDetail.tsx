@@ -25,7 +25,7 @@ import InvoiceDownloadButton from "../../../Common/generateInvoicePDF";
 import { IUserData } from "../../../../interfaces/IUserData";
 
 interface IServiceDetails {
-  image?: string;
+  imageKey?: string;
   name: string;
 }
 
@@ -38,7 +38,7 @@ const ComplaintDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [complaint, setComplaint] = useState<IComplaintDetails | undefined>(
-    undefined
+    undefined,
   );
   const [mechanicDetails, setMechanicDetails] =
     useState<IMechanicDetails | null>(null);
@@ -50,14 +50,14 @@ const ComplaintDetail: React.FC = () => {
 
   // Fetch complaint details and set up polling for real-time updates
   useEffect(() => {
-    let pollingInterval: NodeJS.Timeout;
+    let pollingInterval: ReturnType<typeof setInterval>;
 
     const fetchComplaintDetail = async () => {
       if (!id) return;
       try {
         setIsLoading(true);
         const result = await getUserRegisteredServiceDetailsById(id);
-
+        console.log("service Details is ", result);
         if (result?.data?.result?.[0]) {
           setComplaint(result.data.result[0]);
         }
@@ -101,7 +101,7 @@ const ComplaintDetail: React.FC = () => {
       try {
         const result = await getMechanicDetails(complaint.currentMechanicId);
         const mechanic = result?.data?.result;
-
+        console.log("mechanic details is ", mechanic);
         if (mechanic) {
           setMechanicDetails({
             ...mechanic,
@@ -188,7 +188,7 @@ const ComplaintDetail: React.FC = () => {
         )}
 
         <ComplaintHeader
-          image={serviceDetails.image || "/api/placeholder/60/60"}
+          image={serviceDetails.imageKey || "/api/placeholder/60/60"}
           name={serviceDetails.name || "Unknown Service"}
           requestId={complaint._id}
           status={status}

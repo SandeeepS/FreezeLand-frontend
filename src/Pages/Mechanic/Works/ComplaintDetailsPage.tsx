@@ -12,8 +12,8 @@ import AccecptBtn from "./AccecptBtn";
 import UpdateStatusBtn from "./UpdateStatusBtn";
 import { ComplaintDetails } from "../../../interfaces/IPages/Mechanic/IMechanicInterfaces";
 import StatusProgressBar from "../../../components/Common/StatusProgressBar";
-import { useSelector } from "react-redux"; 
-import { RootState } from "../../../App/store"; 
+import { useSelector } from "react-redux";
+import { RootState } from "../../../App/store";
 import FloatingChat from "../../../components/Common/Chat/FloatingChat";
 import { ComplaintStatus } from "../../../Enums/StatusEnums";
 import ServiceCancelBtn from "../../../components/Common/ServiceCancelBtn";
@@ -35,7 +35,8 @@ const ComplaintDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const mechid = id as string;
   const navigate = useNavigate();
-  const [userComplaintDetails, setUserComplaintDetails] = useState<ComplaintDetails | null>(null);
+  const [userComplaintDetails, setUserComplaintDetails] =
+    useState<ComplaintDetails | null>(null);
 
   const mechDetails = useSelector((state: RootState) => state.auth.mechData);
   const currentMechId = mechDetails?.id || "";
@@ -55,8 +56,8 @@ const ComplaintDetailsPage: React.FC = () => {
 
     try {
       const result = await getComplaintDetails(id);
-      console.log("result from the backend is ",result);
-      
+      console.log("result from the backend is ", result);
+
       if (result && result.data.result && result.data.result.length > 0) {
         const complaintData = result.data.result[0];
         setUserComplaintDetails(complaintData);
@@ -79,7 +80,7 @@ const ComplaintDetailsPage: React.FC = () => {
   }, [fetchComplaintDetails]);
 
   const handleStatusChange = useCallback((newStatus: ComplaintStatus) => {
-    setComplaint(prevComplaint => {
+    setComplaint((prevComplaint) => {
       if (!prevComplaint) return prevComplaint;
       return {
         ...prevComplaint,
@@ -87,7 +88,7 @@ const ComplaintDetailsPage: React.FC = () => {
       };
     });
 
-    setUserComplaintDetails(prevDetails => {
+    setUserComplaintDetails((prevDetails) => {
       if (!prevDetails) return prevDetails;
       return {
         ...prevDetails,
@@ -102,12 +103,14 @@ const ComplaintDetailsPage: React.FC = () => {
 
   const isAccepted = complaint?.status !== ComplaintStatus.PENDING;
   const showCancelButton = complaint?.status === ComplaintStatus.ACCEPTED;
-  const showReportButton = isAccepted && complaint?.userId && (
-    complaint.status === ComplaintStatus.ACCEPTED ||
-    complaint.status === ComplaintStatus.ON_PROCESS ||
-    complaint.status === ComplaintStatus.COMPLETED
-  );
-  const customerName = complaint?.name || complaint?.userDetails?.name || "Customer";
+  const showReportButton =
+    isAccepted &&
+    complaint?.userId &&
+    (complaint.status === ComplaintStatus.ACCEPTED ||
+      complaint.status === ComplaintStatus.ON_PROCESS ||
+      complaint.status === ComplaintStatus.COMPLETED);
+  const customerName =
+    complaint?.name || complaint?.userDetails?.name || "Customer";
 
   if (loading) {
     return (
@@ -167,24 +170,18 @@ const ComplaintDetailsPage: React.FC = () => {
 
       {showCancelButton && (
         <div className="mt-4 flex justify-center pb-4">
-          <ServiceCancelBtn
-            complaintId={complaint._id}
-            userRole="mechanic"
-          />
+          <ServiceCancelBtn complaintId={complaint._id} userRole="mechanic" />
         </div>
       )}
-      
+
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-1/2">
-          {complaint.locationName &&
-          typeof complaint.locationName === "object" &&
-          "address" in complaint.locationName &&
-          "latitude" in complaint.locationName &&
-          "longitude" in complaint.locationName ? (
+          {complaint.userAddress[0] &&
+          typeof complaint.userAddress[0] === "object" ? (
             <GoogleMapLocation
               location={
-                complaint.locationName as {
-                  address: string;
+                complaint.userAddress[0] as {
+                  fullAddress: string;
                   latitude: number;
                   longitude: number;
                 }
@@ -201,15 +198,12 @@ const ComplaintDetailsPage: React.FC = () => {
             formatDate={formatDate}
           />
 
-          {complaint.locationName &&
-          typeof complaint.locationName === "object" &&
-          "address" in complaint.locationName &&
-          "latitude" in complaint.locationName &&
-          "longitude" in complaint.locationName ? (
+          {complaint.userAddress[0] &&
+          typeof complaint.userAddress[0] === "object" ? (
             <LocationDetail
               location={
-                complaint.locationName as {
-                  address: string;
+                complaint.userAddress[0] as {
+                  fullAddress: string;
                   latitude: number;
                   longitude: number;
                 }
@@ -226,13 +220,16 @@ const ComplaintDetailsPage: React.FC = () => {
           complaint={{
             ...complaint,
             image: complaint.image ?? [],
-            workDetails: complaint.workDetails && complaint.workDetails.length > 0
-              ? [complaint.workDetails[0]]
-              : [{
-                  description: "",
-                  cost: 0,
-                  addedAt: new Date(),
-                }],
+            workDetails:
+              complaint.workDetails && complaint.workDetails.length > 0
+                ? [complaint.workDetails[0]]
+                : [
+                    {
+                      description: "",
+                      cost: 0,
+                      addedAt: new Date(),
+                    },
+                  ],
           }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -248,7 +245,8 @@ const ComplaintDetailsPage: React.FC = () => {
                 Issues with the customer?
               </h3>
               <p className="text-gray-600 mb-4">
-                If you experienced any problems with the customer or service conditions, you can report it to help us improve our platform.
+                If you experienced any problems with the customer or service
+                conditions, you can report it to help us improve our platform.
               </p>
               <Button
                 variant="outlined"
@@ -280,9 +278,13 @@ const ComplaintDetailsPage: React.FC = () => {
         open={reportSuccess}
         autoHideDuration={6000}
         onClose={() => setReportSuccess(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={() => setReportSuccess(false)} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setReportSuccess(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Report submitted successfully. Our team will review it shortly.
         </Alert>
       </Snackbar>

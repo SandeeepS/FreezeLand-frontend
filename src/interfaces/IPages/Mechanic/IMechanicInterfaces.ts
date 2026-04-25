@@ -140,6 +140,11 @@ export interface ComplaintDetails {
     addedAt: Date;
   }[];
   chatId: string;
+  userAddress:{
+    fullAddress:string;
+    latitude:number;
+    longitude:number;
+  }[]
 }
 
 export interface EditMechanicFormData {

@@ -3,7 +3,7 @@ import { Phone, Email, Person, VerifiedUser } from "@mui/icons-material";
 import { getImageUrl } from "../../../../Api/user";
 
 interface MechanicDetails {
-  photo?: string;
+  profile_picture?: string;
   name: string;
   isVerified: boolean;
   _id: string;
@@ -22,8 +22,8 @@ const MechanicInfo: React.FC<{ mechanicDetails?: MechanicDetails }> = ({
     const fetchData = async () => {
       try {
         const image = await getImageUrl(
-          mechanicDetails?.photo as string,
-          "mechanic"
+          mechanicDetails?.profile_picture as string,
+          "mechanic",
         );
         setMechanicImage(image?.data.url);
       } catch (error) {
@@ -48,7 +48,7 @@ const MechanicInfo: React.FC<{ mechanicDetails?: MechanicDetails }> = ({
       </div>
       <div className=" bg-gray-100 p-5">
         <div className="flex items-center mb-4">
-          {mechanicDetails.photo ? (
+          {mechanicDetails.profile_picture ? (
             <img
               src={mechanicImage}
               alt={mechanicDetails.name}
@@ -72,7 +72,7 @@ const MechanicInfo: React.FC<{ mechanicDetails?: MechanicDetails }> = ({
             </p>
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <div className="flex items-center text-sm">
             <Phone className="text-gray-500 mr-2 w-4 h-4" />

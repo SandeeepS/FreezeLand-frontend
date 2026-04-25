@@ -3,7 +3,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 interface LocationDetalProps {
   location: {
-    address: string;
+    fullAddress: string;
     latitude: number;
     longitude: number;
   };
@@ -22,7 +22,7 @@ const LocationDetail: React.FC<LocationDetalProps> = ({ location }) => {
           <div>
             <p className="font-medium">Service Location</p>
             <p className="text-sm text-gray-500">
-              {location.address || "No address provided"}
+              {location.fullAddress || "No address provided"}
             </p>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { GoogleMap, LoadScript, Marker, DirectionsRenderer } from "@react-google
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY!;
 
 interface LocationProps {
-  address: string;
+  fullAddress: string;
   latitude: number;
   longitude: number;
 }
